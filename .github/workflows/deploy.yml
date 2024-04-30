@@ -42,6 +42,15 @@ jobs:
         with:
           registry: ${{ steps.login-ecr.outputs.registry }}
 
+      - name: Set tag based on branch
+        id: set-tag
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "::set-output name=tag::prd"
+          elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
+            echo "::set-output name=tag::stg"
+          fi
+
       - name: Build CMS
         uses: docker/build-push-action@v5
         env:
@@ -52,6 +61,6 @@ jobs:
           context: .
           push: true
           provenance: false
-          tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:prd
+          tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ steps.set-tag.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
