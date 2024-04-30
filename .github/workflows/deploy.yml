@@ -52,6 +52,6 @@ jobs:
           context: .
           push: true
           provenance: false
-          tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:stg
+          tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:prd
           cache-from: type=gha
           cache-to: type=gha,mode=max
