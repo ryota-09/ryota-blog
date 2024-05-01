@@ -1,5 +1,6 @@
 import BlogTitle from "@/components/Header/BlogTitle";
-import { BLOG_TITLE } from "@/static/header";
+import HeaderNav from "@/components/Header/HeaderNav";
+import { BLOG_TITLE, HEADER_NAV_ITEMS } from "@/static/header";
 
 const Header = () => {
   return (
@@ -11,13 +12,7 @@ const Header = () => {
             アイコン
           </div>
         </div>
-        <nav>
-          <ul className="flex space-x-4 mt-4 mx-1">
-            <li><a href="#" className="text-gray-600 hover:text-gray-900">Blog</a></li>
-            <li><a href="#" className="text-gray-600 hover:text-gray-900">Portfolio</a></li>
-            <li><a href="#" className="text-gray-600 hover:text-gray-900">Contact</a></li>
-          </ul>
-        </nav>
+        <HeaderNav items={HEADER_NAV_ITEMS} />
       </div>
     </header>
   )
