@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Kosugi_Maru } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"] });
 
@@ -17,7 +18,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={KosugiMaru.className}><Header />{children}</body>
+      <body className={`${KosugiMaru.className} bg-[#eee] flex flex-col min-h-screen`}>
+        <Header />
+        <main className="flex-grow">
+          {children}
+        </main>
+        <Footer />
+      </body>
     </html>
   );
 }
