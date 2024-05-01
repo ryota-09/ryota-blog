@@ -1,13 +1,12 @@
-import Link from "next/link";
+import BlogTitle from "@/components/Header/BlogTitle";
+import { BLOG_TITLE } from "@/static/header";
 
 const Header = () => {
   return (
     <header className="bg-white py-4 shadow-md">
       <div className="container mx-auto divide-y">
         <div className="flex justify-between items-center mb-4">
-          <Link href="/">
-            <h1 className="text-xl font-bold text-gray-600">りょたぶろぐ - ゆる開発LIFE -</h1>
-          </Link>
+          <BlogTitle title={BLOG_TITLE} />
           <div>
             アイコン
           </div>

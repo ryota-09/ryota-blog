@@ -17,8 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Header />
-      <body className={KosugiMaru.className}>{children}</body>
+      <body className={KosugiMaru.className}><Header />{children}</body>
     </html>
   );
 }

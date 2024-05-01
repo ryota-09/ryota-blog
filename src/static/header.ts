@@ -1,0 +1,1 @@
+export const BLOG_TITLE = 'りょたぶろぐ - ゆる開発LIFE -';
