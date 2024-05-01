@@ -11,14 +11,14 @@ const data = [
   },
   {
     id: "2",
-    title: "title2",
+    title: "title2title2title2title2title2title2title2title2title2title2title2title2title2title2",
     description: "description2",
     updatedAt: "2021-10-10",
     thumbnail: "/test.webp",
   },
   {
     id: "3",
-    title: "title3",
+    title: "タイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトルタイトル",
     description: "description3",
     updatedAt: "2021-10-10",
     thumbnail: "/test.webp",
@@ -29,11 +29,13 @@ const Page = async () => {
   // const data = await getArticleList();
   return (
     <div className="w-[calc(100%_-_300px)]">
-      {data.map((item) => (
-        <ul key={item.id}>
-          <ArticleCard data={item} />
-        </ul>
-      ))}
+      <ul className="grid grid-cols-2 gap-4">
+        {data.map((item) => (
+          <li key={item.id}>
+            <ArticleCard data={item} />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
