@@ -3,6 +3,7 @@ import { Kosugi_Maru } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SideNav from "@/components/SideNav";
 
 const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"] });
 
@@ -20,8 +21,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${KosugiMaru.className} bg-[#eee] flex flex-col min-h-screen`}>
         <Header />
-        <main className="flex-grow">
+        <main className="flex-grow flex container mx-auto gap-4 my-4">
           {children}
+          <SideNav />
         </main>
         <Footer />
       </body>

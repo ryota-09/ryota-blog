@@ -10,10 +10,7 @@ const Header = () => {
         <div className="flex justify-between items-center mb-4">
           <BlogTitle title={BLOG_TITLE} />
           <div className="">
-            <p className="z-50 overflow-auto bg-red-500">
-              アイコン
-            </p>
-            <SPNav />
+            {/* <SPNav /> */}
           </div>
         </div>
         <HeaderNav items={HEADER_NAV_ITEMS} />
