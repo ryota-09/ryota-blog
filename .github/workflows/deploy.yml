@@ -46,9 +46,9 @@ jobs:
         id: set-tag
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "::set-output name=tag::prd"
+            echo "tag=prd" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
-            echo "::set-output name=tag::stg"
+            echo "tag=stg" >> $GITHUB_OUTPUT
           fi
 
       - name: Build CMS
