@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ja">
       <body className={`${KosugiMaru.className} bg-[#eee] flex flex-col min-h-screen`}>
         <Header />
         <main className="flex-grow flex container mx-auto gap-4 my-4">

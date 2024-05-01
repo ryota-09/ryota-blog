@@ -17,7 +17,7 @@ const NavDrower = ({ isOpen, onClick }: NavDrowerProps) => {
     >
       <HumbergerButton isOpen={isOpen} onClick={onClick} />
       <ul className="mt-6">
-             // 省略
+             {/* // 省略 */}
       </ul>
     </nav>
   )
