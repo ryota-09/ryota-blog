@@ -23,8 +23,8 @@ import Image from 'next/image';
 // }
 
 import RichEditor from "@/components/ArticleBody/RichEditor";
-import { AUTHOR_NAME } from '@/static/blogs';
 import ThumbnailCard from '@/components/ArticleBody/ThumbnailCard';
+import Chip from '@/components/UiParts/Chip';
 
 type ArticleBodyProps = {
   data: any
@@ -33,8 +33,14 @@ type ArticleBodyProps = {
 const ArticleBody = ({ data }: ArticleBodyProps) => {
   return (
     <div>
-      <div className='w-[80%] mx-auto'>
+      <div className='w-[80%] mx-auto my-16'>
         <ThumbnailCard title={data.title} />
+      </div>
+      <div className='mt-4'>
+        <time dateTime='' className="text-gray-400">{data.publishedAt || data.updatedAt}</time>
+      </div>
+      <div className='mt-4'>
+        <Chip label={data.category.name} />
       </div>
       <div>
         <RichEditor html={data.content} />
