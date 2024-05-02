@@ -6,7 +6,7 @@ type CustomparagraphProps = HTMLAttributes<HTMLParagraphElement>
 const CustomParagraph = ({ children, ...RestProps }: CustomparagraphProps) => {
 
   return (
-    <p {...RestProps} className="text-sm text-txt-base leading-normal tracking-wider">
+    <p {...RestProps} className="text-md text-txt-base leading-relaxed tracking-wider">
       {children}
     </p>
   );
