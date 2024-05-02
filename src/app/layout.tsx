@@ -23,7 +23,6 @@ export default function RootLayout({
         <Header />
         <main className="flex-grow flex container mx-auto gap-4 my-4">
           {children}
-          <SideNav />
         </main>
         <Footer />
       </body>
