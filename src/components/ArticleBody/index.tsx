@@ -22,6 +22,8 @@
 //   }
 // }
 
+import RichEditor from "@/components/ArticleBody/RichEditor";
+
 type ArticleBodyProps = {
   data: any
 }
@@ -33,7 +35,9 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
       <div className="mt-4">
         <img src={data.eyecatch.url} alt="" className="w-full" />
       </div>
-      <div className="mt-8" dangerouslySetInnerHTML={{ __html: data.content }} />
+      <div>
+        <RichEditor html={data.content} />
+      </div>
     </div>
   )
 }
