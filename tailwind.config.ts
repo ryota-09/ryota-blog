@@ -18,6 +18,7 @@ const config: Config = {
         "secondary": "#3BACB6",
         "base-color": "#82DBD8",
         "light": "#B3E8E5",
+        "txt-base": "#383838"
       },
     }
   },
