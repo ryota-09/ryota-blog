@@ -27,6 +27,7 @@ import ThumbnailCard from '@/components/ArticleBody/ThumbnailCard';
 import Chip from '@/components/UiParts/Chip';
 import { AUTHOR_DESCRIPTION, AUTHOR_NAME } from '@/static/blogs';
 import BottomCard from '@/components/ArticleBody/BottomCard';
+import FixedButton from '@/components/UiParts/FixedButton';
 
 type ArticleBodyProps = {
   data: any
@@ -50,6 +51,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
       <aside className='flex gap-4 mx-0.5 border-t py-10'>
         <BottomCard />
       </aside>
+      <FixedButton />
     </div>
   )
 }
