@@ -2,6 +2,7 @@ import { DOMNode, Element, attributesToProps, domToReact, HTMLReactParserOptions
 import CustomH3 from "@/components/ArticleBody/RichEditor/CustomUI/CustomH3";
 import CustomH2 from "@/components/ArticleBody/RichEditor/CustomUI/CustomH2";
 import CustomParagraph from "@/components/ArticleBody/RichEditor/CustomUI/CustomParagraph";
+import CustomLink from "@/components/ArticleBody/RichEditor/CustomUI/CustomLink";
 
 const isElement = (domNode: DOMNode): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);
@@ -22,6 +23,8 @@ export const customReplaceOptions: HTMLReactParserOptions = {
           return <CustomH3 {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomH3>;
         case "p":
           return <CustomParagraph {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomParagraph>;
+        case "a":
+          return <CustomLink {...props} href={domNode.attribs.href}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomLink>;
       }
     }
   },

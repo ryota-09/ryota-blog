@@ -1,6 +1,6 @@
 import { type HTMLAttributes } from "react";
 
-type CustomparagraphProps = HTMLAttributes<HTMLHeadingElement>
+type CustomparagraphProps = HTMLAttributes<HTMLParagraphElement>
 
 
 const CustomParagraph = ({ children, ...RestProps }: CustomparagraphProps) => {
