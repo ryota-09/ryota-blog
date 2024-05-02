@@ -25,6 +25,8 @@ import Image from 'next/image';
 import RichEditor from "@/components/ArticleBody/RichEditor";
 import ThumbnailCard from '@/components/ArticleBody/ThumbnailCard';
 import Chip from '@/components/UiParts/Chip';
+import { AUTHOR_DESCRIPTION, AUTHOR_NAME } from '@/static/blogs';
+import BottomCard from '@/components/ArticleBody/BottomCard';
 
 type ArticleBodyProps = {
   data: any
@@ -42,9 +44,12 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
       <div className='mt-4'>
         <Chip label={data.category.name} />
       </div>
-      <div>
+      <div className='my-12'>
         <RichEditor html={data.content} />
       </div>
+      <aside className='flex gap-4 mx-0.5 border-t py-10'>
+        <BottomCard />
+      </aside>
     </div>
   )
 }
