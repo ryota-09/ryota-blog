@@ -5,7 +5,7 @@ type CustomLinkProps = { href: string, children: ReactNode } & HTMLAttributes<HT
 
 const CustomLink = ({ href, children, ...restProps }: CustomLinkProps) => {
   return (
-    <Link {...restProps} href={href} className=" no-underline transition hover:text-base-color hover:underline hover:underline-offset-4 hover:decoration-base-color">{children}</Link>
+    <Link {...restProps} href={href} className=" underline underline-offset-4 transition hover:text-base-color hover:no-underline">{children}</Link>
   )
 }
 export default CustomLink;

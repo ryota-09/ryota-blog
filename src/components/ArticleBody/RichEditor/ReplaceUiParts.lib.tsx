@@ -4,6 +4,8 @@ import CustomH2 from "@/components/ArticleBody/RichEditor/CustomUI/CustomH2";
 import CustomParagraph from "@/components/ArticleBody/RichEditor/CustomUI/CustomParagraph";
 import CustomLink from "@/components/ArticleBody/RichEditor/CustomUI/CustomLink";
 import CustomImg from "@/components/ArticleBody/RichEditor/CustomUI/CustomImg";
+import CustomUl from "@/components/ArticleBody/RichEditor/CustomUI/CustomUl";
+import CustomLi from "@/components/ArticleBody/RichEditor/CustomUI/CustomLi";
 
 const isElement = (domNode: DOMNode): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);
@@ -28,6 +30,10 @@ export const customReplaceOptions: HTMLReactParserOptions = {
           return <CustomLink {...props} href={domNode.attribs.href}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomLink>;
         case "img":
           return <CustomImg {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} width={domNode.attribs.width} height={domNode.attribs.height} />;
+        case "ul":
+          return <CustomUl {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomUl>;
+        case "li":
+          return <CustomLi {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomLi>;
       }
     }
   },
