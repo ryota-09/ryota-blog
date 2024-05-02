@@ -20,7 +20,7 @@ const CustomH3 = ({ children, id, ...RestProps }: CustomH3Props) => {
   };
 
   return (
-    <div className="inline-block relative group cursor-pointer" onClick={handleCopy}>
+    <div className="inline-block relative group cursor-pointer my-3" onClick={handleCopy}>
       <h3 id={id} {...RestProps} className="text-xl font-bold group-hover:text-base-color transition duration-300 ease-in-out z-20 pr-1">
         {children}
       </h3>

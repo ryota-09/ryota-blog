@@ -1,4 +1,4 @@
-
+import Image from 'next/image';
 // const data = {
 //   "id": "eaunlqvag",
 //   "createdAt": "2024-05-01T12:08:36.633Z",
@@ -23,6 +23,8 @@
 // }
 
 import RichEditor from "@/components/ArticleBody/RichEditor";
+import { AUTHOR_NAME } from '@/static/blogs';
+import ThumbnailCard from '@/components/ArticleBody/ThumbnailCard';
 
 type ArticleBodyProps = {
   data: any
@@ -31,9 +33,8 @@ type ArticleBodyProps = {
 const ArticleBody = ({ data }: ArticleBodyProps) => {
   return (
     <div>
-      <h1 className="text-3xl font-bold mt-8">{data.title}</h1>
-      <div className="mt-4">
-        <img src={data.eyecatch.url} alt="" className="w-full" />
+      <div className='w-[80%] mx-auto'>
+        <ThumbnailCard title={data.title} />
       </div>
       <div>
         <RichEditor html={data.content} />
