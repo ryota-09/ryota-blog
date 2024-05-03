@@ -1,5 +1,13 @@
 import ArticleBody from "@/components/ArticleBody";
-import { getBlogById } from "@/lib/microcms";
+import { getBlogById, getBlogList } from "@/lib/microcms";
+
+export async function generateStaticParams() {
+  const blogList = await getBlogList({ fields: "id"});
+  
+  return blogList.contents.map((content) => ({
+    blogId: content.id
+  }))
+}
 
 type PageProps = {
   params: {
