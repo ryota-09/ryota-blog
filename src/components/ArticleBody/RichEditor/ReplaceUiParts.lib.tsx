@@ -7,6 +7,7 @@ import CustomImg from "@/components/ArticleBody/RichEditor/CustomUI/CustomImg";
 import CustomUl from "@/components/ArticleBody/RichEditor/CustomUI/CustomUl";
 import CustomLi from "@/components/ArticleBody/RichEditor/CustomUI/CustomLi";
 import MultiCodeBlock from "@/components/ArticleBody/RichEditor/Code/MultiCodeBlock";
+import CustomBlockquote from "@/components/ArticleBody/RichEditor/CustomUI/CustomBlockquote";
 
 const isElement = (domNode: DOMNode): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);
@@ -20,12 +21,20 @@ export const customReplaceOptions: HTMLReactParserOptions = {
     if (isElement(domNode) && domNode.attribs) {
       const props = attributesToProps(domNode.attribs);
 
+      // ハイドレーションエラーが生じるため、scriptタグを削除
+      if (domNode.name === "script" && domNode.attribs.src === "//cdn.iframe.ly/embed.js") {
+        return <></>;
+      }
+
       switch (domNode.name) {
         case "h2":
           return <CustomH2 {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomH2>;
         case "h3":
           return <CustomH3 {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomH3>;
         case "p":
+          if (domNode.parent && "name" in domNode.parent && domNode.parent.name === "blockquote") {
+            return <CustomParagraph {...props} style={{ color: "#718096" }}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomParagraph>;
+          }
           return <CustomParagraph {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomParagraph>;
         case "a":
           return <CustomLink {...props} href={domNode.attribs.href}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomLink>;
@@ -35,6 +44,8 @@ export const customReplaceOptions: HTMLReactParserOptions = {
           return <CustomUl {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomUl>;
         case "li":
           return <CustomLi {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomLi>;
+        case "blockquote":
+          return <CustomBlockquote {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomBlockquote>;
         case "code":
           return <code className="bg-gray-200 font-mono text-sm px-1 py-0.5 rounded">{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</code>
         case "pre":

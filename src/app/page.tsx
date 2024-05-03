@@ -1,3 +1,4 @@
+
 import ArticleCard from "@/components/ArticleCard";
 import SideNav from "@/components/SideNav";
 import { getBlogList } from "@/lib/microcms";
