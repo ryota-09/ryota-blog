@@ -27,6 +27,15 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
+# Set the environment variables
+ARG MICROCMS_SERVICE_DOMAIN
+ARG MICROCMS_API_KEY
+RUN touch .env
+RUN echo "MICROCMS_SERVICE_DOMAIN=${MICROCMS_SERVICE_DOMAIN}" >> .env
+RUN echo "MICROCMS_API_KEY=${MICROCMS_API_KEY}" >> .env
+RUN cat .env
+
+
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
