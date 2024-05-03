@@ -63,6 +63,9 @@ jobs:
           file: ./Dockerfile
           context: .
           push: true
+          build-args: |
+            "MICROCMS_SERVICE_DOMAIN=${{ secrets.MICROCMS_SERVICE_DOMAIN }}"
+            "MICROCMS_API_KEY=${{ secrets.MICROCMS_API_KEY }}"
           provenance: false
           tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ steps.set-tag.outputs.tag }}
           cache-from: type=gha
