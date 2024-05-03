@@ -57,6 +57,8 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ryota-blog
+          MICROCMS_SERVICE_DOMAIN: ${{ secrets.AWS_ROLE_ARN }}
+          MICROCMS_API_KEY: ${{ secrets.AWS_ROLE_ARN }}
         with:
           file: ./Dockerfile
           context: .
