@@ -1,8 +1,9 @@
+import { BlogsContentType } from "@/types/microcms"
 import Image from "next/image"
 import Link from "next/link"
 
 type ArticleCardProps = {
-  data: any
+  data: BlogsContentType
 }
 
 const ArticleCard = ({ data }: ArticleCardProps) => {
@@ -20,11 +21,13 @@ const ArticleCard = ({ data }: ArticleCardProps) => {
             </Link>
           </div>
         </div>
-        <div className="md:flex-shrink-0 w-[28%] relative">
-          <Link href={`/blogs/${data.id}`}>
-            <Image src={data.thumbnail} alt={data.title} fill objectFit="cover" />
-          </Link>
-        </div>
+        {data.thumbnail && (
+          <div className="md:flex-shrink-0 w-[28%] relative">
+            <Link href={`/blogs/${data.id}`}>
+              <Image src={data.thumbnail.url} alt={data.title} fill objectFit="cover" />
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )

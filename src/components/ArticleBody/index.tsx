@@ -28,9 +28,10 @@ import Chip from '@/components/UiParts/Chip';
 import { AUTHOR_DESCRIPTION, AUTHOR_NAME } from '@/static/blogs';
 import BottomCard from '@/components/ArticleBody/BottomCard';
 import FixedButton from '@/components/UiParts/FixedButton';
+import { BlogsContentType } from '@/types/microcms';
 
 type ArticleBodyProps = {
-  data: any
+  data: BlogsContentType
 }
 
 const ArticleBody = ({ data }: ArticleBodyProps) => {
@@ -42,9 +43,13 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
       <div className='mt-4'>
         <time dateTime='' className="text-gray-400">{data.publishedAt || data.updatedAt}</time>
       </div>
-      <div className='mt-4'>
-        <Chip label={data.category.name} />
-      </div>
+      <ul className='mt-4 flex gap-2'>
+        {data.category.map(({ name }, index) => (
+          <li key={index}>
+            <Chip label={name} />
+          </li>
+        ))}
+      </ul>
       <div className='my-12'>
         <RichEditor html={data.content} />
       </div>

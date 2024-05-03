@@ -3,11 +3,15 @@
 import { cltw } from "@/util"
 import { useCallback, useState } from "react"
 
-const CopyButton = () => {
+type CopyButtonProps = {
+  text: string
+}
+
+const CopyButton = ({ text }: CopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false)
 
   const copyToClipboard = useCallback(() => {
-    navigator.clipboard.writeText('Hello, clipboard!')
+    navigator.clipboard.writeText(text)
     setIsCopied(true)
     setTimeout(() => {
       setIsCopied(false)

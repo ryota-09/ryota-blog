@@ -2,9 +2,10 @@ import { createClient } from "microcms-js-sdk";
 import type { MicroCMSQueries } from "microcms-js-sdk";
 import type {
   BaseMicroCMSApiType,
+  BlogsContentType,
+  CategoriesContentType,
   EndPointLiteralType,
   GetObjectType,
-  SateiPageContentType,
 } from "@/types/microcms";
 import { microCMSAPIKey, microCMSServiceDomain } from "@/config";
 
@@ -43,53 +44,15 @@ const MicroCMSApiGetListHandler = baseMicroCMSApiGetHandler("LIST");
 
 const MicroCMSApiGetSingleObjectHandler = baseMicroCMSApiGetHandler("SINGLE");
 
-export const getArticleList = (querys?: MicroCMSQueries) =>
-  MicroCMSApiGetListHandler<SateiPageContentType>("blogs", querys);
+export const getBlogList = (querys?: MicroCMSQueries) =>
+  MicroCMSApiGetListHandler<BlogsContentType>("blogs", querys);
 
-export const getArticleById = (contentId: string, querys?: MicroCMSQueries) =>
-  MicroCMSApiGetSingleObjectHandler<SateiPageContentType>(
+export const getBlogById = (contentId: string, querys?: MicroCMSQueries) =>
+  MicroCMSApiGetSingleObjectHandler<BlogsContentType>(
     "blogs",
     querys,
     contentId
   );
 
-type MicroCMSResponse = {
-  [key: string]: any; // 適切なプロパティと型をここに定義する
-};
-
-// 型Tとそれの部分型を引数にとる非同期関数を定義（アロー関数版）
-// export const fn = async <T>(
-//   ...args: (keyof T)[]
-// ): Promise<Pick<T, (typeof args)[number]>> => {
-//   const optionValue = args.join(",");
-//   const data = await client.get<Pick<T, (typeof args)[number]>>({
-//     endpoint: "tables",
-//     queries: { fields: optionValue },
-//   });
-//   console.log(data);
-//   return data; // 型アサーションを使用して戻り値の型を明示的に指定
-// };
-
-// export const fn = async <T>(
-//   ...args: (keyof T)[]
-// ) => {
-//   const optionValue = args.join(",");
-//   const data = await client.get<Pick<T, (typeof args)[number]>>({
-//     endpoint: "tables",
-//     queries: { fields: optionValue },
-//   });
-//   console.log(data);
-//   return data;
-// };
-
-export const fn = async <T, K extends keyof T>(
-  ...args: K[]
-): Promise<Pick<T, K>> => {
-  const optionValue = args.join(",");
-  const data = await client.get<Pick<T, K>>({
-    endpoint: "tables",
-    queries: { fields: optionValue },
-  });
-  console.log(data);
-  return data;
-};
+export const getCategoryList = (querys?: MicroCMSQueries) =>
+  MicroCMSApiGetListHandler<CategoriesContentType>("categories", querys);

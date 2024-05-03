@@ -6,15 +6,15 @@ import type {
   MicroCMSContentId,
 } from "microcms-js-sdk";
 
-const ENDPOINT_LIST = ["tables", "blogs"] as const;
+const ENDPOINT_LIST = ["blogs", "categories"] as const;
 
-const CUSTOM_FIELD = {
-  table: "table",
-  leftColumn: "leftColumn",
-  richeditor: "richeditor",
-} as const;
+// const CUSTOM_FIELD = {
+//   table: "table",
+//   leftColumn: "leftColumn",
+//   richeditor: "richeditor",
+// } as const;
 
-type CustomFieldLiteralType = keyof typeof CUSTOM_FIELD;
+// type CustomFieldLiteralType = keyof typeof CUSTOM_FIELD;
 
 export type EndPointLiteralType = (typeof ENDPOINT_LIST)[number];
 
@@ -22,6 +22,7 @@ type MicroCMSFields = Readonly<{
   text: string;
   number: number;
   richEditor: string;
+  boolean: boolean;
   image: MicroCMSImage;
   date: MicroCMSDate;
 }>;
@@ -41,37 +42,37 @@ export type BaseMicroCMSApiListDataType<T extends MicroCMSListContent> = {
   limit: number;
 };
 
-type MicroCMSCustomFieldType<T extends CustomFieldLiteralType, U> = {
-  fieldId: T;
-} & U;
+// type MicroCMSCustomFieldType<T extends CustomFieldLiteralType, U> = {
+//   fieldId: T;
+// } & U;
 
-type TextAreaWithImageType = MicroCMSCustomFieldType<
-  typeof CUSTOM_FIELD.leftColumn,
-  {
-    title: MicroCMSFields["text"];
-    image: MicroCMSFields["image"];
-  }
->;
+// type TextAreaWithImageType = MicroCMSCustomFieldType<
+//   typeof CUSTOM_FIELD.leftColumn,
+//   {
+//     title: MicroCMSFields["text"];
+//     image: MicroCMSFields["image"];
+//   }
+// >;
 
-type RichEditorWithTitleType = MicroCMSCustomFieldType<
-  typeof CUSTOM_FIELD.richeditor,
-  {
-    richeditor: MicroCMSFields["richEditor"];
-  }
->;
+// type RichEditorWithTitleType = MicroCMSCustomFieldType<
+//   typeof CUSTOM_FIELD.richeditor,
+//   {
+//     richeditor: MicroCMSFields["richEditor"];
+//   }
+// >;
 
-type TableType = MicroCMSCustomFieldType<
-  typeof CUSTOM_FIELD.table,
-  {
-    table: string;
-  }
->;
+// type TableType = MicroCMSCustomFieldType<
+//   typeof CUSTOM_FIELD.table,
+//   {
+//     table: string;
+//   }
+// >;
 
-export type RepeatedFieldListType<
-  T extends MicroCMSCustomFieldType<CustomFieldLiteralType, object>
-> = T[];
+// export type RepeatedFieldListType<
+//   T extends MicroCMSCustomFieldType<CustomFieldLiteralType, object>
+// > = T[];
 
-type PageContentType<T> = {
+type APIContentType<T> = {
   id: string;
   createdAt: string;
   updatedAt: string;
@@ -79,15 +80,30 @@ type PageContentType<T> = {
   revisedAt?: string;
 } & T;
 
-export type SateiPageContentType = PageContentType<{
+export type CategoriesContentType = APIContentType<{
+  name: MicroCMSFields["text"];
+}>
+
+export type BlogsContentType = APIContentType<{
   title: MicroCMSFields["text"];
-  table: MicroCMSFields["text"];
-  repeatTable: RepeatedFieldListType<TableType>;
-  newedhitor: MicroCMSFields["richEditor"];
-  repeatTable2: RepeatedFieldListType<
-    TextAreaWithImageType | RichEditorWithTitleType
-  >;
-}>;
+  description: MicroCMSFields["text"];
+  noIndex: MicroCMSFields["boolean"];
+  content: MicroCMSFields["richEditor"];
+  thumbnail?: MicroCMSFields["image"];
+  category: CategoriesContentType[];
+}>
+
+
+
+// export type SateiPageContentType = PageContentType<{
+//   title: MicroCMSFields["text"];
+//   table: MicroCMSFields["text"];
+//   repeatTable: RepeatedFieldListType<TableType>;
+//   newedhitor: MicroCMSFields["richEditor"];
+//   repeatTable2: RepeatedFieldListType<
+//     TextAreaWithImageType | RichEditorWithTitleType
+//   >;
+// }>;
 
 export type GetObjectType = "LIST" | "SINGLE";
 
