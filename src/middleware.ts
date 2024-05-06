@@ -13,9 +13,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/403', request.url))
   }
 
-  return NextResponse.redirect(new URL('/sample', request.url))
+  return NextResponse.redirect(new URL('/', request.url))
 }
 
 export const config = {
-  matcher: '/sample',
+  matcher: '/',
 }
