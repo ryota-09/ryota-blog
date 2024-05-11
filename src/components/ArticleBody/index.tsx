@@ -51,12 +51,19 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
         ))}
       </ul>
       <div className='my-12'>
-        <RichEditor html={data.content} />
+        {data.body.map((body, index) => {
+          switch (body.fieldId) {
+            case "richEditor":
+              return <RichEditor html={body.richEditor} />
+            case "html":
+              return <RichEditor html={body.html} />
+          }
+        })}
+        <aside className='flex gap-4 mx-0.5 border-t py-10'>
+          <BottomCard />
+        </aside>
+        <FixedButton />
       </div>
-      <aside className='flex gap-4 mx-0.5 border-t py-10'>
-        <BottomCard />
-      </aside>
-      <FixedButton />
     </div>
   )
 }

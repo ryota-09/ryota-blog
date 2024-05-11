@@ -9,13 +9,14 @@ export function middleware(request: NextRequest) {
   console.log('middleware.ts')
   const customHeaderValue = request.headers.get(CUSTOM_HEADER_KEY_NAME);
   console.log("@@@@ カスタムヘッダー @@@ : ", customHeaderValue)
-  if (customHeaderValue !== CUSTOM_HEADER_VALUE) {
-    return NextResponse.redirect(new URL('/403', request.url))
-  }
+  // if (customHeaderValue !== CUSTOM_HEADER_VALUE) {
+  //   return NextResponse.redirect(new URL('/403', request.url))
+  // }
 
-  return NextResponse.redirect(new URL('/', request.url))
+  // return NextResponse.redirect(new URL('/', request.url))
+  return NextResponse.next()
 }
 
-export const config = {
-  matcher: '/',
-}
+// export const config = {
+//   matcher: '/',
+// }
