@@ -29,6 +29,7 @@ import { AUTHOR_DESCRIPTION, AUTHOR_NAME } from '@/static/blogs';
 import BottomCard from '@/components/ArticleBody/BottomCard';
 import FixedButton from '@/components/UiParts/FixedButton';
 import { BlogsContentType } from '@/types/microcms';
+import HTMLArea from '@/components/ArticleBody/RichEditor/HTMLArea';
 
 type ArticleBodyProps = {
   data: BlogsContentType
@@ -56,7 +57,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
             case "richEditor":
               return <RichEditor html={body.richEditor} />
             case "html":
-              return <RichEditor html={body.html} />
+              return <HTMLArea html={body.html} />
           }
         })}
         <aside className='flex gap-4 mx-0.5 border-t py-10'>
