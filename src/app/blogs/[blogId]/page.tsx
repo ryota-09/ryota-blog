@@ -14,11 +14,12 @@ export async function generateMetadata(
   { params }: { params: { blogId: string } },
 ): Promise<Metadata> {
   const blogId = params.blogId
-  const data = await getBlogById(blogId, { fields: "title,description" })
-
+  const data = await getBlogById(blogId, { fields: "title,description,noIndex" })
+  
   return {
     title: data.title,
     description: data.description,
+    robots: data.noIndex ? "noindex" : null
   }
 }
 

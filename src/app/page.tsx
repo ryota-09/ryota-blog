@@ -2,6 +2,7 @@
 import ArticleCard from "@/components/ArticleCard";
 import SideNav from "@/components/SideNav";
 import { getBlogList } from "@/lib/microcms";
+import { AUTHOR_NAME } from "@/static/blogs";
 
 const Page = async () => {
   const data = await getBlogList();
