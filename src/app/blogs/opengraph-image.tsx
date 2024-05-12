@@ -39,7 +39,6 @@ export default function Image() {
           alignItems: 'center',
           gap: '20px'
         }}>
-          <p>{AUTHOR_NAME}</p>
           <img
             src="/icon.jpg"
             style={{
@@ -49,6 +48,7 @@ export default function Image() {
             }}
             alt="Icon"
           />
+          <p>{AUTHOR_NAME}</p>
         </div>
       </div>
     ),

@@ -1,6 +1,10 @@
+import SearchBar from "@/components/SearchBar";
+
 const SideNav = () => {
   return (
-    <aside className="w-[300px] bg-blue-300"></aside>
+    <aside className="w-[300px]">
+      <SearchBar />
+    </aside>
   )
 }
 

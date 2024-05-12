@@ -5,7 +5,7 @@ import { getBlogList } from "@/lib/microcms";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPaths = {
-    url: baseURL,
+    url: `${baseURL}/blogs`,
     lastModified: new Date()
   }
 

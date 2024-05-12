@@ -54,5 +54,12 @@ export const getBlogById = (contentId: string, querys?: MicroCMSQueries) =>
     contentId
   );
 
+export const getBlogByKeyword = (keyword: string, querys?: MicroCMSQueries) => {
+  return MicroCMSApiGetListHandler<BlogsContentType>("blogs", {
+    q: keyword,
+    ...querys,
+  });
+}
+
 export const getCategoryList = (querys?: MicroCMSQueries) =>
   MicroCMSApiGetListHandler<CategoriesContentType>("categories", querys);

@@ -38,7 +38,6 @@ export default async function Image({ params }: { params: { blogId: string } }) 
           alignItems: 'center',
           gap: '20px'
         }}>
-          <p>{AUTHOR_NAME}</p>
           <img
             src="/icon.jpg"
             style={{
@@ -48,6 +47,7 @@ export default async function Image({ params }: { params: { blogId: string } }) 
             }}
             alt="Icon"
           />
+          <p>{AUTHOR_NAME}</p>
         </div>
       </div>
     ),
