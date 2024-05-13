@@ -5,6 +5,7 @@ import BottomCard from '@/components/ArticleBody/BottomCard';
 import FixedButton from '@/components/UiParts/FixedButton';
 import { BlogsContentType } from '@/types/microcms';
 import HTMLArea from '@/components/ArticleBody/RichEditor/HTMLArea';
+import Link from "next/link";
 
 type ArticleBodyProps = {
   data: BlogsContentType
@@ -17,22 +18,24 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
         <ThumbnailCard title={data.title} />
       </div>
       <div className='mt-4'>
-        <time dateTime='' className="text-gray-400">{data.publishedAt || data.updatedAt}</time>
+        <time dateTime={data.updatedAt.split('T')[0]} className="text-gray-400">{data.updatedAt.split('T')[0].replaceAll("-", "/")}</time>
       </div>
       <ul className='mt-4 flex gap-2'>
         {data.category.map(({ name }, index) => (
-          <li key={index}>
-            <Chip label={name} />
-          </li>
+          <Link href={`/blogs?category=${name}`} key={index}>
+            <li className="block cursor-pointer">
+              <Chip label={name} />
+            </li>
+          </Link>
         ))}
       </ul>
       <div className='my-12'>
         {data.body.map((body, index) => {
           switch (body.fieldId) {
             case "richEditor":
-              return <RichEditor html={body.richEditor} />
+              return <RichEditor key={index} html={body.richEditor} />
             case "html":
-              return <HTMLArea html={body.html} />
+              return <HTMLArea key={index} html={body.html} />
           }
         })}
         <aside className='flex gap-4 mx-0.5 border-t py-10'>

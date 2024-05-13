@@ -2,15 +2,18 @@
 
 import HumbergerButton from "@/components/Header/SPNav/HumbergerButton";
 import NavDrower from "@/components/Header/SPNav/NavDrower";
+import { HEADER_NAV_ITEMS } from "@/static/header";
 import { useState } from "react";
 
 const SPNav = () => {
   const [isOpen, setIsOpen] = useState(false)
   return (
     <>
-      <HumbergerButton isOpen={isOpen} onClick={() => setIsOpen((prev) => !prev)} />
+      <div className="text-gray-100 flex justify-between md:hidden">
+        <HumbergerButton onClick={() => setIsOpen((prev) => !prev)} />
+      </div>
       {/* {isOpen && ( */}
-      <NavDrower isOpen={isOpen} onClick={() => setIsOpen((prev) => !prev)} />
+      <NavDrower isOpen={isOpen} items={HEADER_NAV_ITEMS} onClick={() => setIsOpen((prev) => !prev)} />
       {/* )} */}
     </>
   );
