@@ -1,6 +1,5 @@
 import BlogTitle from "@/components/Header/BlogTitle";
 import HeaderNav from "@/components/Header/HeaderNav";
-import SPNav from "@/components/Header/SPNav";
 import { BLOG_TITLE, HEADER_NAV_ITEMS } from "@/static/header";
 
 const Header = () => {

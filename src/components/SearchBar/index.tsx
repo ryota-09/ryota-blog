@@ -4,7 +4,7 @@ const SearchBar = () => {
   const _seachBlogByKeyword = seachBlogByKeyword.bind(null);
 
   return (
-    <form className="flex justify-center py-4 w-full" action={_seachBlogByKeyword}>
+    <form className="flex justify-center pb-4 w-full" action={_seachBlogByKeyword}>
       <input
         name="keyword"
         type="text"
