@@ -10,11 +10,9 @@ const SPNav = () => {
   return (
     <>
       <div className="text-gray-100 flex justify-between md:hidden">
-        <HumbergerButton onClick={() => setIsOpen((prev) => !prev)} />
+        <HumbergerButton isOpen={isOpen} onClick={() => setIsOpen((prev) => !prev)} />
       </div>
-      {/* {isOpen && ( */}
       <NavDrower isOpen={isOpen} items={HEADER_NAV_ITEMS} onClick={() => setIsOpen((prev) => !prev)} />
-      {/* )} */}
     </>
   );
 }

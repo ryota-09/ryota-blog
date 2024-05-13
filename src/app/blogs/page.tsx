@@ -15,7 +15,7 @@ const Page = async ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [C
   
   return (
     <>
-      <div className="w-[calc(100%_-_300px)] flex flex-col justify-between">
+      <div className="w-full md:w-[calc(100%_-_300px)] flex flex-col justify-between">
         <ul className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           {data.contents.map((item) => (
             <li key={item.id}>

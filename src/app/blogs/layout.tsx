@@ -25,7 +25,7 @@ export default function RootLayout({
     <html lang="ja">
       <body className={`${KosugiMaru.className} bg-[#eee] flex flex-col min-h-screen`}>
         <Header />
-        <main className="flex-grow flex container mx-auto gap-4 my-4">
+        <main className="flex-grow flex flex-col md:flex-row container mx-auto gap-4 my-4">
           {children}
         </main>
         <Footer />
