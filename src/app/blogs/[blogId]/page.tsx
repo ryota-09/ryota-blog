@@ -1,4 +1,5 @@
 import ArticleBody from "@/components/ArticleBody";
+import { baseURL } from "@/config";
 import { getBlogById, getBlogList } from "@/lib/microcms";
 import { Metadata } from "next";
 
@@ -14,11 +15,12 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const blogId = params.blogId
   const data = await getBlogById(blogId, { fields: "title,description,noIndex" })
-  
+
   return {
     title: data.title,
     description: data.description,
-    robots: data.noIndex ? "noindex" : null
+    robots: data.noIndex ? "noindex" : null,
+    metadataBase: new URL(baseURL)
   }
 }
 
