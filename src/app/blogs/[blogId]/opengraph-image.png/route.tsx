@@ -1,16 +1,10 @@
-import { getBlogById } from '@/lib/microcms'
+import { getBlogById, getBlogList } from '@/lib/microcms'
 import { AUTHOR_NAME } from '@/static/blogs'
 import { ImageResponse } from 'next/og'
 
-export const size = {
-  width: 1200,
-  height: 630,
-}
-
-export const contentType = 'image/png'
-
 // Image generation
-const handler = async ({ params }: { params: { blogId: string } }) => {
+export const GET = async (_: unknown, { params }: { params: { blogId: string } }) => {
+  console.log('params', params)
   const blogId = params.blogId
   const data = await getBlogById(blogId, { fields: "title" })
 
@@ -23,6 +17,9 @@ const handler = async ({ params }: { params: { blogId: string } }) => {
           color: 'black',
           width: '100%',
           height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
           border: '32px solid rgb(59 172 182)',
           borderRadius: '16px',
           fontSize: '48px',
@@ -52,8 +49,8 @@ const handler = async ({ params }: { params: { blogId: string } }) => {
       </div>
     ),
     {
-      ...size
+      width: 1200,
+      height: 630,
     }
   )
 }
-export default handler
