@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Script from "next/script";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/static/blogs";
+import { baseURL } from "@/config";
 
 const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"] });
 
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
     default: "Home",
   },
   description: SITE_DESCRIPTION,
+  metadataBase: new URL(baseURL)
 };
 
 export default function RootLayout({
