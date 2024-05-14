@@ -40,7 +40,7 @@ export default function Image() {
           gap: '20px'
         }}>
           <img
-            src="/icon.jpg"
+            src="https://images.microcms-assets.io/assets/4626924a681346e9a0fcabe5478eb9fa/26ca0e17cc994976907bb961f367db9e/author.jpg"
             style={{
               width: '100px',
               height: '100px',
