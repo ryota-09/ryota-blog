@@ -4,7 +4,6 @@ import { Metadata } from "next";
 
 export async function generateStaticParams() {
   const blogList = await getBlogList({ fields: "id" });
-
   return blogList.contents.map((content) => ({
     blogId: content.id
   }))
