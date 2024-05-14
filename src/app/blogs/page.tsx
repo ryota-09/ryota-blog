@@ -23,7 +23,7 @@ const Page = async ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [C
             </li>
           ))}
         </ul>
-        <nav>
+        <nav className="flex md:flex-none justify-center mt-8">
           <Pagination totalPages={Math.floor(data.totalCount / PER_PAGE) + 1} currentPage={searchParams[PAGE_QUERY] ? +searchParams[PAGE_QUERY] : 1} />
         </nav>
       </div>
