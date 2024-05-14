@@ -1,4 +1,5 @@
 import ArticleBody from "@/components/ArticleBody";
+import { baseURL } from "@/config";
 import { getBlogById, getBlogList } from "@/lib/microcms";
 import { Metadata } from "next";
 
@@ -21,7 +22,7 @@ export async function generateMetadata(
     robots: data.noIndex ? "noindex" : null,
     openGraph: {
       type: "article",
-      url: `/blogs/${blogId}`,
+      images: [{ url: `${baseURL}/blogs/${blogId}/opengraph-image.png` }],
       title: data.title,
       description: data.description
     }
