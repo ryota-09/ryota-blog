@@ -18,7 +18,13 @@ export async function generateMetadata(
   return {
     title: data.title,
     description: data.description,
-    robots: data.noIndex ? "noindex" : null
+    robots: data.noIndex ? "noindex" : null,
+    openGraph: {
+      type: "article",
+      url: `/blogs/${blogId}`,
+      title: data.title,
+      description: data.description
+    }
   }
 }
 

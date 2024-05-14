@@ -10,7 +10,7 @@ export const size = {
 export const contentType = 'image/png'
 
 // Image generation
-export default async function Image({ params }: { params: { blogId: string } }) {
+const handler = async ({ params }: { params: { blogId: string } }) => {
   const blogId = params.blogId
   const data = await getBlogById(blogId, { fields: "title" })
 
@@ -56,3 +56,4 @@ export default async function Image({ params }: { params: { blogId: string } }) 
     }
   )
 }
+export default handler
