@@ -4,7 +4,6 @@ import { ImageResponse } from 'next/og'
 
 // Image generation
 export const GET = async (_: unknown, { params }: { params: { blogId: string } }) => {
-  console.log('params', params)
   const blogId = params.blogId
   const data = await getBlogById(blogId, { fields: "title" })
 
