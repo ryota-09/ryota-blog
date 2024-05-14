@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(baseURL)
 };
 
-export default function RootLayout({
+export default function BlogListLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
