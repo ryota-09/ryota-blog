@@ -10,7 +10,7 @@ const ArticleCard = ({ data }: ArticleCardProps) => {
   return (
     <div className="bg-white border-2 border-gray-200 overflow-hidden px-6 pt-6 pb-12 h-full">
       <Link href={`/blogs/${data.id}`} className="block text-xl leading-tight font-medium transition duration-200 text-black hover:text-base-color">{data.title}</Link>
-      <div className="md:flex gap-4 h-full">
+      <div className="flex gap-4 h-full">
         <div className="w-[70%] flex flex-col justify-between">
           <div>
             <p className="mt-2 text-gray-500">{data.description}</p>
@@ -22,9 +22,11 @@ const ArticleCard = ({ data }: ArticleCardProps) => {
           </div>
         </div>
         {data.thumbnail && (
-          <div className="md:flex-shrink-0 w-[28%] relative">
+          <div className="md:flex-shrink-0 w-[45%] lg:w-[28%] xl:w-[45%] mt-2 flex items-center relative">
             <Link href={`/blogs/${data.id}`}>
-              <Image src={data.thumbnail.url} alt={data.title} fill objectFit="cover" />
+              <figure className="overflow-hidden transition-opacity hover:opacity-80">
+                <Image src={data.thumbnail.url} alt={data.title} sizes="100%" fill style={{ objectFit: "cover" }} priority />
+              </figure>
             </Link>
           </div>
         )}

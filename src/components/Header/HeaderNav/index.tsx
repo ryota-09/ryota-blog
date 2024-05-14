@@ -7,8 +7,8 @@ type HeaderNavProps = {
 
 const HeaderNav = ({ items }: HeaderNavProps) => {
   return (
-    <nav>
-      <ul className="flex space-x-4 mt-4 mx-1">
+    <nav className="hidden md:block">
+      <ul className="flex space-x-4 my-4 mx-1">
         {items.map(({ name, href }, index) => (
           <Link key={index} href={href}>
             <li className="text-gray-600 transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color">{name}</li>

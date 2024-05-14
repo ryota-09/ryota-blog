@@ -5,7 +5,7 @@ type ChipProps = {
 
 const Chip = ({ label }: ChipProps) => {
   return (
-    <label className="bg-gray-200 rounded-full px-3 py-2 text-sm text-txt-base">{label}</label>
+    <p className="bg-gray-200 rounded-full px-3 py-2 text-sm text-txt-base hover:opacity-60">{label}</p>
   )
 }
 export default Chip;

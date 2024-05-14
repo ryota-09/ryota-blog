@@ -1,5 +1,6 @@
 import ArticleBody from "@/components/ArticleBody";
 import { getBlogById, getBlogList } from "@/lib/microcms";
+import { Metadata } from "next";
 
 export async function generateStaticParams() {
   const blogList = await getBlogList({ fields: "id" });
@@ -7,6 +8,19 @@ export async function generateStaticParams() {
   return blogList.contents.map((content) => ({
     blogId: content.id
   }))
+}
+
+export async function generateMetadata(
+  { params }: { params: { blogId: string } },
+): Promise<Metadata> {
+  const blogId = params.blogId
+  const data = await getBlogById(blogId, { fields: "title,description,noIndex" })
+  
+  return {
+    title: data.title,
+    description: data.description,
+    robots: data.noIndex ? "noindex" : null
+  }
 }
 
 type PageProps = {

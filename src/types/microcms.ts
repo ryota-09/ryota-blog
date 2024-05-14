@@ -1,3 +1,4 @@
+import { CATEGORY_MAPED_ID } from "@/static/blogs";
 import type {
   MicroCMSDate,
   MicroCMSImage,
@@ -8,13 +9,12 @@ import type {
 
 const ENDPOINT_LIST = ["blogs", "categories"] as const;
 
-// const CUSTOM_FIELD = {
-//   table: "table",
-//   leftColumn: "leftColumn",
-//   richeditor: "richeditor",
-// } as const;
+const CUSTOM_FIELD = {
+  richEditor: "richEditor",
+  html: "html"
+} as const;
 
-// type CustomFieldLiteralType = keyof typeof CUSTOM_FIELD;
+type CustomFieldLiteralType = keyof typeof CUSTOM_FIELD;
 
 export type EndPointLiteralType = (typeof ENDPOINT_LIST)[number];
 
@@ -42,35 +42,27 @@ export type BaseMicroCMSApiListDataType<T extends MicroCMSListContent> = {
   limit: number;
 };
 
-// type MicroCMSCustomFieldType<T extends CustomFieldLiteralType, U> = {
-//   fieldId: T;
-// } & U;
+type MicroCMSCustomFieldType<T extends CustomFieldLiteralType, U> = {
+  fieldId: T;
+} & U;
 
-// type TextAreaWithImageType = MicroCMSCustomFieldType<
-//   typeof CUSTOM_FIELD.leftColumn,
-//   {
-//     title: MicroCMSFields["text"];
-//     image: MicroCMSFields["image"];
-//   }
-// >;
+type BodyRichEditorType = MicroCMSCustomFieldType<
+  typeof CUSTOM_FIELD.richEditor,
+  {
+    richEditor: MicroCMSFields["richEditor"];
+  }
+>;
 
-// type RichEditorWithTitleType = MicroCMSCustomFieldType<
-//   typeof CUSTOM_FIELD.richeditor,
-//   {
-//     richeditor: MicroCMSFields["richEditor"];
-//   }
-// >;
+type BodyHTMLType = MicroCMSCustomFieldType<
+  typeof CUSTOM_FIELD.html,
+  {
+    html: MicroCMSFields["text"];
+  }
+>;
 
-// type TableType = MicroCMSCustomFieldType<
-//   typeof CUSTOM_FIELD.table,
-//   {
-//     table: string;
-//   }
-// >;
-
-// export type RepeatedFieldListType<
-//   T extends MicroCMSCustomFieldType<CustomFieldLiteralType, object>
-// > = T[];
+export type RepeatedFieldListType<
+  T extends MicroCMSCustomFieldType<CustomFieldLiteralType, object>
+> = T[];
 
 type APIContentType<T> = {
   id: string;
@@ -86,24 +78,12 @@ export type CategoriesContentType = APIContentType<{
 
 export type BlogsContentType = APIContentType<{
   title: MicroCMSFields["text"];
+  body: RepeatedFieldListType<BodyRichEditorType | BodyHTMLType>;
   description: MicroCMSFields["text"];
   noIndex: MicroCMSFields["boolean"];
-  content: MicroCMSFields["richEditor"];
   thumbnail?: MicroCMSFields["image"];
   category: CategoriesContentType[];
 }>
-
-
-
-// export type SateiPageContentType = PageContentType<{
-//   title: MicroCMSFields["text"];
-//   table: MicroCMSFields["text"];
-//   repeatTable: RepeatedFieldListType<TableType>;
-//   newedhitor: MicroCMSFields["richEditor"];
-//   repeatTable2: RepeatedFieldListType<
-//     TextAreaWithImageType | RichEditorWithTitleType
-//   >;
-// }>;
 
 export type GetObjectType = "LIST" | "SINGLE";
 
@@ -129,3 +109,5 @@ export type TableOfContentsType = {
   label: string;
   domName: "h2" | "h3";
 };
+
+export type MappedKeyLiteralType = keyof typeof CATEGORY_MAPED_ID;

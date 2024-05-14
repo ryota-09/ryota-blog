@@ -1,25 +1,28 @@
 "use client"
-import HumbergerButton from "@/components/Header/SPNav/HumbergerButton";
+import { HeaderNavItem } from "@/types/header";
+import Link from "next/link";
 
 type NavDrowerProps = {
   isOpen: boolean;
+  items: HeaderNavItem[];
   onClick: () => void;
 }
 
-const NavDrower = ({ isOpen, onClick }: NavDrowerProps) => {
+const NavDrower = ({ isOpen, items, onClick }: NavDrowerProps) => {
   return (
-    <nav
-      className={
-        isOpen
-          ? 'text-left fixed bg-slate-50 right-0 top-0 w-8/12 h-screen flex flex-col justify-start pt-8 px-3 z-0'
-          : 'fixed right-[-100%] z-0'
-      }
-    >
-      <HumbergerButton isOpen={isOpen} onClick={onClick} />
-      <ul className="mt-6">
-             {/* // 省略 */}
-      </ul>
-    </nav>
+    <>
+      <div className={`bg-white text-txt-base w-64 space-y-6 py-16 z-30 absolute inset-y-0 right-0 transform ${isOpen ? "translate-x-0" : "translate-x-full"} md:relative md:translate-x-0 transition duration-500 ease-in-out`}>
+        <nav>
+          {items.map(({ name, href }, index) => (
+            <Link key={index} href={href} className="block py-2.5 px-0 transition duration-200 hover:bg-light hover:text-white">
+              <span className="mx-4">{name}</span>
+            </Link>
+          ))}
+        </nav>
+      </div>
+
+      {isOpen && <div className="bg-black bg-opacity-50 fixed inset-0 z-10" onClick={onClick}></div>}
+    </>
   )
 }
 

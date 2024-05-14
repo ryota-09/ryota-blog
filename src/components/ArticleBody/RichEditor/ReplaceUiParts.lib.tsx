@@ -8,6 +8,11 @@ import CustomUl from "@/components/ArticleBody/RichEditor/CustomUI/CustomUl";
 import CustomLi from "@/components/ArticleBody/RichEditor/CustomUI/CustomLi";
 import MultiCodeBlock from "@/components/ArticleBody/RichEditor/Code/MultiCodeBlock";
 import CustomBlockquote from "@/components/ArticleBody/RichEditor/CustomUI/CustomBlockquote";
+import CustomTable from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTable";
+import CustomTbody from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTbody";
+import CustomTr from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTr";
+import CustomTh from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTh";
+import CustomTd from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTd";
 
 const isElement = (domNode: DOMNode): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);
@@ -59,6 +64,16 @@ export const customReplaceOptions: HTMLReactParserOptions = {
             return <MultiCodeBlock filename={filename} lang={lang}>{"data" in domNode.children[0].children[0] ? domNode.children[0].children[0].data : ""}</MultiCodeBlock>;
           }
           return <pre>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</pre>
+        case "table":
+          return <CustomTable {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomTable>;
+        case "tbody":
+          return <CustomTbody {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomTbody>;
+        case "tr":
+          return <CustomTr {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomTr>;
+        case "th":
+          return <CustomTh {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomTh>;
+        case "td":
+          return <CustomTd {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomTd>;
       }
     }
   },
