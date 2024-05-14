@@ -1,5 +1,4 @@
 import ArticleBody from "@/components/ArticleBody";
-import { baseURL } from "@/config";
 import { getBlogById, getBlogList } from "@/lib/microcms";
 import { Metadata } from "next";
 
@@ -19,8 +18,7 @@ export async function generateMetadata(
   return {
     title: data.title,
     description: data.description,
-    robots: data.noIndex ? "noindex" : null,
-    metadataBase: new URL(baseURL)
+    robots: data.noIndex ? "noindex" : null
   }
 }
 
