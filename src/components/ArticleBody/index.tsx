@@ -30,9 +30,6 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
       <div className='mt-4'>
         <time dateTime={data.updatedAt.split('T')[0]} className="text-gray-400">{data.updatedAt.split('T')[0].replaceAll("-", "/")}</time>
       </div>
-      <div>
-        <TOCList data={TOCdata} />
-      </div>
       <ul className='mt-4 flex gap-2'>
         {data.category.map(({ name }, index) => (
           <Link href={`/blogs?category=${name}`} key={index}>
@@ -42,6 +39,9 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
           </Link>
         ))}
       </ul>
+      <div className="mt-4">
+        <TOCList data={TOCdata} />
+      </div>
       <div className='my-12'>
         {data.body.map((body, index) => {
           switch (body.fieldId) {

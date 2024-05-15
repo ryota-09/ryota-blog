@@ -6,35 +6,40 @@ type TOCListProps = {
 
 const TOCList = ({ data }: TOCListProps) => {
   return (
-    <div className="bg-white dark:bg-gray-950 rounded-lg shadow-sm">
-      <div className="p-6">
-        <h3 className="text-lg font-semibold mb-4">Table of Contents</h3>
-        <nav className="space-y-2">
-          {data.map(({ id, text, subList }) => (
-            <div>
-              <a
-                key={id}
-                id={id}
-                className="block text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 transition-colors"
-                href="#"
-              >
-                {text}
-              </a>
-              {subList.length > 0 && (
-                subList.map(({ id, text }) => (
+    <div className="bg-gray-50 dark:bg-gray-950 rounded-md shadow-lg">
+      <details className="p-6">
+        <summary className="text-2xl font-semibold w-full cursor-pointer transition-opacity hover:opacity-50 marker:text-secondary">目次</summary>
+        <nav className="mx-12 my-8">
+          <ol className="space-y-8 list-decimal">
+            {data.map(({ id, text, subList }) => (
+              <div key={id} className=" ">
+                <li className="group marker:text-black hover:marker:text-base-color marker:duration-300">
                   <a
                     id={id}
-                    className="block text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 transition-colors pl-4"
+                    className=" block text-black text-lg group-hover:text-base-color dark:text-gray-400 dark:hover:text-gray-50 duration-300 transition-colors"
                     href="#"
                   >
                     {text}
                   </a>
-                ))
-              )}
-            </div>
-          ))}
+                </li>
+                <div className="space-y-1 mt-2">
+                  {subList.length > 0 && (
+                    subList.map(({ id, text }) => (
+                      <a
+                        id={id}
+                        className=" indent-4 block text-gray-500 hover:text-base-color dark:text-gray-400 dark:hover:text-gray-50 transition-colors duration-300"
+                        href="#"
+                      >
+                        {text}
+                      </a>
+                    ))
+                  )}
+                </div>
+              </div>
+            ))}
+          </ol>
         </nav>
-      </div>
+      </details>
     </div>
   )
 }
