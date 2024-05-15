@@ -8,8 +8,8 @@ type TOCListProps = {
 const TOCList = ({ data }: TOCListProps) => {
   return (
     <div className="bg-gray-50 dark:bg-gray-950 rounded-md shadow-lg">
-      <details className="p-6">
-        <summary className="text-2xl font-semibold w-full cursor-pointer transition-opacity hover:opacity-50 marker:text-secondary">目次</summary>
+      <details>
+        <summary className="py-6 px-4 text-2xl font-semibold w-full cursor-pointer transition-opacity hover:opacity-50 marker:text-secondary">目次</summary>
         <nav className="mx-12 my-8">
           <ol className="space-y-8 list-decimal">
             {data.map(({ id, text, subList }) => (

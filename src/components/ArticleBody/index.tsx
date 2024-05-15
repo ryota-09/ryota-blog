@@ -24,7 +24,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
 
   return (
     <div>
-      <div className='w-[80%] mx-auto my-16'>
+      <div className='md:w-[80%] mx-auto my-4 md:my-16'>
         <ThumbnailCard title={data.title} />
       </div>
       <div className='mt-4'>

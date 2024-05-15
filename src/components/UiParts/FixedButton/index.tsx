@@ -41,7 +41,7 @@ const FixedButton = () => {
 
   return (
     <button
-      className={`fixed bottom-4 right-4 bg-secondary text-white px-4 py-2 rounded-lg shadow-lg transition-opacity duration-300 active:bg-primary ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+      className={`fixed bottom-4 right-4 bg-secondary text-white px-4 py-2 rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-80 active:bg-primary ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       onClick={scrollToTop}
       style={{ transition: 'opacity 0.3s' }}
     >
