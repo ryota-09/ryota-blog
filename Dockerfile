@@ -37,6 +37,11 @@ RUN echo "MICROCMS_SERVICE_DOMAIN=${MICROCMS_SERVICE_DOMAIN}" >> .env
 RUN echo "MICROCMS_API_KEY=${MICROCMS_API_KEY}" >> .env
 RUN cat .env
 
+# NEXT_PUBLIC_BASE_URLが設定されているか確認
+RUN echo "@@@@@@@@@@@@@@  NEXT_PUBLIC_BASE_URLが設定されているか確認 @@@@@@@@@@@@@@"
+RUN echo $NEXT_PUBLIC_BASE_URL
+RUN echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+
 
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \

@@ -1,3 +1,6 @@
+"use client"
+import ImageWithLoader from "@/components/UiParts/ImageWithLoader"
+import { microCMSLoader } from "@/lib"
 import { BlogsContentType } from "@/types/microcms"
 import Image from "next/image"
 import Link from "next/link"
@@ -25,7 +28,7 @@ const ArticleCard = ({ data }: ArticleCardProps) => {
           <div className="md:flex-shrink-0 w-[45%] lg:w-[28%] xl:w-[45%] mt-2 flex items-center relative">
             <Link href={`/blogs/${data.id}`}>
               <figure className="overflow-hidden transition-opacity hover:opacity-80">
-                <Image src={data.thumbnail.url} alt={data.title} sizes="100%" fill style={{ objectFit: "cover" }} priority />
+                <ImageWithLoader src={data.thumbnail.url} alt={data.title} sizes="100%" fill style={{ objectFit: "cover" }} priority />
               </figure>
             </Link>
           </div>
