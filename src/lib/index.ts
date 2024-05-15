@@ -1,4 +1,9 @@
+import type { MicroCMSQueries } from "microcms-js-sdk";
+import type { ImageLoader } from "next/image";
+
 import type { TOCAssetsType } from "@/types";
+import { CATEGORY_MAPED_ID, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE } from "@/static/blogs";
+import type { MappedKeyLiteralType } from "@/types/microcms";
 
 export const generateTOCAssets = (html: string) => {
   // 正規表現を使用して<h2>または<h3>タグのidとテキストを抽出
@@ -27,4 +32,29 @@ export const generateTOCAssets = (html: string) => {
   }
 
   return results;
+}
+
+export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType, [KEYWORD_QUERY]: string }) => {
+  let filters = "";
+  const query: MicroCMSQueries = { limit: PER_PAGE, offset: 0 }
+
+  if (searchParams[PAGE_QUERY]) {
+    query.offset = (parseInt(searchParams[PAGE_QUERY]) - 1) * PER_PAGE;
+  }
+
+  // filters
+  if (searchParams[CATEGORY_QUERY]) {
+    filters += `${CATEGORY_QUERY}[contains]${CATEGORY_MAPED_ID[searchParams[CATEGORY_QUERY]]}`;
+  }
+
+  if (searchParams[KEYWORD_QUERY]) {
+    query.q = searchParams[KEYWORD_QUERY];
+  }
+
+  return { ...query, filters };
+}
+
+// NOTE: エッジ経由だと画像が表示されないため、画像のURLを変換する
+export const microCMSLoader: ImageLoader = ({ src, width }) => {
+  return `${src}?auto=format&fit=max&w=${width}`
 }

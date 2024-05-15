@@ -2,7 +2,8 @@
 import ArticleCard from "@/components/ArticleCard";
 import Pagination from "@/components/Pagination";
 import SideNav from "@/components/SideNav";
-import { generateQuery, getBlogList } from "@/lib/microcms";
+import { generateQuery } from "@/lib";
+import { getBlogList } from "@/lib/microcms";
 import { CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE } from "@/static/blogs";
 import { MappedKeyLiteralType } from "@/types/microcms";
 import { MicroCMSQueries } from "microcms-js-sdk";
@@ -12,7 +13,7 @@ const Page = async ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [C
   const query: MicroCMSQueries = generateQuery(searchParams);
 
   const data = await getBlogList(query);
-  
+
   return (
     <>
       <div className="w-full md:w-[calc(100%_-_300px)] flex flex-col justify-between">
