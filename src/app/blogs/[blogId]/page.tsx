@@ -23,7 +23,7 @@ export async function generateMetadata(
     metadataBase: new URL(baseURL),
     openGraph: {
       type: "article",
-      images: [{ url: `/blogs/${blogId}/opengraph-image.png` }],
+      images: [{ url: `${baseURL}/blogs/${blogId}/opengraph-image.png` }],
       title: data.title,
       description: data.description
     }
