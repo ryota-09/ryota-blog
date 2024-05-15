@@ -65,6 +65,7 @@ jobs:
           context: .
           push: true
           build-args: |
+            "NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}"
             "MICROCMS_SERVICE_DOMAIN=${{ secrets.MICROCMS_SERVICE_DOMAIN }}"
             "MICROCMS_API_KEY=${{ secrets.MICROCMS_API_KEY }}"
           provenance: false
