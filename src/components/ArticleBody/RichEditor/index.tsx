@@ -6,7 +6,6 @@ type PropsType = {
 };
 
 const RichEditor = ({ html }: PropsType) => {
-  
   return <>{parser(html, customReplaceOptions)}</>;
 };
 export default RichEditor;

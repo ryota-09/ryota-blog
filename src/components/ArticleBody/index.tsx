@@ -6,12 +6,22 @@ import FixedButton from '@/components/UiParts/FixedButton';
 import { BlogsContentType } from '@/types/microcms';
 import HTMLArea from '@/components/ArticleBody/RichEditor/HTMLArea';
 import Link from "next/link";
+import { generateTOCAssets } from "@/lib";
+import TOCList from "@/components/ArticleBody/TOCList";
 
 type ArticleBodyProps = {
   data: BlogsContentType
 }
 
 const ArticleBody = ({ data }: ArticleBodyProps) => {
+  const joindedHTML = data.body.map((body) => {
+    if (body.fieldId === 'richEditor') {
+      return body.richEditor
+    }
+  }).join('')
+
+  const TOCdata = generateTOCAssets(joindedHTML)
+
   return (
     <div>
       <div className='w-[80%] mx-auto my-16'>
@@ -19,6 +29,9 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
       </div>
       <div className='mt-4'>
         <time dateTime={data.updatedAt.split('T')[0]} className="text-gray-400">{data.updatedAt.split('T')[0].replaceAll("-", "/")}</time>
+      </div>
+      <div>
+        <TOCList data={TOCdata} />
       </div>
       <ul className='mt-4 flex gap-2'>
         {data.category.map(({ name }, index) => (
