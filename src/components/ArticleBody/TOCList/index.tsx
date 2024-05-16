@@ -10,10 +10,10 @@ const TOCList = ({ data }: TOCListProps) => {
     <div className="bg-gray-50 dark:bg-gray-950 rounded-md shadow-lg">
       <details>
         <summary className="py-6 px-4 text-2xl font-semibold w-full cursor-pointer transition-opacity hover:opacity-50 marker:text-secondary">目次</summary>
-        <nav className="mx-12 my-8">
+        <nav className="mx-12 pb-10">
           <ol className="space-y-8 list-decimal">
             {data.map(({ id, text, subList }) => (
-              <div key={id} className=" ">
+              <div key={id}>
                 <li className="group marker:text-black hover:marker:text-base-color marker:duration-300">
                   <TOCItem
                     id={id}
@@ -22,22 +22,20 @@ const TOCList = ({ data }: TOCListProps) => {
                     {text}
                   </TOCItem>
                 </li>
-                <div className="space-y-1 mt-2">
-                  <ul>
-                    {subList.length > 0 && (
-                      subList.map(({ id, text }) => (
-                        <li key={id}>
-                          <TOCItem
-                            id={id}
-                            classes=" indent-4 block text-gray-500 hover:text-base-color dark:text-gray-400 dark:hover:text-gray-50 transition-colors duration-300"
-                          >
-                            {text}
-                          </TOCItem>
-                        </li>
-                      ))
-                    )}
-                  </ul>
-                </div>
+                <ul className="space-y-1 mt-2">
+                  {subList.length > 0 && (
+                    subList.map(({ id, text }) => (
+                      <li key={id}>
+                        <TOCItem
+                          id={id}
+                          classes=" indent-4 block text-gray-500 hover:text-base-color dark:text-gray-400 dark:hover:text-gray-50 transition-colors duration-300"
+                        >
+                          {text}
+                        </TOCItem>
+                      </li>
+                    ))
+                  )}
+                </ul>
               </div>
             ))}
           </ol>
