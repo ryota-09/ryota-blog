@@ -1,5 +1,6 @@
 import ArticleBody from "@/components/ArticleBody";
-import { baseURL } from "@/config";
+import BreadcrumbList from "@/components/BreadcrumbList";
+import { generateBreadcrumbAssets } from "@/lib";
 import { getBlogById, getBlogList } from "@/lib/microcms";
 import { Metadata } from "next";
 
@@ -37,13 +38,16 @@ type PageProps = {
 }
 
 const Page = async ({ params }: PageProps) => {
-  const data = await getBlogById(params.blogId);
+  const blogId = params.blogId
+  const data = await getBlogById(blogId);
+  const breadcrumbAssets = generateBreadcrumbAssets(blogId, data.title)
   return (
-    <>
-      <div className="max-w-[1028px] mx-auto bg-white border-2 px-4 py-2">
+    <div className="max-w-[1028px] mx-auto">
+      <BreadcrumbList items={breadcrumbAssets} />
+      <article className=" bg-white border-2 px-4">
         <ArticleBody data={data} />
-      </div>
-    </>
+      </article>
+    </div>
   );
 }
 export default Page;

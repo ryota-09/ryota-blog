@@ -43,9 +43,11 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
       <div className="mt-4">
         <TOCList data={TOCdata} />
       </div>
-      <aside className="mt-4">
-        <AdRevenueLabel />
-      </aside>
+      {data.isAdvertisement && (
+        <aside className="mt-4">
+          <AdRevenueLabel />
+        </aside>
+      )}
       <div className='my-12'>
         {data.body.map((body, index) => {
           switch (body.fieldId) {

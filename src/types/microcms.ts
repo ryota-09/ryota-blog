@@ -81,6 +81,7 @@ export type BlogsContentType = APIContentType<{
   body: RepeatedFieldListType<BodyRichEditorType | BodyHTMLType>;
   description: MicroCMSFields["text"];
   noIndex: MicroCMSFields["boolean"];
+  isAdvertisement: MicroCMSFields["boolean"];
   thumbnail?: MicroCMSFields["image"];
   category: CategoriesContentType[];
 }>
