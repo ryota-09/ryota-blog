@@ -7,7 +7,7 @@ type PropsType ={
 const BlogTitle = ({ title }: PropsType) => {
   return (
     <Link href="/blogs">
-      <h1 className="text-xl font-bold text-black transition duration-200 hover:text-base-color">{title}</h1>
+      <h1 className="text-md md:text-xl font-bold text-black transition duration-200 hover:text-base-color shrink-0">{title}</h1>
     </Link>
   )
 }

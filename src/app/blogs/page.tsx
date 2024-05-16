@@ -9,6 +9,9 @@ import { MappedKeyLiteralType } from "@/types/microcms";
 import { MicroCMSQueries } from "microcms-js-sdk";
 
 const Page = async ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType, [KEYWORD_QUERY]: string } }) => {
+  console.log("@@@@@@@@@@ searchParams @@@@@@@@@@");
+  console.log(searchParams);
+  console.log("@@@@@@@@@@@@@@@@@@@@");
 
   const query: MicroCMSQueries = generateQuery(searchParams);
 

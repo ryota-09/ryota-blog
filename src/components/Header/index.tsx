@@ -7,7 +7,7 @@ const Header = () => {
   return (
     <header className="bg-white pt-4 shadow-md">
       <div className="container mx-auto divide-y">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-4 px-2 md:px-0">
           <BlogTitle title={BLOG_TITLE} />
           <div className="block md:hidden">
             <SPNav />

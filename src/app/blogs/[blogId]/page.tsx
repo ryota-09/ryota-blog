@@ -20,13 +20,13 @@ export async function generateMetadata(
     title: data.title,
     description: data.description,
     robots: data.noIndex ? "noindex" : null,
-    metadataBase: new URL(baseURL),
-    openGraph: {
-      type: "article",
-      images: [{ url: `${baseURL}/blogs/${blogId}/opengraph-image.png` }],
-      title: data.title,
-      description: data.description
-    }
+    // metadataBase: new URL(baseURL),
+    // openGraph: {
+    //   type: "article",
+    //   images: [{ url: `${baseURL}/blogs/${blogId}/opengraph-image.png` }],
+    //   title: data.title,
+    //   description: data.description
+    // }
   }
 }
 
