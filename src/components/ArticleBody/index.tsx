@@ -8,6 +8,7 @@ import HTMLArea from '@/components/ArticleBody/RichEditor/HTMLArea';
 import Link from "next/link";
 import { generateTOCAssets } from "@/lib";
 import TOCList from "@/components/ArticleBody/TOCList";
+import AdRevenueLabel from "@/components/AdRevenueLabel";
 
 type ArticleBodyProps = {
   data: BlogsContentType
@@ -42,6 +43,9 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
       <div className="mt-4">
         <TOCList data={TOCdata} />
       </div>
+      <aside className="mt-4">
+        <AdRevenueLabel />
+      </aside>
       <div className='my-12'>
         {data.body.map((body, index) => {
           switch (body.fieldId) {
