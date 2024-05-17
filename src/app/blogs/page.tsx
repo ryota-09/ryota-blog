@@ -20,7 +20,7 @@ const Page = async ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [C
 
   return (
     <>
-      <div className="w-full md:w-[calc(100%_-_300px)] flex flex-col justify-between">
+      <div className="w-full md:w-[calc(100%_-_300px)] flex flex-col justify-between px-2 md:px-0">
         <div className="flex flex-col gap-4">
           {(category || keyword) && (
             <SearchStateCard category={category} keyword={keyword} />
