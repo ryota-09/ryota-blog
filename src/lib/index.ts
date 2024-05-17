@@ -59,17 +59,18 @@ export const microCMSLoader: ImageLoader = ({ src, width }) => {
   return `${src}?auto=format&fit=max&w=${width}`
 }
 
-export const generateBreadcrumbAssets = (blogId: string, title: string):BreadcrumbItemType[] => {
+export const generateBreadcrumbAssets = (blogId: string, title: string): BreadcrumbItemType[] => {
+  const homePath = "/blogs"
   const results = [
     {
       label: "Home",
-      href: "/blogs"
+      href: homePath
     }
   ];
 
   results.push({
     label: title,
-    href: `/blogs/${blogId}`
+    href: `${homePath}/${blogId}`
   });
 
   return results;
