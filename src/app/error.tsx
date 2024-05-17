@@ -22,7 +22,7 @@ const Page = () => {
             <p className="text-lg font-medium text-gray-600 dark:text-gray-400">
               サーバー内部のエラーが発生しました。
             </p>
-            <Link href="/blogs" className="text-base-color border-2 border-base-color px-4 py-2 rounded-md hover:bg-base-color hover:text-white hover:border-base-color transition duration-200">
+            <Link href="/blogs" className="text-base-color border-2 border-base-color px-4 py-2 hover:bg-base-color hover:text-white hover:border-base-color transition duration-200">
               トップページに戻る
             </Link>
           </div>

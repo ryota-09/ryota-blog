@@ -35,8 +35,6 @@ const Page = async ({ params }: PageProps) => {
   const blogId = params.blogId
   const data = await getBlogById(blogId);
 
-  if (!data) notFound()
-
   const breadcrumbAssets = generateBreadcrumbAssets(blogId, data.title)
   return (
     <div className="max-w-[1028px] mx-auto">

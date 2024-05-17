@@ -24,7 +24,7 @@ export default function Image() {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          border: '32px solid rgb(59 172 182)',
+          border: '48px solid rgb(59 172 182)',
           borderRadius: '16px',
           fontSize: '48px',
           fontWeight: 'bold'

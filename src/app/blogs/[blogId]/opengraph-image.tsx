@@ -24,7 +24,7 @@ export default async function Image({ params }: { params: { blogId: string } }) 
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          border: '32px solid rgb(59 172 182)',
+          border: '48px solid rgb(59 172 182)',
           borderRadius: '16px',
           fontSize: '48px',
           fontWeight: 'bold'
