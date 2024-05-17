@@ -1,11 +1,13 @@
+import { cltw } from "@/util";
 
 type ChipProps = {
   label: string;
+  classes?: string;
 }
 
-const Chip = ({ label }: ChipProps) => {
+const Chip = ({ label, classes = "" }: ChipProps) => {
   return (
-    <p className="bg-gray-200 rounded-full px-3 py-2 text-sm text-txt-base hover:opacity-60">{label}</p>
+    <p className={cltw("rounded-full min-w-20 text-center",classes)}>{label}</p>
   )
 }
 export default Chip;

@@ -35,7 +35,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
         {data.category.map(({ name }, index) => (
           <Link href={`/blogs?category=${name}`} key={index}>
             <li className="block cursor-pointer">
-              <Chip label={name} />
+              <Chip label={name} classes="bg-gray-200 px-3 py-2 text-sm text-txt-base hover:opacity-60" />
             </li>
           </Link>
         ))}

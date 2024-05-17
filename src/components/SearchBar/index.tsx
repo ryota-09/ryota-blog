@@ -1,14 +1,16 @@
 "use client"
 
-import type { FormEvent } from "react"
+import { useRef, type FormEvent } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
 const SearchBar = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const formRef = useRef<HTMLFormElement>(null)
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
     const data = new FormData(event.currentTarget)
     const keyword = data.get('keyword')
     const category = searchParams.get('category')
@@ -21,18 +23,20 @@ const SearchBar = () => {
       return
     }
 
-    if(category) {
+    if (category) {
+      formRef.current?.reset()
       router.push(`${basePath}?category=${category}&keyword=${keyword}`)
       router.refresh()
       return
     }
 
+    formRef.current?.reset()
     router.push(`${basePath}?keyword=${keyword}`)
     router.refresh()
   }
 
   return (
-    <form className="flex justify-center w-full" onSubmit={handleSubmit}>
+    <form ref={formRef} className="flex justify-center w-full" onSubmit={handleSubmit}>
       <input
         name="keyword"
         type="text"
