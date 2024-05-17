@@ -3,6 +3,7 @@ import ArticleCard from "@/components/ArticleCard";
 import Pagination from "@/components/Pagination";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
+import NoContents from "@/components/UiParts/NoContentsPage";
 import { generateQuery } from "@/lib";
 import { getBlogList } from "@/lib/microcms";
 import { CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE } from "@/static/blogs";
@@ -25,17 +26,24 @@ const Page = async ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [C
           {(category || keyword) && (
             <SearchStateCard category={category} keyword={keyword} />
           )}
-          <ul className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-            {data.contents.map((item) => (
-              <li key={item.id}>
-                <ArticleCard data={item} />
-              </li>
-            ))}
-          </ul>
+          {data.totalCount !== 0
+            ?
+            <ul className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+              {data.contents.map((item) => (
+                <li key={item.id}>
+                  <ArticleCard data={item} />
+                </li>
+              ))}
+            </ul>
+            :
+            <NoContents />
+          }
         </div>
-        <nav className="flex md:flex-none justify-center mt-8">
-          <Pagination totalPages={Math.floor(data.totalCount / PER_PAGE) + 1} currentPage={searchParams[PAGE_QUERY] ? +searchParams[PAGE_QUERY] : 1} />
-        </nav>
+        {data.totalCount !== 0 && (
+          <nav className="flex md:flex-none justify-center mt-8">
+            <Pagination totalPages={Math.floor(data.totalCount / PER_PAGE) + 1} currentPage={searchParams[PAGE_QUERY] ? +searchParams[PAGE_QUERY] : 1} />
+          </nav>
+        )}
       </div>
       <SideNav />
     </>
