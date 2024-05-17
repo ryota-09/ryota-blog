@@ -1,10 +1,38 @@
-import { seachBlogByKeyword } from "@/lib/actions";
+"use client"
+
+import type { FormEvent } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 const SearchBar = () => {
-  const _seachBlogByKeyword = seachBlogByKeyword.bind(null);
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
+    const keyword = data.get('keyword')
+    const category = searchParams.get('category')
+
+    const basePath = '/blogs'
+
+    if (!keyword) {
+      router.push(basePath)
+      router.refresh()
+      return
+    }
+
+    if(category) {
+      router.push(`${basePath}?category=${category}&keyword=${keyword}`)
+      router.refresh()
+      return
+    }
+
+    router.push(`${basePath}?keyword=${keyword}`)
+    router.refresh()
+  }
 
   return (
-    <form className="flex justify-center w-full" action={_seachBlogByKeyword}>
+    <form className="flex justify-center w-full" onSubmit={handleSubmit}>
       <input
         name="keyword"
         type="text"
