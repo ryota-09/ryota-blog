@@ -18,7 +18,8 @@ const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemPro
     const pathNameWithQueryParams = window.location.pathname + window.location.search
 
     if (pathNameWithQueryParams.includes('keyword') || pathNameWithQueryParams.includes("category")) {
-      router.push(`${pathNameWithQueryParams}&page=${pageNumber}`)
+      // NOTE: ?category=チュートリアル&page=2&page=3&page=1 になるのを防ぐ
+      router.push(`${pathNameWithQueryParams.replace(/&page=\d+/, '')}&page=${pageNumber}`)
       return
     }
 
