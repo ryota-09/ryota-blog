@@ -1,8 +1,5 @@
-"use client"
 import ImageWithLoader from "@/components/UiParts/ImageWithLoader"
-import { microCMSLoader } from "@/lib"
 import { BlogsContentType } from "@/types/microcms"
-import Image from "next/image"
 import Link from "next/link"
 
 type ArticleCardProps = {
@@ -11,7 +8,7 @@ type ArticleCardProps = {
 
 const ArticleCard = ({ data }: ArticleCardProps) => {
   return (
-    <div className="bg-white border-2 border-gray-200 overflow-hidden px-6 pt-6 pb-12 h-full">
+    <div className="bg-white border-2 border-gray-200 overflow-hidden p-6 h-full flex flex-col">
       <Link href={`/blogs/${data.id}`} className="block text-xl leading-tight font-medium transition duration-200 text-black hover:text-base-color">{data.title}</Link>
       <div className="flex gap-4 h-full">
         <div className="w-[70%] flex flex-col justify-between">

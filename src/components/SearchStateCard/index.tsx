@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Chip from "@/components/UiParts/Chip";
 import type { MappedKeyLiteralType } from "@/types/microcms";
 
@@ -16,18 +17,23 @@ const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
         </svg>
         <p className="text-lg text-gray-500">検索条件 </p>
       </div>
-      <ul className="flex gap-4">
-        {category && (
-          <li>
-            <Chip classes="bg-base-color px-3 py-2 text-sm text-txt-base" label={category} />
-          </li>
-        )}
-        {keyword && (
-          <li>
-            <Chip classes="bg-light px-3 py-2 text-sm text-txt-base" label={keyword} />
-          </li>
-        )}
-      </ul>
+      <div className="flex flex-grow justify-between items-center">
+        <ul className="flex gap-4">
+          {category && (
+            <li>
+              <Chip classes="bg-base-color px-3 py-2 text-sm text-txt-base" label={category} />
+            </li>
+          )}
+          {keyword && (
+            <li>
+              <Chip classes="bg-light px-3 py-2 text-sm text-txt-base" label={keyword} />
+            </li>
+          )}
+        </ul>
+        <div>
+          <Link href="/blogs" className="text-gray-400 text-xs cursor-pointer transition-colors hover:text-gray-700">検索条件をリセット</Link>
+        </div>
+      </div>
     </div>
   )
 }
