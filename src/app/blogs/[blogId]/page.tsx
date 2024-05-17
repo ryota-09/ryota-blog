@@ -3,6 +3,7 @@ import BreadcrumbList from "@/components/BreadcrumbList";
 import { generateBreadcrumbAssets } from "@/lib";
 import { getBlogById, getBlogList } from "@/lib/microcms";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
   const blogList = await getBlogList({ fields: "id" });
@@ -20,14 +21,7 @@ export async function generateMetadata(
   return {
     title: data.title,
     description: data.description,
-    robots: data.noIndex ? "noindex" : null,
-    // metadataBase: new URL(baseURL),
-    // openGraph: {
-    //   type: "article",
-    //   images: [{ url: `${baseURL}/blogs/${blogId}/opengraph-image.png` }],
-    //   title: data.title,
-    //   description: data.description
-    // }
+    robots: data.noIndex ? "noindex" : null
   }
 }
 
@@ -40,6 +34,9 @@ type PageProps = {
 const Page = async ({ params }: PageProps) => {
   const blogId = params.blogId
   const data = await getBlogById(blogId);
+
+  if (!data) notFound()
+
   const breadcrumbAssets = generateBreadcrumbAssets(blogId, data.title)
   return (
     <div className="max-w-[1028px] mx-auto">
