@@ -5,10 +5,7 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "@/static/blogs";
 import { baseURL } from "@/config";
 
 export const metadata: Metadata = {
-  title: {
-    template: `%s | ${SITE_TITLE}`,
-    default: "Home",
-  },
+  title: `About | ${SITE_TITLE}`,
   description: SITE_DESCRIPTION,
   metadataBase: new URL(baseURL)
 };
@@ -21,7 +18,7 @@ export default function BlogListLayout({
   return (
     <>
       <Header />
-      <main className="flex-grow flex flex-col md:flex-row container mx-auto gap-4 my-4">
+      <main className="container mx-auto gap-4 my-4 px-2">
         {children}
       </main>
       <Footer />

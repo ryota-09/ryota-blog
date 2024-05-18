@@ -8,7 +8,7 @@ type HTMLAreaProps = {
 
 const HTMLArea = ({ html }: HTMLAreaProps) => {
   return (
-    <aside className="flex justify-center my-4">{parser(html, customReplaceOptions)}</aside>
+    <aside className="flex justify-center my-8">{parser(html, customReplaceOptions)}</aside>
   )
 }
 export default HTMLArea;

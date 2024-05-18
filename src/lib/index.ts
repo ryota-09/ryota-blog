@@ -1,7 +1,7 @@
 import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { ImageLoader } from "next/image";
 
-import type { TOCAssetsType } from "@/types";
+import type { BreadcrumbItemType, TOCAssetsType } from "@/types";
 import { CATEGORY_MAPED_ID, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE } from "@/static/blogs";
 import type { MappedKeyLiteralType } from "@/types/microcms";
 
@@ -57,4 +57,21 @@ export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QU
 // NOTE: エッジ経由だと画像が表示されないため、画像のURLを変換する
 export const microCMSLoader: ImageLoader = ({ src, width }) => {
   return `${src}?auto=format&fit=max&w=${width}`
+}
+
+export const generateBreadcrumbAssets = (blogId: string, title: string): BreadcrumbItemType[] => {
+  const homePath = "/blogs"
+  const results = [
+    {
+      label: "Home",
+      href: homePath
+    }
+  ];
+
+  results.push({
+    label: title,
+    href: `${homePath}/${blogId}`
+  });
+
+  return results;
 }

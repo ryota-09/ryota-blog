@@ -1,5 +1,6 @@
+"use client"
 import { cltw } from "@/util"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { ReactNode } from "react"
 
 type PaginationItemProps = {
@@ -9,13 +10,35 @@ type PaginationItemProps = {
 }
 
 const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemProps) => {
+  const router = useRouter()
+
+  const handleClick = () => {
+    if (pageNumber === currentPage) return
+
+    const pathNameWithQueryParams = window.location.pathname + window.location.search
+
+    if (pathNameWithQueryParams.includes('keyword') || pathNameWithQueryParams.includes("category")) {
+      // NOTE: ?category=チュートリアル&page=2&page=3&page=1 になるのを防ぐ
+      router.push(`${pathNameWithQueryParams.replace(/&page=\d+/, '')}&page=${pageNumber}`)
+      return
+    }
+
+    if (pageNumber === 1) {
+      router.push('/blogs')
+      return
+    }
+
+    router.push(`/blogs?page=${pageNumber}`)
+  }
+
   return (
-    <Link
-      href={pageNumber === 1 ? '/blogs' : `/blogs?page=${pageNumber}`}
-      className={cltw("inline-flex h-8 w-8 items-center justify-center rounded-md bg-white text-txt-base transition-colors hover:bg-light hover:text-white focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-950 dark:text-gray-400 dark:hover:bg-light dark:focus:ring-base-color", pageNumber === currentPage ? 'bg-base-color text-white' : 'bg-white')}
+    <button
+      type="button"
+      onClick={handleClick}
+      className={cltw("inline-flex h-8 w-8  items-center justify-center bg-white text-txt-base transition-colors hover:bg-light hover:text-white focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-950 dark:text-gray-400 dark:hover:bg-light dark:focus:ring-base-color", pageNumber === currentPage ? 'bg-base-color text-white' : 'bg-white')}
     >
       {children}
-    </Link>
+    </button>
   )
 }
 export default PaginationItem

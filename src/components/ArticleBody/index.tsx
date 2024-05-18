@@ -8,6 +8,7 @@ import HTMLArea from '@/components/ArticleBody/RichEditor/HTMLArea';
 import Link from "next/link";
 import { generateTOCAssets } from "@/lib";
 import TOCList from "@/components/ArticleBody/TOCList";
+import AdRevenueLabel from "@/components/AdRevenueLabel";
 
 type ArticleBodyProps = {
   data: BlogsContentType
@@ -34,7 +35,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
         {data.category.map(({ name }, index) => (
           <Link href={`/blogs?category=${name}`} key={index}>
             <li className="block cursor-pointer">
-              <Chip label={name} />
+              <Chip label={name} classes="bg-gray-200 px-3 py-2 text-sm text-txt-base hover:opacity-60" />
             </li>
           </Link>
         ))}
@@ -42,6 +43,11 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
       <div className="mt-4">
         <TOCList data={TOCdata} />
       </div>
+      {data.isAdvertisement && (
+        <aside className="mt-4">
+          <AdRevenueLabel />
+        </aside>
+      )}
       <div className='my-12'>
         {data.body.map((body, index) => {
           switch (body.fieldId) {

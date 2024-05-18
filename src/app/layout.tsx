@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { Kosugi_Maru } from "next/font/google";
+import "./globals.css";
+import Script from "next/script";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/static/blogs";
 import { baseURL } from "@/config";
+
+const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
@@ -19,12 +22,12 @@ export default function BlogListLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
-      <Header />
-      <main className="flex-grow flex flex-col md:flex-row container mx-auto gap-4 my-4">
+    <html lang="ja">
+      <body className={`${KosugiMaru.className} bg-[#eee] flex flex-col min-h-screen`}>
         {children}
-      </main>
-      <Footer />
-    </>
+        {/* NOTE: 埋め込みiframeのため */}
+        <Script src="//cdn.iframe.ly/embed.js" strategy="lazyOnload" />
+      </body>
+    </html>
   );
 }
