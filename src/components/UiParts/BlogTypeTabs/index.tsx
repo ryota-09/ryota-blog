@@ -30,7 +30,7 @@ const BlogTypeTabs = ({ blogType }: BlogTypeTabsProps) => {
   return (
     <nav className="relative flex bg-transparent flex-grow">
       <div
-        className={cltw("rounded-sm transition-all duration-300 w-1/2 absolute inset-0", activeTab === "blogs" ? 'bg-base-color' : 'bg-[#3ea8ff]')}
+        className={cltw("rounded-sm transition-all duration-300 w-1/2 absolute inset-0", activeTab === "blogs" ? 'bg-base-color' : 'bg-zenn')}
         style={{
           transform: activeTab === "blogs" ? 'translateX(0%)' : 'translateX(100%)',
         }}

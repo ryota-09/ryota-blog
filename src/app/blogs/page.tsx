@@ -12,6 +12,7 @@ import { BLOG_TYPE_QUERY, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY } from "@/st
 import { MappedKeyLiteralType } from "@/types/microcms";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import { BlogTypeKeyLIteralType } from "@/types";
+import ZennArticleList from "@/components/ZennArticleList";
 
 const Page = ({ searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType, [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType, [KEYWORD_QUERY]: string } }) => {
   const category = searchParams[CATEGORY_QUERY];
@@ -34,18 +35,20 @@ const Page = ({ searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKey
           </div>
           {blogType === "zenn"
             ?
-            <div>Zenn</div>
+            <ZennArticleList />
             :
             <Suspense fallback={<Skelton />}>
               <ArticleList query={query} />
             </Suspense>
           }
         </div>
-        <Suspense fallback={<div className="h-16" />}>
-          <nav className="flex md:flex-none justify-center  mt-8">
-            <Pagination query={query} currentPage={searchParams[PAGE_QUERY] ? +searchParams[PAGE_QUERY] : 1} />
-          </nav>
-        </Suspense>
+        {blogType === "blogs" && (
+          <Suspense fallback={<div className="h-16" />}>
+            <nav className="flex md:flex-none justify-center  mt-8">
+              <Pagination query={query} currentPage={searchParams[PAGE_QUERY] ? +searchParams[PAGE_QUERY] : 1} />
+            </nav>
+          </Suspense>
+        )}
       </div>
       <SideNav />
     </>
