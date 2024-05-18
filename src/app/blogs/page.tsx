@@ -1,24 +1,21 @@
 
-import ArticleCard from "@/components/ArticleCard";
-import SkeltonCard from "@/components/ArticleCard/skelton";
+import { MicroCMSQueries } from "microcms-js-sdk";
+import { Suspense } from "react";
+
+import ArticleList from "@/components/ArticleList";
+import Skelton from "@/components/ArticleList/skelton";
 import Pagination from "@/components/Pagination";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
-import NoContents from "@/components/UiParts/NoContentsPage";
 import { generateQuery } from "@/lib";
-import { getBlogList } from "@/lib/microcms";
 import { CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE } from "@/static/blogs";
 import { MappedKeyLiteralType } from "@/types/microcms";
-import { MicroCMSQueries } from "microcms-js-sdk";
 
-const Page = async ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType, [KEYWORD_QUERY]: string } }) => {
+const Page = ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType, [KEYWORD_QUERY]: string } }) => {
   const category = searchParams[CATEGORY_QUERY];
   const keyword = searchParams[KEYWORD_QUERY];
 
-
   const query: MicroCMSQueries = generateQuery(searchParams);
-
-  const data = await getBlogList(query);
 
   return (
     <>
@@ -27,25 +24,15 @@ const Page = async ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [C
           {(category || keyword) && (
             <SearchStateCard category={category} keyword={keyword} />
           )}
-          {data.totalCount !== 0
-            ?
-            <ul className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-              {data.contents.map((item) => (
-                <li key={item.id}>
-                  {/* <ArticleCard data={item} /> */}
-                  <SkeltonCard />
-                </li>
-              ))}
-            </ul>
-            :
-            <NoContents />
-          }
+          <Suspense fallback={<Skelton />}>
+            <ArticleList query={query} />
+          </Suspense>
         </div>
-        {data.totalCount !== 0 && (
-          <nav className="flex md:flex-none justify-center mt-8">
-            <Pagination totalPages={Math.floor(data.totalCount / PER_PAGE) + 1} currentPage={searchParams[PAGE_QUERY] ? +searchParams[PAGE_QUERY] : 1} />
+        <Suspense fallback={<div className="h-16" />}>
+          <nav className="flex md:flex-none justify-center  mt-8">
+            <Pagination query={query} currentPage={searchParams[PAGE_QUERY] ? +searchParams[PAGE_QUERY] : 1} />
           </nav>
-        )}
+        </Suspense>
       </div>
       <SideNav />
     </>
