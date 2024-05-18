@@ -8,13 +8,15 @@ import Pagination from "@/components/Pagination";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
 import { generateQuery } from "@/lib";
-import { CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY } from "@/static/blogs";
+import { BLOG_TYPE_QUERY, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY } from "@/static/blogs";
 import { MappedKeyLiteralType } from "@/types/microcms";
-import Tabs from "@/components/UiParts/Tabs";
+import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
+import { BlogTypeKeyLIteralType } from "@/types";
 
-const Page = ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType, [KEYWORD_QUERY]: string } }) => {
+const Page = ({ searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType, [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType, [KEYWORD_QUERY]: string } }) => {
   const category = searchParams[CATEGORY_QUERY];
   const keyword = searchParams[KEYWORD_QUERY];
+  const blogType = searchParams[BLOG_TYPE_QUERY] || "blogs";
 
   const query: MicroCMSQueries = generateQuery(searchParams);
 
@@ -24,15 +26,20 @@ const Page = ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [CATEGOR
         <div className="flex flex-col gap-4">
           <div className="flex gap-4 flex-col lg:flex-row">
             <div className="flex justify-center items-center p-3 bg-white border-2 border-gray-200">
-              <Tabs />
+              <BlogTypeTabs blogType={blogType} />
             </div>
             {(category || keyword) && (
               <SearchStateCard category={category} keyword={keyword} />
             )}
           </div>
-          <Suspense fallback={<Skelton />}>
-            <ArticleList query={query} />
-          </Suspense>
+          {blogType === "zenn"
+            ?
+            <div>Zenn</div>
+            :
+            <Suspense fallback={<Skelton />}>
+              <ArticleList query={query} />
+            </Suspense>
+          }
         </div>
         <Suspense fallback={<div className="h-16" />}>
           <nav className="flex md:flex-none justify-center  mt-8">
