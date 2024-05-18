@@ -33,15 +33,11 @@ const baseMicroCMSApiGetHandler: BaseMicroCMSApiType =
       switch (objectType) {
         case "LIST":
           return client.get<T>({
-            endpoint, queries, customRequestInit: {
-              cache: "no-store",
-            }
+            endpoint, queries
           });
         case "SINGLE":
           return client.get<T>({
-            endpoint, contentId, queries, customRequestInit: {
-              cache: "force-cache"
-            }
+            endpoint, contentId, queries
           });
         default:
           throw new Error(`🔥: objectTypeに誤りがあります。 ${objectType}`);
