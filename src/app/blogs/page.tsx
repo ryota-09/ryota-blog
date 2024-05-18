@@ -1,5 +1,6 @@
 
 import ArticleCard from "@/components/ArticleCard";
+import SkeltonCard from "@/components/ArticleCard/skelton";
 import Pagination from "@/components/Pagination";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
@@ -31,7 +32,8 @@ const Page = async ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [C
             <ul className="grid grid-cols-1 xl:grid-cols-2 gap-4">
               {data.contents.map((item) => (
                 <li key={item.id}>
-                  <ArticleCard data={item} />
+                  {/* <ArticleCard data={item} /> */}
+                  <SkeltonCard />
                 </li>
               ))}
             </ul>
