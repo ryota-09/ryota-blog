@@ -8,8 +8,9 @@ import Pagination from "@/components/Pagination";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
 import { generateQuery } from "@/lib";
-import { CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE } from "@/static/blogs";
+import { CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY } from "@/static/blogs";
 import { MappedKeyLiteralType } from "@/types/microcms";
+import Tabs from "@/components/UiParts/Tabs";
 
 const Page = ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType, [KEYWORD_QUERY]: string } }) => {
   const category = searchParams[CATEGORY_QUERY];
@@ -21,9 +22,14 @@ const Page = ({ searchParams }: { searchParams: { [PAGE_QUERY]: string, [CATEGOR
     <>
       <div className="w-full md:w-[calc(100%_-_300px)] flex flex-col justify-between px-2 md:px-0">
         <div className="flex flex-col gap-4">
-          {(category || keyword) && (
-            <SearchStateCard category={category} keyword={keyword} />
-          )}
+          <div className="flex gap-4 flex-col lg:flex-row">
+            <div className="flex justify-center items-center p-3 bg-white border-2 border-gray-200">
+              <Tabs />
+            </div>
+            {(category || keyword) && (
+              <SearchStateCard category={category} keyword={keyword} />
+            )}
+          </div>
           <Suspense fallback={<Skelton />}>
             <ArticleList query={query} />
           </Suspense>
