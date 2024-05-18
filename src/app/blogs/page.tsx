@@ -20,7 +20,7 @@ const Page = ({ searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKey
   const blogType = searchParams[BLOG_TYPE_QUERY] || "blogs";
 
   const query: MicroCMSQueries = generateQuery(searchParams);
-
+  
   return (
     <>
       <div className="w-full md:w-[calc(100%_-_300px)] flex flex-col justify-between px-2 md:px-0">

@@ -20,7 +20,7 @@ const SearchBar = () => {
 
     const basePath = '/blogs'
 
-    if (!keyword) {
+    if (!keyword && !category) {
       router.push(basePath)
       router.refresh()
       return
