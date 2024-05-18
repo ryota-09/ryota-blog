@@ -32,9 +32,17 @@ const baseMicroCMSApiGetHandler: BaseMicroCMSApiType =
     ) => {
       switch (objectType) {
         case "LIST":
-          return client.get<T>({ endpoint, queries });
+          return client.get<T>({
+            endpoint, queries, customRequestInit: {
+              cache: "no-store",
+            }
+          });
         case "SINGLE":
-          return client.get<T>({ endpoint, contentId, queries });
+          return client.get<T>({
+            endpoint, contentId, queries, customRequestInit: {
+              cache: "force-cache"
+            }
+          });
         default:
           throw new Error(`🔥: objectTypeに誤りがあります。 ${objectType}`);
       }
@@ -45,7 +53,7 @@ const MicroCMSApiGetListHandler = baseMicroCMSApiGetHandler("LIST");
 const MicroCMSApiGetSingleObjectHandler = baseMicroCMSApiGetHandler("SINGLE");
 
 export const getBlogList = (querys?: MicroCMSQueries) =>
-  MicroCMSApiGetListHandler<BlogsContentType>("blogs", querys);
+  MicroCMSApiGetListHandler<BlogsContentType>("blogs", { ...querys });
 
 export const getBlogById = (contentId: string, querys?: MicroCMSQueries) =>
   MicroCMSApiGetSingleObjectHandler<BlogsContentType>(

@@ -5,7 +5,7 @@ import Script from "next/script";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/static/blogs";
 import { baseURL } from "@/config";
 
-const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"] });
+const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
   title: {
