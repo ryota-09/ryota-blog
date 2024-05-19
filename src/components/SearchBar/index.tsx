@@ -1,42 +1,41 @@
 "use client"
 
-import { useCallback, useContext, useRef, type FormEvent } from "react"
+import { useContext, useRef, type FormEvent } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { GlobalContext } from "@/providers"
 import { cltw } from "@/util"
 
 const SearchBar = () => {
-  const { state } = useContext(GlobalContext)
+  const { state, dispatch } = useContext(GlobalContext)
   const router = useRouter()
   const searchParams = useSearchParams()
   const formRef = useRef<HTMLFormElement>(null)
 
-  const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-
     const data = new FormData(event.currentTarget)
     const keyword = data.get('keyword')
     const category = searchParams.get('category')
 
     const basePath = '/blogs'
 
-    if (!keyword && !category) {
+    if (!keyword) {
       router.push(basePath)
-      router.refresh()
+      // router.refresh()
       return
     }
 
     if (category) {
       formRef.current?.reset()
       router.push(`${basePath}?category=${category}&keyword=${keyword}`)
-      router.refresh()
+      // router.refresh()
       return
     }
 
     formRef.current?.reset()
     router.push(`${basePath}?keyword=${keyword}`)
-    router.refresh()
-  }, [])
+    // router.refresh()
+  }
 
   return (
     <form ref={formRef} className="flex justify-center w-full" onSubmit={handleSubmit}>

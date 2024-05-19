@@ -1,6 +1,7 @@
 "use client"
 import type { BlogTypeKeyLIteralType } from "@/types";
-import { ReactNode, createContext, useReducer, type Dispatch } from "react";
+import { useSearchParams } from "next/navigation";
+import { ReactNode, createContext, use, useEffect, useReducer, type Dispatch } from "react";
 
 export type GlobalState = {
   blogType: BlogTypeKeyLIteralType
@@ -38,6 +39,7 @@ export const reducer = (state: GlobalState, action: Action): GlobalState => {
 
 export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
   return (
     <GlobalContext.Provider value={{ state, dispatch }}>
       {children}
