@@ -23,7 +23,6 @@ const ArticleCard = ({ data }: ArticleCardProps) => {
           <div className="md:flex-shrink-0 md:w-[45%] lg:w-[28%] xl:w-[45%] mt-4 md:mt-2 max-h-[250px] md:max-h-auto overflow-hidden flex items-center relative">
             <Link href={`/blogs/${data.id}`}>
               <figure className="transition-opacity hover:opacity-80">
-                {/* <ImageWithLoader src={data.thumbnail.url} alt={data.title} sizes="100%" fill style={{ objectFit: "cover" }} priority /> */}
                 <ImageWithLoader src={data.thumbnail.url} alt={data.title} width={data.thumbnail.width} height={data.thumbnail.height} priority />
               </figure>
             </Link>

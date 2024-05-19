@@ -16,3 +16,18 @@ export const HEADER_NAV_ITEMS: HeaderNavItem[] = [
     href: '/contact',
   },
 ] as const;
+
+export const SOCIAL_MEDIA_NAV_ITEMS: HeaderNavItem[] = [
+  {
+    name: 'X',
+    href: 'https://x.com/Ryo54388667',
+  },
+  {
+    name: 'Z',
+    href: 'https://zenn.dev/ryota_09',
+  },
+  {
+    name: 'G',
+    href: "https://github.com/ryota-09"
+  },
+] as const;
