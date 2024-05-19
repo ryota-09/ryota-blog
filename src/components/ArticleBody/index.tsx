@@ -9,6 +9,7 @@ import { Link } from 'next-view-transitions';
 import { generateTOCAssets } from "@/lib";
 import TOCList from "@/components/ArticleBody/TOCList";
 import AdRevenueLabel from "@/components/AdRevenueLabel";
+import ImageWithLoader from "@/components/UiParts/ImageWithLoader";
 
 type ArticleBodyProps = {
   data: BlogsContentType
@@ -26,7 +27,23 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
   return (
     <div>
       <div className='md:w-[80%] mx-auto my-4 md:my-16'>
-        <ThumbnailCard title={data.title} />
+        {data.thumbnail
+          ?
+          <div className="flex flex-col gap-8">
+            <h1 className="text-2xl md:text-3xl font-bold">{data.title}</h1>
+            <figure className=" max-h-[300px] md:max-h-[540px] overflow-hidden shadow-2xl">
+              <ImageWithLoader
+                src={data.thumbnail.url}
+                alt={data.title}
+                width={data.thumbnail.width}
+                height={data.thumbnail.height}
+                priority
+              />
+            </figure>
+          </div>
+          :
+          <ThumbnailCard title={data.title} />
+        }
       </div>
       <div className='mt-4'>
         <time dateTime={data.updatedAt.split('T')[0]} className="text-gray-400">{data.updatedAt.split('T')[0].replaceAll("-", "/")}</time>

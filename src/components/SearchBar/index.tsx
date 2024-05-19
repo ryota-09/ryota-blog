@@ -4,9 +4,10 @@ import { useContext, useRef, type FormEvent } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { GlobalContext } from "@/providers"
 import { cltw } from "@/util"
+import { escapeHtml } from "@/lib"
 
 const SearchBar = () => {
-  const { state, dispatch } = useContext(GlobalContext)
+  const { state } = useContext(GlobalContext)
   const router = useRouter()
   const searchParams = useSearchParams()
   const formRef = useRef<HTMLFormElement>(null)
@@ -18,11 +19,13 @@ const SearchBar = () => {
     const category = searchParams.get('category')
 
     const basePath = '/blogs'
-
+    
     if (!keyword) {
       router.push(basePath)
       return
     }
+    
+    const escapedKeyword = escapeHtml(keyword.toString()).trim()
 
     if (category) {
       formRef.current?.reset()
@@ -31,7 +34,7 @@ const SearchBar = () => {
     }
 
     formRef.current?.reset()
-    router.push(`${basePath}?keyword=${keyword}`)
+    router.push(`${basePath}?keyword=${escapedKeyword}`)
   }
 
   return (
