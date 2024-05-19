@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import ImageWithLoader from "@/components/UiParts/ImageWithLoader";
 import { Metadata } from "next";
-import Link from "next/link";
+import { Link } from 'next-view-transitions';
 
 export const metadata: Metadata = {
   title: "Error"

@@ -1,6 +1,6 @@
 import ImageWithLoader from "@/components/UiParts/ImageWithLoader"
 import { BlogsContentType } from "@/types/microcms"
-import Link from "next/link"
+import { Link } from 'next-view-transitions'
 
 type ArticleCardProps = {
   data: BlogsContentType

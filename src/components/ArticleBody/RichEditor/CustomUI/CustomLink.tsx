@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from 'next-view-transitions';
 import { HTMLAttributes, ReactNode } from "react";
 
 type CustomLinkProps = { href: string, children: ReactNode } & HTMLAttributes<HTMLAnchorElement>

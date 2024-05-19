@@ -1,6 +1,6 @@
 "use client"
 import { HeaderNavItem } from "@/types/header";
-import Link from "next/link";
+import { Link } from 'next-view-transitions';
 
 type NavDrowerProps = {
   isOpen: boolean;

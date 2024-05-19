@@ -5,7 +5,7 @@ import BottomCard from '@/components/ArticleBody/BottomCard';
 import FixedButton from '@/components/UiParts/FixedButton';
 import { BlogsContentType } from '@/types/microcms';
 import HTMLArea from '@/components/ArticleBody/RichEditor/HTMLArea';
-import Link from "next/link";
+import { Link } from 'next-view-transitions';
 import { generateTOCAssets } from "@/lib";
 import TOCList from "@/components/ArticleBody/TOCList";
 import AdRevenueLabel from "@/components/AdRevenueLabel";
