@@ -12,6 +12,23 @@ type PaginationItemProps = {
 const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemProps) => {
   const router = useRouter()
 
+  const generatePath = () => {
+    if (pageNumber === currentPage) return
+
+    const pathNameWithQueryParams = window.location.pathname + window.location.search
+
+    if (pathNameWithQueryParams.includes('keyword') || pathNameWithQueryParams.includes("category")) {
+      // NOTE: ?category=チュートリアル&page=2&page=3&page=1 になるのを防ぐ
+      return `${pathNameWithQueryParams.replace(/&page=\d+/, '')}&page=${pageNumber}`
+    }
+
+    if (pageNumber === 1) {
+      return '/blogs'
+    }
+
+    return `/blogs?page=${pageNumber}`
+  }
+
   const handleClick = () => {
     if (pageNumber === currentPage) return
 
