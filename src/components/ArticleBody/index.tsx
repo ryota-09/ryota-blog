@@ -10,6 +10,8 @@ import { generateTOCAssets } from "@/lib";
 import TOCList from "@/components/ArticleBody/TOCList";
 import AdRevenueLabel from "@/components/AdRevenueLabel";
 import ImageWithLoader from "@/components/UiParts/ImageWithLoader";
+import XShareButton from "@/components/UiParts/XShareButton";
+import { baseURL } from "@/config";
 
 type ArticleBodyProps = {
   data: BlogsContentType
@@ -78,6 +80,13 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
           <BottomCard />
         </aside>
         <FixedButton />
+        <XShareButton
+          classes="fixed top-4 right-4 bg-black text-white text-xl w-10 h-10 flex items-center justify-center rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-70 active:bg-gray-500"
+          text={data.title}
+          url={`${baseURL}/blogs/${data.id}`}
+        >
+          X
+        </XShareButton>
       </div>
     </div>
   )

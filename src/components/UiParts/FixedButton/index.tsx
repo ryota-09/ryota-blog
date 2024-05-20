@@ -16,7 +16,7 @@ const FixedButton = () => {
       }
     );
 
-    // 画面の上から800pxの位置にダミー要素を設置
+    // 画面の上から400pxの位置にダミー要素を設置
     const observedElement = document.createElement('div');
     observedElement.style.position = 'absolute';
     observedElement.style.top = '400px';
@@ -41,7 +41,7 @@ const FixedButton = () => {
 
   return (
     <button
-      className={`fixed bottom-4 right-4 bg-secondary text-white px-2 py-2 rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-80 active:bg-primary ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+      className={`fixed bottom-4 right-4 bg-secondary text-white p-2 rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-80 active:bg-primary ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       onClick={scrollToTop}
       style={{ transition: 'opacity 0.3s' }}
     >
