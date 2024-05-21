@@ -44,7 +44,7 @@ const Page = ({ searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKey
         </div>
         {blogType === "blogs" && (
           <Suspense fallback={<div className="h-16" />}>
-            <nav className="flex md:flex-none justify-center  mt-8">
+            <nav className="flex md:flex-none justify-center  mt-4">
               <Pagination query={query} currentPage={searchParams[PAGE_QUERY] ? +searchParams[PAGE_QUERY] : 1} />
             </nav>
           </Suspense>
