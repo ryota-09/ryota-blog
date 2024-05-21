@@ -1,5 +1,5 @@
 import type { HeaderNavItem } from "@/types/header";
-import Link from "next/link";
+import { Link } from 'next-view-transitions';
 
 type HeaderNavProps = {
   items: HeaderNavItem[];

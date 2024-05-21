@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from 'next-view-transitions';
 import Chip from "@/components/UiParts/Chip";
 import type { MappedKeyLiteralType } from "@/types/microcms";
 
@@ -9,7 +9,7 @@ type SearchStateCardProps = {
 
 const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
   return (
-    <div className="bg-white p-3.5 flex flex-col lg:flex-row items-center gap-2 lg:gap-10 border-2 border-gray-200">
+    <div className="bg-white px-3.5 flex flex-grow flex-col lg:flex-row items-center gap-2 lg:gap-10 border-2 border-gray-200">
       <div className="flex items-center gap-2 w-full lg:w-auto">
         <svg className="text-gray-500 w-4 h-4 lg:w-8 lg:h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="10" cy="10" r="8"></circle>

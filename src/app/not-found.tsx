@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link"
+import { Link } from 'next-view-transitions'
 
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -14,7 +14,7 @@ const Page = () => {
     <>
       <Header />
       <main className="flex-grow flex flex-col md:flex-row container mx-auto gap-4 my-4 h-full px-2">
-        <div className="flex w-full flex-col items-center justify-center bg-white px-4 py-12 dark:bg-gray-900 border-2 border-gray-200">
+        <div className="flex w-full flex-col items-center justify-center bg-white px-4 py-6 dark:bg-gray-900 border-2 border-gray-200">
           <div className="flex flex-col items-center justify-center space-y-4">
             <ImageWithLoader src="/404.png" alt="No contents" width={300} height={300} sizes="100vw" style={{ width: '50%', height: 'auto' }} />
             <h1 className="text-8xl font-bold text-gray-800 dark:text-gray-200">404</h1>

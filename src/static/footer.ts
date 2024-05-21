@@ -13,4 +13,8 @@ export const FOOTER_NAV_ITEMS: FooterNavItem[] = [
     name: 'Contact',
     href: '/contact',
   },
+  {
+    name: "RSS",
+    href: "/feed",
+  }
 ] as const;

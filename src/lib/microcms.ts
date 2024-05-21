@@ -51,12 +51,22 @@ const MicroCMSApiGetSingleObjectHandler = baseMicroCMSApiGetHandler("SINGLE");
 export const getBlogList = (querys?: MicroCMSQueries) =>
   MicroCMSApiGetListHandler<BlogsContentType>("blogs", { ...querys });
 
+export const getAllBlogList = async (querys?: MicroCMSQueries) => {
+  const data = client.getAllContents<BlogsContentType>({ "endpoint": "blogs", ...querys });
+  return data;
+}
+
 export const getBlogById = (contentId: string, querys?: MicroCMSQueries) =>
   MicroCMSApiGetSingleObjectHandler<BlogsContentType>(
     "blogs",
     querys,
     contentId
   );
+
+export const getAllBlogIds = async (alternatedField?: string) => {
+  const data = await client.getAllContentIds({ endpoint: "blogs", alternateField: alternatedField });
+  return data;
+}
 
 export const getBlogByKeyword = (keyword: string, querys?: MicroCMSQueries) => {
   return MicroCMSApiGetListHandler<BlogsContentType>("blogs", {

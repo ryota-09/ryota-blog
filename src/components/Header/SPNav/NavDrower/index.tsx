@@ -1,6 +1,7 @@
 "use client"
+import SocialMediaNav from "@/components/Header/SocialMediaNav";
 import { HeaderNavItem } from "@/types/header";
-import Link from "next/link";
+import { Link } from 'next-view-transitions';
 
 type NavDrowerProps = {
   isOpen: boolean;
@@ -19,6 +20,9 @@ const NavDrower = ({ isOpen, items, onClick }: NavDrowerProps) => {
             </Link>
           ))}
         </nav>
+        <div className="flex justify-center px-2">
+          <SocialMediaNav />
+        </div>
       </div>
 
       {isOpen && <div className="bg-black bg-opacity-50 fixed inset-0 z-10" onClick={onClick}></div>}
