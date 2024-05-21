@@ -14,7 +14,11 @@ export const metadata: Metadata = {
     default: "Home",
   },
   description: SITE_DESCRIPTION,
-  metadataBase: new URL(baseURL)
+  metadataBase: new URL(baseURL),
+  // NOTE: トランジッションAPIの設定
+  other: {
+    "view-transition": "same-origin",
+  }
 };
 
 export default function BlogListLayout({
