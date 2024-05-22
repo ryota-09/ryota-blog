@@ -18,7 +18,7 @@ export default function BlogListLayout({
   return (
     <>
       <Header />
-      <main className="container mx-auto gap-4 my-4 px-2">
+      <main className="container mx-auto gap-4 my-4 px-2 flex flex-col flex-grow">
         {children}
       </main>
       <Footer />

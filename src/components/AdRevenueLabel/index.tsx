@@ -35,7 +35,7 @@ const AdRevenueLabel = () => {
           ></path>
         </g>
       </svg>
-      <span className="ml-2 text-md">こちらの記事で広告収益を得ています。</span>
+      <span className="ml-2 text-md">こちらの記事にはプロモーションを含みます</span>
     </div>
   );
 };

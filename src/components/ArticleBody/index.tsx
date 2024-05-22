@@ -81,11 +81,11 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
         </aside>
         <FixedButton />
         <XShareButton
-          classes="fixed top-4 right-4 bg-gray-400 text-white text-xl w-10 h-10 flex items-center justify-center rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-70 active:bg-gray-500"
+          classes="fixed top-4 right-4 bg-gray-400 text-white text-sm w-auto h-10 px-2 flex items-center justify-center rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-70 active:bg-gray-500"
           text={data.title}
           url={`${baseURL}/blogs/${data.id}`}
         >
-          X
+          Post to X
         </XShareButton>
       </div>
     </div>
