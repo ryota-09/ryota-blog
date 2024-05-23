@@ -1,5 +1,5 @@
 import { getBlogById } from '@/lib/microcms'
-import { AUTHOR_NAME, SITE_TITLE } from '@/static/blogs'
+import { AUTHOR_NAME } from '@/static/blogs'
 import { ImageResponse } from 'next/og'
 
 export const size = {
@@ -39,6 +39,7 @@ export default async function Image({ params }: { params: { blogId: string } }) 
           alignItems: 'center',
           gap: '20px'
         }}>
+           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://images.microcms-assets.io/assets/4626924a681346e9a0fcabe5478eb9fa/26ca0e17cc994976907bb961f367db9e/author.jpg"
             style={{

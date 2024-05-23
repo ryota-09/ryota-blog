@@ -44,7 +44,7 @@ export const customReplaceOptions: HTMLReactParserOptions = {
         const href = aElement?.attribs.href
         return (
           // NOTE: スクロールバーが表示されるため、overflowY: "hidden" を指定
-          <iframe src={`/embedded?url=${href}`} className="w-full min-h-[180px] bg-white" style={{ overflowY: "hidden" }} />
+          <iframe src={`/embedded?url=${href}`} className="w-full h-[110px] md:h-[140px] lg:h-[165px] bg-white" style={{ overflowY: "hidden" }} />
         );
       }
 
@@ -54,6 +54,10 @@ export const customReplaceOptions: HTMLReactParserOptions = {
         case "h3":
           return <CustomH3 {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomH3>;
         case "p":
+          // NOTE: pタグ内にchildrenがない場合、brタグを追加
+          if (domNode.children.length === 0) {
+            return <br />
+          }
           if (domNode.parent && "name" in domNode.parent && domNode.parent.name === "blockquote") {
             return <CustomParagraph {...props} style={{ color: "#718096" }}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomParagraph>;
           }
@@ -77,7 +81,6 @@ export const customReplaceOptions: HTMLReactParserOptions = {
               filename = "attribs" in domNode.parent ? domNode.parent.attribs['data-filename'] : null;
             }
             const lang = domNode.children[0].attribs.class.replace('language-', '');
-            // const filename = "attribs" in domNode.children[0].children[0] ? domNode.children[0].children[0].attribs['data-filename'] : null;
             return <MultiCodeBlock filename={filename} lang={lang}>{"data" in domNode.children[0].children[0] ? domNode.children[0].children[0].data : ""}</MultiCodeBlock>;
           }
           return <pre>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</pre>

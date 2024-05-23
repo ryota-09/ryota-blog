@@ -19,7 +19,7 @@ export async function GET() {
     description: SITE_DESCRIPTION,
     link: baseURL,
     language: "ja",
-    image: `${baseURL}/favicon.ico`,
+    image: `${baseURL}/blogs/icon.jpg`,
     copyright: `&copy; ${new Date().getFullYear()} ${AUTHOR_NAME}`,
     updated: buildDate,
     feedLinks: {

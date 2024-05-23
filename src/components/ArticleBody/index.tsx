@@ -41,6 +41,8 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
                 alt={data.title}
                 width={data.thumbnail.width}
                 height={data.thumbnail.height}
+                sizes="100vw"
+                style={{ height: "auto", width: "100%"}}
                 priority
               />
             </figure>

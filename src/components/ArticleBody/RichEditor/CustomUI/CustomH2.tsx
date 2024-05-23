@@ -20,7 +20,7 @@ const CustomH2 = ({ children, id, ...RestProps }: CustomH3Props) => {
   };
 
   return (
-    <div className="py-3 my-3 border-b-base-color border-b-2 group cursor-pointer" onClick={handleCopy}>
+    <div className="py-3 my-3 border-b-secondary border-b-2 group cursor-pointer" onClick={handleCopy}>
       <div className="inline-block relative">
         <h2 id={id} {...RestProps} className="text-2xl font-bold group-hover:text-base-color transition duration-300 ease-in-out z-20 pr-1">
           {children}
