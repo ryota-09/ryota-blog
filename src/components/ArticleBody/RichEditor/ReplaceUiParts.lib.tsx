@@ -14,7 +14,7 @@ import CustomTr from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomT
 import CustomTh from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTh";
 import CustomTd from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTd";
 
-const isElement = (domNode: DOMNode): domNode is Element => {
+const isElement = (domNode: any): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);
   const hasAttributes = (domNode as Element).attribs !== undefined;
 
@@ -29,6 +29,22 @@ export const customReplaceOptions: HTMLReactParserOptions = {
       // ハイドレーションエラーが生じるため、scriptタグを削除
       if (domNode.name === "script" && domNode.attribs.src === "//cdn.iframe.ly/embed.js") {
         return <></>;
+      }
+
+      if (
+        domNode.name === "div" &&
+        domNode.attribs.class === "iframely-embed"
+      ) {
+        const childDivElement = domNode.firstChild
+        if (!isElement(childDivElement)) return
+
+        const aElement = childDivElement.firstChild
+        if (aElement && !("attribs" in aElement)) return;
+
+        const href = aElement?.attribs.href
+        return (
+          <iframe src={`/embedded?url=${href}`} className="w-full min-h-[180px] z-30 bg-white" />
+        );
       }
 
       switch (domNode.name) {

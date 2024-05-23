@@ -2,6 +2,8 @@ import ImageWithLoader from "@/components/UiParts/ImageWithLoader"
 import { BlogsContentType } from "@/types/microcms"
 import { Link } from 'next-view-transitions'
 
+const MAX_DESCRIPTION_LENGTH = 50
+
 type ArticleCardProps = {
   data: BlogsContentType
 }
@@ -12,7 +14,7 @@ const ArticleCard = ({ data }: ArticleCardProps) => {
       <Link href={`/blogs/${data.id}`} className="block text-lg md:text-xl leading-tight font-medium transition duration-200 text-black hover:text-base-color">{data.title}</Link>
       <div className="flex gap-4 h-full flex-col-reverse md:flex-row">
         <div className="md:w-[70%] flex flex-col justify-between">
-          <p className="mt-2 text-gray-500">{data.description}</p>
+          <p className="mt-2 text-gray-500">{data.description.length < MAX_DESCRIPTION_LENGTH ? data.description : data.description.slice(0,MAX_DESCRIPTION_LENGTH) + "..."}</p>
           <div className="flex justify-end">
             <Link href={`/blogs/${data.id}`} className="mt-4 text-xs md:text-md border-2 transition duration-200 border-base-color text-base-color hover:bg-secondary hover:text-white hover:border-secondary font-bold py-2 px-2 md:px-4">
               続きを読む

@@ -1,3 +1,5 @@
+// "use client"
+
 import RichEditor from "@/components/ArticleBody/RichEditor";
 import ThumbnailCard from '@/components/ArticleBody/ThumbnailCard';
 import Chip from '@/components/UiParts/Chip';
@@ -28,7 +30,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
 
   return (
     <div>
-      <div className='md:w-[80%] mx-auto my-4 md:my-16'>
+      <div className='md:w-[80%] mx-auto my-10 md:my-16'>
         {data.thumbnail
           ?
           <div className="flex flex-col gap-8">

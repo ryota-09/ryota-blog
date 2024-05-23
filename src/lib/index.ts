@@ -90,3 +90,8 @@ export const escapeHtml = (text: string | null) => {
     }
   });
 }
+
+export const pickHostname = (url: string) => {
+  const _url = new URL(url);
+  return _url.hostname;
+}

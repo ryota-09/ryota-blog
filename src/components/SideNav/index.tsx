@@ -4,7 +4,7 @@ import SearchBar from "@/components/SearchBar";
 const SideNav = () => {
   return (
     <aside className="w-full md:w-[300px] flex flex-col gap-8 px-2 md:px-0">
-      <div className="mt-6">
+      <div className="mt-7">
         <SearchBar />
       </div>
       <CategoryList />

@@ -31,8 +31,6 @@ export default function BlogListLayout({
       <html lang="ja">
         <body className={`${KosugiMaru.className} bg-[#eee] flex flex-col min-h-screen`}>
           {children}
-          {/* NOTE: 埋め込みiframeのため */}
-          <Script src="//cdn.iframe.ly/embed.js" strategy="lazyOnload" />
         </body>
       </html>
     </ViewTransitions>
