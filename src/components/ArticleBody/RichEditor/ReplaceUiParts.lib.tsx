@@ -43,7 +43,8 @@ export const customReplaceOptions: HTMLReactParserOptions = {
 
         const href = aElement?.attribs.href
         return (
-          <iframe src={`/embedded?url=${href}`} className="w-full min-h-[180px] z-30 bg-white" />
+          // NOTE: スクロールバーが表示されるため、overflowY: "hidden" を指定
+          <iframe src={`/embedded?url=${href}`} className="w-full min-h-[180px] bg-white" style={{ overflowY: "hidden" }} />
         );
       }
 
