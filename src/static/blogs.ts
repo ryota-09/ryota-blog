@@ -9,7 +9,16 @@ export const CATEGORY_QUERY = "category";
 export const BLOG_TYPE_QUERY = "blogType";
 
 export const CATEGORY_MAPED_ID = {
-  "チュートリアル": "j0f-ia7clr",
-  "更新情報": "ow5uxvw0a9",
-  "テクノロジー": "152cgpubnd"
+  "OpenAI API": "openai_api",
+  "React": "react",
+  "ガジェット": "gadget",
+  "雑記": "zakki",
+  "AWS": "aws",
+  "TailwindCSS": "tailwindcss",
+  "プログラミング": "programming",
+  "Career": "career",
+  "LifeHack": "life_hack",
+  "チュートリアル": "tutorial",
+  "Next.js": "next_js",
+  "TypeScript": "typescript"
 } as const;

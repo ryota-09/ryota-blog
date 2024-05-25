@@ -16,7 +16,7 @@ import { BlogTypeKeyLIteralType } from "@/types";
 import ZennArticleList from "@/components/ZennArticleList";
 
 export function generateMetadata(
-  { searchParams }: { searchParams: { blogType?: string, page?: string, category?: string, keyword?: string } },
+  { searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType, [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType, [KEYWORD_QUERY]: string } },
 ): Metadata {
   const blogType = searchParams.blogType || "blogs";
   const page = searchParams.page || null;
@@ -67,6 +67,7 @@ const Page = ({ searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKey
   const category = searchParams[CATEGORY_QUERY];
   const keyword = searchParams[KEYWORD_QUERY];
   const blogType = searchParams[BLOG_TYPE_QUERY] || "blogs";
+  const page = searchParams[PAGE_QUERY] || "1";
 
   const query: MicroCMSQueries = generateQuery(searchParams);
 
@@ -94,7 +95,7 @@ const Page = ({ searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKey
         {blogType === "blogs" && (
           <Suspense fallback={<div className="h-16" />}>
             <nav className="flex md:flex-none justify-center  mt-4">
-              <Pagination query={query} currentPage={searchParams[PAGE_QUERY] ? +searchParams[PAGE_QUERY] : 1} />
+              <Pagination query={query} currentPage={+page} />
             </nav>
           </Suspense>
         )}
