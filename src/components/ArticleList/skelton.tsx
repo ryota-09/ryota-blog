@@ -1,7 +1,9 @@
+import { PER_PAGE } from "@/static/blogs"
+
 const Skelton = () => {
   return (
     <ul className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-      {Array.from({ length: 6 }).map((_, index) => (
+      {Array.from({ length: PER_PAGE }).map((_, index) => (
         <li key={index}>
           <div className="bg-white border-2 border-gray-200 overflow-hidden p-6 h-full flex flex-col">
             <div className="block text-lg md:text-xl leading-tight font-medium transition duration-200 bg-gray-200 h-6 w-full mb-4 animate-pulse" />

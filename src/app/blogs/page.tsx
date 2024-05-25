@@ -1,6 +1,7 @@
 
-import { MicroCMSQueries } from "microcms-js-sdk";
 import { Suspense } from "react";
+import type { MicroCMSQueries } from "microcms-js-sdk";
+import type { Metadata } from "next";
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
@@ -14,13 +15,61 @@ import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import { BlogTypeKeyLIteralType } from "@/types";
 import ZennArticleList from "@/components/ZennArticleList";
 
+export function generateMetadata(
+  { searchParams }: { searchParams: { blogType?: string, page?: string, category?: string, keyword?: string } },
+): Metadata {
+  const blogType = searchParams.blogType || "blogs";
+  const page = searchParams.page || null;
+  const category = searchParams.category || null
+  const keyword = searchParams.keyword || null
+
+  // NOTE: ?blogType=zenn にアクセスした場合  
+  if (blogType === "zenn") {
+    return {
+      title: "Zennの記事一覧",
+      description: "これまでZennで書いてきた記事の一覧です。"
+    }
+  }
+  // NOTE: /blogs にアクセスした場合
+  if (blogType === "blogs" && !category && !keyword) {
+    return {
+      title: page ? `記事一覧のページ。${page}ページ目。` : "HOME",
+      robots: "noindex",
+    }
+  }
+
+  let title = `に関する検索結果のページ${page ? `。${page}ページ目。` : ""}`
+  let description = "に関する検索結果のページです。"
+  // NOTE: ?category=hoge&keyword=fuga にアクセスした場合
+  if (category && keyword) {
+    title = `${category}と${keyword}` + title
+    description = `${category}と${keyword}` + description
+  }
+  // NOTE: ?category=hoge にアクセスした場合
+  if (keyword && !category) {
+    title = `${keyword}` + title
+    description = `${keyword}` + description
+  }
+  // NOTE: ?keyword=fuga にアクセスした場合
+  if (category && !keyword) {
+    title = `${category}` + title
+    description = `${category}` + description
+  }
+
+  return {
+    title: title,
+    description: description,
+    robots: page ? "noindex" : "index"
+  }
+}
+
 const Page = ({ searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType, [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType, [KEYWORD_QUERY]: string } }) => {
   const category = searchParams[CATEGORY_QUERY];
   const keyword = searchParams[KEYWORD_QUERY];
   const blogType = searchParams[BLOG_TYPE_QUERY] || "blogs";
 
   const query: MicroCMSQueries = generateQuery(searchParams);
-  
+
   return (
     <>
       <div className="w-full md:w-[calc(100%_-_300px)] flex flex-col justify-between px-2 md:px-0">

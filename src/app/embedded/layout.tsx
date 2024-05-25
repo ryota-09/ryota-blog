@@ -1,6 +1,11 @@
+import { Metadata } from "next";
 import { Kosugi_Maru } from "next/font/google";
 
 const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"], display: "swap" });
+
+export const metadata: Metadata = {
+  robots: "noindex"
+}
 
 export default function BlogListLayout({
   children,
