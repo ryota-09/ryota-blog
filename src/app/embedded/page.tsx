@@ -5,7 +5,6 @@ import EmbeddedCard from '@/components/EmbeddedCard';
 const Page = async ({ searchParams }: { searchParams: { url: string } }) => {
   const url = searchParams.url
   const metadata = await unstable_cache((url: string) => metaFetcher(url), [url], { revalidate: 24 * 60 * 60 })(url)
-
   return (
     <main className='w-full h-full'>
       <EmbeddedCard

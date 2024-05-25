@@ -13,6 +13,7 @@ import CustomTbody from "@/components/ArticleBody/RichEditor/CustomUI/Table/Cust
 import CustomTr from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTr";
 import CustomTh from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTh";
 import CustomTd from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTd";
+import CustomIframe from "@/components/ArticleBody/RichEditor/CustomUI/CustomIframe";
 
 const isElement = (domNode: any): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);
@@ -44,7 +45,7 @@ export const customReplaceOptions: HTMLReactParserOptions = {
         const href = aElement?.attribs.href
         return (
           // NOTE: スクロールバーが表示されるため、overflowY: "hidden" を指定
-          <iframe src={`/embedded?url=${href}`} className="w-full h-[110px] md:h-[140px] lg:h-[165px] bg-white" style={{ overflowY: "hidden" }} />
+          <CustomIframe href={href ?? ""} className="w-full h-[110px] md:h-[140px] lg:h-[190px] bg-white" />
         );
       }
 
