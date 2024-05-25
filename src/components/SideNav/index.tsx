@@ -1,4 +1,7 @@
+import { Suspense } from "react";
+
 import CategoryList from "@/components/CategoryList";
+import Skelton from "@/components/CategoryList/skelton";
 import SearchBar from "@/components/SearchBar";
 
 const SideNav = () => {
@@ -7,7 +10,9 @@ const SideNav = () => {
       <div className="mt-7">
         <SearchBar />
       </div>
-      <CategoryList />
+      <Suspense fallback={<Skelton />}>
+        <CategoryList />
+      </Suspense>
     </aside>
   )
 }

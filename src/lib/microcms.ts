@@ -75,5 +75,7 @@ export const getBlogByKeyword = (keyword: string, querys?: MicroCMSQueries) => {
   });
 }
 
-export const getCategoryList = (querys?: MicroCMSQueries) =>
-  MicroCMSApiGetListHandler<CategoriesContentType>("categories", querys);
+export const getAllCategoryList = async (querys?: MicroCMSQueries) => {
+  const data = await client.getAllContents<CategoriesContentType>({ "endpoint": "categories", ...querys });
+  return data;
+}
