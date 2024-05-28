@@ -1,4 +1,5 @@
 import { DOMNode, Element, attributesToProps, domToReact, HTMLReactParserOptions } from "html-react-parser";
+
 import CustomH3 from "@/components/ArticleBody/RichEditor/CustomUI/CustomH3";
 import CustomH2 from "@/components/ArticleBody/RichEditor/CustomUI/CustomH2";
 import CustomParagraph from "@/components/ArticleBody/RichEditor/CustomUI/CustomParagraph";
@@ -14,7 +15,7 @@ import CustomTr from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomT
 import CustomTh from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTh";
 import CustomTd from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTd";
 import CustomIframe from "@/components/ArticleBody/RichEditor/CustomUI/CustomIframe";
-import TwitterCard from "@/components/ArticleBody/TwitterCard";
+import TwitterCard from "@/components/ArticleBody/RichEditor/TwitterCard";
 
 const isElement = (domNode: any): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);

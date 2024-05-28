@@ -13,6 +13,7 @@
     "update-rss": "node ./src/static/rss/rss-parser.js"
   },
   "dependencies": {
+    "@next/third-parties": "^14.2.3",
     "clsx": "^2.1.1",
     "html-react-parser": "^5.1.10",
     "microcms-js-sdk": "^3.1.1",

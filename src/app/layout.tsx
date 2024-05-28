@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Kosugi_Maru } from "next/font/google";
 import { ViewTransitions } from 'next-view-transitions'
+import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
-import Script from "next/script";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/static/blogs";
-import { baseURL } from "@/config";
+import { baseURL, gaId, gtmId } from "@/config";
 
 const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"], display: "swap" });
 
@@ -32,6 +32,8 @@ export default function BlogListLayout({
         <body className={`${KosugiMaru.className} bg-[#eee] flex flex-col min-h-screen`}>
           {children}
         </body>
+        <GoogleTagManager gtmId={gtmId} />
+        <GoogleAnalytics gaId={gaId} />
       </html>
     </ViewTransitions>
   );
