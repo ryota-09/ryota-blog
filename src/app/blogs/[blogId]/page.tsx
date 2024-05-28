@@ -3,6 +3,7 @@ import BreadcrumbList from "@/components/BreadcrumbList";
 import { generateBreadcrumbAssets } from "@/lib";
 import { getBlogById, getBlogList } from "@/lib/microcms";
 import { Metadata } from "next";
+import { cookies, draftMode } from "next/headers";
 
 export async function generateStaticParams() {
   const blogList = await getBlogList({ fields: "id" });
@@ -32,7 +33,16 @@ type PageProps = {
 
 const Page = async ({ params }: PageProps) => {
   const blogId = params.blogId
-  const data = await getBlogById(blogId);
+  const { isEnabled } = draftMode()
+  const currentCookies = cookies()
+  const draftKey = currentCookies.get('draftKey')?.value
+
+  let data;
+  if (isEnabled && draftKey) {
+    data = await getBlogById(blogId, { draftKey: draftKey });
+  } else {
+    data = await getBlogById(blogId);
+  }
 
   const breadcrumbAssets = generateBreadcrumbAssets(blogId, data.title)
   return (
