@@ -14,6 +14,7 @@ import CustomTr from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomT
 import CustomTh from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTh";
 import CustomTd from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTd";
 import CustomIframe from "@/components/ArticleBody/RichEditor/CustomUI/CustomIframe";
+import TwitterCard from "@/components/ArticleBody/TwitterCard";
 
 const isElement = (domNode: any): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);
@@ -36,12 +37,14 @@ export const customReplaceOptions: HTMLReactParserOptions = {
         domNode.name === "div" &&
         domNode.attribs.class === "iframely-embed"
       ) {
+
+        if (!domNode.firstChild) return
+
         const childDivElement = domNode.firstChild
         if (!isElement(childDivElement)) return
 
         const aElement = childDivElement.firstChild
         if (aElement && !("attribs" in aElement)) return;
-
         const href = aElement?.attribs.href
         return (
           // NOTE: スクロールバーが表示されるため、overflowY: "hidden" を指定
@@ -72,6 +75,13 @@ export const customReplaceOptions: HTMLReactParserOptions = {
         case "li":
           return <CustomLi {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomLi>;
         case "blockquote":
+          if (domNode.attribs.class === "twitter-tweet") {
+            return (
+              <TwitterCard {...props}>
+                {domToReact(domNode.children as DOMNode[], customReplaceOptions)}
+              </TwitterCard>
+            )
+          }
           return <CustomBlockquote {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomBlockquote>;
         case "code":
           return <code className="bg-gray-200 font-mono text-sm px-1 py-0.5 rounded">{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</code>
