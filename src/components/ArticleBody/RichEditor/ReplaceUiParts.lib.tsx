@@ -17,6 +17,7 @@ import CustomTd from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomT
 import CustomIframe from "@/components/ArticleBody/RichEditor/CustomUI/CustomIframe";
 import TwitterCard from "@/components/ArticleBody/RichEditor/TwitterCard";
 import CustomCode from "@/components/ArticleBody/RichEditor/CustomUI/CustomCode";
+import CustomStrong from "@/components/ArticleBody/RichEditor/CustomUI/CustomStrong";
 
 const isElement = (domNode: any): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);
@@ -68,6 +69,8 @@ export const customReplaceOptions: HTMLReactParserOptions = {
             return <CustomParagraph {...props} style={{ color: "#718096" }}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomParagraph>;
           }
           return <CustomParagraph {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomParagraph>;
+        case "strong":
+          return <CustomStrong {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomStrong>;
         case "a":
           return <CustomLink {...props} href={domNode.attribs.href}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomLink>;
         case "img":

@@ -1,8 +1,6 @@
 "use client"
 import ImageWithLoader from "@/components/UiParts/ImageWithLoader";
-import { microCMSLoader } from "@/lib";
 import { AUTHOR_NAME } from "@/static/blogs";
-import Image from "next/image";
 
 type ThumbnailCardProps = {
   title: string;
