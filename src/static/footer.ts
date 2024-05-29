@@ -11,7 +11,8 @@ export const FOOTER_NAV_ITEMS: FooterNavItem[] = [
   },
   {
     name: 'Contact',
-    href: '/contact',
+    href: 'https://docs.google.com/forms/d/1RP2EUWjYvEa2gwFd0bjFurmZxUFCfvxtwxqpm6ggO68/viewform?edit_requested=true',
+    target: "_blank",
   },
   {
     name: "Feed",

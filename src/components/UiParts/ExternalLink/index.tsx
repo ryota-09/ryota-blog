@@ -1,10 +1,10 @@
 import type { ComponentProps } from "react";
 
-type ExternalLinkProps = Omit<ComponentProps<"a">, "target" | "rel">
+type ExternalLinkProps = Omit<ComponentProps<"a">, "rel">
 
-const ExternalLink = ({ href, children, ...restProps }: ExternalLinkProps) => {
+const ExternalLink = ({ href, target, children, ...restProps }: ExternalLinkProps) => {
   return (
-    <a {...restProps} href={href} target="_blank" rel="noopener noreferrer">{children}</a>
+    <a {...restProps} href={href} target={target || "_blank"} rel="noopener noreferrer">{children}</a>
   )
 }
 
