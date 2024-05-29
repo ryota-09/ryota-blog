@@ -9,7 +9,7 @@ const SPNav = () => {
   const [isOpen, setIsOpen] = useState(false)
   return (
     <>
-      <div className="text-gray-100 flex justify-between md:hidden">
+      <div className=" flex justify-between md:hidden">
         <HumbergerButton isOpen={isOpen} onClick={() => setIsOpen((prev) => !prev)} />
       </div>
       <NavDrower isOpen={isOpen} items={HEADER_NAV_ITEMS} onClick={() => setIsOpen((prev) => !prev)} />

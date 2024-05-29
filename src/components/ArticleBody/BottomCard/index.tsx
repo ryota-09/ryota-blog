@@ -8,8 +8,8 @@ const BottomCard = () => {
         <ImageWithLoader src="/author.jpg" alt="author" width={80} height={80} classes="rounded-full" />
       </div>
       <div>
-        <p className='font-bold text-3xl'>{AUTHOR_NAME}</p>
-        <p className="mx-1 mt-4 text-gray-500">{AUTHOR_DESCRIPTION}</p>
+        <p className='font-bold text-3xl dark:text-gray-300'>{AUTHOR_NAME}</p>
+        <p className="mx-1 mt-4 text-gray-500 dark:text-gray-400">{AUTHOR_DESCRIPTION}</p>
       </div>
     </>
   )

@@ -39,21 +39,21 @@ const BlogTypeTabs = ({ blogType }: BlogTypeTabsProps) => {
   return (
     <nav className="relative flex bg-transparent flex-grow">
       <div
-        className={cltw("rounded-sm transition-all duration-300 w-1/2 absolute inset-0", activeTab === "blogs" ? 'bg-base-color' : 'bg-zenn')}
+        className={cltw("rounded-sm transition-all duration-300 w-1/2 absolute inset-0", activeTab === "blogs" ? 'bg-base-color dark:bg-primary' : 'bg-zenn')}
         style={{
           transform: activeTab === "blogs" ? 'translateX(0%)' : 'translateX(100%)',
         }}
       />
       <button
         type='button'
-        className={cltw("relative z-10 px-4 py-2 transition-all duration-300 text-center w-1/2 font-medium text-lg", activeTab === "blogs" ? 'text-white' : "text-txt-base")}
+        className={cltw("relative z-10 px-4 py-2 transition-all duration-300 text-center w-1/2 font-medium text-lg", activeTab === "blogs" ? 'text-white' : "text-txt-base dark:text-gray-400")}
         onClick={blogButtonHandler}
       >
         {BLOG_TYPE_ASSETS["blogs"]}
       </button>
       <button
         type='button'
-        className={cltw("relative z-10 px-4 py-2 transition-all duration-300 text-center w-1/2 font-medium text-lg", activeTab === "zenn" ? 'text-white' : 'text-txt-base')}
+        className={cltw("relative z-10 px-4 py-2 transition-all duration-300 text-center w-1/2 font-medium text-lg", activeTab === "zenn" ? 'text-white' : 'text-txt-base dark:text-gray-400')}
         onClick={zennButtonHandler}
       >
         {BLOG_TYPE_ASSETS["zenn"]}

@@ -1,6 +1,6 @@
-import { type HTMLAttributes } from "react";
+import { type ComponentProps } from "react";
 
-type CustomUlProps = HTMLAttributes<HTMLUListElement>
+type CustomUlProps = ComponentProps<"ul">
 
 
 const CustomUl = ({ children, ...RestProps }: CustomUlProps) => {

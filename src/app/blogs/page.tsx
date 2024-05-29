@@ -76,7 +76,7 @@ const Page = ({ searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKey
       <div className="w-full md:w-[calc(100%_-_300px)] flex flex-col justify-between px-2 md:px-0">
         <div className="flex flex-col gap-4">
           <div className="flex gap-4 flex-col lg:flex-row">
-            <div className="flex justify-center items-center p-3 bg-white border-2 border-gray-200">
+            <div className="flex justify-center items-center p-3 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-600">
               <BlogTypeTabs blogType={blogType} />
             </div>
             {(category || keyword) && (

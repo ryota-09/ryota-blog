@@ -22,7 +22,7 @@ export default function BlogListLayout({
   return (
     <GlobalStateProvider>
       <Header />
-      <main className="bg-[#eee] flex-grow flex flex-col md:flex-row container mx-auto gap-4 my-4">
+      <main className="bg-[#eee] dark:bg-[#333] flex-grow flex flex-col md:flex-row container mx-auto gap-4 my-4">
         {children}
       </main>
       <Footer />

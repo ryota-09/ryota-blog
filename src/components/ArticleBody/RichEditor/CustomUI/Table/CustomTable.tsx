@@ -1,6 +1,6 @@
-import { type HTMLAttributes } from "react";
+import { type ComponentProps } from "react";
 
-type CustomTableProps = HTMLAttributes<HTMLTableElement>
+type CustomTableProps = ComponentProps<"table">
 
 const CustomTable = ({ children, ...restProps }: CustomTableProps) => {
   return (

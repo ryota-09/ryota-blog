@@ -14,7 +14,7 @@ export default function BlogListLayout({
 }>) {
   return (
     <html lang="ja">
-      <body className={`${KosugiMaru.className} m-0`} style={{ backgroundColor: "white" }}>
+      <body className={`${KosugiMaru.className} m-0 bg-white dark:bg-black`}>
         {children}
       </body>
     </html>

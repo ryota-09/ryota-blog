@@ -7,17 +7,17 @@ type TOCListProps = {
 
 const TOCList = ({ data }: TOCListProps) => {
   return (
-    <div className="hover:bg-gray-50 dark:bg-gray-950 transition duration-200 rounded-md hover:shadow-lg">
+    <div className="hover:bg-gray-50 dark:hover:bg-gray-600 transition duration-200 rounded-md hover:shadow-lg">
       <details>
-        <summary className="py-6 px-4 text-2xl font-semibold w-full cursor-pointer marker:text-secondary">目次</summary>
+        <summary className="py-6 px-4 text-2xl dark:text-gray-300 font-semibold w-full cursor-pointer marker:text-secondary">目次</summary>
         <nav className="mx-12 pb-10">
           <ol className="space-y-8 list-decimal">
             {data.map(({ id, text, subList }) => (
               <div key={id}>
-                <li className="group marker:text-black hover:marker:text-base-color marker:duration-300">
+                <li className="group marker:text-black dark:marker:text-gray-300 hover:marker:text-base-color marker:duration-300">
                   <TOCItem
                     id={id}
-                    classes="block text-black text-lg group-hover:text-base-color dark:text-gray-400 dark:hover:text-gray-50 duration-300 transition-colors"
+                    classes="block text-black text-lg group-hover:text-base-color dark:text-gray-300 dark:hover:text-gray-50 duration-300 transition-colors"
                   >
                     {text}
                   </TOCItem>

@@ -3,8 +3,8 @@ import { FOOTER_NAV_ITEMS } from "@/static/footer";
 
 const Footer = () => {
   return (
-    <footer className="bg-white py-4 shadow-inner">
-      <div className="container mx-auto divide-y px-2 md:px-0">
+    <footer className="bg-white dark:bg-black py-4 shadow-inner">
+      <div className="container mx-auto divide-y dark:divide-[#333] px-2 md:px-0">
         <div className="flex justify-between items-center pb-6">
           <FooterNav items={FOOTER_NAV_ITEMS} />
         </div>

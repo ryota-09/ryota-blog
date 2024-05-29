@@ -34,7 +34,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
         {data.thumbnail
           ?
           <div className="flex flex-col gap-8">
-            <h1 className="text-2xl md:text-3xl font-bold">{data.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold dark:text-gray-300">{data.title}</h1>
             <figure className=" max-h-[300px] md:max-h-[540px] overflow-hidden shadow-2xl">
               <ImageWithLoader
                 src={data.thumbnail.url}
@@ -58,7 +58,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
         {data.category.map(({ name }, index) => (
           <Link href={`/blogs?category=${name}`} key={index}>
             <li className="block cursor-pointer">
-              <Chip label={name} classes="bg-gray-200 px-3 py-2 text-sm text-txt-base hover:opacity-60" />
+              <Chip label={name} classes="bg-gray-200 dark:bg-gray-600 dark:text-gray-300 px-3 py-2 text-sm text-txt-base hover:opacity-60" />
             </li>
           </Link>
         ))}
@@ -80,12 +80,12 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
               return <HTMLArea key={index} html={body.html} />
           }
         })}
-        <aside className='flex gap-4 mx-0.5 border-t py-10'>
+        <aside className='flex gap-4 mx-0.5 border-t dark:border-t-[#333] py-10'>
           <BottomCard />
         </aside>
         <FixedButton />
         <XShareButton
-          classes="fixed top-4 right-4 bg-gray-400 text-white text-sm w-auto h-10 px-2 flex items-center justify-center rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-70 active:bg-gray-500"
+          classes="fixed top-4 right-4 bg-gray-400 dark:bg-gray-600 text-white text-sm w-auto h-10 px-2 flex items-center justify-center rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-70 active:bg-gray-500"
           text={data.title}
           url={`${baseURL}/blogs/${data.id}`}
         >

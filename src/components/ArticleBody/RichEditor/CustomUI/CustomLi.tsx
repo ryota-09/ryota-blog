@@ -1,12 +1,11 @@
-import { type HTMLAttributes } from "react";
+import { type ComponentProps } from "react";
 
-type CustomUlProps = HTMLAttributes<HTMLLIElement>
-
+type CustomUlProps = ComponentProps<"li">
 
 const CustomLi = ({ children, ...RestProps }: CustomUlProps) => {
 
   return (
-    <li {...RestProps} className="list-disc marker:text-gray-500">
+    <li {...RestProps} className="list-disc marker:text-gray-500 dark:text-gray-300">
       {children}
     </li>
   );

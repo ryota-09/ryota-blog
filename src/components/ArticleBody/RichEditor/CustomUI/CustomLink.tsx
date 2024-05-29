@@ -1,11 +1,11 @@
 import { Link } from 'next-view-transitions';
-import { HTMLAttributes, ReactNode } from "react";
+import { type ComponentProps } from "react";
 
-type CustomLinkProps = { href: string, children: ReactNode } & HTMLAttributes<HTMLAnchorElement>
+type CustomLinkProps = ComponentProps<"a">
 
 const CustomLink = ({ href, children, ...restProps }: CustomLinkProps) => {
   return (
-    <Link {...restProps} href={href} className=" underline underline-offset-4 transition hover:text-base-color hover:no-underline">{children}</Link>
+    <Link {...restProps} href={href ?? ""} className=" underline underline-offset-4 transition hover:text-base-color dark:hover:text-primary hover:no-underline">{children}</Link>
   )
 }
 export default CustomLink;

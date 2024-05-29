@@ -1,6 +1,6 @@
-import { type HTMLAttributes } from "react";
+import { type ComponentProps } from "react";
 
-type CustomTrProps = HTMLAttributes<HTMLTableCellElement>
+type CustomTrProps = ComponentProps<"td">
 
 const CustomTd = ({ children, ...restProps }: CustomTrProps) => {
   return (

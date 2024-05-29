@@ -1,6 +1,6 @@
 const AdRevenueLabel = () => {
   return (
-    <div className="flex items-center text-txt-base bg-gray-50 p-4 w-fit">
+    <div className="flex items-center text-txt-base  bg-gray-50 dark:bg-gray-600  p-4 w-fit">
       <svg
         version="1.1"
         id="_x32_"
@@ -35,7 +35,7 @@ const AdRevenueLabel = () => {
           ></path>
         </g>
       </svg>
-      <span className="ml-2 text-md">こちらの記事にはプロモーションを含みます</span>
+      <span className="ml-2 text-md dark:text-gray-300">こちらの記事にはプロモーションを含みます</span>
     </div>
   );
 };

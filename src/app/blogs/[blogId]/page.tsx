@@ -48,7 +48,7 @@ const Page = async ({ params }: PageProps) => {
   return (
     <div className="max-w-[1028px] mx-auto px-2 md:px-0">
       <BreadcrumbList items={breadcrumbAssets} />
-      <article className=" bg-white border-2 px-4">
+      <article className=" bg-white dark:bg-black border-2 dark:border-gray-600 px-4">
         <ArticleBody data={data} />
       </article>
     </div>

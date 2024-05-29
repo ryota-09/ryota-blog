@@ -16,6 +16,7 @@ import CustomTh from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomT
 import CustomTd from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTd";
 import CustomIframe from "@/components/ArticleBody/RichEditor/CustomUI/CustomIframe";
 import TwitterCard from "@/components/ArticleBody/RichEditor/TwitterCard";
+import CustomCode from "@/components/ArticleBody/RichEditor/CustomUI/CustomCode";
 
 const isElement = (domNode: any): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);
@@ -49,7 +50,7 @@ export const customReplaceOptions: HTMLReactParserOptions = {
         const href = aElement?.attribs.href
         return (
           // NOTE: スクロールバーが表示されるため、overflowY: "hidden" を指定
-          <CustomIframe href={href ?? ""} className="w-full h-[110px] md:h-[140px] lg:h-[190px] bg-white" />
+          <CustomIframe href={href ?? ""} className="w-full h-[105px] md:h-[130px] lg:h-[160px] bg-white dark:bg-black" />
         );
       }
 
@@ -85,7 +86,7 @@ export const customReplaceOptions: HTMLReactParserOptions = {
           }
           return <CustomBlockquote {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomBlockquote>;
         case "code":
-          return <code className="bg-gray-200 font-mono text-sm px-1 py-0.5 rounded">{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</code>
+          return <CustomCode className="bg-gray-200 dark:bg-gray-400 font-mono text-sm dark:text-gray-700 px-1 py-0.5 rounded">{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomCode>
         case "pre":
           if (domNode.children[0].type === 'tag' && domNode.children[0].name === 'code') {
             let filename = null;

@@ -2,7 +2,7 @@ import type { ComponentProps } from "react";
 
 type CustomIframeProps = {
   href: string
-} & Omit<ComponentProps<"iframe">, "src">;
+} & Omit<ComponentProps<"iframe">, "src" | "loading">;
 
 const CustomIframe = ({ href, className, style, ...restProps }: CustomIframeProps) => {
   return (

@@ -12,10 +12,10 @@ type NavDrowerProps = {
 const NavDrower = ({ isOpen, items, onClick }: NavDrowerProps) => {
   return (
     <>
-      <div className={`bg-white text-txt-base w-64 space-y-6 py-16 z-30 fixed inset-y-0 right-0 transform ${isOpen ? "translate-x-0" : "translate-x-full"} transition-transform duration-500 ease-in-out`}>
+      <div className={`bg-white dark:bg-black text-txt-base w-64 space-y-6 py-16 z-30 fixed inset-y-0 right-0 transform ${isOpen ? "translate-x-0" : "translate-x-full"} transition-transform duration-500 ease-in-out`}>
         <nav>
           {items.map(({ name, href }, index) => (
-            <Link key={index} href={href} className="block py-2.5 px-0 transition duration-200 hover:bg-light hover:text-white">
+            <Link key={index} href={href} className="block py-2.5 px-0 transition dark:text-gray-300 duration-200 hover:bg-light dark:hover:bg-primary hover:text-white">
               <span className="mx-4">{name}</span>
             </Link>
           ))}
@@ -25,7 +25,7 @@ const NavDrower = ({ isOpen, items, onClick }: NavDrowerProps) => {
         </div>
       </div>
 
-      {isOpen && <div className="bg-black bg-opacity-50 fixed inset-0 z-10" onClick={onClick}></div>}
+      {isOpen && <div className="bg-black dark:bg-gray-600 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-10" onClick={onClick}></div>}
     </>
   )
 }

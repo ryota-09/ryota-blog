@@ -1,6 +1,6 @@
-import { type HTMLAttributes } from "react";
+import { type ComponentProps } from "react";
 
-type CustomTbodyProps = HTMLAttributes<HTMLTableSectionElement>
+type CustomTbodyProps = ComponentProps<"tbody">
 
 const CustomTbody = ({ children, ...restProps }: CustomTbodyProps) => {
   return (

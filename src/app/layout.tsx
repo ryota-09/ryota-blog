@@ -29,7 +29,7 @@ export default function BlogListLayout({
   return (
     <ViewTransitions>
       <html lang="ja">
-        <body className={`${KosugiMaru.className} bg-[#eee] flex flex-col min-h-screen`}>
+        <body className={`${KosugiMaru.className} bg-[#eee] dark:bg-[#333] flex flex-col min-h-screen`}>
           {children}
         </body>
         <GoogleTagManager gtmId={gtmId} />

@@ -12,7 +12,7 @@ const BreadcrumbItem = ({ href, label, isLast }: BreadcrumbItemProps) => {
       {!isLast
         ?
         <>
-          <Link href={href} className="block text-gray-600 h-wull w-full transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color">
+          <Link href={href} className="block text-gray-600 dark:text-gray-400 h-wull w-full transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color">
             <span>{label}</span>
           </Link>
           <svg
@@ -21,7 +21,7 @@ const BreadcrumbItem = ({ href, label, isLast }: BreadcrumbItemProps) => {
             height="24"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
+            stroke="gray"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -31,7 +31,7 @@ const BreadcrumbItem = ({ href, label, isLast }: BreadcrumbItemProps) => {
           </svg>
         </>
         :
-        <p className="text-gray-600">{label}</p>
+        <p className="text-gray-600 dark:text-gray-400">{label}</p>
       }
 
     </li >
