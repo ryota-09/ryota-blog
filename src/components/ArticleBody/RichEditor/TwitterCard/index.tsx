@@ -15,19 +15,18 @@ const TwitterCard = ({ children, className, ...restProps }: TwitterCardProps) =>
       window.twttr.widgets.load();
     }
   }, [pathname]);
-
   return (
     <>
-      <div className="dark:hidden">
+      {/* <div className="dark:hidden"> */}
         <blockquote {...restProps} data-theme="light" className={cltw(className, "twitter-tweet")}>
           {children}
         </blockquote>
-      </div>
-      <div className="hidden dark:block">
+      {/* </div> */}
+      {/* <div className="hidden dark:block">
         <blockquote {...restProps} data-theme="dark" className={cltw(className, "twitter-tweet")}>
           {children}
         </blockquote>
-      </div>
+      </div> */}
       <Script
         src="https://platform.twitter.com/widgets.js"
         strategy="lazyOnload"
