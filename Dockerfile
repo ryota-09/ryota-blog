@@ -33,17 +33,9 @@ ARG MICROCMS_SERVICE_DOMAIN
 ARG MICROCMS_API_KEY
 RUN touch .env
 RUN echo "NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}" >> .env
-RUN echo "NEXT_PUBLIC_GTM_ID=${NEXT_PUBLIC_GTM_ID}" >> .env
-RUN echo "NEXT_PUBLIC_GA_ID=${NEXT_PUBLIC_GA_ID}" >> .env
 RUN echo "MICROCMS_SERVICE_DOMAIN=${MICROCMS_SERVICE_DOMAIN}" >> .env
 RUN echo "MICROCMS_API_KEY=${MICROCMS_API_KEY}" >> .env
 RUN cat .env
-
-# NEXT_PUBLIC_BASE_URLが設定されているか確認
-RUN echo "@@@@@@@@@@@@@@  NEXT_PUBLIC_BASE_URLが設定されているか確認 @@@@@@@@@@@@@@"
-RUN echo $NEXT_PUBLIC_BASE_URL
-RUN echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-
 
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
