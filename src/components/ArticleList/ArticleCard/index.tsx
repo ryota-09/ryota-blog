@@ -14,7 +14,7 @@ const ArticleCard = ({ data }: ArticleCardProps) => {
         <div className="md:w-[70%] flex flex-col justify-between">
           <p className="mt-2 text-gray-500 line-clamp-3">{data.description}</p>
           <div className="flex justify-end">
-            <Link href={`/blogs/${data.id}`} className="mt-4 text-xs md:text-md border-2 transition duration-200 border-base-color dark:border-primary text-base-color dark:text-light hover:bg-secondary dark:hover:bg-primary hover:text-white hover:border-secondary dark:hover:border-primary font-bold py-2 px-2 md:px-4">
+            <Link href={`/blogs/${data.id}`} className="mt-4 text-md md:text-xs md:text-md border-2 transition duration-200 border-base-color dark:border-primary text-base-color dark:text-light hover:bg-secondary dark:hover:bg-primary hover:text-white hover:border-secondary dark:hover:border-primary font-bold py-3 md:py-2 px-6 md:px-4">
               続きを読む
             </Link>
           </div>

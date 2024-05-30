@@ -23,7 +23,10 @@ export default function Image() {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          border: '48px solid rgb(59 172 182)',
+          borderTop: '60px solid rgb(59 172 182)',
+          borderBottom: '60px solid rgb(59 172 182)',
+          borderLeft: '72px solid rgb(59 172 182)',
+          borderRight: '72px solid rgb(59 172 182)',
           borderRadius: '16px',
           fontSize: '48px',
           fontWeight: 'bold'
