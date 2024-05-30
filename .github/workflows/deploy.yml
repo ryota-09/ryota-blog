@@ -5,6 +5,9 @@ on:
     branches:
       - main
       - staging
+  # webhookをトリガーにする場合
+  repository_dispatch:
+    types: [posts_update]
 
 jobs:
   build:
