@@ -18,6 +18,7 @@ import CustomIframe from "@/components/ArticleBody/RichEditor/CustomUI/CustomIfr
 import TwitterCard from "@/components/ArticleBody/RichEditor/TwitterCard";
 import CustomCode from "@/components/ArticleBody/RichEditor/CustomUI/CustomCode";
 import CustomStrong from "@/components/ArticleBody/RichEditor/CustomUI/CustomStrong";
+import ExternalLink from "@/components/UiParts/ExternalLink";
 
 const isElement = (domNode: any): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);
@@ -72,9 +73,20 @@ export const customReplaceOptions: HTMLReactParserOptions = {
         case "strong":
           return <CustomStrong {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomStrong>;
         case "a":
-          return <CustomLink {...props} href={domNode.attribs.href}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomLink>;
+          const href = domNode.attribs.href;
+          const isExternal = href.startsWith("http") || domNode.attribs.target === "_blank" || href.includes("amazon");
+          if (isExternal) {
+            return <ExternalLink {...props} href={href} className="underline underline-offset-4 transition hover:text-base-color dark:hover:text-primary hover:no-underline">{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</ExternalLink>;
+          }
+          return <CustomLink {...props} href={href}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomLink>;
         case "img":
-          return <CustomImg {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} width={domNode.attribs.width} height={domNode.attribs.height} />;
+          const width = domNode.attribs.width;
+          const height = domNode.attribs.height;
+          if (!width || !height) {
+            // eslint-disable-next-line @next/next/no-img-element
+            return <img {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} />;
+          }
+          return <CustomImg {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} width={width} height={height} />;
         case "ul":
           return <CustomUl {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomUl>;
         case "li":

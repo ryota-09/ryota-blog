@@ -13,7 +13,7 @@ type EmbeddedCardProps = {
 const EmbeddedCard = ({ url, title, description, website, banner }: EmbeddedCardProps) => {
   return (
     <ExternalLink href={url} className='cursor-pointer transition-opacity hover:opacity-70 dark:hover:opacity-80'>
-      <aside className='flex border dark:border-gray-600 dark:bg-[#333]'>
+      <aside className='flex border bg-white dark:border-gray-600 dark:bg-[#333]'>
         <div className='flex-1 my-1 md:my-4 px-2 md:px-6'>
           <p className='dark:text-gray-300 text-md md:text-xl line-clamp-1'>{title}</p>
           <p className='text-gray-500 text-sm md:mt-4 line-clamp-1'>{description}</p>
