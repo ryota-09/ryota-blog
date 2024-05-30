@@ -20,5 +20,7 @@ export const CATEGORY_MAPED_ID = {
   "LifeHack": "life_hack",
   "チュートリアル": "tutorial",
   "Next.js": "next_js",
-  "TypeScript": "typescript"
+  "TypeScript": "typescript",
+  "CSS": "css",
+  "レビュー": "review",
 } as const;
