@@ -80,7 +80,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
               return <HTMLArea key={index} html={body.html} />
           }
         })}
-        <aside className='flex gap-4 mx-0.5 border-t dark:border-t-[#333] py-10'>
+        <aside className='flex flex-col-reverse md:flex-row gap-8 md:gap-4 mx-0.5 border-t dark:border-t-[#333] py-10'>
           <BottomCard />
         </aside>
         <FixedButton />
