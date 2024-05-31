@@ -9,6 +9,9 @@ type ArticleListProps = {
 
 const ArticleList = async ({ query }: ArticleListProps) => {
   const data = await getBlogList(query);
+  const contentCount = data.contents.length;
+
+  const emptyRow = contentCount > 4 || contentCount % 4 === 0 ? 0 : 1;
 
   return (
     data.totalCount !== 0
@@ -19,6 +22,7 @@ const ArticleList = async ({ query }: ArticleListProps) => {
             <ArticleCard data={item} />
           </li>
         ))}
+        {emptyRow === 1 && <li className="hidden lg:block lg:h-[250px]" />}
       </ul>
       :
       <NoContents />

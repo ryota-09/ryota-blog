@@ -1,3 +1,7 @@
+// const withBundleAnalyzer = require('@next/bundle-analyzer')({
+//   enabled: process.env.ANALYZE === 'true',
+// })
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
@@ -6,5 +10,5 @@ const nextConfig = {
     "remotePatterns": [{ protocol: "https", hostname: "images.microcms-assets.io" }]
   }
 };
-
-export default nextConfig;
+export default nextConfig
+// module.exports = withBundleAnalyzer(nextConfig)

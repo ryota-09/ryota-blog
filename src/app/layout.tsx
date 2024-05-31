@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Kosugi_Maru } from "next/font/google";
 import { ViewTransitions } from 'next-view-transitions'
-import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
+
+import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/static/blogs";
 import { baseURL, gaId, gtmId } from "@/config";
 

@@ -50,7 +50,7 @@ export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QU
   if (searchParams[KEYWORD_QUERY]) {
     query.q = searchParams[KEYWORD_QUERY];
   }
-
+  console.log("query", query)
   return { ...query, filters };
 }
 

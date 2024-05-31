@@ -1,6 +1,7 @@
+"use client"
 import CopyButton from '@/components/ArticleBody/RichEditor/Code/CopyButton';
-import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter';
+import oneDark from 'react-syntax-highlighter/dist/esm/styles/prism/one-dark';
 
 
 type MultiCodeBlockProps = {
