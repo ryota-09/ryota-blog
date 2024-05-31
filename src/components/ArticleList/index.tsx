@@ -8,7 +8,7 @@ type ArticleListProps = {
 }
 
 const ArticleList = async ({ query }: ArticleListProps) => {
-  const data = await getBlogList(query);
+  const data = await getBlogList({ ...query, orders: "-publishedAt" });
   const contentCount = data.contents.length;
 
   const emptyRow = contentCount > 4 || contentCount % 4 === 0 ? 0 : 1;
