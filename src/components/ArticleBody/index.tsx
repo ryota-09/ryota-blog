@@ -26,6 +26,8 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
     }
   }).join('')
 
+  const displayTime = data.publishedAt || data.updatedAt
+
   const TOCdata = generateTOCAssets(joindedHTML)
 
   return (
@@ -52,7 +54,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
         }
       </div>
       <div className='mt-4'>
-        <time dateTime={data.updatedAt.split('T')[0]} className="text-gray-400">{data.updatedAt.split('T')[0].replaceAll("-", "/")}</time>
+        <time dateTime={displayTime.split('T')[0]} className="text-gray-400">{displayTime.split('T')[0].replaceAll("-", "/")}</time>
       </div>
       <ul className='mt-4 flex flex-wrap gap-2'>
         {data.category.map(({ name }, index) => (
