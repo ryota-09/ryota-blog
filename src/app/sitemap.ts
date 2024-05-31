@@ -15,12 +15,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   ]
 
-  const blogList = await getAllBlogList({ fields: "id,updatedAt,publishedAt" });
+  const blogList = (await getAllBlogList({ fields: "id,updatedAt,publishedAt,noIndex" })).filter((content) => !content.noIndex)
 
-  const dynamicPaths = blogList.map((content) => ({
-    url: `${baseURL}/blogs/${content.id}`,
-    lastModified: content.publishedAt || content.updatedAt
-  }))
-
+  const dynamicPaths = blogList.map((content) => {
+    return {
+      url: `${baseURL}/blogs/${content.id}`,
+      lastModified: content.publishedAt || content.updatedAt
+    }
+  })
+  
   return [...staticPaths, ...dynamicPaths]
 }
