@@ -8,6 +8,8 @@
 
 This repository manages the frontend of `Ryota Blog`, a blog platform built using the latest technology stack.
 
+↓ Web Page
+https://ryotablog.jp/blogs
 
 ## Technology Stack
 
