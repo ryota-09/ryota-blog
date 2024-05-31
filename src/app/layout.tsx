@@ -6,6 +6,7 @@ import "./globals.css";
 import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/static/blogs";
 import { baseURL, gaId, gtmId } from "@/config";
+import NextTopLoader from "nextjs-toploader";
 
 const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"], display: "swap" });
 
@@ -31,6 +32,11 @@ export default function BlogListLayout({
     <ViewTransitions>
       <html lang="ja">
         <body className={`${KosugiMaru.className} bg-[#eee] dark:bg-[#333] flex flex-col min-h-screen`}>
+          <NextTopLoader
+            color="#3BACB6"
+            initialPosition={0.1}
+            crawl
+          />
           {children}
         </body>
         <GoogleTagManager gtmId={gtmId} />

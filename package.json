@@ -20,6 +20,7 @@
     "microcms-js-sdk": "^3.1.1",
     "next": "14.2.3",
     "next-view-transitions": "^0.1.1",
+    "nextjs-toploader": "^1.6.12",
     "react": "^18",
     "react-dom": "^18",
     "react-syntax-highlighter": "^15.5.0"
