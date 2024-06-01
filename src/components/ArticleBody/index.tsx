@@ -9,10 +9,10 @@ import { Link } from 'next-view-transitions';
 import { generateTOCAssets } from "@/lib";
 import TOCList from "@/components/ArticleBody/TOCList";
 import AdRevenueLabel from "@/components/AdRevenueLabel";
-import ImageWithLoader from "@/components/UiParts/ImageWithLoader";
 import XShareButton from "@/components/UiParts/XShareButton";
 import { baseURL } from "@/config";
 import PrevAndNextBlogNav from "@/components/ArticleBody/PrevAndNextBlogNav";
+import Image from "next/image";
 
 type ArticleBodyProps = {
   data: BlogsContentType
@@ -37,7 +37,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
           <div className="flex flex-col gap-8">
             <h1 className="text-2xl md:text-3xl font-bold dark:text-gray-300">{data.title}</h1>
             <figure className=" max-h-[300px] md:max-h-[540px] overflow-hidden shadow-2xl">
-              <ImageWithLoader
+              <Image
                 src={data.thumbnail.url}
                 alt={data.title}
                 width={data.thumbnail.width}

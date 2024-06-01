@@ -1,5 +1,5 @@
+import Image from "next/image";
 import ExternalLink from "@/components/UiParts/ExternalLink";
-import ImageWithLoader from "@/components/UiParts/ImageWithLoader";
 import { pickHostname } from "@/lib";
 
 type EmbeddedCardProps = {
@@ -20,7 +20,7 @@ const EmbeddedCard = ({ url, title, description, website, banner }: EmbeddedCard
           <p className='mt-2 md:mt-6 bg-gray-100 inline-block px-2 rounded-full text-sm md:text-md text-gray-600 line-clamp-1'>{pickHostname(website)}</p>
         </div>
         <figure className="w-1/3 md:w-auto md:flex-shrink-0 flex items-center">
-          <ImageWithLoader src={banner ?? ""} alt={title} width={300} height={200} />
+        <Image src={banner ?? ""} alt={title} width={300} height={200} />
         </figure>
       </aside>
     </ExternalLink>

@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "analyze": "ANALYZE=true npm run build",
-    "start": "next start",
+    "start": "node .next/standalone/server.js",
     "lint": "next lint",
     "test": "vitest",
     "storybook": "storybook dev -p 6006",

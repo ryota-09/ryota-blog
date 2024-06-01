@@ -55,7 +55,7 @@ export function generateMetadata(
     title = `${category}` + title
     description = `${category}` + description
   }
-  console.log(page)
+  
   return {
     title: title,
     description: description,

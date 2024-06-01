@@ -54,11 +54,6 @@ export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QU
   return { ...query, filters };
 }
 
-// NOTE: エッジ経由だと画像が表示されないため、画像のURLを変換する
-export const microCMSLoader: ImageLoader = ({ src, width }) => {
-  return `${src}?auto=format&fit=max&w=${width}`
-}
-
 export const generateBreadcrumbAssets = (blogId: string, title: string): BreadcrumbItemType[] => {
   const homePath = "/blogs"
   const results = [
