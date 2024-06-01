@@ -19,6 +19,7 @@ import TwitterCard from "@/components/ArticleBody/RichEditor/TwitterCard";
 import CustomCode from "@/components/ArticleBody/RichEditor/CustomUI/CustomCode";
 import CustomStrong from "@/components/ArticleBody/RichEditor/CustomUI/CustomStrong";
 import ExternalLink from "@/components/UiParts/ExternalLink";
+import PopupModal from "@/components/UiParts/PopupModal";
 
 const isElement = (domNode: any): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);
@@ -86,7 +87,11 @@ export const customReplaceOptions: HTMLReactParserOptions = {
             // eslint-disable-next-line @next/next/no-img-element
             return <img {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} />;
           }
-          return <CustomImg {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} width={width} height={height} />;
+          return (
+            <PopupModal>
+              <CustomImg {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} width={width} height={height} />
+            </PopupModal>
+          )
         case "ul":
           return <CustomUl {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomUl>;
         case "li":
