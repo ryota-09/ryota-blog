@@ -1,5 +1,3 @@
-// "use client"
-
 import RichEditor from "@/components/ArticleBody/RichEditor";
 import ThumbnailCard from '@/components/ArticleBody/ThumbnailCard';
 import Chip from '@/components/UiParts/Chip';
@@ -87,7 +85,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
         </aside>
         <FixedButton />
         <XShareButton
-          classes="fixed top-4 right-4 bg-gray-400 dark:bg-gray-600 text-white text-sm w-auto h-10 px-2 flex items-center justify-center rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-70 active:bg-gray-500"
+          classes="fixed bottom-4 bottom-4 left-4 bg-gray-400 dark:bg-gray-600 text-white text-sm w-auto h-10 px-2 flex items-center justify-center rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-70 active:bg-gray-500"
           text={data.title}
           url={`${baseURL}/blogs/${data.id}`}
         >
