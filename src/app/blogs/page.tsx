@@ -34,7 +34,7 @@ export function generateMetadata(
   if (blogType === "blogs" && !category && !keyword) {
     return {
       title: page ? `記事一覧のページ。${page}ページ目。` : "HOME",
-      robots: "noindex",
+      robots: page ? "noindex" : "index"
     }
   }
 
@@ -55,7 +55,7 @@ export function generateMetadata(
     title = `${category}` + title
     description = `${category}` + description
   }
-
+  console.log(page)
   return {
     title: title,
     description: description,
