@@ -25,15 +25,13 @@ const BreadcrumbItem = ({ href, label, isLast }: BreadcrumbItemProps) => {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="lucide lucide-chevron-right"
           >
             <path d="m9 18 6-6-6-6"></path>
           </svg>
         </>
         :
-        <p className="text-gray-600 dark:text-gray-400">{label}</p>
+        <p className="text-gray-600 dark:text-gray-400 line-clamp-1">{label}</p>
       }
-
     </li >
   )
 }
