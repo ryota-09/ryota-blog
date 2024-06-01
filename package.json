@@ -53,6 +53,7 @@
     "meta-fetcher": "^3.1.1",
     "postcss": "^8",
     "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.6.1",
     "react-scroll": "^1.9.0",
     "rss-parser": "^3.13.0",
     "storybook": "^8.0.9",

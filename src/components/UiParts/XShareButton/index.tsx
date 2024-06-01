@@ -19,7 +19,7 @@ const XShareButton = ({ text, url, hashtags, via, related, in_reply_to, classes,
   const [isVisible, setIsVisible] = useState(false);
 
   const targetURL = new URL("https://x.com/intent/tweet");
-  if (text !== undefined) targetURL.searchParams.set("text",text);
+  if (text !== undefined) targetURL.searchParams.set("text", text);
   if (url !== undefined) targetURL.searchParams.set("url", url);
   if (hashtags !== undefined) targetURL.searchParams.set("hashtags", hashtags.join(","));
   if (via !== undefined) targetURL.searchParams.set("via", via);

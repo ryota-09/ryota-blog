@@ -10,7 +10,7 @@ type AccordionProps = {
 const Accordion = ({ title, children, classes }: AccordionProps) => {
   return (
     <details className="group">
-      <summary className={cltw("list-none text-gray-400",classes)}>{title}</summary>
+      <summary className={cltw("list-none text-gray-400", classes)}>{title}</summary>
       {children}
     </details>
   )

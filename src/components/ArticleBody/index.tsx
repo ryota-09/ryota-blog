@@ -12,6 +12,7 @@ import AdRevenueLabel from "@/components/AdRevenueLabel";
 import ImageWithLoader from "@/components/UiParts/ImageWithLoader";
 import XShareButton from "@/components/UiParts/XShareButton";
 import { baseURL } from "@/config";
+import PrevAndNextBlogNav from "@/components/ArticleBody/PrevAndNextBlogNav";
 
 type ArticleBodyProps = {
   data: BlogsContentType
@@ -42,7 +43,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
                 width={data.thumbnail.width}
                 height={data.thumbnail.height}
                 sizes="100vw"
-                style={{ height: "auto", width: "100%"}}
+                style={{ height: "auto", width: "100%" }}
                 priority
               />
             </figure>
@@ -80,6 +81,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
               return <HTMLArea key={index} html={body.html} />
           }
         })}
+        <PrevAndNextBlogNav currentBlogData={data} />
         <aside className='flex flex-col-reverse md:flex-row gap-8 md:gap-4 mx-0.5 border-t dark:border-t-[#333] py-10'>
           <BottomCard />
         </aside>

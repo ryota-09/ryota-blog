@@ -1,6 +1,7 @@
 import { createClient } from "microcms-js-sdk";
 import type { MicroCMSQueries } from "microcms-js-sdk";
 import type {
+  BaseMicroCMSApiListDataType,
   BaseMicroCMSApiType,
   BlogsContentType,
   CategoriesContentType,
@@ -78,4 +79,33 @@ export const getBlogByKeyword = (keyword: string, querys?: MicroCMSQueries) => {
 export const getAllCategoryList = async (querys?: MicroCMSQueries) => {
   const data = await client.getAllContents<CategoriesContentType>({ "endpoint": "categories", ...querys });
   return data;
+}
+
+export const getPrevAndNextBlog = async (data: BlogsContentType) => {
+  const publishedAt = data.publishedAt;
+  const [ prev, next ] = await Promise.all([
+    client.get<BaseMicroCMSApiListDataType<BlogsContentType>>({
+      endpoint: "blogs",
+      queries: {
+        fields: "id,title,publishedAt,updatedAt",
+        filters: `publishedAt[less_than]${publishedAt}`,
+        limit: 1,
+        orders: "-publishedAt",
+      }
+    }),
+    client.get<BaseMicroCMSApiListDataType<BlogsContentType>>({
+      endpoint: "blogs",
+      queries: {
+        fields: "id,title,publishedAt,updatedAt",
+        filters: `publishedAt[greater_than]${publishedAt}`,
+        limit: 1,
+        orders: "publishedAt",
+      }
+    })
+  ])
+
+  const prevBlogData = prev.contents[0] || null
+  const nextBlogData = next.contents[0] || null
+
+  return { prevBlogData, nextBlogData }
 }
