@@ -31,7 +31,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
 
   return (
     <div>
-      <div className='md:w-[80%] mx-auto my-10 md:my-16'>
+      <div className='md:w-[80%] mx-auto my-6 md:my-16'>
         {data.thumbnail
           ?
           <div className="flex flex-col gap-8">
