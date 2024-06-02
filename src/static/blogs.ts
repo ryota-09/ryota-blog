@@ -18,7 +18,6 @@ export const CATEGORY_MAPED_ID = {
   "プログラミング": "programming",
   "Career": "career",
   "LifeHack": "life_hack",
-  "チュートリアル": "tutorial",
   "Next.js": "next_js",
   "TypeScript": "typescript",
   "CSS": "css",
