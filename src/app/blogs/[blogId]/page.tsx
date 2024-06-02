@@ -1,9 +1,12 @@
+import type { Metadata } from "next";
+import { cookies, draftMode } from "next/headers";
+
 import ArticleBody from "@/components/ArticleBody";
 import BreadcrumbList from "@/components/BreadcrumbList";
 import { generateBreadcrumbAssets } from "@/lib";
 import { getBlogById, getBlogList } from "@/lib/microcms";
-import { Metadata } from "next";
-import { cookies, draftMode } from "next/headers";
+import type { BlogsContentType } from "@/types/microcms";
+import JsonLD from "@/components/Head/JsonLD";
 
 export async function generateStaticParams() {
   const blogList = await getBlogList({ fields: "id" });
@@ -37,7 +40,7 @@ const Page = async ({ params }: PageProps) => {
   const currentCookies = cookies()
   const draftKey = currentCookies.get('draftKey')?.value
 
-  let data;
+  let data: BlogsContentType
   if (isEnabled && draftKey) {
     data = await getBlogById(blogId, { draftKey: draftKey });
   } else {
@@ -51,6 +54,7 @@ const Page = async ({ params }: PageProps) => {
       <article className=" bg-white dark:bg-black border-2 dark:border-gray-600 px-4">
         <ArticleBody data={data} />
       </article>
+      <JsonLD data={data} />
     </div>
   );
 }
