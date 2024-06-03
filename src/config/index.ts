@@ -9,3 +9,4 @@ export const gaId = process.env.NEXT_PUBLIC_GA_ID || ""
 // AWS RUM
 export const gustRoleArn = process.env.NEXT_PUBLIC_GUEST_ROLE_ARN || ""
 export const identityPoolId = process.env.NEXT_PUBLIC_IDENTITY_POOL_ID || ""
+export const applicationId = process.env.NEXT_PUBLIC_APPLICATION_ID || ""
