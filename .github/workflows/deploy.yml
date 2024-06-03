@@ -63,6 +63,9 @@ jobs:
           NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
           MICROCMS_SERVICE_DOMAIN: ${{ secrets.MICROCMS_SERVICE_DOMAIN }}
           MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY }}
+          NEXT_PUBLIC_GUEST_ROLE_ARN: ${{ secrets.NEXT_PUBLIC_GUEST_ROLE_ARN }}
+          NEXT_PUBLIC_IDENTITY_POOL_ID: ${{ secrets.NEXT_PUBLIC_IDENTITY_POOL_ID }}
+          NEXT_PUBLIC_APPLICATION_ID: ${{ secrets.NEXT_PUBLIC_APPLICATION_ID }}
         with:
           file: ./Dockerfile
           context: .
@@ -71,6 +74,9 @@ jobs:
             "NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}"
             "MICROCMS_SERVICE_DOMAIN=${{ secrets.MICROCMS_SERVICE_DOMAIN }}"
             "MICROCMS_API_KEY=${{ secrets.MICROCMS_API_KEY }}"
+            "NEXT_PUBLIC_GUEST_ROLE_ARN=${{ secrets.NEXT_PUBLIC_GUEST_ROLE_ARN }}"
+            "NEXT_PUBLIC_IDENTITY_POOL_ID=${{ secrets.NEXT_PUBLIC_IDENTITY_POOL_ID }}"
+            "NEXT_PUBLIC_APPLICATION_ID=${{ secrets.NEXT_PUBLIC_APPLICATION_ID }}"
           provenance: false
           tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ steps.set-tag.outputs.tag }}
           cache-from: type=gha
