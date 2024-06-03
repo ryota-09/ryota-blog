@@ -24,12 +24,14 @@ const ClientLayout = ({ children }: ClientLayoutProps) => {
         allowCookies: true,
         enableXRay: false,
       }
+      console.log({ "appid": applicationId, "appver": APPLICATION_VERSION, APPLICATION_REGION, config })
       new AwsRum(
         applicationId,
         APPLICATION_VERSION,
         APPLICATION_REGION,
         config
       )
+      console.log("CloudWatch RUM initialized.")
     } catch (error) {
       console.error("Error initializing CloudWatch RUM.", error)
     }
