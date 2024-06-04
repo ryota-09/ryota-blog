@@ -1,4 +1,4 @@
-import "./globals.css";
+import "../styles/globals.css";
 import type { Metadata } from "next";
 import { Kosugi_Maru } from "next/font/google";
 import { ViewTransitions } from 'next-view-transitions'
