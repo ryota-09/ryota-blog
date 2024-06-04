@@ -23,3 +23,7 @@ export const CATEGORY_MAPED_ID = {
   "CSS": "css",
   "レビュー": "review",
 } as const;
+
+export const CATEGORY_MAPED_NAME = Object.fromEntries(
+  Object.entries(CATEGORY_MAPED_ID).map(([key, value]) => [value, key])
+) as { [key: string]: string };

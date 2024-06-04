@@ -7,6 +7,7 @@ import { generateBreadcrumbAssets } from "@/lib";
 import { getBlogById, getBlogList } from "@/lib/microcms";
 import type { BlogsContentType } from "@/types/microcms";
 import JsonLD from "@/components/Head/JsonLD";
+import RelatedContentList from "@/components/RelatedContentList";
 
 export async function generateStaticParams() {
   const blogList = await getBlogList({ fields: "id" });
@@ -54,6 +55,11 @@ const Page = async ({ params }: PageProps) => {
       <article className=" bg-white dark:bg-black border-2 dark:border-gray-600 px-4">
         <ArticleBody data={data} />
       </article>
+      {data.relatedContent && (
+        <aside className="my-8">
+          <RelatedContentList data={data.relatedContent} />
+        </aside>
+      )}
       <JsonLD data={data} />
     </div>
   );
