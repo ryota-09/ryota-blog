@@ -55,7 +55,7 @@ const Page = async ({ params }: PageProps) => {
       <article className=" bg-white dark:bg-black border-2 dark:border-gray-600 px-4">
         <ArticleBody data={data} />
       </article>
-      {data.relatedContent && (
+      {data.relatedContent.length > 1 && (
         <aside className="my-8">
           <RelatedContentList data={data.relatedContent} />
         </aside>
