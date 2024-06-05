@@ -57,11 +57,11 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
       </div>
       <ul className='mt-4 flex flex-wrap gap-2'>
         {data.category.map(({ name }, index) => (
-          <Link href={`/blogs?category=${name}`} key={index}>
-            <li className="block cursor-pointer">
+          <li key={index} className="block cursor-pointer">
+            <Link href={`/blogs?category=${name}`}>
               <Chip label={name} classes="bg-gray-200 dark:bg-gray-600 dark:text-gray-300 px-3 py-2 text-sm text-txt-base hover:opacity-60" />
-            </li>
-          </Link>
+            </Link>
+          </li>
         ))}
       </ul>
       <div className="mt-4">
