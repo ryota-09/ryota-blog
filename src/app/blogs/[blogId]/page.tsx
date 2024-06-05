@@ -49,7 +49,6 @@ const Page = async ({ params }: PageProps) => {
   }
 
   const breadcrumbAssets = generateBreadcrumbAssets(blogId, data.title)
-  console.log(data.relatedContent)
   return (
     <div className="max-w-[1028px] mx-auto px-2 md:px-0">
       <BreadcrumbList items={breadcrumbAssets} />

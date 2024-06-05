@@ -14,26 +14,54 @@ type ClientLayoutProps = {
 
 const ClientLayout = ({ children }: ClientLayoutProps) => {
   useEffect(() => {
-    try {
-      const config: AwsRumConfig = {
-        sessionSampleRate: 1,
-        guestRoleArn: gustRoleArn,
-        identityPoolId: identityPoolId,
-        endpoint: RUM_ENDPOINT,
-        telemetries: ["performance", "errors", "http"],
-        allowCookies: true,
-        enableXRay: false,
+    // NOTE:safariの場合はRequestIdleCallbackが使えないため、初期化処理を遅延させない
+    if (navigator.userAgent.includes("Safari")) {
+      try {
+        const config: AwsRumConfig = {
+          sessionSampleRate: 1,
+          guestRoleArn: gustRoleArn,
+          identityPoolId: identityPoolId,
+          endpoint: RUM_ENDPOINT,
+          telemetries: ["performance", "errors", "http"],
+          allowCookies: true,
+          enableXRay: false,
+        }
+
+        new AwsRum(
+          applicationId,
+          APPLICATION_VERSION,
+          APPLICATION_REGION,
+          config
+        )
+      } catch (error) {
+        console.error("Error initializing CloudWatch RUM.", error)
       }
-      
-      new AwsRum(
-        applicationId,
-        APPLICATION_VERSION,
-        APPLICATION_REGION,
-        config
-      )
-    } catch (error) {
-      console.error("Error initializing CloudWatch RUM.", error)
+      return
     }
+
+    // RequestIdleCallbackを使って初期化処理を遅延させる
+    requestIdleCallback(() => {
+      try {
+        const config: AwsRumConfig = {
+          sessionSampleRate: 1,
+          guestRoleArn: gustRoleArn,
+          identityPoolId: identityPoolId,
+          endpoint: RUM_ENDPOINT,
+          telemetries: ["performance", "errors", "http"],
+          allowCookies: true,
+          enableXRay: false,
+        }
+
+        new AwsRum(
+          applicationId,
+          APPLICATION_VERSION,
+          APPLICATION_REGION,
+          config
+        )
+      } catch (error) {
+        console.error("Error initializing CloudWatch RUM.", error)
+      }
+    })
   }, [])
   return children
 }
