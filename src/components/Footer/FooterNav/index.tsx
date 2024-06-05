@@ -13,13 +13,17 @@ const FooterNav = ({ items }: FooterNavProps) => {
         {items.map(({ name, href, target }, index) => (
           target
             ?
-            <ExternalLink key={index} href={href} target={target}>
-              <li className=" text-gray-600 dark:text-gray-400 transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color">{name}</li>
-            </ExternalLink>
+            <li key={index} className=" text-gray-600 dark:text-gray-400 transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color">
+              <ExternalLink href={href} target={target}>
+                {name}
+              </ExternalLink>
+            </li>
             :
-            <Link key={index} href={href}>
-              <li className=" text-gray-600 dark:text-gray-400 transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color">{name}</li>
-            </Link>
+            <li key={index} className=" text-gray-600 dark:text-gray-400 transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color">
+              <Link href={href}>
+                {name}
+              </Link>
+            </li>
         ))}
       </ul>
     </nav>
