@@ -24,16 +24,18 @@ export default async function Image({ params }: { params: { blogId: string } }) 
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
+          paddingBottom: '80px',
           borderTop: '84px solid rgb(59 172 182)',
           borderBottom: '84px solid rgb(59 172 182)',
           borderLeft: '96px solid rgb(59 172 182)',
           borderRight: '96px solid rgb(59 172 182)',
           borderRadius: '16px',
           fontSize: '48px',
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          overflow: 'hidden'
         }}
       >
-        <div style={{ margin: "20px" }}>{data.title}</div>
+        <div style={{ margin: "5px", display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', WebkitLineClamp: 3 }}>{data.title}</div>
         <div style={{
           position: 'absolute',
           right: '20px',
@@ -42,7 +44,7 @@ export default async function Image({ params }: { params: { blogId: string } }) 
           alignItems: 'center',
           gap: '20px'
         }}>
-           {/* eslint-disable-next-line @next/next/no-img-element */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://images.microcms-assets.io/assets/4626924a681346e9a0fcabe5478eb9fa/26ca0e17cc994976907bb961f367db9e/author.jpg"
             style={{

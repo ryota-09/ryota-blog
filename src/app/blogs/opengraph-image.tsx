@@ -9,7 +9,7 @@ export const size = {
 export const contentType = 'image/png'
 
 export default function Image() {
-
+  const text = "ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ"
   return new ImageResponse(
     (
       <div
@@ -23,16 +23,19 @@ export default function Image() {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
+          paddingBottom: '80px',
           borderTop: '84px solid rgb(59 172 182)',
           borderBottom: '84px solid rgb(59 172 182)',
           borderLeft: '96px solid rgb(59 172 182)',
           borderRight: '96px solid rgb(59 172 182)',
           borderRadius: '16px',
           fontSize: '48px',
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          overflow: 'hidden'
         }}
       >
-        <div style={{ margin: "20px" }}>{SITE_TITLE}</div>
+        {/* <div style={{ margin: "20px" }}>{SITE_TITLE}</div> */}
+        <div style={{ margin: "5px", display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', WebkitLineClamp: 3 }}>{text}</div>
         <div style={{
           position: 'absolute',
           right: '20px',
