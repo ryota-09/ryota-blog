@@ -8,6 +8,16 @@ const APPLICATION_VERSION = "1.0.0";
 const APPLICATION_REGION = "ap-northeast-1";
 const RUM_ENDPOINT = "https://dataplane.rum.ap-northeast-1.amazonaws.com";
 
+const config: AwsRumConfig = {
+  sessionSampleRate: 1,
+  guestRoleArn: gustRoleArn,
+  identityPoolId: identityPoolId,
+  endpoint: RUM_ENDPOINT,
+  telemetries: ["performance", "errors", "http"],
+  allowCookies: true,
+  enableXRay: false,
+}
+
 type ClientLayoutProps = {
   children: ReactNode;
 }
@@ -15,18 +25,8 @@ type ClientLayoutProps = {
 const ClientLayout = ({ children }: ClientLayoutProps) => {
   useEffect(() => {
     // NOTE:safariの場合はRequestIdleCallbackが使えないため、初期化処理を遅延させない
-    if (navigator.userAgent.includes("Safari")) {
+    if (navigator.userAgent.toLocaleLowerCase().includes("safari")) {
       try {
-        const config: AwsRumConfig = {
-          sessionSampleRate: 1,
-          guestRoleArn: gustRoleArn,
-          identityPoolId: identityPoolId,
-          endpoint: RUM_ENDPOINT,
-          telemetries: ["performance", "errors", "http"],
-          allowCookies: true,
-          enableXRay: false,
-        }
-
         new AwsRum(
           applicationId,
           APPLICATION_VERSION,
@@ -42,16 +42,6 @@ const ClientLayout = ({ children }: ClientLayoutProps) => {
     // RequestIdleCallbackを使って初期化処理を遅延させる
     requestIdleCallback(() => {
       try {
-        const config: AwsRumConfig = {
-          sessionSampleRate: 1,
-          guestRoleArn: gustRoleArn,
-          identityPoolId: identityPoolId,
-          endpoint: RUM_ENDPOINT,
-          telemetries: ["performance", "errors", "http"],
-          allowCookies: true,
-          enableXRay: false,
-        }
-
         new AwsRum(
           applicationId,
           APPLICATION_VERSION,

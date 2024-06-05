@@ -13,6 +13,7 @@ type TOCItemProps = {
 const TOCItem = ({ id, children, classes }: TOCItemProps) => {
   return (
     <Scroll
+      href={`#${id}`}
       to={id}
       smooth
       offset={-14}
