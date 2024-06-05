@@ -1,6 +1,7 @@
+import { ImageResponse } from 'next/og'
+
 import { getBlogById } from '@/lib/microcms'
 import { AUTHOR_NAME } from '@/static/blogs'
-import { ImageResponse } from 'next/og'
 
 export const size = {
   width: 1200,
