@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 import { baseURL } from "@/config";
-import { getAllBlogList } from "@/lib/microcms";
+import { getAllBlogList, getAllCategoryList } from "@/lib/microcms";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPaths = [
@@ -15,6 +15,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   ]
 
+  const allCategories = await getAllCategoryList({ fields: "name" })
+
+  const categoryPaths = allCategories.map((category) => {
+    return {
+      url: `${baseURL}/blogs?category=${category.name}`,
+      lastModified: new Date()
+    }
+  })
+
+
   const blogList = (await getAllBlogList({ fields: "id,updatedAt,publishedAt,noIndex" })).filter((content) => !content.noIndex)
 
   const dynamicPaths = blogList.map((content) => {
@@ -23,6 +33,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: content.publishedAt || content.updatedAt
     }
   })
-  
-  return [...staticPaths, ...dynamicPaths]
+
+  return [...staticPaths, ...categoryPaths, ...dynamicPaths]
 }
