@@ -49,13 +49,14 @@ const Page = async ({ params }: PageProps) => {
   }
 
   const breadcrumbAssets = generateBreadcrumbAssets(blogId, data.title)
+  console.log(data.relatedContent)
   return (
     <div className="max-w-[1028px] mx-auto px-2 md:px-0">
       <BreadcrumbList items={breadcrumbAssets} />
       <article className=" bg-white dark:bg-black border-2 dark:border-gray-600 px-4">
         <ArticleBody data={data} />
       </article>
-      {data.relatedContent.length > 1 && (
+      {data.relatedContent.length >= 1 && (
         <aside className="my-8">
           <RelatedContentList data={data.relatedContent} />
         </aside>
