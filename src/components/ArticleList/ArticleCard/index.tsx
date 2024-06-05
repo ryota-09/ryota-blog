@@ -16,6 +16,8 @@ const ArticleCard = ({ data }: ArticleCardProps) => {
           <p className="mt-2 text-gray-500 line-clamp-3">{data.description}</p>
           <div className="flex justify-end">
             <Link href={`/blogs/${data.id}`} className="mt-4 text-md md:text-xs md:text-md border-2 transition duration-200 border-base-color dark:border-primary text-base-color dark:text-light hover:bg-secondary dark:hover:bg-primary hover:text-white hover:border-secondary dark:hover:border-primary font-bold py-3 md:py-2 px-6 md:px-4">
+              {/* NOTE: アクセシビリティの都合上、「続きを読む」は不適切判定なのでsr-onlyを付与 */}
+              <span className="sr-only">{data.title}の</span>
               続きを読む
             </Link>
           </div>
