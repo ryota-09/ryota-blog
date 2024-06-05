@@ -41,9 +41,11 @@ const FixedButton = () => {
 
   return (
     <button
+      type='button'
       className={`fixed bottom-4 right-4 bg-secondary text-white p-2 rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-80 active:bg-primary ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       onClick={scrollToTop}
       style={{ transition: 'opacity 0.3s' }}
+      aria-label="上部にスクロールして戻る"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
