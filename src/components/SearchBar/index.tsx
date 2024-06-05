@@ -45,10 +45,13 @@ const SearchBar = () => {
         className={cltw("w-full px-4 py-2 border-2 dark:border-gray-600 dark:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-base-color dark:focus:ring-primary focus:border-transparent", state.blogType === "zenn" ? "bg-gray-300 cursor-not-allowed" : "bg-white")}
         placeholder={state.blogType === "zenn" ? "※ Zennの記事は検索非対応" : "Search..."}
         disabled={state.blogType === "zenn"}
+        aria-disabled={state.blogType === "zenn"}
       />
       <button
         type="submit"
+        aria-label="検索"
         disabled={state.blogType === "zenn"}
+        aria-disabled={state.blogType === "zenn"}
         className={cltw("text-white px-2 ml-2 block my-0.5 transition-opacity rounded-sm ", state.blogType === "zenn" ? "bg-gray-500 cursor-not-allowed" : "bg-base-color hover:opacity-80 active:bg-secondary dark:bg-primary")}>
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="10" cy="10" r="8"></circle>
