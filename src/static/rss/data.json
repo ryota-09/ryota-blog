@@ -1,6 +1,38 @@
 [
   {
     "creator": "りょた",
+    "title": "details/summary要素を使ってみた",
+    "link": "https://zenn.dev/ryota_09/articles/40fb30c4a2d348",
+    "pubDate": "Sat, 01 Jun 2024 10:16:20 GMT",
+    "enclosure": {
+      "url": "https://res.cloudinary.com/zenn/image/upload/s--056I2zef--/c_fit%2Cg_north_west%2Cl_text:notosansjp-medium.otf_55:details%252Fsummary%25E8%25A6%2581%25E7%25B4%25A0%25E3%2582%2592%25E4%25BD%25BF%25E3%2581%25A3%25E3%2581%25A6%25E3%2581%25BF%25E3%2581%259F%2Cw_1010%2Cx_90%2Cy_100/g_south_west%2Cl_text:notosansjp-medium.otf_37:%25E3%2582%258A%25E3%2582%2587%25E3%2581%259F%2Cx_203%2Cy_121/g_south_west%2Ch_90%2Cl_fetch:aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL3plbm4tdXNlci11cGxvYWQvYXZhdGFyL2RkNmQyMTZhMWYuanBlZw==%2Cr_max%2Cw_90%2Cx_87%2Cy_95/v1627283836/default/og-base-w1200-v2.png",
+      "length": "0",
+      "type": "image/png"
+    },
+    "dc:creator": "りょた",
+    "content": "こんにちは！@Ryo54388667です!☺️\n普段は都内でエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\n今回はHTMLのdetails/summary要素を使ってみたので紹介します！\n\n 📌 details/summary要素の概要\nごちゃごちゃ説明するより見ていただいたほうが良いですよね！Zennでも利用されている下記のような要素です。\nこれがsummary要素のテキスト\ndetails内の折り畳まれたコンテンツ\ndetails内の折り畳まれたコンテンツ\ndetails内の折り畳まれたコンテンツ\n\nopen/closeの状態を...",
+    "contentSnippet": "こんにちは！@Ryo54388667です!☺️\n普段は都内でエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\n今回はHTMLのdetails/summary要素を使ってみたので紹介します！\n\n 📌 details/summary要素の概要\nごちゃごちゃ説明するより見ていただいたほうが良いですよね！Zennでも利用されている下記のような要素です。\nこれがsummary要素のテキスト\ndetails内の折り畳まれたコンテンツ\ndetails内の折り畳まれたコンテンツ\ndetails内の折り畳まれたコンテンツ\n\nopen/closeの状態を...",
+    "guid": "https://zenn.dev/ryota_09/articles/40fb30c4a2d348",
+    "isoDate": "2024-06-01T10:16:20.000Z"
+  },
+  {
+    "creator": "りょた",
+    "title": "【Next.js / App Router】埋め込みリンクカードの実装について",
+    "link": "https://zenn.dev/ryota_09/articles/13ca153e3039bc",
+    "pubDate": "Sat, 25 May 2024 10:36:06 GMT",
+    "enclosure": {
+      "url": "https://res.cloudinary.com/zenn/image/upload/s--NtdFRn0I--/c_fit%2Cg_north_west%2Cl_text:notosansjp-medium.otf_55:%25E3%2580%2590Next.js%2520%252F%2520App%2520Router%25E3%2580%2591%25E5%259F%258B%25E3%2582%2581%25E8%25BE%25BC%25E3%2581%25BF%25E3%2583%25AA%25E3%2583%25B3%25E3%2582%25AF%25E3%2582%25AB%25E3%2583%25BC%25E3%2583%2589%25E3%2581%25AE%25E5%25AE%259F%25E8%25A3%2585%25E3%2581%25AB%25E3%2581%25A4%25E3%2581%2584%25E3%2581%25A6%2Cw_1010%2Cx_90%2Cy_100/g_south_west%2Cl_text:notosansjp-medium.otf_37:%25E3%2582%258A%25E3%2582%2587%25E3%2581%259F%2Cx_203%2Cy_121/g_south_west%2Ch_90%2Cl_fetch:aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL3plbm4tdXNlci11cGxvYWQvYXZhdGFyL2RkNmQyMTZhMWYuanBlZw==%2Cr_max%2Cw_90%2Cx_87%2Cy_95/v1627283836/default/og-base-w1200-v2.png",
+      "length": "0",
+      "type": "image/png"
+    },
+    "dc:creator": "りょた",
+    "content": "こんにちは！@Ryo54388667です!☺️\n普段は都内でエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\n今回はApp Routerを利用した埋め込みリンクカードの実装を紹介していきます！\n!\n本記事では、同一ドメイン内での埋め込みリンクカードの実装方法について説明します。\nクロスドメインの場合、挙動が変わる可能性があるかもです🙏\n\n\n 📌 埋め込みリンクカードの概要\nいろいろ説明するのも良いですが、「百聞は一見にしかず」ということで、下記のようなものを実装します。\nhttps://nextjs.org/blog/next-15-...",
+    "contentSnippet": "こんにちは！@Ryo54388667です!☺️\n普段は都内でエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\n今回はApp Routerを利用した埋め込みリンクカードの実装を紹介していきます！\n!\n本記事では、同一ドメイン内での埋め込みリンクカードの実装方法について説明します。\nクロスドメインの場合、挙動が変わる可能性があるかもです🙏\n\n\n 📌 埋め込みリンクカードの概要\nいろいろ説明するのも良いですが、「百聞は一見にしかず」ということで、下記のようなものを実装します。\nhttps://nextjs.org/blog/next-15-...",
+    "guid": "https://zenn.dev/ryota_09/articles/13ca153e3039bc",
+    "isoDate": "2024-05-25T10:36:06.000Z"
+  },
+  {
+    "creator": "りょた",
     "title": "バイパスを禁止し、CloudFrontだけを経由してApp Runnerへのアクセスを許可する方法",
     "link": "https://zenn.dev/ryota_09/articles/4bcf449216b3d8",
     "pubDate": "Sun, 12 May 2024 09:00:00 GMT",
@@ -286,37 +318,5 @@
     "contentSnippet": "こちらは、ラクスパートナーズ Advent Calendar 2023の5日目の記事です！🎄📅🎁\nhttps://qiita.com/advent-calendar/2023/rakus-partners\n前日の記事は、「Next.js App RouterとMDXでリッチなスキルシートをサクッと書く」 でした！\n\n 📌 はじめに\nこんにちは！@Ryo54388667です!☺️\n普段は都内でフロントエンドエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\nNext.js製アプリのホスティング先をリサーチしていた時、このLambda We...",
     "guid": "https://zenn.dev/ryota_09/articles/212902afa784c7",
     "isoDate": "2023-12-03T08:00:51.000Z"
-  },
-  {
-    "creator": "りょた",
-    "title": "新しくなった Amplify Hosting を利用してNext.js14のアプリの機能を試してみた",
-    "link": "https://zenn.dev/devcamp/articles/4a4e559d8544bc",
-    "pubDate": "Thu, 23 Nov 2023 23:21:44 GMT",
-    "enclosure": {
-      "url": "https://res.cloudinary.com/zenn/image/upload/s--C5b-fKH_--/c_fit%2Cg_north_west%2Cl_text:notosansjp-medium.otf_55:%25E6%2596%25B0%25E3%2581%2597%25E3%2581%258F%25E3%2581%25AA%25E3%2581%25A3%25E3%2581%259F%2520Amplify%2520Hosting%2520%25E3%2582%2592%25E5%2588%25A9%25E7%2594%25A8%25E3%2581%2597%25E3%2581%25A6Next.js14%25E3%2581%25AE%25E3%2582%25A2%25E3%2583%2597%25E3%2583%25AA%25E3%2581%25AE%25E6%25A9%259F%25E8%2583%25BD%25E3%2582%2592%25E8%25A9%25A6%25E3%2581%2597%25E3%2581%25A6%25E3%2581%25BF%25E3%2581%259F%2Cw_1010%2Cx_90%2Cy_100/g_south_west%2Cl_text:notosansjp-medium.otf_34:%25E3%2582%258A%25E3%2582%2587%25E3%2581%259F%2Cx_220%2Cy_108/bo_3px_solid_rgb:d6e3ed%2Cg_south_west%2Ch_90%2Cl_fetch:aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL3plbm4tdXNlci11cGxvYWQvYXZhdGFyL2MyN2UwYzc3MzcuanBlZw==%2Cr_20%2Cw_90%2Cx_92%2Cy_102/co_rgb:6e7b85%2Cg_south_west%2Cl_text:notosansjp-medium.otf_30:%25E3%2583%2587%25E3%2583%2599%25E3%2582%25AD%25E3%2583%25A3%25E3%2583%25B3%2Cx_220%2Cy_160/bo_4px_solid_white%2Cg_south_west%2Ch_50%2Cl_fetch:aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL3plbm4tdXNlci11cGxvYWQvYXZhdGFyL2RkNmQyMTZhMWYuanBlZw==%2Cr_max%2Cw_50%2Cx_139%2Cy_84/v1627283836/default/og-base-w1200-v2.png",
-      "length": "0",
-      "type": "image/png"
-    },
-    "dc:creator": "りょた",
-    "content": "\n 📌 はじめに\nこんにちは！@Ryo54388667です!☺️\n普段は都内でフロントエンドエンジニアとして業務をしてます！主にTypeScriptやNext.jsといった技術を触っています~\n先日、AWS Amplify についてのアップグレード情報がありました！🎉\nhttps://twitter.com/AWSAmplify/status/1724831823023263887\nその中でも本業でも頻繁に利用しているAmplify Hosting(以下 Amplify)も新しくなったということで、早速いろいろと試してみました!\n\n 📌 確認対象の機能について\nAmplify Hosti...",
-    "contentSnippet": "📌 はじめに\nこんにちは！@Ryo54388667です!☺️\n普段は都内でフロントエンドエンジニアとして業務をしてます！主にTypeScriptやNext.jsといった技術を触っています~\n先日、AWS Amplify についてのアップグレード情報がありました！🎉\nhttps://twitter.com/AWSAmplify/status/1724831823023263887\nその中でも本業でも頻繁に利用しているAmplify Hosting(以下 Amplify)も新しくなったということで、早速いろいろと試してみました!\n\n 📌 確認対象の機能について\nAmplify Hosti...",
-    "guid": "https://zenn.dev/devcamp/articles/4a4e559d8544bc",
-    "isoDate": "2023-11-23T23:21:44.000Z"
-  },
-  {
-    "creator": "りょた",
-    "title": "デベキャンで経験したクラウドエンジニアの実践的な業務について",
-    "link": "https://zenn.dev/devcamp/articles/6584f40e67da80",
-    "pubDate": "Sat, 18 Nov 2023 00:23:17 GMT",
-    "enclosure": {
-      "url": "https://res.cloudinary.com/zenn/image/upload/s--qmUXwBCr--/c_fit%2Cg_north_west%2Cl_text:notosansjp-medium.otf_55:%25E3%2583%2587%25E3%2583%2599%25E3%2582%25AD%25E3%2583%25A3%25E3%2583%25B3%25E3%2581%25A7%25E7%25B5%258C%25E9%25A8%2593%25E3%2581%2597%25E3%2581%259F%25E3%2582%25AF%25E3%2583%25A9%25E3%2582%25A6%25E3%2583%2589%25E3%2582%25A8%25E3%2583%25B3%25E3%2582%25B8%25E3%2583%258B%25E3%2582%25A2%25E3%2581%25AE%25E5%25AE%259F%25E8%25B7%25B5%25E7%259A%2584%25E3%2581%25AA%25E6%25A5%25AD%25E5%258B%2599%25E3%2581%25AB%25E3%2581%25A4%25E3%2581%2584%25E3%2581%25A6%2Cw_1010%2Cx_90%2Cy_100/g_south_west%2Cl_text:notosansjp-medium.otf_34:%25E3%2582%258A%25E3%2582%2587%25E3%2581%259F%2Cx_220%2Cy_108/bo_3px_solid_rgb:d6e3ed%2Cg_south_west%2Ch_90%2Cl_fetch:aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL3plbm4tdXNlci11cGxvYWQvYXZhdGFyL2MyN2UwYzc3MzcuanBlZw==%2Cr_20%2Cw_90%2Cx_92%2Cy_102/co_rgb:6e7b85%2Cg_south_west%2Cl_text:notosansjp-medium.otf_30:%25E3%2583%2587%25E3%2583%2599%25E3%2582%25AD%25E3%2583%25A3%25E3%2583%25B3%2Cx_220%2Cy_160/bo_4px_solid_white%2Cg_south_west%2Ch_50%2Cl_fetch:aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL3plbm4tdXNlci11cGxvYWQvYXZhdGFyL2RkNmQyMTZhMWYuanBlZw==%2Cr_max%2Cw_50%2Cx_139%2Cy_84/v1627283836/default/og-base-w1200-v2.png",
-      "length": "0",
-      "type": "image/png"
-    },
-    "dc:creator": "りょた",
-    "content": "こんにちは！@Ryo54388667です!☺️\n普段は都内でフロントエンドエンジニアとして業務をしてます！主にTypeScriptやNext.jsといった技術を触っています。クラウド周辺のような低レイヤーの勉強をしたかったので、今回、数ヶ月間、デベキャンプラクティス（以下デベキャン） に参加しました！その振り返りを書いていきます〜\nhttps://propagate-tech.com/services/devcamp?pvs=25\n\n 📌 概要\n行ってきたことを抜粋してお伝えします！\n主に、３つフェーズの業務を行いました。\nこちらの図がわかりやすいので引用させていただきます。\n\nこれから...",
-    "contentSnippet": "こんにちは！@Ryo54388667です!☺️\n普段は都内でフロントエンドエンジニアとして業務をしてます！主にTypeScriptやNext.jsといった技術を触っています。クラウド周辺のような低レイヤーの勉強をしたかったので、今回、数ヶ月間、デベキャンプラクティス（以下デベキャン） に参加しました！その振り返りを書いていきます〜\nhttps://propagate-tech.com/services/devcamp?pvs=25\n\n 📌 概要\n行ってきたことを抜粋してお伝えします！\n主に、３つフェーズの業務を行いました。\nこちらの図がわかりやすいので引用させていただきます。\n\nこれから...",
-    "guid": "https://zenn.dev/devcamp/articles/6584f40e67da80",
-    "isoDate": "2023-11-18T00:23:17.000Z"
   }
 ]
