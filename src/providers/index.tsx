@@ -1,7 +1,6 @@
 "use client"
 import type { BlogTypeKeyLIteralType } from "@/types";
-import { useSearchParams } from "next/navigation";
-import { ReactNode, createContext, use, useEffect, useReducer, type Dispatch } from "react";
+import { ReactNode, createContext, useReducer, type Dispatch } from "react";
 
 export type GlobalState = {
   blogType: BlogTypeKeyLIteralType

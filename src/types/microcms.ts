@@ -35,8 +35,6 @@ export type BaseMicroCMSApiSingleDataType<T extends MicroCMSContentId> = {
 
 export type BaseMicroCMSApiListDataType<T extends MicroCMSListContent> = {
   contents: T[];
-  createdAt: string;
-  updatedAt: string;
   totalCount: number;
   offset: number;
   limit: number;
