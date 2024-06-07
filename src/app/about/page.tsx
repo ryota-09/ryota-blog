@@ -13,7 +13,7 @@ const Page = () => {
         </p>
       </div>
       <figure>
-        <Image src="/icon.jpg" alt={AUTHOR_NAME} className="block shadow-2xl mx-auto aspect-square overflow-hidden rounded-full object-cover w-[200px] md:w-[400px]" width={400} height={400} />
+        <Image src="/author.jpg" alt={AUTHOR_NAME} className="block shadow-2xl mx-auto aspect-square overflow-hidden rounded-full object-cover w-[200px] md:w-[400px]" width={400} height={400} />
       </figure>
     </article>
   )

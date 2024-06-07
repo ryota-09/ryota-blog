@@ -20,16 +20,25 @@ export const SOCIAL_MEDIA_NAV_ITEMS: HeaderNavItem[] = [
   {
     name: 'X',
     href: 'https://x.com/Ryo54388667',
+    icon: '/icons/x.svg',
     target: "_blank",
   },
   {
-    name: 'Z',
+    name: 'Zenn',
     href: 'https://zenn.dev/ryota_09',
+    icon: '/icons/zenn.svg',
     target: "_blank",
   },
   {
-    name: 'G',
+    name: 'GitHub',
     href: "https://github.com/ryota-09",
+    icon: '/icons/github.svg',
     target: "_blank",
   },
+  {
+    name: "Feed",
+    href: "/feed",
+    icon: "/icons/rss.svg",
+    target: "_self",
+  }
 ] as const;
