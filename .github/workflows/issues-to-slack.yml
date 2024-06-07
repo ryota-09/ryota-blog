@@ -1,0 +1,27 @@
+name: Notify Slack on Issue
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  notify_slack:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send notification to Slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "💬 : issueが起票されました！",
+              "attachments": [
+                {
+                  "title": "${{ github.event.issue.title }}",
+                  "title_link": "${{ github.event.issue.html_url }}",
+                  "text": "${{ github.event.issue.body }}"
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
