@@ -14,7 +14,6 @@ jobs:
         with:
           payload: |
             {
-              "color": "#82DBD8",
               "blocks": [
                 {
                   "type": "section",
