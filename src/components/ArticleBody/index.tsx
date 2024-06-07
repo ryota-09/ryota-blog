@@ -13,6 +13,7 @@ import XShareButton from "@/components/UiParts/XShareButton";
 import { baseURL } from "@/config";
 import PrevAndNextBlogNav from "@/components/ArticleBody/PrevAndNextBlogNav";
 import Image from "next/image";
+import IssueButton from "@/components/UiParts/IssueButton";
 
 type ArticleBodyProps = {
   data: BlogsContentType
@@ -81,6 +82,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
               return <HTMLArea key={index} html={body.html} />
           }
         })}
+        <IssueButton currentPath={`${baseURL}/blogs/${data.id}`} />
         <PrevAndNextBlogNav currentBlogData={data} />
         <aside className='flex flex-col-reverse md:flex-row gap-8 md:gap-4 mx-0.5 border-t dark:border-t-[#333] py-10'>
           <BottomCard />
@@ -88,7 +90,6 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
         <FixedButton />
         <XShareButton
           classes="fixed bottom-4 bottom-4 left-4 bg-gray-400 dark:bg-gray-600 text-white text-sm w-auto h-10 px-2 flex items-center justify-center rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-70 active:bg-gray-500"
-          text={data.title}
           url={`${baseURL}/blogs/${data.id}`}
         >
           Post to X
