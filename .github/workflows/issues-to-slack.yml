@@ -12,7 +12,7 @@ jobs:
       - name: Send notification to Slack
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          payload: |
+          payload: >
             {
               "text": "💬 : issueが起票されました！",
               "attachments": [
