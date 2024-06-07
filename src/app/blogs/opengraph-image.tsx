@@ -9,7 +9,6 @@ export const size = {
 export const contentType = 'image/png'
 
 export default function Image() {
-  const text = "ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ"
   return new ImageResponse(
     (
       <div
@@ -34,8 +33,7 @@ export default function Image() {
           overflow: 'hidden'
         }}
       >
-        {/* <div style={{ margin: "20px" }}>{SITE_TITLE}</div> */}
-        <div style={{ margin: "5px", display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', WebkitLineClamp: 3 }}>{text}</div>
+        <div style={{ margin: "5px", display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', WebkitLineClamp: 3 }}>{SITE_TITLE}</div>
         <div style={{
           position: 'absolute',
           right: '20px',

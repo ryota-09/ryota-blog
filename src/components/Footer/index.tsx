@@ -1,4 +1,5 @@
 import FooterNav from "@/components/Footer/FooterNav";
+import { SITE_TITLE } from "@/static/blogs";
 import { FOOTER_NAV_ITEMS } from "@/static/footer";
 
 const Footer = () => {
@@ -9,7 +10,7 @@ const Footer = () => {
           <FooterNav items={FOOTER_NAV_ITEMS} />
         </div>
         <div className="text-gray-600 flex justify-end pt-4">
-          &copy; {new Date().getFullYear()} りょたぶろぐ. All rights reserved.
+          &copy; {`${new Date().getFullYear()} ${SITE_TITLE}. All rights reserved.`}
         </div>
       </div>
     </footer>
