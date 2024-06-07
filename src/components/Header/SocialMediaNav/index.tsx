@@ -1,5 +1,6 @@
-import { SOCIAL_MEDIA_NAV_ITEMS } from "@/static/header";
 import Image from "next/image";
+
+import { SOCIAL_MEDIA_NAV_ITEMS } from "@/static/header";
 
 const SocialMediaNav = () => {
   return (
@@ -7,7 +8,7 @@ const SocialMediaNav = () => {
       <a href={SOCIAL_MEDIA_NAV_ITEMS[0].href} target={SOCIAL_MEDIA_NAV_ITEMS[0].target} rel="noreferrer" className="w-8 h-8  border dark:border-[#333] dark:bg-gray-400 rounded-md font-extrabold flex justify-center items-center opacity-50 hover:opacity-30">
         <Image src={SOCIAL_MEDIA_NAV_ITEMS[0].icon ?? ""} alt={SOCIAL_MEDIA_NAV_ITEMS[0].name} width={20} height={20} />
       </a>
-      <a href={SOCIAL_MEDIA_NAV_ITEMS[1].href} target={SOCIAL_MEDIA_NAV_ITEMS[1].target} rel="noreferrer" className="w-8 h-8  border dark:border-[#333] dark:bg-gray-400 rounded-md font-extrabold flex justify-center items-center transition opacity-50 hover:bg-zenn">
+      <a href={SOCIAL_MEDIA_NAV_ITEMS[1].href} target={SOCIAL_MEDIA_NAV_ITEMS[1].target} rel="noreferrer" className="w-8 h-8  border dark:border-[#333] dark:bg-gray-400 rounded-md font-extrabold flex justify-center items-center transition opacity-50 hover:opacity-30 hover:bg-zenn">
         <Image src={SOCIAL_MEDIA_NAV_ITEMS[1].icon ?? ""} alt={SOCIAL_MEDIA_NAV_ITEMS[0].name} width={20} height={20} />
       </a>
       <a href={SOCIAL_MEDIA_NAV_ITEMS[2].href} target={SOCIAL_MEDIA_NAV_ITEMS[2].target} rel="noreferrer" className="w-8 h-8  border dark:border-[#333] dark:bg-gray-400 rounded-md font-extrabold flex justify-center items-center transition opacity-50 hover:opacity-30">
