@@ -15,7 +15,7 @@ export const FOOTER_NAV_ITEMS: FooterNavItem[] = [
     target: "_blank",
   },
   {
-    name: "Feed",
+    name: "RSS",
     href: "/feed",
   }
 ] as const;
