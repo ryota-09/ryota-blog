@@ -13,7 +13,8 @@ const Pagination = async ({ currentPage, query }: PaginationProps) => {
 
   const data = await getBlogList(query);
 
-  const totalPages = Math.floor(data.totalCount / PER_PAGE) + 1
+  const rate = data.totalCount / PER_PAGE
+  const totalPages = rate < 1 ? 1 : Math.ceil(rate)
   const smallNumRange = Array.from({ length: totalPages + 1 }).map((_, index) => index + 1).slice(2, currentPage - 1 - 1);
   const largeNumRange = Array.from({ length: totalPages + 1 }).map((_, index) => index + 1).slice(currentPage + 1, totalPages - 1);
 
