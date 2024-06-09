@@ -1,6 +1,22 @@
 [
   {
     "creator": "りょた",
+    "title": "URLクエリを使ったissueの起票とGitHub ActionsによるSlack通知を実現する",
+    "link": "https://zenn.dev/ryota_09/articles/77ca2efe5d23d0",
+    "pubDate": "Sat, 08 Jun 2024 09:00:01 GMT",
+    "enclosure": {
+      "url": "https://res.cloudinary.com/zenn/image/upload/s--XIUFeq-O--/c_fit%2Cg_north_west%2Cl_text:notosansjp-medium.otf_55:URL%25E3%2582%25AF%25E3%2582%25A8%25E3%2583%25AA%25E3%2582%2592%25E4%25BD%25BF%25E3%2581%25A3%25E3%2581%259Fissue%25E3%2581%25AE%25E8%25B5%25B7%25E7%25A5%25A8%25E3%2581%25A8GitHub%2520Actions%25E3%2581%25AB%25E3%2582%2588%25E3%2582%258BSlack%25E9%2580%259A%25E7%259F%25A5%25E3%2582%2592%25E5%25AE%259F%25E7%258F%25BE%25E3%2581%2599%25E3%2582%258B%2Cw_1010%2Cx_90%2Cy_100/g_south_west%2Cl_text:notosansjp-medium.otf_37:%25E3%2582%258A%25E3%2582%2587%25E3%2581%259F%2Cx_203%2Cy_121/g_south_west%2Ch_90%2Cl_fetch:aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL3plbm4tdXNlci11cGxvYWQvYXZhdGFyL2RkNmQyMTZhMWYuanBlZw==%2Cr_max%2Cw_90%2Cx_87%2Cy_95/v1627283836/default/og-base-w1200-v2.png",
+      "length": "0",
+      "type": "image/png"
+    },
+    "dc:creator": "りょた",
+    "content": "こんにちは！@Ryo54388667です!☺️\n普段は都内でエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\n今回はURLクエリを使ったissueの起票とGitHub ActionsによるSlack通知の実装を紹介していきます！\n\n 📌 実装したいもの\nWebメディアなどの運用について、誤った情報をいかに早くキャッチするかが重要です！昨今は炎上に繋がりかねませんし。。😇管理者としても誤った情報を放置し続けたいとは思っていませんし、意図せず誤った情報を掲載してしまうケースもあるでしょう。いずれにせよ、Web上には正しい情報を掲載したいと...",
+    "contentSnippet": "こんにちは！@Ryo54388667です!☺️\n普段は都内でエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\n今回はURLクエリを使ったissueの起票とGitHub ActionsによるSlack通知の実装を紹介していきます！\n\n 📌 実装したいもの\nWebメディアなどの運用について、誤った情報をいかに早くキャッチするかが重要です！昨今は炎上に繋がりかねませんし。。😇管理者としても誤った情報を放置し続けたいとは思っていませんし、意図せず誤った情報を掲載してしまうケースもあるでしょう。いずれにせよ、Web上には正しい情報を掲載したいと...",
+    "guid": "https://zenn.dev/ryota_09/articles/77ca2efe5d23d0",
+    "isoDate": "2024-06-08T09:00:01.000Z"
+  },
+  {
+    "creator": "りょた",
     "title": "details/summary要素を使ってみた",
     "link": "https://zenn.dev/ryota_09/articles/40fb30c4a2d348",
     "pubDate": "Sat, 01 Jun 2024 10:16:20 GMT",
@@ -302,21 +318,5 @@
     "contentSnippet": "📌 はじめに\nこんにちは！@Ryo54388667です!☺️\n普段は都内でフロントエンドエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\n先日、CloudFrontがstale-while-revalidateに対応したという話を耳にしました。\nhttps://dev.classmethod.jp/articles/cloudfront-stale-while-revalidate-stale-if-error/\n自分の中でstale-while-revalidateの挙動のイメージが曖昧だったので、検証ついでに記事を書いてみまし...",
     "guid": "https://zenn.dev/devcamp/articles/e9877f79230ef2",
     "isoDate": "2023-12-09T06:16:49.000Z"
-  },
-  {
-    "creator": "りょた",
-    "title": "Lambda Web Adapter を利用してSSR Streamingを試してみた",
-    "link": "https://zenn.dev/ryota_09/articles/212902afa784c7",
-    "pubDate": "Sun, 03 Dec 2023 08:00:51 GMT",
-    "enclosure": {
-      "url": "https://res.cloudinary.com/zenn/image/upload/s--DgfJtfhe--/c_fit%2Cg_north_west%2Cl_text:notosansjp-medium.otf_55:Lambda%2520Web%2520Adapter%2520%25E3%2582%2592%25E5%2588%25A9%25E7%2594%25A8%25E3%2581%2597%25E3%2581%25A6SSR%2520Streaming%25E3%2582%2592%25E8%25A9%25A6%25E3%2581%2597%25E3%2581%25A6%25E3%2581%25BF%25E3%2581%259F%2Cw_1010%2Cx_90%2Cy_100/g_south_west%2Cl_text:notosansjp-medium.otf_37:%25E3%2582%258A%25E3%2582%2587%25E3%2581%259F%2Cx_203%2Cy_121/g_south_west%2Ch_90%2Cl_fetch:aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL3plbm4tdXNlci11cGxvYWQvYXZhdGFyL2RkNmQyMTZhMWYuanBlZw==%2Cr_max%2Cw_90%2Cx_87%2Cy_95/v1627283836/default/og-base-w1200-v2.png",
-      "length": "0",
-      "type": "image/png"
-    },
-    "dc:creator": "りょた",
-    "content": "こちらは、ラクスパートナーズ Advent Calendar 2023の5日目の記事です！🎄📅🎁\nhttps://qiita.com/advent-calendar/2023/rakus-partners\n前日の記事は、「Next.js App RouterとMDXでリッチなスキルシートをサクッと書く」 でした！\n\n 📌 はじめに\nこんにちは！@Ryo54388667です!☺️\n普段は都内でフロントエンドエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\nNext.js製アプリのホスティング先をリサーチしていた時、このLambda We...",
-    "contentSnippet": "こちらは、ラクスパートナーズ Advent Calendar 2023の5日目の記事です！🎄📅🎁\nhttps://qiita.com/advent-calendar/2023/rakus-partners\n前日の記事は、「Next.js App RouterとMDXでリッチなスキルシートをサクッと書く」 でした！\n\n 📌 はじめに\nこんにちは！@Ryo54388667です!☺️\n普段は都内でフロントエンドエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\nNext.js製アプリのホスティング先をリサーチしていた時、このLambda We...",
-    "guid": "https://zenn.dev/ryota_09/articles/212902afa784c7",
-    "isoDate": "2023-12-03T08:00:51.000Z"
   }
 ]
