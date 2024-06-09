@@ -22,6 +22,7 @@ export const CATEGORY_MAPED_ID = {
   "TypeScript": "typescript",
   "CSS": "css",
   "レビュー": "review",
+  "時事": "news",
 } as const;
 
 export const CATEGORY_MAPED_NAME = Object.fromEntries(
