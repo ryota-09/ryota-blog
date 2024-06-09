@@ -1,5 +1,5 @@
 import NewLabel from "@/components/UiParts/NewLabel";
-import { isWithinTwoWeeks } from "@/lib";
+import { isWithinTwoWeeks } from "@/util";
 
 type ZennArticleType = {
   link: string;

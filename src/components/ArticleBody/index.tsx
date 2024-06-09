@@ -14,6 +14,8 @@ import { baseURL } from "@/config";
 import PrevAndNextBlogNav from "@/components/ArticleBody/PrevAndNextBlogNav";
 import Image from "next/image";
 import IssueButton from "@/components/UiParts/IssueButton";
+import { calcDiffYears } from "@/util";
+import InfoYearsCard from "@/components/UiParts/InfoYearsCard";
 
 type ArticleBodyProps = {
   data: BlogsContentType
@@ -44,7 +46,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
                 width={data.thumbnail.width}
                 height={data.thumbnail.height}
                 sizes="100vw"
-                style={{ height: "auto", width: "100%"}}
+                style={{ height: "auto", width: "100%" }}
                 priority
               />
             </figure>
@@ -56,6 +58,11 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
       <div className='mt-4'>
         <time dateTime={displayTime.split('T')[0]} className="text-gray-400">{displayTime.split('T')[0].replaceAll("-", "/")}</time>
       </div>
+      {calcDiffYears(displayTime) >= 1 && (
+        <aside className="mt-4">
+          <InfoYearsCard diffYear={calcDiffYears(displayTime)} />
+        </aside>
+      )}
       <ul className='mt-4 flex flex-wrap gap-2'>
         {data.category.map(({ name }, index) => (
           <li key={index} className="block cursor-pointer">

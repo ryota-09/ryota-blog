@@ -3,7 +3,7 @@ import { Link } from 'next-view-transitions'
 
 import { BlogsContentType } from "@/types/microcms"
 import NewLabel from "@/components/UiParts/NewLabel"
-import { isWithinTwoWeeks } from "@/lib"
+import { isWithinTwoWeeks } from "@/util"
 
 type ArticleCardProps = {
   data: BlogsContentType
