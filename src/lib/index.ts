@@ -73,7 +73,7 @@ export const generateBreadcrumbAssets = (blogId: string, title: string): Breadcr
 export const escapeHtml = (text: string | null) => {
 
   if (!text) return "";
-  
+
   return text.replace(/[&<>"']/g, (match) => {
     switch (match) {
       case "&": return "&amp;";

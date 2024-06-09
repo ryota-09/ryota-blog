@@ -2,6 +2,8 @@ import Image from "next/image"
 import { Link } from 'next-view-transitions'
 
 import { BlogsContentType } from "@/types/microcms"
+import NewLabel from "@/components/UiParts/NewLabel"
+import { isWithinTwoWeeks } from "@/util"
 
 type ArticleCardProps = {
   data: BlogsContentType
@@ -9,7 +11,8 @@ type ArticleCardProps = {
 
 const ArticleCard = ({ data }: ArticleCardProps) => {
   return (
-    <div className="bg-white dark:bg-black border-2 border-gray-200 dark:dark:border-gray-600 overflow-hidden p-6 h-full flex flex-col">
+    <div className="bg-white dark:bg-black border-2 border-gray-200 dark:dark:border-gray-600 p-6 h-full flex flex-col relative">
+      {isWithinTwoWeeks(data.publishedAt || data.updatedAt) && <NewLabel className="absolute -top-2.5 -left-2 md:-left-4" />}
       <Link href={`/blogs/${data.id}`} className="block text-lg md:text-xl leading-tight font-medium transition duration-200 text-black dark:text-gray-300 hover:text-base-color dark:hover:text-primary">{data.title}</Link>
       <div className="flex gap-4 h-full flex-col-reverse md:flex-row">
         <div className="md:w-[70%] flex flex-col justify-between">
