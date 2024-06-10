@@ -1,9 +1,9 @@
-import Image from "next/image"
 import { Link } from 'next-view-transitions'
 
 import { BlogsContentType } from "@/types/microcms"
 import NewLabel from "@/components/UiParts/NewLabel"
 import { isWithinTwoWeeks } from "@/util"
+import ImageWithBlur from "@/components/UiParts/ImageWithBlur"
 
 type ArticleCardProps = {
   data: BlogsContentType
@@ -29,7 +29,7 @@ const ArticleCard = ({ data }: ArticleCardProps) => {
           <div className="md:flex-shrink-0 md:w-[45%] lg:w-[28%] xl:w-[45%] mt-4 md:mt-2 max-h-[250px] md:max-h-auto overflow-hidden flex justify-center items-center">
             <Link href={`/blogs/${data.id}`}>
               <figure className="transition-opacity hover:opacity-80">
-                <Image
+                <ImageWithBlur
                   src={data.thumbnail.url}
                   alt={data.title}
                   width={data.thumbnail.width}
