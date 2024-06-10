@@ -3,7 +3,6 @@ import { Link } from 'next-view-transitions'
 import { BlogsContentType } from "@/types/microcms"
 import NewLabel from "@/components/UiParts/NewLabel"
 import { isWithinTwoWeeks } from "@/util"
-// import ImageWithBlur from "@/components/UiParts/ImageWithBlur"
 import Image from 'next/image'
 
 type ArticleCardProps = {
