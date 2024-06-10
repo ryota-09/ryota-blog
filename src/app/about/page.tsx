@@ -1,7 +1,7 @@
 import SocialMediaNav from "@/components/Header/SocialMediaNav"
 import Chip from "@/components/UiParts/Chip"
+import ImageWithBlur from "@/components/UiParts/ImageWithBlur"
 import { AUTHOR_DESCRIPTION, AUTHOR_NAME } from "@/static/blogs"
-import Image from "next/image"
 
 const Page = () => {
   return (
@@ -15,7 +15,7 @@ const Page = () => {
         <SocialMediaNav />
       </div>
       <figure>
-        <Image src="/author.jpg" alt={AUTHOR_NAME} className="block shadow-2xl mx-auto aspect-square overflow-hidden rounded-full object-cover w-[200px] md:w-[400px]" width={400} height={400} />
+        <ImageWithBlur src="/author.jpg" alt={AUTHOR_NAME} isInternal className="block shadow-2xl mx-auto aspect-square overflow-hidden rounded-full object-cover w-[200px] md:w-[400px]" width={400} height={400} />
       </figure>
     </article>
   )

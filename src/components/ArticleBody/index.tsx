@@ -12,10 +12,10 @@ import AdRevenueLabel from "@/components/AdRevenueLabel";
 import XShareButton from "@/components/UiParts/XShareButton";
 import { baseURL } from "@/config";
 import PrevAndNextBlogNav from "@/components/ArticleBody/PrevAndNextBlogNav";
-import Image from "next/image";
 import IssueButton from "@/components/UiParts/IssueButton";
 import { calcDiffYears } from "@/util";
 import InfoYearsCard from "@/components/UiParts/InfoYearsCard";
+import ImageWithBlur from "@/components/UiParts/ImageWithBlur";
 
 type ArticleBodyProps = {
   data: BlogsContentType
@@ -31,7 +31,6 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
   const displayTime = data.publishedAt || data.updatedAt
 
   const TOCdata = generateTOCAssets(joindedHTML)
-
   return (
     <div>
       <div className='md:w-[80%] mx-auto my-6 md:my-16'>
@@ -40,7 +39,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
           <div className="flex flex-col gap-8">
             <h1 className="text-2xl md:text-3xl font-bold dark:text-gray-300">{data.title}</h1>
             <figure className="max-h-[300px] md:max-h-[540px] overflow-hidden shadow-2xl">
-              <Image
+              <ImageWithBlur
                 src={data.thumbnail.url}
                 alt={data.title}
                 width={data.thumbnail.width}

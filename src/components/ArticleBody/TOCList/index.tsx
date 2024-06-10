@@ -10,7 +10,7 @@ const TOCList = ({ data }: TOCListProps) => {
     <div className="hover:bg-gray-50 dark:hover:bg-gray-600 transition duration-200 rounded-md hover:shadow-lg">
       <details>
         <summary className="py-6 px-4 text-2xl dark:text-gray-300 font-semibold w-full cursor-pointer marker:text-secondary">目次</summary>
-        <nav className="mx-12 pb-10">
+        <nav className="ml-8 mr-1 md:ml-12 md:mr-12 pb-10">
           <ol className="space-y-8 list-decimal">
             {data.map(({ id, text, subList }) => (
               <div key={id}>
