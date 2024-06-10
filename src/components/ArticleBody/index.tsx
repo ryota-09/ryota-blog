@@ -15,8 +15,7 @@ import PrevAndNextBlogNav from "@/components/ArticleBody/PrevAndNextBlogNav";
 import IssueButton from "@/components/UiParts/IssueButton";
 import { calcDiffYears } from "@/util";
 import InfoYearsCard from "@/components/UiParts/InfoYearsCard";
-// import ImageWithBlur from "@/components/UiParts/ImageWithBlur";
-import Image from "next/image";
+import ImageWithBlur from "@/components/UiParts/ImageWithBlur";
 
 type ArticleBodyProps = {
   data: BlogsContentType
@@ -40,7 +39,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
           <div className="flex flex-col gap-8">
             <h1 className="text-2xl md:text-3xl font-bold dark:text-gray-300">{data.title}</h1>
             <figure className="max-h-[300px] md:max-h-[540px] overflow-hidden shadow-2xl">
-              <Image
+              <ImageWithBlur
                 src={data.thumbnail.url}
                 alt={data.title}
                 width={data.thumbnail.width}
