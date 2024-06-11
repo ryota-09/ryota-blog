@@ -10,8 +10,8 @@ type PaginationProps = {
 }
 
 const Pagination = async ({ currentPage, query }: PaginationProps) => {
-
-  const data = await getBlogList(query);
+  // NOTE: 1日キャッシュ保持
+  const data = await getBlogList(query, { next: { revalidate: 86400 } });
 
   const rate = data.totalCount / PER_PAGE;
   const totalPages = rate < 1 ? 1 : Math.ceil(rate);

@@ -3,7 +3,7 @@ import type { FooterNavItem } from "@/types/footer";
 export const FOOTER_NAV_ITEMS: FooterNavItem[] = [
   {
     name: 'Home',
-    href: '/',
+    href: '/blogs',
   },
   {
     name: 'About',
