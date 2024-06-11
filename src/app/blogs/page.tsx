@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
-import Pagination from "@/components/Pagination";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
 import { generateQuery } from "@/lib";
@@ -55,7 +54,7 @@ export function generateMetadata(
     title = `${category}` + title
     description = `${category}` + description
   }
-  
+
   return {
     title: title,
     description: description,
@@ -88,17 +87,10 @@ const Page = ({ searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKey
             <ZennArticleList />
             :
             <Suspense fallback={<Skelton />}>
-              <ArticleList query={query} />
+              <ArticleList query={query} blogType={blogType} page={page} />
             </Suspense>
           }
         </div>
-        {blogType === "blogs" && (
-          <Suspense fallback={<div className="h-16" />}>
-            <nav className="flex md:flex-none justify-center  mt-4">
-              <Pagination query={query} currentPage={+page} />
-            </nav>
-          </Suspense>
-        )}
       </div>
       <SideNav />
     </>
