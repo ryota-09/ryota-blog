@@ -1,5 +1,5 @@
 import { createClient } from "microcms-js-sdk";
-import type { MicroCMSQueries } from "microcms-js-sdk";
+import type { CustomRequestInit, MicroCMSQueries } from "microcms-js-sdk";
 import type {
   BaseMicroCMSApiListDataType,
   BaseMicroCMSApiType,
@@ -29,16 +29,17 @@ const baseMicroCMSApiGetHandler: BaseMicroCMSApiType =
     <T>(
       endpoint: EndPointLiteralType,
       queries?: MicroCMSQueries,
-      contentId?: string
+      customRequestInit?: CustomRequestInit,
+      contentId?: string,
     ) => {
       switch (objectType) {
         case "LIST":
           return client.get<T>({
-            endpoint, queries
+            endpoint, queries, customRequestInit
           });
         case "SINGLE":
           return client.get<T>({
-            endpoint, contentId, queries
+            endpoint, queries, contentId, customRequestInit
           });
         default:
           throw new Error(`🔥: objectTypeに誤りがあります。 ${objectType}`);
@@ -49,19 +50,20 @@ const MicroCMSApiGetListHandler = baseMicroCMSApiGetHandler("LIST");
 
 const MicroCMSApiGetSingleObjectHandler = baseMicroCMSApiGetHandler("SINGLE");
 
-export const getBlogList = (querys?: MicroCMSQueries) =>
-  MicroCMSApiGetListHandler<BlogsContentType>("blogs", { ...querys });
+export const getBlogList = (querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) =>
+  MicroCMSApiGetListHandler<BlogsContentType>("blogs", querys, customRequestInit);
 
-export const getAllBlogList = async (querys?: MicroCMSQueries) => {
-  const data = client.getAllContents<BlogsContentType>({ "endpoint": "blogs", ...querys });
+export const getAllBlogList = async (querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) => {
+  const data = client.getAllContents<BlogsContentType>({ "endpoint": "blogs", ...querys, ...customRequestInit });
   return data;
 }
 
-export const getBlogById = (contentId: string, querys?: MicroCMSQueries) =>
+export const getBlogById = (contentId: string, querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) =>
   MicroCMSApiGetSingleObjectHandler<BlogsContentType>(
     "blogs",
     querys,
-    contentId
+    customRequestInit,
+    contentId,
   );
 
 export const getAllBlogIds = async (alternatedField?: string) => {
@@ -69,21 +71,22 @@ export const getAllBlogIds = async (alternatedField?: string) => {
   return data;
 }
 
-export const getBlogByKeyword = (keyword: string, querys?: MicroCMSQueries) => {
+export const getBlogByKeyword = (keyword: string, querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) => {
   return MicroCMSApiGetListHandler<BlogsContentType>("blogs", {
     q: keyword,
     ...querys,
+    ...customRequestInit,
   });
 }
 
-export const getAllCategoryList = async (querys?: MicroCMSQueries) => {
-  const data = await client.getAllContents<CategoriesContentType>({ "endpoint": "categories", ...querys });
+export const getAllCategoryList = async (querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) => {
+  const data = await client.getAllContents<CategoriesContentType>({ "endpoint": "categories", ...querys, ...customRequestInit });
   return data;
 }
 
 export const getPrevAndNextBlog = async (data: BlogsContentType) => {
   const publishedAt = data.publishedAt;
-  const [ prev, next ] = await Promise.all([
+  const [prev, next] = await Promise.all([
     client.get<BaseMicroCMSApiListDataType<BlogsContentType>>({
       endpoint: "blogs",
       queries: {
@@ -91,6 +94,12 @@ export const getPrevAndNextBlog = async (data: BlogsContentType) => {
         filters: `publishedAt[less_than]${publishedAt}`,
         limit: 1,
         orders: "-publishedAt",
+      },
+      customRequestInit: {
+        next: {
+          // NOTE: １日保持 60 * 60 * 24
+          revalidate: 86400
+        }
       }
     }),
     client.get<BaseMicroCMSApiListDataType<BlogsContentType>>({
@@ -100,6 +109,12 @@ export const getPrevAndNextBlog = async (data: BlogsContentType) => {
         filters: `publishedAt[greater_than]${publishedAt}`,
         limit: 1,
         orders: "publishedAt",
+      },
+      customRequestInit: {
+        next: {
+          // NOTE: １日保持 60 * 60 * 24
+          revalidate: 86400
+        }
       }
     })
   ])

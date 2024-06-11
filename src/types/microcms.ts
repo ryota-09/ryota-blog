@@ -5,6 +5,7 @@ import type {
   MicroCMSQueries,
   MicroCMSListContent,
   MicroCMSContentId,
+  CustomRequestInit,
 } from "microcms-js-sdk";
 
 const ENDPOINT_LIST = ["blogs", "categories"] as const;
@@ -90,12 +91,14 @@ export type GetObjectType = "LIST" | "SINGLE";
 export type BaseMicroCMSApiType = {
   (getObjectType: "LIST"): <T extends MicroCMSListContent>(
     endpoint: EndPointLiteralType,
-    queries?: MicroCMSQueries
+    queries?: MicroCMSQueries,
+    customRequestInit?: CustomRequestInit,
   ) => Promise<BaseMicroCMSApiListDataType<T>>;
   (getObjectType: "SINGLE"): <T extends MicroCMSContentId>(
     endpoint: EndPointLiteralType,
     queries: MicroCMSQueries | undefined,
-    contentId: string
+    customRequestInit: CustomRequestInit | undefined,
+    contentId: string,
   ) => Promise<BaseMicroCMSApiSingleDataType<T>>;
 };
 
