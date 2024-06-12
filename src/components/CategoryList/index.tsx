@@ -2,7 +2,8 @@ import CategoryItem from "@/components/CategoryList/CategoryItem";
 import { getAllCategoryList } from "@/lib/microcms";
 
 const CategoryList = async () => {
-  const data = await getAllCategoryList({ fields: "id,name" });
+  // NOTE: 1週間キャッシュ保持
+  const data = await getAllCategoryList({ fields: "id,name" }, { "next": { revalidate: 604800 } });
   return (
     <div>
       <div className="text-xl mb-8 px-0.5 dark:text-gray-400">Category</div>

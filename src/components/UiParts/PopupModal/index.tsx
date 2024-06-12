@@ -5,6 +5,9 @@ import { useKey } from "@/hooks/keybord"
 import { cltw } from "@/util"
 
 type PopupModalProps = {
+  /**
+   * モーダルのコンテンツ
+   */
   children: ReactNode
 }
 

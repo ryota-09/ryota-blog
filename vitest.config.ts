@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
+    setupFiles: './src/__tests__/setup.ts',
     env: {
       MICROCMS_SERVICE_DOMAIN: 'example',
       MICROCMS_API_KEY: 'api-key',

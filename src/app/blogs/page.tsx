@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
-import Pagination from "@/components/Pagination";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
 import { generateQuery } from "@/lib";
@@ -55,7 +54,7 @@ export function generateMetadata(
     title = `${category}` + title
     description = `${category}` + description
   }
-  
+
   return {
     title: title,
     description: description,
@@ -74,7 +73,7 @@ const Page = ({ searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKey
   return (
     <>
       <div className="w-full md:w-[calc(100%_-_300px)] flex flex-col justify-between px-2 md:px-0">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col flex-grow gap-4">
           <div className="flex gap-4 flex-col lg:flex-row">
             <div className="flex justify-center items-center p-3 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-600">
               <BlogTypeTabs blogType={blogType} />
@@ -88,17 +87,10 @@ const Page = ({ searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKey
             <ZennArticleList />
             :
             <Suspense fallback={<Skelton />}>
-              <ArticleList query={query} />
+              <ArticleList query={query} blogType={blogType} page={page} />
             </Suspense>
           }
         </div>
-        {blogType === "blogs" && (
-          <Suspense fallback={<div className="h-16" />}>
-            <nav className="flex md:flex-none justify-center  mt-4">
-              <Pagination query={query} currentPage={+page} />
-            </nav>
-          </Suspense>
-        )}
       </div>
       <SideNav />
     </>

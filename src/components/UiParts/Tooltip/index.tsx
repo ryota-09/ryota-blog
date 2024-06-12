@@ -2,6 +2,9 @@ import { cltw } from "@/util"
 import type { ReactNode } from "react"
 
 type TooltipProps = {
+  /**
+   * ツールチップの内容
+   */
   label: string
   children: ReactNode
   className?: string

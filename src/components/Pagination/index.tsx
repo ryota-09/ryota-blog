@@ -1,25 +1,20 @@
 import EllipsisMenu from "@/components/Pagination/EllipsisMenu"
 import PaginationItem from "@/components/Pagination/PaginationItem"
-import { getBlogList } from "@/lib/microcms"
 import { PER_PAGE } from "@/static/blogs"
-import type { MicroCMSQueries } from "microcms-js-sdk"
 
 type PaginationProps = {
-  query: MicroCMSQueries
   currentPage: number
+  totalCount: number
 }
 
-const Pagination = async ({ currentPage, query }: PaginationProps) => {
-  // NOTE: 1日キャッシュ保持
-  const data = await getBlogList(query, { next: { revalidate: 86400 } });
-
-  const rate = data.totalCount / PER_PAGE;
-  const totalPages = rate < 1 ? 1 : Math.ceil(rate);
-  const smallNumRange = Array.from({ length: totalPages + 1 }).map((_, index) => index + 1).slice(2, currentPage - 1 - 1);
+const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
+  const rate = totalCount / PER_PAGE
+  const totalPages = rate < 1 ? 1 : Math.ceil(rate)
+  const smallNumRange = Array.from({ length: totalPages + 1 }).map((_, index) => index + 1).slice(1, currentPage - 1 - 1);
   const largeNumRange = Array.from({ length: totalPages + 1 }).map((_, index) => index + 1).slice(currentPage + 1, totalPages - 1);
 
   return (
-    data.totalCount !== 0 && (
+    totalCount !== 0 && (
       <ul className="flex items-center gap-2">
         {currentPage !== 1 && (
           <li>

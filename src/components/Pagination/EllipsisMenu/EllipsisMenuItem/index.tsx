@@ -1,20 +1,18 @@
 "use client"
+
 import { cltw } from "@/util"
 import { useRouter } from "next/navigation"
-import { ReactNode } from "react"
+import type { ReactNode } from "react"
 
-type PaginationItemProps = {
-  currentPage: number
+type EllipsisMenuItemProps = {
   pageNumber?: number
   children: ReactNode
 }
 
-const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemProps) => {
+const EllipsisMenuItem = ({ pageNumber, children }: EllipsisMenuItemProps) => {
   const router = useRouter()
 
   const handleClick = () => {
-    if (pageNumber === currentPage) return
-
     const pathNameWithQueryParams = window.location.pathname + window.location.search
 
     if (pathNameWithQueryParams.includes('keyword') || pathNameWithQueryParams.includes("category")) {
@@ -23,19 +21,13 @@ const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemPro
       return
     }
 
-    if (pageNumber === 1) {
-      router.push('/blogs')
-      return
-    }
-
     router.push(`/blogs?page=${pageNumber}`)
   }
 
   return (
     <button
-      type="button"
+      className={cltw("block w-full text-left px-4 py-2 text-md text-txt-base dark:text-gray-400 hover:bg-light dark:hover:bg-secondary hover:text-white")}
       onClick={handleClick}
-      className={cltw("inline-flex h-8 w-8  items-center justify-center bg-white text-txt-base transition-colors hover:bg-light dark:hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-950 dark:text-gray-400 dark:focus:ring-base-color", pageNumber === currentPage ? 'bg-base-color dark:bg-secondary dark:text-gray-50' : 'bg-white dark:bg-black')}
       role="navigation"
       aria-label="ページネーションボタン"
     >
@@ -43,4 +35,4 @@ const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemPro
     </button>
   )
 }
-export default PaginationItem
+export default EllipsisMenuItem
