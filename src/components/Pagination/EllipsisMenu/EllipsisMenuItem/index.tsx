@@ -18,10 +18,12 @@ const EllipsisMenuItem = ({ pageNumber, children }: EllipsisMenuItemProps) => {
     if (pathNameWithQueryParams.includes('keyword') || pathNameWithQueryParams.includes("category")) {
       // NOTE: ?category=チュートリアル&page=2&page=3&page=1 になるのを防ぐ
       router.push(`${pathNameWithQueryParams.replace(/&page=\d+/, '')}&page=${pageNumber}`)
+      router.refresh()
       return
     }
 
     router.push(`/blogs?page=${pageNumber}`)
+    router.refresh()
   }
 
   return (

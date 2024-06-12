@@ -22,6 +22,7 @@ const SearchBar = () => {
     
     if (!keyword) {
       router.push(basePath)
+      router.refresh()
       return
     }
     
@@ -30,11 +31,13 @@ const SearchBar = () => {
     if (category) {
       formRef.current?.reset()
       router.push(`${basePath}?category=${category}&keyword=${keyword}`)
+      router.refresh()
       return
     }
 
     formRef.current?.reset()
     router.push(`${basePath}?keyword=${escapedKeyword}`)
+    router.refresh()
   }
 
   return (
