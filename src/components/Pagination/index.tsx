@@ -11,7 +11,7 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
 
   const rate = totalCount / PER_PAGE
   const totalPages = rate < 1 ? 1 : Math.ceil(rate)
-  const smallNumRange = Array.from({ length: totalPages + 1 }).map((_, index) => index + 1).slice(2, currentPage - 1 - 1);
+  const smallNumRange = Array.from({ length: totalPages + 1 }).map((_, index) => index + 1).slice(1, currentPage - 1 - 1);
   const largeNumRange = Array.from({ length: totalPages + 1 }).map((_, index) => index + 1).slice(currentPage + 1, totalPages - 1);
 
   return (
@@ -45,7 +45,7 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
             <button type="button">
               <span>...</span>
             </button>
-            <EllipsisMenu range={smallNumRange} />
+            <EllipsisMenu currentPage={currentPage} range={smallNumRange} />
           </li>
         }
         {currentPage >= 3 && (
@@ -68,7 +68,7 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
             <button type="button">
               <span>...</span>
             </button>
-            <EllipsisMenu range={largeNumRange} />
+            <EllipsisMenu currentPage={currentPage} range={largeNumRange} />
           </li>
         }
         {totalPages !== 1 && (
