@@ -45,7 +45,7 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
             <button type="button">
               <span>...</span>
             </button>
-            <EllipsisMenu currentPage={currentPage} range={smallNumRange} />
+            <EllipsisMenu range={smallNumRange} />
           </li>
         }
         {currentPage >= 3 && (
@@ -68,7 +68,7 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
             <button type="button">
               <span>...</span>
             </button>
-            <EllipsisMenu currentPage={currentPage} range={largeNumRange} />
+            <EllipsisMenu range={largeNumRange} />
           </li>
         }
         {totalPages !== 1 && (
