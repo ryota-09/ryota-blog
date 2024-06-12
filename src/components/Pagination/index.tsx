@@ -7,7 +7,7 @@ type PaginationProps = {
   totalCount: number
 }
 
-const Pagination = async ({ currentPage, totalCount }: PaginationProps) => {
+const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
 
   const rate = totalCount / PER_PAGE
   const totalPages = rate < 1 ? 1 : Math.ceil(rate)
