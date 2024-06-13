@@ -1,7 +1,14 @@
 "use client"
 import React, { useEffect, useState } from 'react';
 
-const FixedButton = () => {
+type FixedButtonProps = {
+  /**
+   * 上部からのスクロール量がこの値を超えたらボタンを表示する
+   */
+  topTo?: number;
+}
+
+const FixedButton = ({ topTo = 400 }: FixedButtonProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -19,7 +26,7 @@ const FixedButton = () => {
     // 画面の上から400pxの位置にダミー要素を設置
     const observedElement = document.createElement('div');
     observedElement.style.position = 'absolute';
-    observedElement.style.top = '400px';
+    observedElement.style.top = `${topTo}px`;
     observedElement.style.height = '1px';
     observedElement.style.width = '100%';
     document.body.appendChild(observedElement);

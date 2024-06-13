@@ -6,6 +6,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 type BlogTypeTabsProps = {
+  /**
+   * 一覧表示するブログの種類
+   */
   blogType: BlogTypeKeyLIteralType;
 }
 
