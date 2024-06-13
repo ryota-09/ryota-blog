@@ -37,7 +37,7 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
           </li>
         )}
         <li>
-          <PaginationItem pageNumber={1} currentPage={currentPage} >1</PaginationItem>
+          <PaginationItem pageNumber={1} currentPage={currentPage}>1</PaginationItem>
         </li>
         {currentPage >= 4 &&
           <li className="relative group mx-6">

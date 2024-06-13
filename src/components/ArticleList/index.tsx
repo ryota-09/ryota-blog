@@ -35,7 +35,7 @@ const ArticleList = async ({ query, blogType, page }: ArticleListProps) => {
       }
       {(blogType === "blogs" && contentCount >= 1) && (
         <nav className="flex md:flex-none justify-center mt-4">
-          <Pagination currentPage={+page} totalCount={10} />
+          <Pagination currentPage={+page} totalCount={data.totalCount} />
         </nav>
       )}
     </div>

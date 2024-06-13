@@ -20,15 +20,18 @@ const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemPro
     if (pathNameWithQueryParams.includes('keyword') || pathNameWithQueryParams.includes("category")) {
       // NOTE: ?category=チュートリアル&page=2&page=3&page=1 になるのを防ぐ
       router.push(`${pathNameWithQueryParams.replace(/&page=\d+/, '')}&page=${pageNumber}`)
+      router.refresh()
       return
     }
 
     if (pageNumber === 1) {
       router.push('/blogs')
+      router.refresh()
       return
     }
 
     router.push(`/blogs?page=${pageNumber}`)
+    router.refresh()
   }
 
   return (

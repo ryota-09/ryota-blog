@@ -6,6 +6,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 type BlogTypeTabsProps = {
+  /**
+   * 一覧表示するブログの種類
+   */
   blogType: BlogTypeKeyLIteralType;
 }
 
@@ -20,12 +23,14 @@ const BlogTypeTabs = ({ blogType }: BlogTypeTabsProps) => {
     setActiveTab("blogs")
     dispatch({ type: "SET_BLOG_TYPE", payload: { blogType: "blogs" } })
     router.push('/blogs')
+    router.refresh()
   }, [])
 
   const zennButtonHandler = useCallback(() => {
     setActiveTab("zenn")
     dispatch({ type: "SET_BLOG_TYPE", payload: { blogType: "zenn" } })
     router.push('/blogs?blogType=zenn')
+    router.refresh()
   }, [])
 
   useEffect(() => {
