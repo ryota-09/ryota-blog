@@ -8,7 +8,7 @@ type PaginationProps = {
 }
 
 const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
-  
+
   const rate = totalCount / PER_PAGE
   const totalPages = rate < 1 ? 1 : Math.ceil(rate)
   const smallNumRange = Array.from({ length: totalPages + 1 }).map((_, index) => index + 1).slice(1, currentPage - 1 - 1);
@@ -38,7 +38,7 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
           </li>
         )}
         <li>
-          <PaginationItem pageNumber={1} currentPage={currentPage} >1</PaginationItem>
+          <PaginationItem pageNumber={1} currentPage={currentPage}>1</PaginationItem>
         </li>
         {currentPage >= 4 &&
           <li className="relative group mx-6">
