@@ -19,3 +19,4 @@ vi.mock('next/navigation', async () => {
     usePathname: vi.fn(),
   };
 });
+vi.mock("next/link")

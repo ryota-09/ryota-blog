@@ -1,8 +1,8 @@
 "use client"
-
+import { Link } from "next-view-transitions"
+import { useSearchParams } from "next/navigation"
+import { useCallback, type ReactNode } from "react"
 import { cltw } from "@/util"
-import { useRouter } from "next/navigation"
-import type { ReactNode } from "react"
 
 type EllipsisMenuItemProps = {
   pageNumber?: number
@@ -10,31 +10,41 @@ type EllipsisMenuItemProps = {
 }
 
 const EllipsisMenuItem = ({ pageNumber, children }: EllipsisMenuItemProps) => {
-  const router = useRouter()
+  const searchParams = useSearchParams()
 
-  const handleClick = () => {
-    const pathNameWithQueryParams = window.location.pathname + window.location.search
+  const generateHref = useCallback(() => {
+    const baseHref = `/blogs`
 
-    if (pathNameWithQueryParams.includes('keyword') || pathNameWithQueryParams.includes("category")) {
-      // NOTE: ?category=チュートリアル&page=2&page=3&page=1 になるのを防ぐ
-      router.push(`${pathNameWithQueryParams.replace(/&page=\d+/, '')}&page=${pageNumber}`)
-      router.refresh()
-      return
+    const category = searchParams.get('category') ?? ""
+    const keyword = searchParams.get('keyword') ?? ""
+
+    if (category && keyword) {
+      const currentPath = `${baseHref}?category=${category}&keyword=${keyword}`
+      return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
+    } else if (category) {
+      const currentPath = `${baseHref}?category=${category}`
+      return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
+    } else if (keyword) {
+      const currentPath = `${baseHref}?keyword=${keyword}`
+      return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
     }
 
-    router.push(`/blogs?page=${pageNumber}`)
-    router.refresh()
-  }
+    if (pageNumber === 1) {
+      return baseHref
+    }
+
+    return `${baseHref}?page=${pageNumber}`
+  }, [searchParams, pageNumber])
 
   return (
-    <button
+    <Link
+      href={generateHref()}
       className={cltw("block w-full text-left px-4 py-2 text-md text-txt-base dark:text-gray-400 hover:bg-light dark:hover:bg-secondary hover:text-white")}
-      onClick={handleClick}
       role="navigation"
       aria-label="ページネーションボタン"
     >
       {children}
-    </button>
+    </Link>
   )
 }
 export default EllipsisMenuItem

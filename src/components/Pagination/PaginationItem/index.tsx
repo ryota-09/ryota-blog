@@ -1,7 +1,8 @@
 "use client"
 import { cltw } from "@/util"
-import { useRouter } from "next/navigation"
-import { ReactNode } from "react"
+import { Link } from "next-view-transitions"
+import { useRouter, useSearchParams } from "next/navigation"
+import { ReactNode, useCallback } from "react"
 
 type PaginationItemProps = {
   currentPage: number
@@ -10,40 +11,42 @@ type PaginationItemProps = {
 }
 
 const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemProps) => {
-  const router = useRouter()
+  const searchParams = useSearchParams()
 
-  const handleClick = () => {
-    if (pageNumber === currentPage) return
+  const generateHref = useCallback(() => {
+    const baseHref = `/blogs`
+    if (pageNumber === currentPage) return ""
 
-    const pathNameWithQueryParams = window.location.pathname + window.location.search
+    const category = searchParams.get('category') ?? ""
+    const keyword = searchParams.get('keyword') ?? ""
 
-    if (pathNameWithQueryParams.includes('keyword') || pathNameWithQueryParams.includes("category")) {
-      // NOTE: ?category=チュートリアル&page=2&page=3&page=1 になるのを防ぐ
-      router.push(`${pathNameWithQueryParams.replace(/&page=\d+/, '')}&page=${pageNumber}`)
-      router.refresh()
-      return
+    if (category && keyword) {
+      const currentPath = `${baseHref}?category=${category}&keyword=${keyword}`
+      return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
+    } else if (category) {
+      const currentPath = `${baseHref}?category=${category}`
+      return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
+    } else if (keyword) {
+      const currentPath = `${baseHref}?keyword=${keyword}`
+      return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
     }
 
     if (pageNumber === 1) {
-      router.push('/blogs')
-      router.refresh()
-      return
+      return baseHref
     }
 
-    router.push(`/blogs?page=${pageNumber}`)
-    router.refresh()
-  }
+    return `${baseHref}?page=${pageNumber}`
+  }, [searchParams, pageNumber, currentPage])
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className={cltw("inline-flex h-8 w-8  items-center justify-center bg-white text-txt-base transition-colors hover:bg-light dark:hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-950 dark:text-gray-400 dark:focus:ring-base-color", pageNumber === currentPage ? 'bg-base-color dark:bg-secondary dark:text-gray-50' : 'bg-white dark:bg-black')}
+    <Link
+      href={generateHref()}
+      className={cltw("inline-flex h-8 w-8  items-center justify-center bg-white text-txt-base transition-colors  focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-950 dark:text-gray-400 dark:focus:ring-base-color", pageNumber === currentPage ? 'bg-base-color dark:bg-secondary dark:text-gray-50' : 'bg-white dark:bg-black hover:bg-light dark:hover:bg-primary hover:text-white')}
       role="navigation"
       aria-label="ページネーションボタン"
     >
       {children}
-    </button>
+    </Link>
   )
 }
 export default PaginationItem

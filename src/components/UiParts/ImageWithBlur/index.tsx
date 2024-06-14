@@ -8,10 +8,10 @@ import type { ImageProps } from "next/image"
 type ImageWithBlurProps = {
   src: string
   className?: string
-  isInternal?: boolean
 } & Omit<ImageProps, 'placeholder' | 'blurDataURL' | "src">
 
-const ImageWithBlur = async ({ className = "", isInternal, src, alt, ...restPros }: ImageWithBlurProps) => {
+const ImageWithBlur = async ({ className = "", src, alt, ...restPros }: ImageWithBlurProps) => {
+  const isInternal = !src.startsWith("http") || !src.startsWith("https")
   // NOTE: 画像が内部リソースの場合は、fs.readFileで読み込む
   if (isInternal) {
     const buffer = await fs.readFile(`./public${src}`)
