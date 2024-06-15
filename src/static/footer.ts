@@ -15,6 +15,11 @@ export const FOOTER_NAV_ITEMS: FooterNavItem[] = [
     target: "_blank",
   },
   {
+    name: "Storybook",
+    href: "https://story.ryotablog.jp",
+    target: "_blank",
+  },
+  {
     name: "RSS",
     href: "/feed",
   }

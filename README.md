@@ -12,7 +12,7 @@ This repository manages the frontend of `Ryota Blog`, a blog platform built usin
 https://ryotablog.jp/blogs  
   
 ↓ Storybook  
-https://main.d27d2aojxnjjfp.amplifyapp.com
+https://story.ryotablog.jp
 
 ## Technology Stack
 
