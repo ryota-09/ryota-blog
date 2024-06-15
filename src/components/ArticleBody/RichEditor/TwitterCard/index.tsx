@@ -17,11 +17,11 @@ const TwitterCard = ({ children, className, ...restProps }: TwitterCardProps) =>
   }, [pathname]);
   return (
     <>
-      {/* <div className="dark:hidden"> */}
+      <aside className="max-w-[80%] md:max-auto mx-auto">
         <blockquote {...restProps} data-theme="light" className={cltw(className, "twitter-tweet")}>
           {children}
         </blockquote>
-      {/* </div> */}
+      </aside>
       {/* <div className="hidden dark:block">
         <blockquote {...restProps} data-theme="dark" className={cltw(className, "twitter-tweet")}>
           {children}
