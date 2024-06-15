@@ -6,9 +6,7 @@ const Footer = () => {
   return (
     <footer className="bg-white dark:bg-black py-4 shadow-inner">
       <div className="container mx-auto divide-y dark:divide-[#333] px-2 md:px-0">
-        <div className="flex justify-between items-center pb-6">
-          <FooterNav items={FOOTER_NAV_ITEMS} />
-        </div>
+        <FooterNav items={FOOTER_NAV_ITEMS} />
         <div className="text-gray-600 flex justify-end pt-4">
           &copy; {`${new Date().getFullYear()} ${SITE_TITLE}. All rights reserved.`}
         </div>
