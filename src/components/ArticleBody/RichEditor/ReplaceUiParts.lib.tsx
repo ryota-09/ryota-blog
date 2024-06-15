@@ -1,4 +1,5 @@
 import { DOMNode, Element, attributesToProps, domToReact, HTMLReactParserOptions } from "html-react-parser";
+import dynamic from "next/dynamic";
 
 import CustomH3 from "@/components/ArticleBody/RichEditor/CustomUI/CustomH3";
 import CustomH2 from "@/components/ArticleBody/RichEditor/CustomUI/CustomH2";
@@ -15,11 +16,12 @@ import CustomTr from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomT
 import CustomTh from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTh";
 import CustomTd from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTd";
 import CustomIframe from "@/components/ArticleBody/RichEditor/CustomUI/CustomIframe";
-import TwitterCard from "@/components/ArticleBody/RichEditor/TwitterCard";
 import CustomCode from "@/components/ArticleBody/RichEditor/CustomUI/CustomCode";
 import CustomStrong from "@/components/ArticleBody/RichEditor/CustomUI/CustomStrong";
 import ExternalLink from "@/components/UiParts/ExternalLink";
 import PopupModal from "@/components/UiParts/PopupModal";
+
+const TwitterCard = dynamic(() => import("@/components/ArticleBody/RichEditor/TwitterCard"), { ssr: false });
 
 const isElement = (domNode: any): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);
@@ -53,7 +55,7 @@ export const customReplaceOptions: HTMLReactParserOptions = {
         const href = aElement?.attribs.href
         return (
           // NOTE: スクロールバーが表示されるため、overflowY: "hidden" を指定
-          <CustomIframe href={href ?? ""} className="w-full h-[88px] sm:h-[105px] md:h-[130px] lg:h-[160px] bg-white dark:bg-black" />
+          <CustomIframe href={href ?? ""} className="w-full h-[90px] md:h-[107px] lg:h-[148px] bg-white dark:bg-black" />
         );
       }
 
@@ -77,7 +79,7 @@ export const customReplaceOptions: HTMLReactParserOptions = {
           const href = domNode.attribs.href;
           const isExternal = href.startsWith("http") || domNode.attribs.target === "_blank" || href.includes("amazon");
           if (isExternal) {
-            return <ExternalLink {...props} href={href} className="underline underline-offset-4 transition hover:text-base-color dark:hover:text-primary hover:no-underline">{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</ExternalLink>;
+            return <ExternalLink {...props} href={href} className="underline underline-offset-4 transition hover:text-base-color dark:hover:text-primary hover:no-underline break-all">{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</ExternalLink>;
           }
           return <CustomLink {...props} href={href}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomLink>;
         case "img":
