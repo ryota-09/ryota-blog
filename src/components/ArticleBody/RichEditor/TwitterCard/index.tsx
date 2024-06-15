@@ -1,5 +1,4 @@
 "use client"
-
 import { cltw } from "@/util";
 import { usePathname } from "next/navigation";
 import Script from "next/script";
@@ -17,16 +16,16 @@ const TwitterCard = ({ children, className, ...restProps }: TwitterCardProps) =>
   }, [pathname]);
   return (
     <>
-      <aside className="max-w-[80%] md:max-auto mx-auto">
+      <aside className="dark:hidden max-w-[80%] md:max-auto mx-auto">
         <blockquote {...restProps} data-theme="light" className={cltw(className, "twitter-tweet")}>
           {children}
         </blockquote>
       </aside>
-      {/* <div className="hidden dark:block">
+      <aside className="hidden dark:block max-w-[80%] md:max-auto mx-auto">
         <blockquote {...restProps} data-theme="dark" className={cltw(className, "twitter-tweet")}>
           {children}
         </blockquote>
-      </div> */}
+      </aside>
       <Script
         src="https://platform.twitter.com/widgets.js"
         strategy="lazyOnload"
