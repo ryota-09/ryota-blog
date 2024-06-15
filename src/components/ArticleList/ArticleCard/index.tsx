@@ -6,6 +6,9 @@ import { isWithinTwoWeeks } from "@/util"
 import Image from 'next/image'
 
 type ArticleCardProps = {
+  /**
+   * ブログ記事のデータ
+   */
   data: BlogsContentType
 }
 
