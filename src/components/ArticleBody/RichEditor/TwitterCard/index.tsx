@@ -16,12 +16,12 @@ const TwitterCard = ({ children, className, ...restProps }: TwitterCardProps) =>
   }, [pathname]);
   return (
     <>
-      <aside className="dark:hidden max-w-[80%] md:max-auto mx-auto">
+      <aside className="dark:hidden max-w-[85vw] sm:max-w-[80%] md:max-w-auto sm:mx-auto overflow-x-hidden">
         <blockquote {...restProps} data-theme="light" className={cltw(className, "twitter-tweet")}>
           {children}
         </blockquote>
       </aside>
-      <aside className="hidden dark:block max-w-[80%] md:max-auto mx-auto">
+      <aside className="hidden dark:block max-w-[85vw] sm:max-w-[80%] md:max-w-auto sm:mx-auto overflow-x-hidden">
         <blockquote {...restProps} data-theme="dark" className={cltw(className, "twitter-tweet")}>
           {children}
         </blockquote>

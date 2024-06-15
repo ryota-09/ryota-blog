@@ -36,6 +36,12 @@ export const SOCIAL_MEDIA_NAV_ITEMS: HeaderNavItem[] = [
     target: "_blank",
   },
   {
+    name: "Storybook",
+    href: "https://story.ryotablog.jp",
+    icon: "/icons/storybook.svg",
+    target: "_blank",
+  },
+  {
     name: "Feed",
     href: "/feed",
     icon: "/icons/rss.svg",

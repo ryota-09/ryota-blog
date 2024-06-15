@@ -1,10 +1,12 @@
+import Image from "next/image";
+
 import RichEditor from "@/components/ArticleBody/RichEditor";
 import ThumbnailCard from '@/components/ArticleBody/ThumbnailCard';
 import Chip from '@/components/UiParts/Chip';
 import BottomCard from '@/components/ArticleBody/BottomCard';
 import FixedButton from '@/components/UiParts/FixedButton';
 import { BlogsContentType } from '@/types/microcms';
-import HTMLArea from '@/components/ArticleBody/RichEditor/HTMLArea';
+// import HTMLArea from '@/components/ArticleBody/RichEditor/HTMLArea';
 import { Link } from 'next-view-transitions';
 import { generateTOCAssets } from "@/lib";
 import TOCList from "@/components/ArticleBody/TOCList";
@@ -15,7 +17,9 @@ import PrevAndNextBlogNav from "@/components/ArticleBody/PrevAndNextBlogNav";
 import IssueButton from "@/components/UiParts/IssueButton";
 import { calcDiffYears } from "@/util";
 import InfoYearsCard from "@/components/UiParts/InfoYearsCard";
-import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const HTMLArea = dynamic(() => import('@/components/ArticleBody/RichEditor/HTMLArea'), { ssr: false });
 
 type ArticleBodyProps = {
   data: BlogsContentType
