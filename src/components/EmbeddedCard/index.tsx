@@ -1,4 +1,3 @@
-import Image from "next/image";
 import ExternalLink from "@/components/UiParts/ExternalLink";
 import { pickHostname } from "@/lib";
 

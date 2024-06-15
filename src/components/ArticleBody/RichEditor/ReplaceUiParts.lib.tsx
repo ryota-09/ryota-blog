@@ -77,7 +77,7 @@ export const customReplaceOptions: HTMLReactParserOptions = {
           const href = domNode.attribs.href;
           const isExternal = href.startsWith("http") || domNode.attribs.target === "_blank" || href.includes("amazon");
           if (isExternal) {
-            return <ExternalLink {...props} href={href} className="underline underline-offset-4 transition hover:text-base-color dark:hover:text-primary hover:no-underline">{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</ExternalLink>;
+            return <ExternalLink {...props} href={href} className="underline underline-offset-4 transition hover:text-base-color dark:hover:text-primary hover:no-underline break-all">{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</ExternalLink>;
           }
           return <CustomLink {...props} href={href}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomLink>;
         case "img":
