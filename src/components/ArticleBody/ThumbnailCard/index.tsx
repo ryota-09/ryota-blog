@@ -2,6 +2,9 @@ import { AUTHOR_NAME } from "@/static/blogs";
 import Image from "next/image";
 
 type ThumbnailCardProps = {
+  /**
+   *  記事のタイトル
+   */
   title: string;
 }
 
