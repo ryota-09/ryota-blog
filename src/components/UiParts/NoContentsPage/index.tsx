@@ -1,6 +1,5 @@
 import ImageWithBlur from "@/components/UiParts/ImageWithBlur";
 import { Link } from "next-view-transitions";
-import Image from "next/image";
 
 const NoContents = () => {
   return (
