@@ -10,7 +10,13 @@ const LARGE_RANGE_START_OFFSET = 1;
 const LARGE_RANGE_END_OFFSET = 1;
 
 type PaginationProps = {
+  /**
+   * 現在のページ番号 (クエリ例: ?page=1)
+   */
   currentPage: number
+  /**
+   * 総コンテンツ数
+   */
   totalCount: number
 }
 
