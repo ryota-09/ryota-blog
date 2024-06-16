@@ -4,7 +4,7 @@ import { SOCIAL_MEDIA_NAV_ITEMS } from "@/static/header";
 
 const SocialMediaNav = () => {
   return (
-    <nav className="flex gap-6 md:gap-4">
+    <nav className="flex gap-5 md:gap-4">
       <a href={SOCIAL_MEDIA_NAV_ITEMS[0].href} target={SOCIAL_MEDIA_NAV_ITEMS[0].target} rel="noreferrer" className="w-8 h-8  border dark:border-[#333] dark:bg-gray-400 rounded-md font-extrabold flex justify-center items-center opacity-50 hover:opacity-30">
         <Image src={SOCIAL_MEDIA_NAV_ITEMS[0].icon ?? ""} alt={SOCIAL_MEDIA_NAV_ITEMS[0].name} width={20} height={20} />
       </a>
