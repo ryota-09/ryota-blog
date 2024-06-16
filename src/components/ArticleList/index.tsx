@@ -27,7 +27,7 @@ const ArticleList = async ({ query, blogType, page }: ArticleListProps) => {
             </li>
           ))}
           {Array.from({ length: emptyItem }).map((_, index) => (
-            <li key={index} className="hidden md:block md:min-h-[240px]" />
+            <li key={index} className="hidden md:block md:h-[290px]" />
           ))}
         </ul>
         :
