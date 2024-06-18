@@ -3,7 +3,8 @@ module.exports = {
     collect: {
       numberOfRuns: 1,
       url: [
-        "https://ryotablog.jp/blogs"
+        // "https://ryotablog.jp/blogs",
+        "https://ryotablog.jp/blogs/customdomain-apprunner-with-terraform-route53"
       ],
       settings: {
         "additive": "true",

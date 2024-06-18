@@ -14,7 +14,7 @@ function getLatestLighthouseReport() {
 function getLighthouseScores() {
   const reportPath = getLatestLighthouseReport();
   const report = JSON.parse(fs.readFileSync(reportPath));
-  console.log(report)
+  // console.log(report)
   console.log(
     {
       performance: report.categories.performance.score * 100,
@@ -69,20 +69,20 @@ async function appendDataToSheet() {
 
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?valueInputOption=RAW`;
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${ACCESS_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ values }),
-  });
+  // const response = await fetch(url, {
+  //   method: 'POST',
+  //   headers: {
+  //     'Authorization': `Bearer ${ACCESS_TOKEN}`,
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify({ values }),
+  // });
 
-  if (!response.ok) {
-    console.error('Error updating scores:', response.statusText);
-  } else {
-    console.log('Scores updated successfully.');
-  }
+  // if (!response.ok) {
+  //   console.error('Error updating scores:', response.statusText);
+  // } else {
+  //   console.log('Scores updated successfully.');
+  // }
 }
 
 // メイン関数

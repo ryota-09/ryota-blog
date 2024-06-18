@@ -7,17 +7,17 @@ import { cltw } from "@/util";
 type TOCItemProps = {
   id: string;
   children: ReactNode;
-  classes?: string;
+  className?: string;
 }
 
-const TOCItem = ({ id, children, classes }: TOCItemProps) => {
+const TOCItem = ({ id, children, className }: TOCItemProps) => {
   return (
     <Scroll
       href={`#${id}`}
       to={id}
       smooth
       offset={-14}
-      className={cltw("cursor-pointer",classes)}
+      className={cltw("cursor-pointer",className)}
     >
       {children}
     </Scroll>
