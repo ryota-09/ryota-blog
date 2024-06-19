@@ -17,7 +17,7 @@ const ArticleList = async ({ query, blogType, page }: ArticleListProps) => {
   const contentCount = data.contents.length
   const emptyItem = PER_PAGE - contentCount
   return (
-    <div className="flex flex-col justify-between h-full">
+    <div className="opacity-50 animate-fadeIn flex flex-col justify-between h-full">
       {data.totalCount !== 0
         ?
         <ul className="flex-imtem grid grid-cols-1 xl:grid-cols-2 gap-4">
