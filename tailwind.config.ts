@@ -8,6 +8,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      keyframes: {
+        fadeInAnime: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+      },
+      animation: {
+        'fadeIn': 'fadeInAnime 1s forwards',
+      },
       textUnderlineOffset: {
         "highlight": '-0.2em',
       },

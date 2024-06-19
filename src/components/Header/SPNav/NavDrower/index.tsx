@@ -27,7 +27,7 @@ const NavDrower = ({ isOpen, items, onClick }: NavDrowerProps) => {
               </Link>
           ))}
         </nav>
-        <div className="flex justify-center px-2">
+        <div className="flex justify-center">
           <SocialMediaNav />
         </div>
       </div>

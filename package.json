@@ -11,7 +11,9 @@
     "test": "vitest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "update-rss": "node ./src/static/rss/rss-parser.js"
+    "update-rss": "node ./src/static/rss/rss-parser.js",
+    "update-lh:desktop": "lhci autorun --config=.desktop-lighthouserc.js",
+    "update-lh:mobile": "lhci autorun --config=.mobile-lighthouserc.js && node ./webvitals/update-mobile-vitals.js"
   },
   "dependencies": {
     "@next/third-parties": "^14.2.3",
