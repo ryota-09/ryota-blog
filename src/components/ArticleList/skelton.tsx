@@ -6,7 +6,7 @@ const Skelton = () => {
       <ul className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         {Array.from({ length: PER_PAGE }).map((_, index) => (
           <li key={index}>
-            <div className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-600 overflow-hidden p-6 sm:h-[620px] md:h-[290px] flex flex-col">
+            <div className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-600 overflow-hidden p-6 h-[540px] md:h-[290px] flex flex-col">
               <div className="block text-lg md:text-xl leading-tight font-medium transition duration-200 bg-gray-200 dark:bg-gray-600 h-6 w-full mb-4 animate-pulse" />
               <div className="flex gap-4 h-full flex-col-reverse md:flex-row">
                 <div className="md:w-[70%] flex flex-col justify-between">
