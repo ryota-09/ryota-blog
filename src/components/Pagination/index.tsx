@@ -1,6 +1,7 @@
 import EllipsisMenu from "@/components/Pagination/EllipsisMenu"
 import PaginationItem from "@/components/Pagination/PaginationItem"
 import { PER_PAGE } from "@/static/blogs"
+import { useMemo } from "react";
 
 const MINIMUM_PAGE_COUNT = 1;
 const INDEX_OFFSET = 1;
@@ -24,12 +25,12 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
   const rate = totalCount / PER_PAGE;
   const totalPages = rate < MINIMUM_PAGE_COUNT ? MINIMUM_PAGE_COUNT : Math.ceil(rate);
 
-  const previousPageRange = Array.from({ length: totalPages + INDEX_OFFSET })
+  const previousPageRange = useMemo(() => Array.from({ length: totalPages + INDEX_OFFSET })
     .map((_, index) => index + INDEX_OFFSET)
-    .slice(SMALL_RANGE_START_OFFSET, currentPage - SMALL_RANGE_END_OFFSET);
-  const nextPageRange = Array.from({ length: totalPages + INDEX_OFFSET })
+    .slice(SMALL_RANGE_START_OFFSET, currentPage - SMALL_RANGE_END_OFFSET), [currentPage, totalPages])
+  const nextPageRange = useMemo(() => Array.from({ length: totalPages + INDEX_OFFSET })
     .map((_, index) => index + INDEX_OFFSET)
-    .slice(currentPage + LARGE_RANGE_START_OFFSET, totalPages - LARGE_RANGE_END_OFFSET);
+    .slice(currentPage + LARGE_RANGE_START_OFFSET, totalPages - LARGE_RANGE_END_OFFSET), [currentPage, totalPages])
 
   return (
     totalCount !== 0 && (
