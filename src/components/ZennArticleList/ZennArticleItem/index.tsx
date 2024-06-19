@@ -9,7 +9,7 @@ type ZennArticleType = {
 
 const ZennArticleItem = ({ link, title, date }: ZennArticleType) => {
   return (
-    <li className="relative bg-white dark:bg-black  border-[10px] border-zenn rounded-lg p-4 h-full min-h-[228.5px] flex flex-col items-center transition-opacity hover:opacity-70">
+    <li className="relative bg-white dark:bg-black  border-[10px] border-zenn rounded-lg p-4 min-h-[228.5px] flex flex-col items-center transition-opacity hover:opacity-70">
       {isWithinTwoWeeks(date) && <NewLabel className="absolute -top-4 -left-4 md:-left-6" />}
       <a href={link} target="_blank" rel="noreferrer" className="h-full flex items-center flex-col">
         <time className="text-xs lg:text-sm text-gray-400 dark:text-gray-500 w-full text-left" dateTime={date.split("T")[0]}>{date.split("T")[0].replaceAll("-", "/")}</time>

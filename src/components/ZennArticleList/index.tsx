@@ -4,7 +4,8 @@ import data from "@/static/rss/data.json"
 
 const ZennArticleList = () => {
   return (
-    <nav className="opacity-0 animate-fadeIn">
+    // NOTE: フッターの位置を調整するため、mb-[101px]を追加
+    <nav className="opacity-0 animate-fadeIn mb-[101px]">
       <ul className="m-0 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         {data.slice(0, 6).map(({ link, title, isoDate }, index) => (
           <ZennArticleItem key={index} link={link} title={title} date={isoDate} />
