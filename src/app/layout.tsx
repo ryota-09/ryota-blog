@@ -8,6 +8,7 @@ import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/static/blogs";
 import { baseURL, gaId, gtmId } from "@/config";
 import ClientLayout from "@/components/ClientLayout";
+import PreloadResources from "@/components/Head/PreloadResources";
 
 const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"], display: "swap", preload: true });
 
@@ -32,6 +33,7 @@ export default function BlogListLayout({
   return (
     <ViewTransitions>
       <html lang="ja">
+        <PreloadResources />
         <ClientLayout>
           <body className={`${KosugiMaru.className} bg-[#eee] dark:bg-[#333] flex flex-col min-h-screen`}>
             <NextTopLoader

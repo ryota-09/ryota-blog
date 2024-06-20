@@ -3,8 +3,14 @@ import Chip from "@/components/UiParts/Chip";
 import type { MappedKeyLiteralType } from "@/types/microcms";
 
 type SearchStateCardProps = {
-  keyword: string;
-  category: MappedKeyLiteralType
+  /**
+   * 検索キーワード
+   */
+  keyword?: string;
+  /**
+   * カテゴリー
+   */
+  category?: MappedKeyLiteralType
 }
 
 const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
