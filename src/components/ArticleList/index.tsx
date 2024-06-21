@@ -21,9 +21,9 @@ const ArticleList = async ({ query, blogType, page }: ArticleListProps) => {
       {data.totalCount !== 0
         ?
         <ul className="flex-imtem grid grid-cols-1 xl:grid-cols-2 gap-4">
-          {data.contents.map((item) => (
-            <li key={item.id}>
-              <ArticleCard data={item} />
+          {data.contents.map((item, index) => (
+            <li key={item.id} data-testid={`pw-article-card-${index}`}>
+              <ArticleCard data={item} index={index} />
             </li>
           ))}
           {Array.from({ length: emptyItem }).map((_, index) => (

@@ -54,6 +54,7 @@ const BlogTypeTabs = ({ blogType }: BlogTypeTabsProps) => {
         type='button'
         className={cltw("relative z-10 px-4 py-2 transition-all duration-300 text-center w-1/2 font-medium text-lg text-txt-base", activeTab === "blogs" ? "" : "text-txt-base dark:text-gray-400")}
         onClick={blogButtonHandler}
+        data-testid="pw-blog-type-tabs-blogs"
       >
         {BLOG_TYPE_ASSETS["blogs"]}
       </button>
@@ -61,6 +62,7 @@ const BlogTypeTabs = ({ blogType }: BlogTypeTabsProps) => {
         type='button'
         className={cltw("relative z-10 px-4 py-2 transition-all duration-300 text-center w-1/2 font-medium text-lg text-txt-base", activeTab === "zenn" ? '' : 'dark:text-gray-400')}
         onClick={zennButtonHandler}
+        data-testid="pw-blog-type-tabs-zenn"
       >
         {BLOG_TYPE_ASSETS["zenn"]}
       </button>

@@ -60,7 +60,8 @@ const data: BlogsContentType = {
 
 export const Default: Story = {
   args: {
-    data
+    data,
+    index: 0
   },
   decorators: [
     (Story) => (
