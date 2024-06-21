@@ -9,8 +9,8 @@ type FooterNavProps = {
 
 const FooterNav = ({ items }: FooterNavProps) => {
   return (
-    <nav className="flex items-center pb-6">
-      <ul className="flex flex-grow flex-wrap justify-evenly md:justify-start gap-y-4 sm:gap-y-0 md:space-x-8 mt-4">
+    <nav className="pb-6">
+      <ul className="md:flex md:gap-4 grid grid-cols-3 mt-4">
         {items.map(({ name, href, target }, index) => (
           target
             ?
