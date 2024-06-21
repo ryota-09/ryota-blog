@@ -9,6 +9,7 @@
     "start": "node .next/standalone/server.js",
     "lint": "next lint",
     "test": "vitest",
+    "e2e": "npx playwright test --ui",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "update-rss": "node ./src/static/rss/rss-parser.js",
@@ -31,6 +32,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^1.5.0",
     "@next/bundle-analyzer": "^14.2.3",
+    "@playwright/test": "^1.44.1",
     "@storybook/addon-essentials": "^8.1.6",
     "@storybook/addon-interactions": "^8.1.6",
     "@storybook/addon-links": "^8.1.6",

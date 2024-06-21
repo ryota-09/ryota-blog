@@ -39,3 +39,7 @@ next-env.d.ts
 
 # lighthouse report
 .lighthouseci
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
