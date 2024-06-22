@@ -10,14 +10,18 @@ type ArticleCardProps = {
    * ブログ記事のデータ
    */
   data: BlogsContentType
+  /**
+   * インデックス
+   */
+  index: number
 }
 
-const ArticleCard = ({ data }: ArticleCardProps) => {
+const ArticleCard = ({ data, index }: ArticleCardProps) => {
   return (
     <div className="bg-white dark:bg-black border-2 border-gray-200 dark:dark:border-gray-600 p-6 h-[540px] md:h-[290px] flex flex-col relative">
       {isWithinTwoWeeks(data.publishedAt || data.updatedAt) && <NewLabel className="absolute -top-2.5 -left-2 md:-left-4" />}
-      <Link href={`/blogs/${data.id}`} className="block h-[6rem] md:h-[5rem] lg:h-[4.5rem] text-lg md:text-xl leading-tight font-medium line-clamp-3 sm:line-clamp-2 transition duration-200 text-black dark:text-gray-300 hover:text-base-color dark:hover:text-primary">{data.title}</Link>
-      <div className="flex gap-4 flex-col-reverse md:flex-row overflow-hidden">
+      <Link href={`/blogs/${data.id}`} className="block h-[6rem] md:h-[5rem] lg:h-[4.5rem] text-lg md:text-xl leading-tight font-medium line-clamp-3 sm:line-clamp-2 transition duration-200 text-black dark:text-gray-300 hover:text-base-color dark:hover:text-primary" data-testid={`pw-card-title-${index}`} >{data.title}</Link>
+      <div className="flex gap-4 flex-col-reverse md:flex-row overflow-hidden h-full">
         <div className="md:w-[70%] flex flex-col justify-between">
           <p className="mt-2 text-gray-500 h-[6rem] sm:h-auto line-clamp-4 sm:line-clamp-3 md:line-clamp-4">{data.description}</p>
           <div className="flex justify-end">

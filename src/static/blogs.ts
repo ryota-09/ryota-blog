@@ -23,7 +23,9 @@ export const CATEGORY_MAPED_ID = {
   "CSS": "css",
   "レビュー": "review",
   "時事": "news",
-  "Terraform": "terraform"
+  "Terraform": "terraform",
+  "UI": "ui-parts",
+  "Release Notes": "release_notes",
 } as const;
 
 export const CATEGORY_MAPED_NAME = Object.fromEntries(
