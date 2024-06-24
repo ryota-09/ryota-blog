@@ -1,6 +1,22 @@
 [
   {
     "creator": "りょた",
+    "title": "WordPressからmicroCMSへ移行してブログをフルリニューアルした話",
+    "link": "https://zenn.dev/ryota_09/articles/71dab6d4dae52f",
+    "pubDate": "Sun, 23 Jun 2024 09:00:00 GMT",
+    "enclosure": {
+      "url": "https://res.cloudinary.com/zenn/image/upload/s--R8K8uZCZ--/c_fit%2Cg_north_west%2Cl_text:notosansjp-medium.otf_55:WordPress%25E3%2581%258B%25E3%2582%2589microCMS%25E3%2581%25B8%25E7%25A7%25BB%25E8%25A1%258C%25E3%2581%2597%25E3%2581%25A6%25E3%2583%2596%25E3%2583%25AD%25E3%2582%25B0%25E3%2582%2592%25E3%2583%2595%25E3%2583%25AB%25E3%2583%25AA%25E3%2583%258B%25E3%2583%25A5%25E3%2583%25BC%25E3%2582%25A2%25E3%2583%25AB%25E3%2581%2597%25E3%2581%259F%25E8%25A9%25B1%2Cw_1010%2Cx_90%2Cy_100/g_south_west%2Cl_text:notosansjp-medium.otf_37:%25E3%2582%258A%25E3%2582%2587%25E3%2581%259F%2Cx_203%2Cy_121/g_south_west%2Ch_90%2Cl_fetch:aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL3plbm4tdXNlci11cGxvYWQvYXZhdGFyL2RkNmQyMTZhMWYuanBlZw==%2Cr_max%2Cw_90%2Cx_87%2Cy_95/v1627283836/default/og-base-w1200-v2.png",
+      "length": "0",
+      "type": "image/png"
+    },
+    "dc:creator": "りょた",
+    "content": "こんにちは！@Ryo54388667です!☺️\n普段は都内でエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\nブログのリニューアルのプロセスで直面した課題や解決策について紹介したいと思います。\n!\n本記事内容は、移行手順ではなく、移行中の課題などにフォーカスしたものです🙇‍♂️\n\n\n 📌 はじめに\n数年前に作成してから放置していたWordPressのブログがあり、「いつかヘッドレスCMSにしたいなー」と思いつつも、ずるずると月日が経っていました。。😇そんな感じで腰が重い状態が続いていたのですが、今回、「移行しよっ！！」と思い立ったのは...",
+    "contentSnippet": "こんにちは！@Ryo54388667です!☺️\n普段は都内でエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\nブログのリニューアルのプロセスで直面した課題や解決策について紹介したいと思います。\n!\n本記事内容は、移行手順ではなく、移行中の課題などにフォーカスしたものです🙇‍♂️\n\n\n 📌 はじめに\n数年前に作成してから放置していたWordPressのブログがあり、「いつかヘッドレスCMSにしたいなー」と思いつつも、ずるずると月日が経っていました。。😇そんな感じで腰が重い状態が続いていたのですが、今回、「移行しよっ！！」と思い立ったのは...",
+    "guid": "https://zenn.dev/ryota_09/articles/71dab6d4dae52f",
+    "isoDate": "2024-06-23T09:00:00.000Z"
+  },
+  {
+    "creator": "りょた",
     "title": "URLクエリを使ったissueの起票とGitHub ActionsによるSlack通知を実現する",
     "link": "https://zenn.dev/ryota_09/articles/77ca2efe5d23d0",
     "pubDate": "Sat, 08 Jun 2024 09:00:01 GMT",
@@ -302,21 +318,5 @@
     "contentSnippet": "こちらは、AWS AmplifyとAWS×フロントエンド #AWSAmplifyJP Advent Calendar 2023の17日目の記事です！🎄📅🎁\nhttps://qiita.com/advent-calendar/2023/amplify\n前日の記事は、「Amplify Boost Up #04 登壇の振り返り」 でした！\n\n 📌 はじめに\nこんにちは！@Ryo54388667です!☺️\n普段は都内でフロントエンドエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\nNext.js製のアプリのStorybookをAWS Ampl...",
     "guid": "https://zenn.dev/ryota_09/articles/90003d4158ce51",
     "isoDate": "2023-12-16T01:27:23.000Z"
-  },
-  {
-    "creator": "りょた",
-    "title": "CloudFrontで学ぶstale-while-revalidate、stale-if-errorディレクティブ",
-    "link": "https://zenn.dev/devcamp/articles/e9877f79230ef2",
-    "pubDate": "Sat, 09 Dec 2023 06:16:49 GMT",
-    "enclosure": {
-      "url": "https://res.cloudinary.com/zenn/image/upload/s--1gA9jDF9--/c_fit%2Cg_north_west%2Cl_text:notosansjp-medium.otf_55:CloudFront%25E3%2581%25A7%25E5%25AD%25A6%25E3%2581%25B6stale-while-revalidate%25E3%2580%2581stale-if-error%25E3%2583%2587%25E3%2582%25A3%25E3%2583%25AC%25E3%2582%25AF%25E3%2583%2586%25E3%2582%25A3%25E3%2583%2596%2Cw_1010%2Cx_90%2Cy_100/g_south_west%2Cl_text:notosansjp-medium.otf_34:%25E3%2582%258A%25E3%2582%2587%25E3%2581%259F%2Cx_220%2Cy_108/bo_3px_solid_rgb:d6e3ed%2Cg_south_west%2Ch_90%2Cl_fetch:aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL3plbm4tdXNlci11cGxvYWQvYXZhdGFyL2MyN2UwYzc3MzcuanBlZw==%2Cr_20%2Cw_90%2Cx_92%2Cy_102/co_rgb:6e7b85%2Cg_south_west%2Cl_text:notosansjp-medium.otf_30:%25E3%2583%2587%25E3%2583%2599%25E3%2582%25AD%25E3%2583%25A3%25E3%2583%25B3%2Cx_220%2Cy_160/bo_4px_solid_white%2Cg_south_west%2Ch_50%2Cl_fetch:aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL3plbm4tdXNlci11cGxvYWQvYXZhdGFyL2RkNmQyMTZhMWYuanBlZw==%2Cr_max%2Cw_50%2Cx_139%2Cy_84/v1627283836/default/og-base-w1200-v2.png",
-      "length": "0",
-      "type": "image/png"
-    },
-    "dc:creator": "りょた",
-    "content": "\n 📌 はじめに\nこんにちは！@Ryo54388667です!☺️\n普段は都内でフロントエンドエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\n先日、CloudFrontがstale-while-revalidateに対応したという話を耳にしました。\nhttps://dev.classmethod.jp/articles/cloudfront-stale-while-revalidate-stale-if-error/\n自分の中でstale-while-revalidateの挙動のイメージが曖昧だったので、検証ついでに記事を書いてみまし...",
-    "contentSnippet": "📌 はじめに\nこんにちは！@Ryo54388667です!☺️\n普段は都内でフロントエンドエンジニアとして業務をしてます！\n主にTypeScriptやNext.jsといった技術を触っています。\n先日、CloudFrontがstale-while-revalidateに対応したという話を耳にしました。\nhttps://dev.classmethod.jp/articles/cloudfront-stale-while-revalidate-stale-if-error/\n自分の中でstale-while-revalidateの挙動のイメージが曖昧だったので、検証ついでに記事を書いてみまし...",
-    "guid": "https://zenn.dev/devcamp/articles/e9877f79230ef2",
-    "isoDate": "2023-12-09T06:16:49.000Z"
   }
 ]
