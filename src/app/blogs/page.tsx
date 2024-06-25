@@ -2,6 +2,7 @@
 import { Suspense } from "react";
 import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
@@ -9,10 +10,13 @@ import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
 import { generateQuery } from "@/lib";
 import { BLOG_TYPE_QUERY, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY } from "@/static/blogs";
-import { MappedKeyLiteralType } from "@/types/microcms";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
-import { BlogTypeKeyLIteralType } from "@/types";
-import ZennArticleList from "@/components/ZennArticleList";
+import type { MappedKeyLiteralType } from "@/types/microcms";
+import type { BlogTypeKeyLIteralType } from "@/types";
+
+const ZennArticleList = dynamic(() => import("@/components/ZennArticleList"));
+
+
 
 export function generateMetadata(
   { searchParams }: { searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType, [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType, [KEYWORD_QUERY]: string } },

@@ -1,10 +1,13 @@
+import dynamic from "next/dynamic";
+
 import ArticleCard from "@/components/ArticleList/ArticleCard";
-import Pagination from "@/components/Pagination";
-import NoContents from "@/components/UiParts/NoContentsPage";
 import { getBlogList } from "@/lib/microcms";
 import { PER_PAGE } from "@/static/blogs";
-import { BlogTypeKeyLIteralType } from "@/types";
+import type { BlogTypeKeyLIteralType } from "@/types";
 import type { MicroCMSQueries } from "microcms-js-sdk";
+import NoContents from "@/components/UiParts/NoContentsPage";
+
+const Pagination = dynamic(() => import("@/components/Pagination"));
 
 type ArticleListProps = {
   query: MicroCMSQueries
