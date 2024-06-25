@@ -50,6 +50,8 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                role="img"
+                aria-label="Previous Page"
               >
                 <path d="m9 18 6-6-6-6" />
               </svg>
@@ -116,6 +118,8 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                role="img"
+                aria-label="Next Page"
               >
                 <path d="m9 18 6-6-6-6" />
               </svg>
