@@ -46,7 +46,7 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
                     width: '100%',
                     height: 'auto'
                   }}
-                  priority
+                  priority={index === 0}
                 />
               </figure>
             </Link>

@@ -1,6 +1,7 @@
 import "../styles/globals.css";
 import type { Metadata } from "next";
-import { Kosugi_Maru } from "next/font/google";
+// import { Kosugi_Maru } from "next/font/google";
+import localFont from "next/font/local"
 import { ViewTransitions } from 'next-view-transitions'
 import NextTopLoader from "nextjs-toploader";
 
@@ -10,7 +11,12 @@ import { baseURL, gaId, gtmId } from "@/config";
 import ClientLayout from "@/components/ClientLayout";
 import PreloadResources from "@/components/Head/PreloadResources";
 
-const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"], display: "swap", preload: true });
+// NOTE: cssがブロックされてしまうのでlocalFontを使用
+const KosugiMaru = localFont({
+  src: "../../public/KosugiMaru-Regular.ttf",
+  preload: true,
+  display: "swap",
+})
 
 export const metadata: Metadata = {
   title: {
