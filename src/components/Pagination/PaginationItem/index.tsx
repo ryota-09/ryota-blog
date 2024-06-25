@@ -42,8 +42,6 @@ const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemPro
     <Link
       href={generateHref()}
       className={cltw("inline-flex h-8 w-8  items-center justify-center bg-white text-txt-base transition-colors  focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-950 dark:text-gray-400 dark:focus:ring-base-color", pageNumber === currentPage ? 'bg-base-color dark:bg-secondary dark:text-gray-50' : 'bg-white dark:bg-black hover:bg-light dark:hover:bg-primary hover:text-white')}
-      role="navigation"
-      aria-label="ページネーションボタン"
     >
       {children}
     </Link>
