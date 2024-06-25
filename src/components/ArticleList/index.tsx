@@ -13,7 +13,7 @@ type ArticleListProps = {
 }
 
 const ArticleList = async ({ query, blogType, page }: ArticleListProps) => {
-  const data = await getBlogList({ ...query, orders: "-publishedAt" }, { cache: "no-store" });
+  const data = await getBlogList({ ...query, orders: "-publishedAt" }, { next: { revalidate: 86400 } });
   const contentCount = data.contents.length
   const emptyItem = PER_PAGE - contentCount
   return (

@@ -1,6 +1,5 @@
 import "../styles/globals.css";
 import type { Metadata } from "next";
-// import { Kosugi_Maru } from "next/font/google";
 import localFont from "next/font/local"
 import { ViewTransitions } from 'next-view-transitions'
 import NextTopLoader from "nextjs-toploader";
