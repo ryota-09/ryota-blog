@@ -1,9 +1,11 @@
 "use client"
+import dynamic from "next/dynamic";
 
 import HumbergerButton from "@/components/Header/SPNav/HumbergerButton";
-import NavDrower from "@/components/Header/SPNav/NavDrower";
 import { HEADER_NAV_ITEMS } from "@/static/header";
 import { useState } from "react";
+
+const NavDrower = dynamic(() => import("@/components/Header/SPNav/NavDrower"));
 
 const SPNav = () => {
   const [isOpen, setIsOpen] = useState(false)
