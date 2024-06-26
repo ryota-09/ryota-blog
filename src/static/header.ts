@@ -20,31 +20,31 @@ export const SOCIAL_MEDIA_NAV_ITEMS: HeaderNavItem[] = [
   {
     name: 'X',
     href: 'https://x.com/Ryo54388667',
-    icon: '/icons/x.svg',
+    icon: '/icons/x.webp',
     target: "_blank",
   },
   {
     name: 'Zenn',
     href: 'https://zenn.dev/ryota_09',
-    icon: '/icons/zenn.svg',
+    icon: '/icons/zenn.webp',
     target: "_blank",
   },
   {
     name: 'GitHub',
     href: "https://github.com/ryota-09",
-    icon: '/icons/github.svg',
+    icon: '/icons/github.webp',
     target: "_blank",
   },
   {
     name: "Storybook",
     href: "https://story.ryotablog.jp/?path=/docs/document--docs",
-    icon: "/icons/storybook.svg",
+    icon: "/icons/storybook.webp",
     target: "_blank",
   },
   {
     name: "Feed",
     href: "/feed",
-    icon: "/icons/rss.svg",
+    icon: "/icons/rss.webp",
     target: "_self",
   }
 ] as const;
