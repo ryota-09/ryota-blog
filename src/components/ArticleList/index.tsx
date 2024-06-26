@@ -1,10 +1,13 @@
+import dynamic from "next/dynamic";
+
 import ArticleCard from "@/components/ArticleList/ArticleCard";
-import Pagination from "@/components/Pagination";
-import NoContents from "@/components/UiParts/NoContentsPage";
 import { getBlogList } from "@/lib/microcms";
 import { PER_PAGE } from "@/static/blogs";
-import { BlogTypeKeyLIteralType } from "@/types";
+import type { BlogTypeKeyLIteralType } from "@/types";
 import type { MicroCMSQueries } from "microcms-js-sdk";
+import NoContents from "@/components/UiParts/NoContentsPage";
+
+const Pagination = dynamic(() => import("@/components/Pagination"));
 
 type ArticleListProps = {
   query: MicroCMSQueries
@@ -13,7 +16,7 @@ type ArticleListProps = {
 }
 
 const ArticleList = async ({ query, blogType, page }: ArticleListProps) => {
-  const data = await getBlogList({ ...query, orders: "-publishedAt" }, { cache: "no-store" });
+  const data = await getBlogList({ ...query, orders: "-publishedAt" }, { next: { revalidate: 86400 } });
   const contentCount = data.contents.length
   const emptyItem = PER_PAGE - contentCount
   return (
