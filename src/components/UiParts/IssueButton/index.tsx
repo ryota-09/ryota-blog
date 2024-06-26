@@ -12,7 +12,7 @@ const IssueButton = ({ currentPath }: IssueButtonProps) => {
   return (
     <ExternalLink href={href} className="flex gap-4 items-center hover:opacity-70 dark:bg-gray-500 w-full sm:w-1/2  lg:w-1/4 border shadow-md p-4">
       <figure>
-        <Image src="/icons/github.svg" alt="GitHub" width={24} height={24} />
+        <Image src="/icons/github.webp" alt="GitHub" width={24} height={24} />
       </figure>
       <div className=" text-txt-base dark:text-gray-400 text-center flex-grow">
         修正をリクエストする
