@@ -23,7 +23,7 @@ const FooterNav = ({ items }: FooterNavProps) => {
             </li>
             :
             <li key={index} className="min-w-20 text-center md:text-start text-gray-600 dark:text-gray-400">
-              <Link href={href} className="block px-2 py-3 transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color">
+              <Link href={href} prefetch={false} className="block px-2 py-3 transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color">
                 {name}
               </Link>
             </li>

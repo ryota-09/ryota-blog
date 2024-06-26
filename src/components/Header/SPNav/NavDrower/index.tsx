@@ -1,8 +1,9 @@
 "use client"
+import { Link } from 'next-view-transitions';
+
 import SocialMediaNav from "@/components/Header/SocialMediaNav";
 import ExternalLink from "@/components/UiParts/ExternalLink";
-import { HeaderNavItem } from "@/types/header";
-import { Link } from 'next-view-transitions';
+import type { HeaderNavItem } from "@/types/header";
 
 type NavDrowerProps = {
   isOpen: boolean;
