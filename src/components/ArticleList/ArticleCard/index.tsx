@@ -47,6 +47,7 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
                     height: 'auto'
                   }}
                   priority={index === 0}
+                  loading={index === 0 ? 'eager' : 'lazy'}
                 />
               </figure>
             </Link>

@@ -32,8 +32,8 @@ const NavDrower = ({ isOpen, items, onClick }: NavDrowerProps) => {
           <SocialMediaNav />
         </div>
       </div>
-
-      {isOpen && <div className="bg-black dark:bg-gray-600 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-10" onClick={onClick}></div>}
+        
+      {isOpen && <div className="bg-black dark:bg-gray-600 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 backdrop-blur-md z-20" onClick={onClick}></div>}
     </>
   )
 }
