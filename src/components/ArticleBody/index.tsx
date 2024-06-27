@@ -50,6 +50,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
                 height={data.thumbnail.height}
                 sizes="100vw"
                 style={{ height: "auto", width: "100%" }}
+                loading="eager"
                 priority
               />
             </figure>
