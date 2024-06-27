@@ -1,11 +1,7 @@
 import { Metadata } from "next";
-import localFont from "next/font/local";
+import { Kosugi_Maru } from "next/font/google";
 
-const KosugiMaru = localFont({
-  src: "../../../public/KosugiMaru-Regular.ttf",
-  preload: true,
-  display: "swap",
-})
+const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
   robots: "noindex"
