@@ -23,6 +23,7 @@ export const metadata: Metadata = {
   // NOTE: トランジッションAPIの設定
   other: {
     "view-transition": "same-origin",
+    "google-site-verification": "l7_0SUkxGZZ2XbjQm0_RBuxUONxVunXg2ThGwWjwhD4",
   }
 };
 
