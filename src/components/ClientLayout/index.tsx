@@ -24,8 +24,8 @@ type ClientLayoutProps = {
 
 const ClientLayout = ({ children }: ClientLayoutProps) => {
   useEffect(() => {
-    // NOTE:safariの場合はRequestIdleCallbackが使えないため、初期化処理を遅延させない
-    if (navigator.userAgent.toLocaleLowerCase().includes("safari")) {
+    // NOTE:safariとInstagram内ブラウザの場合はRequestIdleCallbackが使えないため、初期化処理を遅延させない
+    if (navigator.userAgent.toLocaleLowerCase().includes("safari") || navigator.userAgent.toLocaleLowerCase().includes("instagram")) {
       try {
         new AwsRum(
           applicationId,

@@ -55,7 +55,7 @@ export const customReplaceOptions: HTMLReactParserOptions = {
         const href = aElement?.attribs.href
         return (
           // NOTE: スクロールバーが表示されるため、overflowY: "hidden" を指定
-          <CustomIframe href={href ?? ""} className="w-full h-[90px] md:h-[107px] lg:h-[148px] bg-white dark:bg-black" />
+          <CustomIframe href={href ?? ""} className="w-full h-[90px] sm:h-[106px] md:h-[128px] lg:h-[174px] bg-white dark:bg-black" />
         );
       }
 
