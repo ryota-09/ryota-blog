@@ -1,6 +1,8 @@
-import type { BreadcrumbList, BlogPosting ,WithContext } from "schema-dts"
+import type { BreadcrumbList, BlogPosting, WithContext, WebSite } from "schema-dts"
 import type { BlogsContentType } from "@/types/microcms"
 import { baseURL } from "@/config"
+import { SITE_TITLE } from "@/static/blogs"
+import Script from "next/script"
 
 
 type JsonLDProps = {
@@ -47,11 +49,26 @@ const JsonLD = ({ data }: JsonLDProps) => {
       url: `${baseURL}/about`
     },
   }
-  
+
+  const siteNameJsonLD: WithContext<WebSite> = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_TITLE,
+    url: baseURL,
+    publisher: {
+      "@type": "Person",
+      name: "Ryota",
+      jobTitle: "Software Engineer",
+      url: `${baseURL}/about`
+    },
+  }
+
   return (
-    <script
+    <Script
+      id="json-ld"
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify([blogPostingJsonLD,{ ...breadcrumbJsonLD }]) }}
+      strategy="afterInteractive"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify([blogPostingJsonLD, { ...breadcrumbJsonLD }, siteNameJsonLD]) }}
     />
   )
 }
