@@ -20,6 +20,7 @@ import CustomCode from "@/components/ArticleBody/RichEditor/CustomUI/CustomCode"
 import CustomStrong from "@/components/ArticleBody/RichEditor/CustomUI/CustomStrong";
 import ExternalLink from "@/components/UiParts/ExternalLink";
 import PopupModal from "@/components/UiParts/PopupModal";
+import Image from "next/image";
 
 const TwitterCard = dynamic(() => import("@/components/ArticleBody/RichEditor/TwitterCard"), { ssr: false });
 
@@ -133,3 +134,28 @@ export const customReplaceOptions: HTMLReactParserOptions = {
     }
   },
 };
+
+export const amazonLinkCardOptions: HTMLReactParserOptions = {
+  replace: (domNode) => {
+    if (isElement(domNode) && domNode.attribs) {
+      const props = attributesToProps(domNode.attribs);
+
+      switch (domNode.name) {
+        case "a":
+          const href = domNode.attribs.href;
+          return (
+            <ExternalLink {...props} href={href} className="relative flex flex-col md:flex-row items-center gap-8 px-4 py-8 md:px-6 md:py-4 border-[#D0AD77] border-[6px] hover:transition hover:opacity-80 hover:text-[#D0AD77] after:content-['Amazon'] after:text-gray-700 after:bg-[#D0AD77] after:absolute after:py-0 lg:after:py-2 md:after:py-0.5 after:px-4 after:w-auto after:top-0 after:right-0">
+              {domToReact(domNode.children as DOMNode[], amazonLinkCardOptions)}
+            </ExternalLink>
+          )
+        case "img":
+          return (
+            <figure className="overflow-hidden object-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} />
+            </figure>
+          )
+      }
+    }
+  },
+}
