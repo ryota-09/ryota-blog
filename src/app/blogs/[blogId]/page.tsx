@@ -9,6 +9,7 @@ import type { BlogsContentType } from "@/types/microcms";
 import JsonLD from "@/components/Head/JsonLD";
 import RelatedContentList from "@/components/RelatedContentList";
 
+
 export async function generateStaticParams() {
   const blogList = await getBlogList({ fields: "id" });
   return blogList.contents.map((content) => ({

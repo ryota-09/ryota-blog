@@ -6,7 +6,6 @@ import Chip from '@/components/UiParts/Chip';
 import BottomCard from '@/components/ArticleBody/BottomCard';
 import FixedButton from '@/components/UiParts/FixedButton';
 import { BlogsContentType } from '@/types/microcms';
-// import HTMLArea from '@/components/ArticleBody/RichEditor/HTMLArea';
 import { Link } from 'next-view-transitions';
 import { generateTOCAssets } from "@/lib";
 import TOCList from "@/components/ArticleBody/TOCList";
@@ -20,6 +19,7 @@ import InfoYearsCard from "@/components/UiParts/InfoYearsCard";
 import dynamic from "next/dynamic";
 
 const HTMLArea = dynamic(() => import('@/components/ArticleBody/RichEditor/HTMLArea'), { ssr: false });
+const AmazonLinkCard = dynamic(() => import('@/components/ArticleBody/RichEditor/AmazonLinkCard'), { ssr: false });
 
 type ArticleBodyProps = {
   data: BlogsContentType
@@ -90,7 +90,11 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
             case "richEditor":
               return <RichEditor key={index} html={body.richEditor} />
             case "html":
-              return <HTMLArea key={index} html={body.html} />
+              const html = body.html
+              if (html.startsWith('AMAZON')) {
+                return <AmazonLinkCard key={index} html={html.replace("AMAZON", "")} />
+              }
+              return <HTMLArea key={index} html={html} />
           }
         })}
         <IssueButton currentPath={`${baseURL}/blogs/${data.id}`} />
@@ -100,7 +104,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
         </aside>
         <FixedButton />
         <XShareButton
-          classes="fixed bottom-4 bottom-4 left-4 bg-gray-400 dark:bg-gray-600 text-white text-sm w-auto h-10 px-2 flex items-center justify-center rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-70 active:bg-gray-500"
+          classes="fixed z-50 bottom-4 bottom-4 left-4 bg-gray-400 dark:bg-gray-600 text-white text-sm w-auto h-10 px-2 flex items-center justify-center rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-70 active:bg-gray-500"
           url={`${baseURL}/blogs/${data.id}`}
         >
           Post to X
