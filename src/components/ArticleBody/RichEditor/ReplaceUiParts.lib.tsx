@@ -21,6 +21,7 @@ import CustomStrong from "@/components/ArticleBody/RichEditor/CustomUI/CustomStr
 import ExternalLink from "@/components/UiParts/ExternalLink";
 import PopupModal from "@/components/UiParts/PopupModal";
 import Image from "next/image";
+import CustomU from "@/components/ArticleBody/RichEditor/CustomUI/CustomU";
 
 const TwitterCard = dynamic(() => import("@/components/ArticleBody/RichEditor/TwitterCard"), { ssr: false });
 
@@ -76,6 +77,8 @@ export const customReplaceOptions: HTMLReactParserOptions = {
           return <CustomParagraph {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomParagraph>;
         case "strong":
           return <CustomStrong {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomStrong>;
+        case "u":
+          return <CustomU {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomU>;
         case "a":
           const href = domNode.attribs.href;
           const isExternal = href.startsWith("http") || domNode.attribs.target === "_blank" || href.includes("amazon");
