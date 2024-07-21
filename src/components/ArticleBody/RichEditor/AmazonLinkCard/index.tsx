@@ -7,7 +7,7 @@ type AmazonLinkCardProps = {
 
 const AmazonLinkCard = ({ html }: AmazonLinkCardProps) => {
   return (
-    <aside className="w-full">
+    <aside className="w-full my-10">
       {parser(html, amazonLinkCardOptions)}
     </aside>
   )
