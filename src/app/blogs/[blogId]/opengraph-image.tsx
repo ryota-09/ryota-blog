@@ -1,4 +1,6 @@
 import { ImageResponse } from 'next/og'
+import fs from 'fs'
+import path from 'path'
 
 import { getBlogById } from '@/lib/microcms'
 import { AUTHOR_NAME } from '@/static/blogs'
@@ -11,6 +13,8 @@ export const size = {
 export const contentType = 'image/png'
 
 export default async function Image({ params }: { params: { blogId: string } }) {
+  const fontData = await fs.readFileSync(path.join(process.cwd(), 'public/KosugiMaru-Regular.ttf'))
+
   const blogId = params.blogId
   const data = await getBlogById(blogId, { fields: "title" })
   return new ImageResponse(
@@ -60,7 +64,13 @@ export default async function Image({ params }: { params: { blogId: string } }) 
       </div>
     ),
     {
-      ...size
+      ...size,
+      fonts: [
+        {
+          name: 'Kosugi Maru',
+          data: fontData,
+        }
+      ]
     }
   )
 }

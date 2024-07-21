@@ -1,5 +1,8 @@
-import { AUTHOR_NAME, SITE_TITLE } from '@/static/blogs'
 import { ImageResponse } from 'next/og'
+import fs from 'fs'
+import path from 'path'
+
+import { AUTHOR_NAME, SITE_TITLE } from '@/static/blogs'
 
 export const size = {
   width: 1200,
@@ -8,7 +11,8 @@ export const size = {
 
 export const contentType = 'image/png'
 
-export default function Image() {
+export default async function Image() {
+  const fontData = await fs.readFileSync(path.join(process.cwd(), 'public/KosugiMaru-Regular.ttf'))
   return new ImageResponse(
     (
       <div
@@ -57,7 +61,13 @@ export default function Image() {
       </div>
     ),
     {
-      ...size
+      ...size,
+      fonts: [
+        {
+          name: 'Kosugi Maru',
+          data: fontData,
+        }
+      ]
     }
   )
 }
