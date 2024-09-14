@@ -93,6 +93,12 @@ export const customReplaceOptions: HTMLReactParserOptions = {
             // eslint-disable-next-line @next/next/no-img-element
             return <img {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} />;
           }
+          // 親要素がaタグの場合、ポップアップさせない
+          if (domNode.parent && "name" in domNode.parent && domNode.parent.name === "a") {
+            return (
+              <CustomImg {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} width={width} height={height} />
+            )
+          }
           return (
             <PopupModal>
               <CustomImg {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} width={width} height={height} />
