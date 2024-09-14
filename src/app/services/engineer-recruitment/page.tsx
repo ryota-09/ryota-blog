@@ -1,4 +1,10 @@
 import { CheckCircle, Code, GitBranchIcon, Globe, MessageCircle, Users } from "lucide-react"
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "即戦力として活躍できる人材のご紹介！",
+  description: "【企業様向け】新人エンジニアの育成を行っており、フロントエンドのエンジニアとしての基礎から応用までを学んだ優秀な人材をご紹介しています。このページでは、今後の活躍が期待されるエンジニアを求める企業様向けに、スキルや経験をご紹介いたします。"
+};
 
 export default function Page() {
   return (
