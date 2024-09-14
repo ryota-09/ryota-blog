@@ -1,3 +1,4 @@
+import TOCItem from "@/components/ArticleBody/TOCList/TOCItem";
 import { CheckCircle, Code, GitBranchIcon, Globe, MessageCircle, Users } from "lucide-react"
 import type { Metadata } from "next";
 
@@ -19,6 +20,11 @@ export default function Page() {
           <p className="max-w-3xl mx-auto text-lg text-[#383838]">
             新人エンジニアの育成を行っており、エンジニアとしての基礎から応用までを学んだ優秀な人材をご紹介しています。このページでは、今後の活躍が期待されるエンジニアを求める企業様向けに、スキルや経験をご紹介いたします。
           </p>
+          <div className="flex justify-center mt-8">
+            <TOCItem id="contact" className="bg-[#2F8F9D] hover:bg-[#3BACB6] text-white font-semibold py-3 px-16 rounded-full text-lg transition duration-300 ease-in-out transform hover:scale-105">
+              お問い合わせ
+            </TOCItem>
+          </div>
         </section>
 
         <section>
@@ -126,7 +132,7 @@ export default function Page() {
             もし、即戦力のエンジニアをお探しであれば、ぜひお問い合わせください。
           </p>
           <div className="flex justify-center">
-            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScRnrm5cduh8rsULQCGz1fDLydw2o0Yb5er5j1uIQN9rrNDsQ/viewform?embedded=true" width="640" height="1300">読み込んでいます…</iframe>
+            <iframe id="contact" src="https://docs.google.com/forms/d/e/1FAIpQLScRnrm5cduh8rsULQCGz1fDLydw2o0Yb5er5j1uIQN9rrNDsQ/viewform?embedded=true" width="640" height="1300">読み込んでいます…</iframe>
           </div>
         </section>
       </div>
