@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, type ReactNode } from "react";
-import { AwsRum, type AwsRumConfig } from "aws-rum-web";
+import type { AwsRumConfig } from "aws-rum-web";
 
 import { applicationId, gustRoleArn, identityPoolId } from "@/config";
 
@@ -18,41 +18,43 @@ const config: AwsRumConfig = {
   enableXRay: false,
 }
 
+const RUM_STORAGE_KEY = 'aws_rum_initialized';
+
 type ClientLayoutProps = {
   children: ReactNode;
 }
 
 const ClientLayout = ({ children }: ClientLayoutProps) => {
   useEffect(() => {
-    // NOTE:safariとInstagram内ブラウザの場合はRequestIdleCallbackが使えないため、初期化処理を遅延させない
-    if (navigator.userAgent.toLocaleLowerCase().includes("safari") || navigator.userAgent.toLocaleLowerCase().includes("instagram")) {
-      try {
-        new AwsRum(
-          applicationId,
-          APPLICATION_VERSION,
-          APPLICATION_REGION,
-          config
-        )
-      } catch (error) {
-        console.error("Error initializing CloudWatch RUM.", error)
-      }
-      return
+    const isInitialized = localStorage.getItem(RUM_STORAGE_KEY);
+    if (isInitialized === 'true') {
+      return;
     }
 
-    // RequestIdleCallbackを使って初期化処理を遅延させる
-    requestIdleCallback(() => {
+    const initRUM = async () => {
       try {
+        const { AwsRum } = await import('aws-rum-web');
         new AwsRum(
           applicationId,
           APPLICATION_VERSION,
           APPLICATION_REGION,
           config
-        )
+        );
+        localStorage.setItem(RUM_STORAGE_KEY, 'true');
       } catch (error) {
-        console.error("Error initializing CloudWatch RUM.", error)
+        console.error("Error initializing CloudWatch RUM.", error);
       }
-    })
-  }, [])
-  return children
+    };
+
+    if (navigator.userAgent.toLocaleLowerCase().includes("safari") || 
+        navigator.userAgent.toLocaleLowerCase().includes("instagram")) {
+      setTimeout(initRUM, 2000);
+      return;
+    }
+
+    requestIdleCallback(initRUM);
+  }, []);
+  
+  return children;
 }
 export default ClientLayout;
