@@ -1,31 +1,18 @@
 import { test, expect } from '@playwright/test';
+import { baseURL } from '../src/config';
 
 test('should pass a simple test', async () => {
   expect(true).toBe(true);
 });
 
-test('should create and verify page content', async ({ page }) => {
-  await page.setContent(`
-    <html>
-      <head>
-        <title>Ryota-Blog Test Page</title>
-      </head>
-      <body>
-        <h1>Welcome to Ryota-Blog</h1>
-        <nav>
-          <a href="/blogs">Blogs</a>
-          <a href="/about">About</a>
-        </nav>
-      </body>
-    </html>
-  `);
+test('should navigate to baseURL and verify Ryota-Blog text', async ({ page }) => {
+  await page.goto(baseURL);
   
   const title = await page.title();
-  expect(title).toBe('Ryota-Blog Test Page');
+  expect(title).toContain('Ryota-Blog');
   
-  const heading = await page.textContent('h1');
-  expect(heading).toBe('Welcome to Ryota-Blog');
+  const content = await page.content();
+  expect(content).toContain('Ryota-Blog');
   
-  const blogLink = await page.$('nav a[href="/blogs"]');
-  expect(await blogLink?.textContent()).toBe('Blogs');
+  console.log('Successfully verified Ryota-Blog text on the page');
 });
