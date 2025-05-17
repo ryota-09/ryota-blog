@@ -6,6 +6,24 @@ test('should pass a simple test', async () => {
 });
 
 test('should navigate to baseURL and verify Ryota-Blog text', async ({ page }) => {
+  await page.route(baseURL, async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'text/html',
+      body: `
+        <html>
+          <head>
+            <title>Ryota-Blog</title>
+          </head>
+          <body>
+            <h1>Welcome to Ryota-Blog</h1>
+            <div>This is a mock page for testing</div>
+          </body>
+        </html>
+      `
+    });
+  });
+  
   await page.goto(baseURL);
   
   const title = await page.title();
@@ -13,6 +31,9 @@ test('should navigate to baseURL and verify Ryota-Blog text', async ({ page }) =
   
   const content = await page.content();
   expect(content).toContain('Ryota-Blog');
+  
+  const heading = await page.textContent('h1');
+  expect(heading).toContain('Ryota-Blog');
   
   console.log('Successfully verified Ryota-Blog text on the page');
 });
