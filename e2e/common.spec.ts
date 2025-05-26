@@ -25,10 +25,12 @@ test.describe('共通項目（全ページ）のテスト', () => {
       
       const links = await page.locator('header nav a');
       const href = await links.nth(i).getAttribute('href');
-      await links.nth(i).click();
-      
-      await page.waitForURL(`**${href}`);
-      await expect(page).toHaveURL(new RegExp(href));
+      if (href) {
+        await links.nth(i).click();
+        
+        await page.waitForURL(`**${href}`);
+        await expect(page).toHaveURL(new RegExp(href.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+      }
     }
   });
 
