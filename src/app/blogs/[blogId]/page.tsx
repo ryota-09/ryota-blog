@@ -4,16 +4,16 @@ import { cookies, draftMode } from "next/headers";
 import ArticleBody from "@/components/ArticleBody";
 import BreadcrumbList from "@/components/BreadcrumbList";
 import { generateBreadcrumbAssets } from "@/lib";
-import { getBlogById, getBlogList } from "@/lib/microcms";
+import { getBlogById, getAllBlogList } from "@/lib/microcms";
 import type { BlogsContentType } from "@/types/microcms";
 import JsonLD from "@/components/Head/JsonLD";
 import RelatedContentList from "@/components/RelatedContentList";
 
 
 export async function generateStaticParams() {
-  const blogList = await getBlogList({ fields: "id" });
-  return blogList.contents.map((content) => ({
-    blogId: content.id
+  const blogList = await getAllBlogList({ fields: "id" });
+  return blogList.map(({ id }) => ({
+    blogId: id
   }))
 }
 
