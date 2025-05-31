@@ -15,12 +15,18 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
+# Force reinstall sharp for the current platform
+RUN npm rebuild sharp
+
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Rebuild sharp for the current platform
+RUN npm rebuild sharp
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -60,6 +66,11 @@ ENV NODE_ENV production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+
+# Install sharp for the runtime platform
+RUN apk add --no-cache libc6-compat
+COPY package.json ./
+RUN npm install sharp --platform=linuxmusl --arch=x64
 
 COPY --from=builder /app/public ./public
 
