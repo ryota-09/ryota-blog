@@ -61,7 +61,7 @@ export default async function Image({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.microcms-assets.io/assets/4626924a681346e9a0fcabe5478eb9fa/26ca0e17cc994976907bb961f367db9e/author.png"
+            src="https://images.microcms-assets.io/assets/4626924a681346e9a0fcabe5478eb9fa/652ac7c701f14f858ad1cbb1ece163c6/author.png"
             style={{
               width: "100px",
               height: "100px",
