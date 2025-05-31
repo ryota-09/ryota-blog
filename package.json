@@ -30,7 +30,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-syntax-highlighter": "^15.5.0",
-    "sharp": "^0.33.4"
+    "sharp": "0.32.6"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.5.0",
