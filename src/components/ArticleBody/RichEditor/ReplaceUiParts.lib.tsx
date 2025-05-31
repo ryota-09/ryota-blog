@@ -1,4 +1,5 @@
 import { DOMNode, Element, attributesToProps, domToReact, HTMLReactParserOptions } from "html-react-parser";
+import dynamic from "next/dynamic";
 
 import CustomH3 from "@/components/ArticleBody/RichEditor/CustomUI/CustomH3";
 import CustomH2 from "@/components/ArticleBody/RichEditor/CustomUI/CustomH2";
@@ -15,11 +16,14 @@ import CustomTr from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomT
 import CustomTh from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTh";
 import CustomTd from "@/components/ArticleBody/RichEditor/CustomUI/Table/CustomTd";
 import CustomIframe from "@/components/ArticleBody/RichEditor/CustomUI/CustomIframe";
-import TwitterCard from "@/components/ArticleBody/RichEditor/TwitterCard";
 import CustomCode from "@/components/ArticleBody/RichEditor/CustomUI/CustomCode";
 import CustomStrong from "@/components/ArticleBody/RichEditor/CustomUI/CustomStrong";
 import ExternalLink from "@/components/UiParts/ExternalLink";
 import PopupModal from "@/components/UiParts/PopupModal";
+import Image from "next/image";
+import CustomU from "@/components/ArticleBody/RichEditor/CustomUI/CustomU";
+
+const TwitterCard = dynamic(() => import("@/components/ArticleBody/RichEditor/TwitterCard"), { ssr: false });
 
 const isElement = (domNode: any): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);
@@ -53,7 +57,7 @@ export const customReplaceOptions: HTMLReactParserOptions = {
         const href = aElement?.attribs.href
         return (
           // NOTE: スクロールバーが表示されるため、overflowY: "hidden" を指定
-          <CustomIframe href={href ?? ""} className="w-full h-[88px] sm:h-[105px] md:h-[130px] lg:h-[160px] bg-white dark:bg-black" />
+          <CustomIframe href={href ?? ""} className="w-full h-[90px] sm:h-[106px] md:h-[128px] lg:h-[174px] bg-white dark:bg-black" />
         );
       }
 
@@ -73,11 +77,13 @@ export const customReplaceOptions: HTMLReactParserOptions = {
           return <CustomParagraph {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomParagraph>;
         case "strong":
           return <CustomStrong {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomStrong>;
+        case "u":
+          return <CustomU {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomU>;
         case "a":
           const href = domNode.attribs.href;
           const isExternal = href.startsWith("http") || domNode.attribs.target === "_blank" || href.includes("amazon");
           if (isExternal) {
-            return <ExternalLink {...props} href={href} className="underline underline-offset-4 transition hover:text-base-color dark:hover:text-primary hover:no-underline">{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</ExternalLink>;
+            return <ExternalLink {...props} href={href} className="underline underline-offset-4 transition hover:text-base-color dark:hover:text-primary hover:no-underline break-all">{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</ExternalLink>;
           }
           return <CustomLink {...props} href={href}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomLink>;
         case "img":
@@ -86,6 +92,12 @@ export const customReplaceOptions: HTMLReactParserOptions = {
           if (!width || !height) {
             // eslint-disable-next-line @next/next/no-img-element
             return <img {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} />;
+          }
+          // 親要素がaタグの場合、ポップアップさせない
+          if (domNode.parent && "name" in domNode.parent && domNode.parent.name === "a") {
+            return (
+              <CustomImg {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} width={width} height={height} />
+            )
           }
           return (
             <PopupModal>
@@ -131,3 +143,28 @@ export const customReplaceOptions: HTMLReactParserOptions = {
     }
   },
 };
+
+export const amazonLinkCardOptions: HTMLReactParserOptions = {
+  replace: (domNode) => {
+    if (isElement(domNode) && domNode.attribs) {
+      const props = attributesToProps(domNode.attribs);
+
+      switch (domNode.name) {
+        case "a":
+          const href = domNode.attribs.href;
+          return (
+            <ExternalLink {...props} href={href} className="relative flex flex-col md:flex-row items-center gap-8 px-4 py-8 md:px-6 md:py-4 border-[#D0AD77] border-[6px] hover:transition hover:opacity-80 hover:text-[#D0AD77] after:content-['Amazon'] after:text-gray-700 after:bg-[#D0AD77] after:absolute after:py-0 lg:after:py-2 md:after:py-0.5 after:px-4 after:w-auto after:top-0 after:right-0">
+              {domToReact(domNode.children as DOMNode[], amazonLinkCardOptions)}
+            </ExternalLink>
+          )
+        case "img":
+          return (
+            <figure className="overflow-hidden object-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img {...props} src={domNode.attribs.src} alt={domNode.attribs.alt} />
+            </figure>
+          )
+      }
+    }
+  },
+}

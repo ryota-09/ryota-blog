@@ -5,7 +5,7 @@ const BottomCard = () => {
   return (
     <>
       <div className='flex items-center justify-center shrink-0 mx-6'>
-      <Image src="/icon.jpg" alt="author" width={80} height={80} sizes="100vw" className="rounded-full" />
+      <Image src="/author.jpg" alt="author" width={80} height={80} sizes="100vw" className="rounded-full" />
       </div>
       <div>
         <p className='font-bold text-3xl dark:text-gray-300'>{AUTHOR_NAME}</p>

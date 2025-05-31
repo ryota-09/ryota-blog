@@ -1,7 +1,14 @@
 "use client"
 import React, { useEffect, useState } from 'react';
 
-const FixedButton = () => {
+type FixedButtonProps = {
+  /**
+   * 上部からのスクロール量がこの値を超えたらボタンを表示する
+   */
+  topTo?: number;
+}
+
+const FixedButton = ({ topTo = 400 }: FixedButtonProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -19,7 +26,7 @@ const FixedButton = () => {
     // 画面の上から400pxの位置にダミー要素を設置
     const observedElement = document.createElement('div');
     observedElement.style.position = 'absolute';
-    observedElement.style.top = '400px';
+    observedElement.style.top = `${topTo}px`;
     observedElement.style.height = '1px';
     observedElement.style.width = '100%';
     document.body.appendChild(observedElement);
@@ -41,9 +48,11 @@ const FixedButton = () => {
 
   return (
     <button
-      className={`fixed bottom-4 right-4 bg-secondary text-white p-2 rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-80 active:bg-primary ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+      type='button'
+      className={`fixed z-50 bottom-4 right-4 bg-secondary text-white p-2 rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-80 active:bg-primary ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       onClick={scrollToTop}
       style={{ transition: 'opacity 0.3s' }}
+      aria-label="上部にスクロールして戻る"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

@@ -1,9 +1,13 @@
 "use client"
 import { useState, type ReactNode } from "react"
+
 import { useKey } from "@/hooks/keybord"
 import { cltw } from "@/util"
 
 type PopupModalProps = {
+  /**
+   * モーダルのコンテンツ
+   */
   children: ReactNode
 }
 
@@ -17,13 +21,9 @@ const PopupModal = ({ children }: PopupModalProps) => {
   return (
     <div onClick={() => setIsOpen((prev) => !prev)} className={cltw(isOpen ? "cursor-zoom-out" : "cursor-zoom-in")}>
       {children}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="transition-transform transform duration-300 ease-in-out w-[90vw]">
-            {children}
-          </div>
-        </div>
-      )}
+      <div className={cltw("transition-transform transform duration-300 ease-in-out", isOpen ? "fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 opacity-100 scale-125 md:scale-[1.4] h-auto" : "scale-100 opacity-0 h-0 w-0")}>
+        {children}
+      </div>
     </div>
   )
 }

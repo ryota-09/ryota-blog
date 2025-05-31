@@ -1,8 +1,9 @@
 "use client"
+import { Link } from 'next-view-transitions';
+
 import SocialMediaNav from "@/components/Header/SocialMediaNav";
 import ExternalLink from "@/components/UiParts/ExternalLink";
-import { HeaderNavItem } from "@/types/header";
-import { Link } from 'next-view-transitions';
+import type { HeaderNavItem } from "@/types/header";
 
 type NavDrowerProps = {
   isOpen: boolean;
@@ -27,12 +28,12 @@ const NavDrower = ({ isOpen, items, onClick }: NavDrowerProps) => {
               </Link>
           ))}
         </nav>
-        <div className="flex justify-center px-2">
+        <div className="flex justify-center">
           <SocialMediaNav />
         </div>
       </div>
-
-      {isOpen && <div className="bg-black dark:bg-gray-600 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-10" onClick={onClick}></div>}
+        
+      {isOpen && <div className="bg-black dark:bg-gray-600 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 backdrop-blur-md z-20" onClick={onClick}></div>}
     </>
   )
 }

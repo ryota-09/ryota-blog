@@ -9,7 +9,10 @@
 This repository manages the frontend of `Ryota Blog`, a blog platform built using the latest technology stack.
 
 ↓ Web Page  
-https://ryotablog.jp/blogs
+https://ryotablog.jp/blogs  
+  
+↓ Storybook  
+https://story.ryotablog.jp
 
 ## Technology Stack
 
@@ -34,10 +37,8 @@ MICROCMS_SERVICE_DOMAIN=your_microcms_service_domain
 ```
 
 ## Other
-
+  
 ↓ This repository contains the Terraform configuration files to manage AWS services  
 https://github.com/ryota-09/ryota-blog-infra
-
----
 
 For more details about the frontend part of `Ryota Blog`, refer to the official documentation or comments within the repository. If you have any questions or need support, create an issue or contact the maintainers.

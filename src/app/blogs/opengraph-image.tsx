@@ -1,5 +1,8 @@
-import { AUTHOR_NAME, SITE_TITLE } from '@/static/blogs'
 import { ImageResponse } from 'next/og'
+import fs from 'fs'
+import path from 'path'
+
+import { AUTHOR_NAME, SITE_TITLE } from '@/static/blogs'
 
 export const size = {
   width: 1200,
@@ -8,8 +11,8 @@ export const size = {
 
 export const contentType = 'image/png'
 
-export default function Image() {
-  const text = "ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ"
+export default async function Image() {
+  const fontData = await fs.readFileSync(path.join(process.cwd(), 'public/KosugiMaru-Regular.ttf'))
   return new ImageResponse(
     (
       <div
@@ -34,8 +37,7 @@ export default function Image() {
           overflow: 'hidden'
         }}
       >
-        {/* <div style={{ margin: "20px" }}>{SITE_TITLE}</div> */}
-        <div style={{ margin: "5px", display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', WebkitLineClamp: 3 }}>{text}</div>
+        <div style={{ margin: "5px", display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', WebkitLineClamp: 3 }}>{SITE_TITLE}</div>
         <div style={{
           position: 'absolute',
           right: '20px',
@@ -59,7 +61,13 @@ export default function Image() {
       </div>
     ),
     {
-      ...size
+      ...size,
+      fonts: [
+        {
+          name: 'Kosugi Maru',
+          data: fontData,
+        }
+      ]
     }
   )
 }

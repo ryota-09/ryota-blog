@@ -3,8 +3,14 @@ import Chip from "@/components/UiParts/Chip";
 import type { MappedKeyLiteralType } from "@/types/microcms";
 
 type SearchStateCardProps = {
-  keyword: string;
-  category: MappedKeyLiteralType
+  /**
+   * 検索キーワード
+   */
+  keyword?: string;
+  /**
+   * カテゴリー
+   */
+  category?: MappedKeyLiteralType
 }
 
 const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
@@ -20,17 +26,17 @@ const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
       <div className="flex flex-col lg:flex-row flex-grow justify-between items-center gap w-full lg:w-auto">
         <ul className="flex gap-4 items-center">
           {category && (
-            <li>
+            <li data-testid="pw-search-chip-category">
               <Chip classes=" text-xs lg:text-md bg-base-color dark:bg-primary px-3 py-2 text-sm text-txt-base dark:text-white" label={category} />
             </li>
           )}
           {keyword && (
-            <li>
+            <li data-testid="pw-search-chip-keyword">
               <Chip classes="text-xs lg:text-md bg-light dark:bg-secondary px-3 py-2 text-sm text-txt-base dark:text-white" label={keyword} />
             </li>
           )}
         </ul>
-        <div className="w-full lg:w-auto text-right">
+        <div className="w-full lg:w-auto text-right" data-testid="pw-reset-search-state">
           <Link href="/blogs" className="text-gray-400 text-xs cursor-pointer transition-colors hover:text-gray-700 dark:hover:text-gray-300">検索条件をリセット</Link>
         </div>
       </div>

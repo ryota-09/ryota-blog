@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import type { Metadata } from "next";
-import { Kosugi_Maru } from "next/font/google";
+import { Kosugi_Maru } from "next/font/google"
 import { ViewTransitions } from 'next-view-transitions'
 import NextTopLoader from "nextjs-toploader";
 
@@ -8,6 +8,8 @@ import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/static/blogs";
 import { baseURL, gaId, gtmId } from "@/config";
 import ClientLayout from "@/components/ClientLayout";
+import PreloadResources from "@/components/Head/PreloadResources";
+
 
 const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"], display: "swap" });
 
@@ -21,6 +23,7 @@ export const metadata: Metadata = {
   // NOTE: トランジッションAPIの設定
   other: {
     "view-transition": "same-origin",
+    "google-site-verification": "l7_0SUkxGZZ2XbjQm0_RBuxUONxVunXg2ThGwWjwhD4",
   }
 };
 
@@ -32,6 +35,7 @@ export default function BlogListLayout({
   return (
     <ViewTransitions>
       <html lang="ja">
+        <PreloadResources />
         <ClientLayout>
           <body className={`${KosugiMaru.className} bg-[#eee] dark:bg-[#333] flex flex-col min-h-screen`}>
             <NextTopLoader
