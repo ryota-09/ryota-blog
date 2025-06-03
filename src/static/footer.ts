@@ -22,5 +22,9 @@ export const FOOTER_NAV_ITEMS: FooterNavItem[] = [
   {
     name: "RSS",
     href: "/feed",
+  },
+  {
+    name: "llms.txt",
+    href: "/docs/llms.txt",
   }
 ] as const;
