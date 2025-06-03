@@ -1,7 +1,10 @@
 export const AUTHOR_NAME = 'りょた';
 export const AUTHOR_DESCRIPTION = 'りょたといいます！ 都内でエンジニアやってます！ Software Developer | DevCan#2 hostedBy Classmethod | React.js | Next.js | AWS SAA / DVA / SOA';
 export const SITE_TITLE = 'Ryota-Blog';
+export const SITE_DOMAIN = 'ryotablog.jp';
+export const AUTHOR_E_MAIL = "ryotadevelop@webclouddev.com";
 export const SITE_DESCRIPTION = '技術ブログです！ React.js, Next.js, AWSなどの技術について書いています！';
+export const SITE_DESCRIPTION_EN = 'This is a technical blog! I write about technologies such as React.js, Next.js, and AWS!';
 export const PER_PAGE = 4;
 export const KEYWORD_QUERY = "keyword";
 export const PAGE_QUERY = "page";
