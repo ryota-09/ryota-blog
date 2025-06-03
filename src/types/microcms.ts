@@ -114,3 +114,6 @@ export type TableOfContentsType = {
 };
 
 export type MappedKeyLiteralType = keyof typeof CATEGORY_MAPED_ID;
+
+// カテゴリAPIのレスポンス型
+export type CategoriesApiResponseType = BaseMicroCMSApiListDataType<CategoriesContentType>;
