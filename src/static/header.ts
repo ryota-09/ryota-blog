@@ -46,5 +46,11 @@ export const SOCIAL_MEDIA_NAV_ITEMS: HeaderNavItem[] = [
     href: "/feed",
     icon: "/icons/rss.webp",
     target: "_self",
+  },
+  {
+    name: "LLMs",
+    href: "/docs/llms.txt",
+    icon: "/icons/llms.png",
+    target: "_self",
   }
 ] as const;
