@@ -5,12 +5,12 @@ export const cltw = (...inputs: (string | undefined)[]) => {
   return twMerge(clsx(inputs));
 };
 
+const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
+
 export const isWithinTwoWeeks = (date: string) => {
   const targetDate = new Date(date);
-  const twoWeeksPrev = new Date(
-    new Date().getTime() - 14 * 24 * 60 * 60 * 1000,
-  );
   const now = new Date();
+  const twoWeeksPrev = new Date(now.getTime() - TWO_WEEKS_MS);
   return targetDate >= twoWeeksPrev && targetDate <= now;
 };
 
