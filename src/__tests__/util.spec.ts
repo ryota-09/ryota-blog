@@ -13,17 +13,17 @@ describe("isWithinTwoWeeks", () => {
     vi.useRealTimers();
   });
 
-  it("returns true for a date within the last two weeks", () => {
+  it("直近2週間以内の日付ならtrueを返す", () => {
     const target = new Date("2024-06-25T00:00:00Z").toISOString();
     expect(isWithinTwoWeeks(target)).toBe(true);
   });
 
-  it("returns false for a date older than two weeks", () => {
+  it("2週間より前の日付ならfalseを返す", () => {
     const target = new Date("2024-06-10T00:00:00Z").toISOString();
     expect(isWithinTwoWeeks(target)).toBe(false);
   });
 
-  it("returns false for a future date", () => {
+  it("未来の日付ならfalseを返す", () => {
     const target = new Date("2024-07-10T00:00:00Z").toISOString();
     expect(isWithinTwoWeeks(target)).toBe(false);
   });
