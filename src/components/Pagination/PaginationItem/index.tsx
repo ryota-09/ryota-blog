@@ -9,20 +9,29 @@ type PaginationItemProps = {
   currentPage: number
   pageNumber?: number
   children: ReactNode
+  basePath?: string
 }
 
-const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemProps) => {
+const PaginationItem = ({ pageNumber, children, currentPage, basePath }: PaginationItemProps) => {
   const searchParams = useSearchParams()
   const pathname = usePathname()
 
   const generateHref = useCallback(() => {
     if (pageNumber === currentPage) return ""
 
-    // Check if we're on a category page
-    const categoryPathMatch = pathname.match(/^\/blogs\/([^\/]+)$/)
+    // サーバーサイドでbasePathが提供されている場合はそれを使用
+    if (basePath) {
+      if (pageNumber === 1) {
+        return basePath
+      }
+      return `${basePath}/page/${pageNumber}`
+    }
+
+    // カテゴリページかどうかを確認
+    const categoryPathMatch = pathname?.match(/^\/blogs\/([^\/]+)$/)
     const categoryId = categoryPathMatch ? categoryPathMatch[1] : null
     
-    const keyword = searchParams.get('keyword') ?? ""
+    const keyword = searchParams?.get('keyword') ?? ""
     
     let baseHref = categoryId ? `/blogs/${categoryId}` : `/blogs`
 
@@ -35,8 +44,9 @@ const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemPro
       return baseHref
     }
 
-    return `${baseHref}?page=${pageNumber}`
-  }, [searchParams, pathname, pageNumber, currentPage])
+    // 新しいパスベースのページネーション形式を使用
+    return `${baseHref}/page/${pageNumber}`
+  }, [searchParams, pathname, pageNumber, currentPage, basePath])
 
   return (
     <Link

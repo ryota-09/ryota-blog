@@ -1,9 +1,9 @@
 import { MetadataRoute } from "next";
 
 import { baseURL } from "@/config";
-import { getAllBlogList, getAllCategoryList } from "@/lib/microcms";
+import { getAllBlogList, getAllCategoryList, getBlogList } from "@/lib/microcms";
 import { getPrimaryCategoryId } from "@/lib";
-import { CATEGORY_MAPED_ID } from "@/static/blogs";
+import { CATEGORY_MAPED_ID, PER_PAGE } from "@/static/blogs";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPaths = [
@@ -37,5 +37,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   })
 
-  return [...staticPaths, ...categoryPaths, ...dynamicPaths]
+  // ページネーションのパスを生成
+  const totalBlogData = await getBlogList({ limit: 1 });
+  const totalPages = Math.ceil(totalBlogData.totalCount / PER_PAGE);
+  
+  const paginationPaths = Array.from({ length: Math.max(totalPages - 1, 0) }, (_, i) => ({
+    url: `${baseURL}/blogs/page/${i + 2}`,
+    lastModified: new Date()
+  }));
+
+  return [...staticPaths, ...categoryPaths, ...dynamicPaths, ...paginationPaths]
 }
