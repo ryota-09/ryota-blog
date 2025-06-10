@@ -109,7 +109,7 @@ const Page = ({ params, searchParams }: PageProps) => {
             <ZennArticleList />
             :
             <Suspense fallback={<Skelton />}>
-              <ArticleList query={query} blogType={blogType} page={page} />
+              <ArticleList query={query} blogType={blogType} page={page} basePath={`/blogs/${params.category}`} />
             </Suspense>
           }
         </div>
