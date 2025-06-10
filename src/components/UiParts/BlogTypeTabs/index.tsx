@@ -2,8 +2,8 @@
 import { GlobalContext } from '@/providers';
 import { BLOG_TYPE_ASSETS, BlogTypeKeyLIteralType } from '@/types';
 import { cltw } from '@/util';
-import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useCallback, useContext, useState } from 'react';
 
 type BlogTypeTabsProps = {
   /**
@@ -16,7 +16,6 @@ const BlogTypeTabs = ({ blogType }: BlogTypeTabsProps) => {
   const { dispatch } = useContext(GlobalContext);
   const [activeTab, setActiveTab] = useState<BlogTypeKeyLIteralType>(blogType || "blogs");
 
-  const searchParams = useSearchParams();
   const router = useRouter();
 
   const blogButtonHandler = useCallback(() => {
@@ -29,18 +28,10 @@ const BlogTypeTabs = ({ blogType }: BlogTypeTabsProps) => {
   const zennButtonHandler = useCallback(() => {
     setActiveTab("zenn")
     dispatch({ type: "SET_BLOG_TYPE", payload: { blogType: "zenn" } })
-    router.push('/blogs?blogType=zenn')
+    router.push('/blogs/zenn')
     router.refresh()
   }, [])
 
-  useEffect(() => {
-    const blogType = searchParams.get("blogType")
-    if (!blogType) {
-      setActiveTab("blogs")
-      dispatch({ type: "SET_BLOG_TYPE", payload: { blogType: "blogs" } })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams])
 
   return (
     <nav className="relative flex bg-transparent flex-grow">

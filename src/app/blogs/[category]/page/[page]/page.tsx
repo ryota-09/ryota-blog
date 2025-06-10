@@ -11,7 +11,6 @@ import { generateQuery } from "@/lib";
 import { getBlogList } from "@/lib/microcms";
 import { PER_PAGE, CATEGORY_MAPED_NAME, CATEGORY_MAPED_ID } from "@/static/blogs";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
-import type { BlogTypeKeyLIteralType } from "@/types";
 
 export async function generateStaticParams() {
   const categories = Object.entries(CATEGORY_MAPED_ID);
