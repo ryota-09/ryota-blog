@@ -20,8 +20,8 @@ import CustomCode from "@/components/ArticleBody/RichEditor/CustomUI/CustomCode"
 import CustomStrong from "@/components/ArticleBody/RichEditor/CustomUI/CustomStrong";
 import ExternalLink from "@/components/UiParts/ExternalLink";
 import PopupModal from "@/components/UiParts/PopupModal";
-import Image from "next/image";
 import CustomU from "@/components/ArticleBody/RichEditor/CustomUI/CustomU";
+import CopyableText from "@/components/ArticleBody/RichEditor/CopyableText";
 
 const TwitterCard = dynamic(() => import("@/components/ArticleBody/RichEditor/TwitterCard"), { ssr: false });
 
@@ -139,6 +139,11 @@ export const customReplaceOptions: HTMLReactParserOptions = {
           return <CustomTh {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomTh>;
         case "td":
           return <CustomTd {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CustomTd>;
+        case "span":
+          if (domNode.attribs.class === "copy") {
+            return <CopyableText {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</CopyableText>;
+          }
+          return <span {...props}>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</span>;
       }
     }
   },
