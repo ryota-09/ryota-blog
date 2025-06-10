@@ -10,7 +10,7 @@ type SearchStateCardProps = {
   /**
    * カテゴリー
    */
-  category?: MappedKeyLiteralType
+  category?: MappedKeyLiteralType | string
 }
 
 const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
