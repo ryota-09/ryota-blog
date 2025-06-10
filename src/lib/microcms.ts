@@ -90,7 +90,7 @@ export const getPrevAndNextBlog = async (data: BlogsContentType) => {
     client.get<BaseMicroCMSApiListDataType<BlogsContentType>>({
       endpoint: "blogs",
       queries: {
-        fields: "id,title,publishedAt,updatedAt",
+        fields: "id,title,publishedAt,updatedAt,category",
         filters: `publishedAt[less_than]${publishedAt}`,
         limit: 1,
         orders: "-publishedAt",
@@ -105,7 +105,7 @@ export const getPrevAndNextBlog = async (data: BlogsContentType) => {
     client.get<BaseMicroCMSApiListDataType<BlogsContentType>>({
       endpoint: "blogs",
       queries: {
-        fields: "id,title,publishedAt,updatedAt",
+        fields: "id,title,publishedAt,updatedAt,category",
         filters: `publishedAt[greater_than]${publishedAt}`,
         limit: 1,
         orders: "publishedAt",

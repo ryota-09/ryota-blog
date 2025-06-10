@@ -7,7 +7,7 @@ import BottomCard from '@/components/ArticleBody/BottomCard';
 import FixedButton from '@/components/UiParts/FixedButton';
 import { BlogsContentType } from '@/types/microcms';
 import { Link } from 'next-view-transitions';
-import { generateTOCAssets } from "@/lib";
+import { generateTOCAssets, getPrimaryCategoryId } from "@/lib";
 import TOCList from "@/components/ArticleBody/TOCList";
 import AdRevenueLabel from "@/components/AdRevenueLabel";
 import XShareButton from "@/components/UiParts/XShareButton";
@@ -33,6 +33,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
   }).join('')
 
   const displayTime = data.publishedAt || data.updatedAt
+  const categoryId = getPrimaryCategoryId(data);
 
   const TOCdata = generateTOCAssets(joindedHTML)
   return (
@@ -97,7 +98,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
               return <HTMLArea key={index} html={html} />
           }
         })}
-        <IssueButton currentPath={`${baseURL}/blogs/${data.id}`} />
+        <IssueButton currentPath={`${baseURL}/blogs/${categoryId}/${data.id}`} />
         <PrevAndNextBlogNav currentBlogData={data} />
         <aside className='flex flex-col-reverse md:flex-row gap-8 md:gap-4 mx-0.5 border-t dark:border-t-[#333] py-10'>
           <BottomCard />
@@ -105,7 +106,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
         <FixedButton />
         <XShareButton
           classes="fixed z-50 bottom-4 bottom-4 left-4 bg-gray-400 dark:bg-gray-600 text-white text-sm w-auto h-10 px-2 flex items-center justify-center rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-70 active:bg-gray-500"
-          url={`${baseURL}/blogs/${data.id}`}
+          url={`${baseURL}/blogs/${categoryId}/${data.id}`}
         >
           Post to X
         </XShareButton>

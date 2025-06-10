@@ -8,6 +8,7 @@ import {
   SITE_DOMAIN,
   SITE_TITLE,
 } from "@/static/blogs";
+import { getPrimaryCategoryId } from "@/lib";
 
 // 日付フォーマットの国際化 API
 const DATE_FMT = new Intl.DateTimeFormat("en-CA", {
@@ -96,12 +97,13 @@ function generateContentSection(posts: BlogsContentType[]): string {
   }
 
   const contentList = posts
-    .map(({ id, title, publishedAt, description }) => {
-      if (!publishedAt) return null;
+    .map((post) => {
+      if (!post.publishedAt) return null;
       
-      const url = `${baseURL}/blogs/${id}`;
-      const linkDetails = description ? `: ${description}` : "";
-      return `- [${title}](${url})${linkDetails}`;
+      const categoryId = getPrimaryCategoryId(post);
+      const url = `${baseURL}/blogs/${categoryId}/${post.id}`;
+      const linkDetails = post.description ? `: ${post.description}` : "";
+      return `- [${post.title}](${url})${linkDetails}`;
     })
     .filter(Boolean)
     .join("\n");
@@ -130,7 +132,7 @@ function buildLlmsTxt({ posts, categories }: LlmsTxtData): string {
 async function fetchLlmsTxtData(): Promise<LlmsTxtData> {
   const [posts, categories] = await Promise.all([
     getAllBlogList({
-      fields: "id,title,publishedAt,noIndex,description",
+      fields: "id,title,publishedAt,noIndex,description,category",
       orders: "-publishedAt",
     }),
     getAllCategoryList({
