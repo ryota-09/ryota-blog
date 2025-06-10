@@ -21,7 +21,7 @@ export async function generateStaticParams() {
     try {
       const query: MicroCMSQueries = {
         limit: 1,
-        filters: `category[contains]${categoryName}`
+        filters: `category[contains]${categoryId}`
       };
       
       const data = await getBlogList(query);
@@ -85,7 +85,7 @@ const Page = async ({ params }: PageProps) => {
   // このカテゴリでページが存在するかチェック
   const checkQuery: MicroCMSQueries = {
     limit: 1,
-    filters: `category[contains]${categoryName}`
+    filters: `category[contains]${params.category}`
   };
   const data = await getBlogList(checkQuery);
   const totalPages = Math.ceil(data.totalCount / PER_PAGE);
@@ -97,7 +97,7 @@ const Page = async ({ params }: PageProps) => {
   const blogType = "blogs";
   const query: MicroCMSQueries = generateQuery({ 
     page: params.page,
-    category: categoryName,
+    category: params.category,
     keyword: ""
   });
 
