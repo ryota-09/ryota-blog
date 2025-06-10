@@ -14,12 +14,12 @@ const EllipsisMenuItem = ({ pageNumber, children }: EllipsisMenuItemProps) => {
   const pathname = usePathname()
 
   const generateHref = useCallback(() => {
-    // Check if we're on a category page
+    // カテゴリページかどうかを確認
     const categoryPathMatch = pathname.match(/^\/blogs\/([^\/]+)$/)
     const categoryId = categoryPathMatch ? categoryPathMatch[1] : null
     
     let baseHref = categoryId ? `/blogs/${categoryId}` : `/blogs`
-    const keyword = searchParams.get('keyword') ?? ""
+    const keyword = searchParams?.get('keyword') ?? ""
 
     if (keyword) {
       const currentPath = `${baseHref}?keyword=${keyword}`
@@ -30,7 +30,8 @@ const EllipsisMenuItem = ({ pageNumber, children }: EllipsisMenuItemProps) => {
       return baseHref
     }
 
-    return `${baseHref}?page=${pageNumber}`
+    // 新しいパスベースのページネーション形式を使用
+    return `${baseHref}/page/${pageNumber}`
   }, [searchParams, pathname, pageNumber])
 
   return (

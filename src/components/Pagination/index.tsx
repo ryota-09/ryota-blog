@@ -19,9 +19,13 @@ type PaginationProps = {
    * 総コンテンツ数
    */
   totalCount: number
+  /**
+   * サーバーサイドでのベースパス (オプション)
+   */
+  basePath?: string
 }
 
-const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
+const Pagination = ({ currentPage, totalCount, basePath }: PaginationProps) => {
   const rate = totalCount / PER_PAGE;
   const totalPages = rate < MINIMUM_PAGE_COUNT ? MINIMUM_PAGE_COUNT : Math.ceil(rate);
 
@@ -38,7 +42,7 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
         {/* NOTE: 1ページ目以外、前のページを表示するボタン */}
         {currentPage !== 1 && (
           <li>
-            <PaginationItem pageNumber={currentPage - 1} currentPage={currentPage} >
+            <PaginationItem pageNumber={currentPage - 1} currentPage={currentPage} basePath={basePath}>
               <svg
                 className="-scale-x-90"
                 xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +64,7 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
         )}
         {/* NOTE: １ページ目を表すボタン */}
         <li>
-          <PaginationItem pageNumber={1} currentPage={currentPage}>1</PaginationItem>
+          <PaginationItem pageNumber={1} currentPage={currentPage} basePath={basePath}>1</PaginationItem>
         </li>
         {/* NOTE: 4ページ目以降の場合、省略ボタンを表示し、ホバー時にメニューを表示する */}
         {currentPage >= 4 &&
@@ -74,19 +78,19 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
         {/* NOTE: ３ページ目以降の場合、１ページ前のページを表示するためのボタン */}
         {currentPage >= 3 && (
           <li>
-            <PaginationItem pageNumber={currentPage - 1} currentPage={currentPage}>{currentPage - 1}</PaginationItem>
+            <PaginationItem pageNumber={currentPage - 1} currentPage={currentPage} basePath={basePath}>{currentPage - 1}</PaginationItem>
           </li>
         )}
         {/* NOTE: 現在のページを表すボタン。常時、アクティブになる。 */}
         {currentPage !== 1 && currentPage !== totalPages && (
           <li>
-            <PaginationItem pageNumber={currentPage} currentPage={currentPage}>{currentPage}</PaginationItem>
+            <PaginationItem pageNumber={currentPage} currentPage={currentPage} basePath={basePath}>{currentPage}</PaginationItem>
           </li>
         )}
         {/* NOTE: 現在のページの次のページを表すボタン */}
         {currentPage < totalPages && currentPage + 1 !== totalPages && (
           <li>
-            <PaginationItem pageNumber={currentPage + 1} currentPage={currentPage}>{currentPage + 1}</PaginationItem>
+            <PaginationItem pageNumber={currentPage + 1} currentPage={currentPage} basePath={basePath}>{currentPage + 1}</PaginationItem>
           </li>
         )}
         {/* NOTE: 最後から３ページ目以前の場合、省略ボタンを表示し、ホバー時にメニューを表示する */}
@@ -101,13 +105,13 @@ const Pagination = ({ currentPage, totalCount }: PaginationProps) => {
         {/* NOTE: 最後のページを表すボタン */}
         {totalPages !== 1 && (
           <li>
-            <PaginationItem pageNumber={totalPages} currentPage={currentPage} >{totalPages}</PaginationItem>
+            <PaginationItem pageNumber={totalPages} currentPage={currentPage} basePath={basePath}>{totalPages}</PaginationItem>
           </li>
         )}
         {/* NOTE: 最後のページ以外、次のページを表示するボタン */}
         {currentPage !== totalPages && (
           <li>
-            <PaginationItem pageNumber={currentPage + 1} currentPage={currentPage} >
+            <PaginationItem pageNumber={currentPage + 1} currentPage={currentPage} basePath={basePath}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"

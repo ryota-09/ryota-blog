@@ -1,16 +1,13 @@
 "use client"
-
 import { useContext, useRef, type FormEvent } from "react"
-import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { GlobalContext } from "@/providers"
 import { cltw } from "@/util"
 import { escapeHtml } from "@/lib"
-import { CATEGORY_MAPED_ID } from "@/static/blogs"
 
 const SearchBar = () => {
   const { state } = useContext(GlobalContext)
   const router = useRouter()
-  const searchParams = useSearchParams()
   const pathname = usePathname()
   const formRef = useRef<HTMLFormElement>(null)
 
