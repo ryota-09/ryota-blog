@@ -33,7 +33,7 @@ export const generateTOCAssets = (html: string) => {
   return results;
 }
 
-export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType, [KEYWORD_QUERY]: string }) => {
+export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType | string, [KEYWORD_QUERY]: string }) => {
   let filters = "";
   const query: MicroCMSQueries = { limit: PER_PAGE, offset: 0 }
 
@@ -43,7 +43,13 @@ export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QU
 
   // filters
   if (searchParams[CATEGORY_QUERY]) {
-    filters += `${CATEGORY_QUERY}[contains]${CATEGORY_MAPED_ID[searchParams[CATEGORY_QUERY]]}`;
+    const categoryValue = searchParams[CATEGORY_QUERY];
+    // If categoryValue is already a category name, use it directly
+    // If it's a category ID, convert it to name using CATEGORY_MAPED_NAME
+    const categoryId = typeof categoryValue === 'string' && CATEGORY_MAPED_ID[categoryValue as keyof typeof CATEGORY_MAPED_ID] 
+      ? CATEGORY_MAPED_ID[categoryValue as keyof typeof CATEGORY_MAPED_ID]
+      : categoryValue;
+    filters += `${CATEGORY_QUERY}[contains]${categoryId}`;
   }
 
   if (searchParams[KEYWORD_QUERY]) {

@@ -1,8 +1,9 @@
 "use client"
 import { cltw } from "@/util"
 import { Link } from "next-view-transitions"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { ReactNode, useCallback } from "react"
+import { CATEGORY_MAPED_ID } from "@/static/blogs"
 
 type PaginationItemProps = {
   currentPage: number
@@ -12,21 +13,20 @@ type PaginationItemProps = {
 
 const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemProps) => {
   const searchParams = useSearchParams()
+  const pathname = usePathname()
 
   const generateHref = useCallback(() => {
-    const baseHref = `/blogs`
     if (pageNumber === currentPage) return ""
 
-    const category = searchParams.get('category') ?? ""
+    // Check if we're on a category page
+    const categoryPathMatch = pathname.match(/^\/blogs\/([^\/]+)$/)
+    const categoryId = categoryPathMatch ? categoryPathMatch[1] : null
+    
     const keyword = searchParams.get('keyword') ?? ""
+    
+    let baseHref = categoryId ? `/blogs/${categoryId}` : `/blogs`
 
-    if (category && keyword) {
-      const currentPath = `${baseHref}?category=${category}&keyword=${keyword}`
-      return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
-    } else if (category) {
-      const currentPath = `${baseHref}?category=${category}`
-      return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
-    } else if (keyword) {
+    if (keyword) {
       const currentPath = `${baseHref}?keyword=${keyword}`
       return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
     }
@@ -36,7 +36,7 @@ const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemPro
     }
 
     return `${baseHref}?page=${pageNumber}`
-  }, [searchParams, pageNumber, currentPage])
+  }, [searchParams, pathname, pageNumber, currentPage])
 
   return (
     <Link

@@ -1,42 +1,45 @@
 "use client"
 
 import { useContext, useRef, type FormEvent } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { GlobalContext } from "@/providers"
 import { cltw } from "@/util"
 import { escapeHtml } from "@/lib"
+import { CATEGORY_MAPED_ID } from "@/static/blogs"
 
 const SearchBar = () => {
   const { state } = useContext(GlobalContext)
   const router = useRouter()
   const searchParams = useSearchParams()
+  const pathname = usePathname()
   const formRef = useRef<HTMLFormElement>(null)
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
     const keyword = data.get('keyword')
-    const category = searchParams.get('category')
-
-    const basePath = '/blogs'
+    
+    // Check if we're on a category page
+    const categoryPathMatch = pathname.match(/^\/blogs\/([^\/]+)$/)
+    const categoryId = categoryPathMatch ? categoryPathMatch[1] : null
 
     if (!keyword) {
-      router.push(basePath)
+      router.push(categoryId ? `/blogs/${categoryId}` : '/blogs')
       router.refresh()
       return
     }
 
     const escapedKeyword = escapeHtml(keyword.toString()).trim()
 
-    if (category) {
+    if (categoryId) {
       formRef.current?.reset()
-      router.push(`${basePath}?category=${category}&keyword=${keyword}`)
+      router.push(`/blogs/${categoryId}?keyword=${escapedKeyword}`)
       router.refresh()
       return
     }
 
     formRef.current?.reset()
-    router.push(`${basePath}?keyword=${escapedKeyword}`)
+    router.push(`/blogs?keyword=${escapedKeyword}`)
     router.refresh()
   }
 
