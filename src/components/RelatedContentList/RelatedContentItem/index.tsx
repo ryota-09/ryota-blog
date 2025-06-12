@@ -1,7 +1,10 @@
+'use client';
+
 import Chip from "@/components/UiParts/Chip";
 import { CATEGORY_MAPED_NAME } from "@/static/blogs";
 import { CategoriesContentType } from "@/types/microcms";
 import { Link } from "next-view-transitions";
+import { useLocale } from 'next-intl';
 
 type RelatedContentItemProps = {
   id: string;
@@ -12,12 +15,13 @@ type RelatedContentItemProps = {
 }
 
 const RelatedContentItem = ({ id, publishedAt, updatedAt, title, category }: RelatedContentItemProps) => {
+  const locale = useLocale();
   const displayTime = publishedAt || updatedAt;
   const primaryCategoryId = category.length > 0 ? category[0].id : "programming";
   
   return (
     <li>
-      <Link href={`/blogs/${primaryCategoryId}/${id}`} key={id} className="group transition-opacity hover:opacity-60 flex md:justify-between flex-col gap-1 md:gap-0 md:flex-row items-center py-2">
+      <Link href={`/${locale}/blogs/${primaryCategoryId}/${id}`} key={id} className="group transition-opacity hover:opacity-60 flex md:justify-between flex-col gap-1 md:gap-0 md:flex-row items-center py-2">
         <div>
           <time dateTime={displayTime.split('T')[0]} className="text-gray-400 text-sm">{displayTime.split('T')[0].replaceAll("-", "/")}</time>
           <p className="line-clamp-2 md:line-clamp-3 text-txt-base dark:text-gray-300 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-txt-base dark:group-hover:decoration-gray-300">{title}</p>

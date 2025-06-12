@@ -3,6 +3,7 @@ import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import dynamic from "next/dynamic";
+import { getTranslations } from 'next-intl/server';
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
@@ -13,18 +14,27 @@ import { BLOG_TYPE_QUERY, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, CATEGORY_MA
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import type { MappedKeyLiteralType } from "@/types/microcms";
 import type { BlogTypeKeyLIteralType } from "@/types";
+import { locales } from '@/i18n/config';
 
 const ZennArticleList = dynamic(() => import("@/components/ZennArticleList"));
 
 export async function generateStaticParams() {
-  return Object.values(CATEGORY_MAPED_ID).map((categoryId) => ({
-    category: categoryId
-  }));
+  const params = [];
+  for (const locale of locales) {
+    for (const categoryId of Object.values(CATEGORY_MAPED_ID)) {
+      params.push({
+        locale,
+        category: categoryId
+      });
+    }
+  }
+  return params;
 }
 
 export async function generateMetadata(
-  { params, searchParams }: { params: { category: string }, searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType, [PAGE_QUERY]: string, [KEYWORD_QUERY]: string } }
+  { params, searchParams }: { params: { locale: string; category: string }, searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType, [PAGE_QUERY]: string, [KEYWORD_QUERY]: string } }
 ): Promise<Metadata> {
+  const t = await getTranslations({ locale: params.locale, namespace: 'blog' });
   const categoryName = CATEGORY_MAPED_NAME[params.category];
   
   if (!categoryName) {
@@ -37,25 +47,26 @@ export async function generateMetadata(
 
   if (blogType === "zenn") {
     return {
-      title: "Zennの記事一覧",
-      description: "これまでZennで書いてきた記事の一覧です。"
+      title: t('zennArticles'),
+      description: t('zennArticles')
     }
   }
 
   if (blogType === "blogs" && !keyword) {
+    const title = page ? `${categoryName} - ${t('page')} ${page}` : categoryName;
     return {
-      title: page ? `${categoryName}の記事一覧。${page}ページ目。` : `${categoryName}の記事一覧`,
-      description: `${categoryName}に関する技術記事の一覧です。`,
+      title,
+      description: categoryName,
       robots: page ? "noindex" : "index"
     }
   }
 
-  let title = `に関する検索結果のページ${page ? `。${page}ページ目。` : ""}`
-  let description = "に関する検索結果のページです。"
+  let title = page ? ` - ${t('page')} ${page}` : ""
+  let description = ""
   
   if (keyword) {
-    title = `${categoryName}と${keyword}` + title
-    description = `${categoryName}と${keyword}` + description
+    title = `${categoryName} & ${keyword}` + title
+    description = `${categoryName} & ${keyword}`
   }
 
   return {
@@ -67,6 +78,7 @@ export async function generateMetadata(
 
 type PageProps = {
   params: {
+    locale: string;
     category: string;
   };
   searchParams: { 
@@ -109,7 +121,7 @@ const Page = ({ params, searchParams }: PageProps) => {
             <ZennArticleList />
             :
             <Suspense fallback={<Skelton />}>
-              <ArticleList query={query} blogType={blogType} page={page} basePath={`/blogs/${params.category}`} />
+              <ArticleList query={query} blogType={blogType} page={page} basePath={`/${params.locale}/blogs/${params.category}`} />
             </Suspense>
           }
         </div>

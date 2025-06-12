@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getTranslations } from 'next-intl/server';
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
@@ -10,41 +11,57 @@ import { generateQuery } from "@/lib";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import { getBlogList } from "@/lib/microcms";
 import { PER_PAGE } from "@/static/blogs";
+import { locales } from '@/i18n/config';
 
 export async function generateStaticParams() {
   const data = await getBlogList({ limit: 1 });
   const totalPages = Math.ceil(data.totalCount / PER_PAGE);
   
-  // Generate params for pages 2 onwards (page 1 is at /blogs)
-  return Array.from({ length: Math.max(totalPages - 1, 0) }, (_, i) => ({
-    page: String(i + 2)
-  }));
+  const params = [];
+  for (const locale of locales) {
+    // ページ2以降のパラメータを生成（ページ1は/[locale]/blogsにある）
+    for (let i = 2; i <= totalPages; i++) {
+      params.push({
+        locale,
+        page: String(i)
+      });
+    }
+  }
+  
+  return params;
 }
 
-export function generateMetadata(
-  { params }: { params: { page: string } }
-): Metadata {
+export async function generateMetadata(
+  { params }: { params: { locale: string; page: string } }
+): Promise<Metadata> {
+  const t = await getTranslations({ locale: params.locale, namespace: 'blog' });
   const page = params.page;
   
   return {
-    title: `記事一覧のページ。${page}ページ目。`,
-    description: `記事一覧の${page}ページ目です。`,
+    title: `${t('recentPosts')} - ${t('page')} ${page}`,
+    description: `${t('recentPosts')} - ${t('page')} ${page}`,
     robots: "noindex",
     alternates: {
-      canonical: `/blogs/page/${page}`
+      canonical: `/${params.locale}/blogs/page/${page}`,
+      languages: Object.fromEntries(
+        locales.map((locale) => [
+          locale,
+          `/${locale}/blogs/page/${page}`
+        ])
+      )
     }
   };
 }
 
-const Page = async ({ params }: { params: { page: string } }) => {
+const Page = async ({ params }: { params: { locale: string; page: string } }) => {
   const pageNum = parseInt(params.page);
   
-  // Validate page number
+  // ページ番号の検証
   if (isNaN(pageNum) || pageNum < 2) {
     notFound();
   }
   
-  // Check if page exists
+  // ページが存在するかチェック
   const data = await getBlogList({ limit: 1 });
   const totalPages = Math.ceil(data.totalCount / PER_PAGE);
   
@@ -71,7 +88,7 @@ const Page = async ({ params }: { params: { page: string } }) => {
             </div>
           </div>
           <Suspense fallback={<Skelton />}>
-            <ArticleList query={query} blogType={blogType} page={params.page} basePath="/blogs" />
+            <ArticleList query={query} blogType={blogType} page={params.page} basePath={`/${params.locale}/blogs`} />
           </Suspense>
         </div>
       </div>
