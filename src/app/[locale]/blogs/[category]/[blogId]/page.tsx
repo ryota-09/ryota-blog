@@ -9,21 +9,28 @@ import { getBlogById, getAllBlogList } from "@/lib/microcms";
 import type { BlogsContentType } from "@/types/microcms";
 import JsonLD from "@/components/Head/JsonLD";
 import RelatedContentList from "@/components/RelatedContentList";
+import { locales } from '@/i18n/config';
 
 export async function generateStaticParams() {
   const blogList = await getAllBlogList({ fields: "id,category" });
   
-  return blogList.map((blog) => {
-    const categoryId = getPrimaryCategoryId(blog);
-    return {
-      category: categoryId,
-      blogId: blog.id
-    };
-  });
+  const params = [];
+  for (const locale of locales) {
+    for (const blog of blogList) {
+      const categoryId = getPrimaryCategoryId(blog);
+      params.push({
+        locale,
+        category: categoryId,
+        blogId: blog.id
+      });
+    }
+  }
+  
+  return params;
 }
 
 export async function generateMetadata(
-  { params }: { params: { category: string; blogId: string } },
+  { params }: { params: { locale: string; category: string; blogId: string } },
 ): Promise<Metadata> {
   const blogId = params.blogId;
   const data = await getBlogById(blogId, { fields: "title,description,noIndex" });
@@ -31,12 +38,21 @@ export async function generateMetadata(
   return {
     title: data.title,
     description: data.description,
-    robots: data.noIndex ? "noindex" : null
+    robots: data.noIndex ? "noindex" : null,
+    alternates: {
+      languages: Object.fromEntries(
+        locales.map((locale) => [
+          locale,
+          `/${locale}/blogs/${params.category}/${params.blogId}`
+        ])
+      )
+    }
   };
 }
 
 type PageProps = {
   params: {
+    locale: string;
     category: string;
     blogId: string;
   };
@@ -66,7 +82,7 @@ const Page = async ({ params }: PageProps) => {
     notFound();
   }
 
-  const breadcrumbAssets = generateBreadcrumbAssets(data);
+  const breadcrumbAssets = generateBreadcrumbAssets(data, params.locale);
   return (
     <div className="max-w-[1028px] mx-auto px-2 md:px-0">
       <BreadcrumbList items={breadcrumbAssets} />

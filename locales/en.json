@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "siteTitle": "Ryota's Web Engineer Blog",
+    "siteDescription": "A blog where a web engineer shares about technology, career, and daily life"
+  },
+  "navigation": {
+    "home": "Home",
+    "blogs": "Blog",
+    "about": "About",
+    "contact": "Contact",
+    "search": "Search"
+  },
+  "blog": {
+    "recentPosts": "Recent Posts",
+    "categories": "Categories",
+    "tags": "Tags",
+    "readMore": "Read More",
+    "publishedAt": "Published",
+    "updatedAt": "Updated",
+    "tableOfContents": "Table of Contents",
+    "relatedPosts": "Related Posts",
+    "shareOnTwitter": "Share on Twitter",
+    "searchPlaceholder": "Search articles...",
+    "noPostsFound": "No posts found",
+    "allCategories": "All",
+    "zennArticles": "Zenn Articles"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page"
+  },
+  "footer": {
+    "copyright": "© {year} Ryota's Web Engineer Blog",
+    "allRightsReserved": "All rights reserved."
+  }
+}

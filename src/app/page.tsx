@@ -1,11 +1,7 @@
-import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 
-export const metadata: Metadata = {
-  robots: "noindex"
-}
-
 const Page = () => {
-  redirect("/blogs")
+  // Root page will be handled by middleware to redirect to default locale
+  redirect("/ja")
 }
 export default Page

@@ -1,14 +1,25 @@
 import type { Metadata } from "next";
+import { getTranslations } from 'next-intl/server';
 
 import SideNav from "@/components/SideNav";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import ZennArticleList from "@/components/ZennArticleList";
 
-export const metadata: Metadata = {
-  title: "Zennの記事一覧",
-  description: "これまでZennで書いてきた記事の一覧です。",
-  robots: "noindex"
-};
+interface ZennPageProps {
+  params: {
+    locale: string;
+  };
+}
+
+export async function generateMetadata({ params: { locale } }: ZennPageProps): Promise<Metadata> {
+  const t = await getTranslations({ locale, namespace: 'blog' });
+  
+  return {
+    title: t('zennArticles'),
+    description: t('zennArticles'),
+    robots: "noindex"
+  };
+}
 
 const ZennPage = () => {
   return (

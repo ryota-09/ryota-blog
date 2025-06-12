@@ -1,5 +1,5 @@
 import ImageWithBlur from "@/components/UiParts/ImageWithBlur";
-import { Link } from "next-view-transitions";
+import BackToTopLink from "./BackToTopLink";
 
 const NoContents = () => {
   return (
@@ -8,9 +8,7 @@ const NoContents = () => {
       <div className="flex flex-col gap-8">
         <p className="dark:text-gray-400 text-center md:text-left">表示できるコンテンツが<br className="inline md:hidden" />ありません。</p>
         <div className="flex justify-center md:justify-start">
-          <Link href="/blogs" className="text-base-color border-2 border-base-color w-fit px-4 py-2 hover:bg-base-color hover:text-white hover:border-base-color transition duration-200">
-            トップページに戻る
-          </Link>
+          <BackToTopLink />
         </div>
       </div>
     </div>
