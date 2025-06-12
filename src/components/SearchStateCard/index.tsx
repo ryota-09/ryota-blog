@@ -1,4 +1,7 @@
+'use client';
+
 import { Link } from 'next-view-transitions';
+import { useLocale } from 'next-intl';
 import Chip from "@/components/UiParts/Chip";
 import type { MappedKeyLiteralType } from "@/types/microcms";
 
@@ -14,6 +17,8 @@ type SearchStateCardProps = {
 }
 
 const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
+  const locale = useLocale();
+  
   return (
     <div className="bg-white dark:bg-black px-3.5 flex flex-grow flex-col lg:flex-row items-center gap-2 lg:gap-10 border-2 border-gray-200 dark:border-gray-600">
       <div className="flex items-center gap-2 w-full lg:w-auto">
@@ -37,7 +42,7 @@ const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
           )}
         </ul>
         <div className="w-full lg:w-auto text-right" data-testid="pw-reset-search-state">
-          <Link href="/blogs" className="text-gray-400 text-xs cursor-pointer transition-colors hover:text-gray-700 dark:hover:text-gray-300">検索条件をリセット</Link>
+          <Link href={`/${locale}/blogs`} className="text-gray-400 text-xs cursor-pointer transition-colors hover:text-gray-700 dark:hover:text-gray-300">検索条件をリセット</Link>
         </div>
       </div>
     </div>

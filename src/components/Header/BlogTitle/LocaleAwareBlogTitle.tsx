@@ -1,17 +1,19 @@
+'use client';
+
 import { Link } from 'next-view-transitions';
+import { useLocale } from 'next-intl';
 
 type PropsType = {
   title: string;
-  locale?: string;
 }
 
-const BlogTitle = ({ title, locale }: PropsType) => {
-  const href = locale ? `/${locale}/blogs` : '/blogs';
+const LocaleAwareBlogTitle = ({ title }: PropsType) => {
+  const locale = useLocale();
   
   return (
-    <Link href={href}>
+    <Link href={`/${locale}/blogs`}>
       <h1 className="text-md md:text-xl font-bold text-black dark:text-gray-400 transition duration-200 hover:text-base-color shrink-0">{title}</h1>
     </Link>
   )
 }
-export default BlogTitle;
+export default LocaleAwareBlogTitle;

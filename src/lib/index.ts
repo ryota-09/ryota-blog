@@ -65,24 +65,25 @@ export const getPrimaryCategoryId = (blog: Pick<BlogsContentType, "category">): 
   return CATEGORY_MAPED_ID[categoryName] || "programming";
 }
 
-export const generateBreadcrumbAssets = (blog: BlogsContentType): BreadcrumbItemType[] => {
+export const generateBreadcrumbAssets = (blog: BlogsContentType, locale?: string): BreadcrumbItemType[] => {
   const categoryId = getPrimaryCategoryId(blog);
   const categoryName = CATEGORY_MAPED_NAME[categoryId];
+  const localePrefix = locale ? `/${locale}` : '';
   
   const results = [
     {
       label: "Home",
-      href: "/blogs"
+      href: `${localePrefix}/blogs`
     },
     {
       label: categoryName,
-      href: `/blogs/${categoryId}`
+      href: `${localePrefix}/blogs/${categoryId}`
     }
   ];
 
   results.push({
     label: blog.title,
-    href: `/blogs/${categoryId}/${blog.id}`
+    href: `${localePrefix}/blogs/${categoryId}/${blog.id}`
   });
 
   return results;

@@ -3,7 +3,13 @@ import Chip from "@/components/UiParts/Chip";
 import ImageWithBlur from "@/components/UiParts/ImageWithBlur";
 import { AUTHOR_DESCRIPTION, AUTHOR_NAME } from "@/static/blogs";
 
-const Page = () => {
+interface AboutPageProps {
+  params: {
+    locale: string;
+  };
+}
+
+const Page = ({ params: { locale } }: AboutPageProps) => {
   return (
     <article className="flex h-full min-h-[600px] w-full flex-grow flex-col items-center justify-center gap-8 border-2 border-gray-200 bg-white px-8 md:flex-row md:justify-between dark:border-gray-600 dark:bg-black">
       <div className="flex flex-col items-start space-y-8">
