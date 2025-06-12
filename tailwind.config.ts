@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -13,9 +14,20 @@ const config: Config = {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
+        fadeIn: {
+          '0%': { 
+            opacity: '0', 
+            transform: 'translateY(-4px)' 
+          },
+          '100%': { 
+            opacity: '1', 
+            transform: 'translateY(0)' 
+          },
+        },
       },
       animation: {
         'fadeIn': 'fadeInAnime 1s forwards',
+        'fade-in': 'fadeIn 0.2s ease-out',
       },
       textUnderlineOffset: {
         "highlight": '-0.2em',
