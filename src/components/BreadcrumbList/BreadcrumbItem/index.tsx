@@ -12,7 +12,7 @@ const BreadcrumbItem = ({ href, label, isLast }: BreadcrumbItemProps) => {
       {!isLast
         ?
         <>
-          <Link href={href} className="block text-gray-600 dark:text-gray-400 h-wull w-full transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color">
+          <Link href={href} className="block text-gray-600 dark:text-gray-400 h-wull w-full transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color whitespace-nowrap">
             <span>{label}</span>
           </Link>
           <svg

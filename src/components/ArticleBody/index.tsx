@@ -93,20 +93,13 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
           }
         })}
       </div>
-        <IssueButton currentPath={`https://ryotablog.com/blogs/${categoryId}/${data.id}`} />
+        <IssueButton currentPath={`https://ryotablog.com/ja/blogs/${categoryId}/${data.id}`} />
         <PrevAndNextBlogNav currentBlogData={data} />
         <aside className='flex flex-col-reverse md:flex-row gap-8 md:gap-4 mx-0.5 border-t dark:border-t-[#333] py-10'>
           <BottomCard />
         </aside>
         <FixedButton />
-        <div className="border-2 border-gray-200 dark:border-gray-600 p-4 mt-8">
-          <div className="flex justify-center flex-col gap-4">
-            <h3 className="text-xl font-bold text-txt-base dark:text-gray-300">記事をシェアする</h3>
-            <div className="flex justify-center">
-              <LocaleAwareShare categoryId={categoryId} blogId={data.id} title={data.title} />
-            </div>
-          </div>
-        </div>
+        <LocaleAwareShare categoryId={categoryId} blogId={data.id} title={data.title} />
     </div>
   )
 }
