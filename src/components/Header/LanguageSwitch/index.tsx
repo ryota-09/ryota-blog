@@ -1,4 +1,5 @@
 "use client"
+import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
@@ -57,13 +58,6 @@ const LanguageSwitch = () => {
     }
   };
 
-  const getCurrentLanguageLabel = () => {
-    return locale === "ja" ? "日本語" : "English";
-  };
-
-  const getLanguageLabel = (targetLocale: Locale) => {
-    return targetLocale === "ja" ? t("switchToJapanese") : t("switchToEnglish");
-  };
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -73,38 +67,49 @@ const LanguageSwitch = () => {
         aria-haspopup="listbox"
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={(e) => handleKeyDown(e)}
-        className="w-8 h-8 border dark:border-[#333] dark:bg-gray-400 rounded-md flex justify-center items-center transition opacity-50 hover:opacity-30 text-xs font-medium"
+        className="w-8 h-8 border dark:border-[#333] dark:bg-gray-400 rounded-md flex justify-center items-center transition opacity-50 hover:opacity-30"
       >
-        {locale.toUpperCase()}
+        <Image src="/icons/translate.svg" alt="language" width={20} height={20} />
       </button>
 
       {isOpen && (
         <div
           role="listbox"
           aria-label={t("languageSwitch")}
-          className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg min-w-[120px] z-50"
+          className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg min-w-[100px] z-50"
         >
-          {LOCALES.map((targetLocale) => (
-            <button
-              key={targetLocale}
-              role="option"
-              aria-selected={targetLocale === locale}
-              onClick={() => switchLanguage(targetLocale)}
-              onKeyDown={(e) => handleKeyDown(e, targetLocale)}
-              className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                targetLocale === locale 
-                  ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" 
-                  : "text-gray-700 dark:text-gray-300"
-              } ${targetLocale === LOCALES[0] ? "rounded-t-md" : ""} ${
-                targetLocale === LOCALES[LOCALES.length - 1] ? "rounded-b-md" : ""
-              }`}
-            >
-              {getLanguageLabel(targetLocale)}
-              {targetLocale === locale && (
-                <span className="ml-2 text-blue-600 dark:text-blue-400">✓</span>
-              )}
-            </button>
-          ))}
+          <button
+            role="option"
+            aria-selected={"ja" === locale}
+            onClick={() => switchLanguage("ja")}
+            onKeyDown={(e) => handleKeyDown(e, "ja")}
+            className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors rounded-t-md ${
+              "ja" === locale 
+                ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" 
+                : "text-gray-700 dark:text-gray-300"
+            }`}
+          >
+            日本語
+            {"ja" === locale && (
+              <span className="ml-2 text-blue-600 dark:text-blue-400">✓</span>
+            )}
+          </button>
+          <button
+            role="option"
+            aria-selected={"en" === locale}
+            onClick={() => switchLanguage("en")}
+            onKeyDown={(e) => handleKeyDown(e, "en")}
+            className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors rounded-b-md ${
+              "en" === locale 
+                ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" 
+                : "text-gray-700 dark:text-gray-300"
+            }`}
+          >
+            English
+            {"en" === locale && (
+              <span className="ml-2 text-blue-600 dark:text-blue-400">✓</span>
+            )}
+          </button>
         </div>
       )}
     </div>
