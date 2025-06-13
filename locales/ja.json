@@ -8,7 +8,10 @@
     "blogs": "ブログ",
     "about": "プロフィール",
     "contact": "お問い合わせ",
-    "search": "検索"
+    "search": "検索",
+    "languageSwitch": "言語切り替え",
+    "switchToEnglish": "English",
+    "switchToJapanese": "日本語"
   },
   "blog": {
     "recentPosts": "最新の記事",
@@ -23,7 +26,9 @@
     "searchPlaceholder": "記事を検索...",
     "noPostsFound": "記事が見つかりませんでした",
     "allCategories": "すべて",
-    "zennArticles": "Zenn記事"
+    "zennArticles": "Zenn記事",
+    "mostReadArticles": "最も読まれている記事",
+    "page": "ページ"
   },
   "pagination": {
     "previous": "前へ",

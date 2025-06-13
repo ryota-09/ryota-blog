@@ -84,6 +84,7 @@ export type BlogsContentType = APIContentType<{
   thumbnail?: MicroCMSFields["image"];
   category: CategoriesContentType[];
   relatedContent: BlogsContentType[];
+  pageViews?: MicroCMSFields["number"];
 }>
 
 export type GetObjectType = "LIST" | "SINGLE";
