@@ -16,7 +16,7 @@ const CopyButton = ({ text }: CopyButtonProps) => {
     setTimeout(() => {
       setIsCopied(false)
     }, 1000)
-  }, [])
+  }, [text])
 
   return (
     <div className='relative' onClick={copyToClipboard}>
