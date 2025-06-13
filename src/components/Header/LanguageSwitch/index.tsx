@@ -83,15 +83,15 @@ const LanguageSwitch = () => {
             aria-selected={"ja" === locale}
             onClick={() => switchLanguage("ja")}
             onKeyDown={(e) => handleKeyDown(e, "ja")}
-            className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors rounded-t-md ${
+            className={`w-full px-3 py-2 text-left text-sm hover:bg-light dark:hover:bg-primary hover:text-white transition-colors rounded-t-md ${
               "ja" === locale 
-                ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" 
+                ? "bg-base-color dark:bg-secondary dark:text-gray-50" 
                 : "text-gray-700 dark:text-gray-300"
             }`}
           >
             日本語
             {"ja" === locale && (
-              <span className="ml-2 text-blue-600 dark:text-blue-400">✓</span>
+              <span className="ml-2 text-primary dark:text-gray-50">✓</span>
             )}
           </button>
           <button
@@ -99,15 +99,15 @@ const LanguageSwitch = () => {
             aria-selected={"en" === locale}
             onClick={() => switchLanguage("en")}
             onKeyDown={(e) => handleKeyDown(e, "en")}
-            className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors rounded-b-md ${
+            className={`w-full px-3 py-2 text-left text-sm hover:bg-light dark:hover:bg-primary hover:text-white transition-colors rounded-b-md ${
               "en" === locale 
-                ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" 
+                ? "bg-base-color dark:bg-secondary dark:text-gray-50" 
                 : "text-gray-700 dark:text-gray-300"
             }`}
           >
             English
             {"en" === locale && (
-              <span className="ml-2 text-blue-600 dark:text-blue-400">✓</span>
+              <span className="ml-2 text-primary dark:text-gray-50">✓</span>
             )}
           </button>
         </div>
