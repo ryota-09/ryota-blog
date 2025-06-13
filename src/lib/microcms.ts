@@ -84,6 +84,14 @@ export const getAllCategoryList = async (querys?: MicroCMSQueries, customRequest
   return data;
 }
 
+export const getCategoryById = (contentId: string, querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) =>
+  MicroCMSApiGetSingleObjectHandler<CategoriesContentType>(
+    "categories",
+    querys,
+    customRequestInit,
+    contentId,
+  );
+
 export const getPrevAndNextBlog = async (data: BlogsContentType) => {
   const publishedAt = data.publishedAt;
   const [prev, next] = await Promise.all([
