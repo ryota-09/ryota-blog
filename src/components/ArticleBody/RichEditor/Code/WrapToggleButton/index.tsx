@@ -1,13 +1,22 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import Tooltip from "../Tooltip";
+import { CODE_BLOCK_STYLES, ICONS } from "../constants";
 
 type WrapToggleButtonProps = {
   onToggleWrap: (isWrapped: boolean) => void;
+  defaultWrapped?: boolean;
+  className?: string;
 };
 
-const WrapToggleButton = ({ onToggleWrap }: WrapToggleButtonProps) => {
-  const [isWrapped, setIsWrapped] = useState(false);
+const WrapToggleButton = ({ 
+  onToggleWrap, 
+  defaultWrapped = false,
+  className 
+}: WrapToggleButtonProps) => {
+  const [isWrapped, setIsWrapped] = useState(defaultWrapped);
+  const [isHovered, setIsHovered] = useState(false);
 
   const toggleWrap = useCallback(() => {
     const newWrappedState = !isWrapped;
@@ -15,43 +24,58 @@ const WrapToggleButton = ({ onToggleWrap }: WrapToggleButtonProps) => {
     onToggleWrap(newWrappedState);
   }, [isWrapped, onToggleWrap]);
 
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovered(false);
+  }, []);
+
+  const tooltipText = isWrapped ? "折り返しなし" : "折り返し";
+
   return (
     <button
-      className="relative h-6 w-6 cursor-pointer text-[#9ca4b5] transition-colors hover:text-[#b4bccf] group"
+      type="button"
+      className={`${CODE_BLOCK_STYLES.button} ${className || ''}`}
       onClick={toggleWrap}
-      aria-label={isWrapped ? "折り返しなし" : "折り返し"}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      aria-label={tooltipText}
+      aria-pressed={isWrapped}
+      title={tooltipText}
     >
       <svg
-  xmlns="http://www.w3.org/2000/svg"
-  className="h-6 w-6"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  strokeWidth="2"
-  strokeLinecap="round"
-  strokeLinejoin="round"
->
-  {isWrapped ? (
-    // Unwrap icon - 長い一行のテキストと矢印で展開を表現
-    <>
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <polyline points="18 9 21 12 18 15"></polyline>
-    </>
-  ) : (
-    // Wrap icon - テキストが折り返される様子を滑らかな曲線で表現
-    <>
-      <line x1="3" y1="8" x2="16" y2="8"></line>
-      <path d="M16 8c0 0 4 0 4 4s-4 4-4 4H10"></path>
-      <polyline points="13 13 10 16 13 19"></polyline>
-    </>
-  )}
-</svg>
-      {/* ホバー時のツールチップ */}
-      <span 
-        className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[#9ca4b5] text-xs whitespace-nowrap bg-[#282a2e] px-2 py-1 rounded transition-opacity opacity-0 group-hover:opacity-100 pointer-events-none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={CODE_BLOCK_STYLES.icon}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
       >
-        {isWrapped ? "折り返しなし" : "折り返し"}
-      </span>
+        {isWrapped ? (
+          // Unwrap icon - 長い一行のテキストと矢印で展開を表現
+          <>
+            <line {...ICONS.wrap.unwrap.line} />
+            <polyline points={ICONS.wrap.unwrap.polyline} />
+          </>
+        ) : (
+          // Wrap icon - テキストが折り返される様子を表現
+          <>
+            <line {...ICONS.wrap.wrap.line} />
+            <path d={ICONS.wrap.wrap.path} />
+            <polyline points={ICONS.wrap.wrap.polyline} />
+          </>
+        )}
+      </svg>
+      
+      <Tooltip
+        text={tooltipText}
+        isVisible={isHovered}
+      />
     </button>
   );
 };
