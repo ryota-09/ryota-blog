@@ -1,4 +1,4 @@
-import SocialMediaNav from "@/components/Header/SocialMediaNav";
+import SocialMediaIcons from "@/components/Header/SocialMediaIcons";
 import Chip from "@/components/UiParts/Chip";
 import ImageWithBlur from "@/components/UiParts/ImageWithBlur";
 import { AUTHOR_DESCRIPTION, AUTHOR_NAME } from "@/static/blogs";
@@ -23,7 +23,7 @@ const Page = ({ params: { locale } }: AboutPageProps) => {
         <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
           {AUTHOR_DESCRIPTION}
         </p>
-        <SocialMediaNav />
+        <SocialMediaIcons locale={locale} />
       </div>
       <figure>
         <ImageWithBlur
