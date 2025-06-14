@@ -20,25 +20,28 @@ const MultiCodeBlock = ({ lang, filename, children }: MultiCodeBlockProps) => {
   }, [])
 
   return (
-    <div className='my-4 w-[83vw] sm:w-[600px] md:w-[730px] md:max-w-[980px] lg:w-[1028px] overflow-x-auto'>
+    <div className='my-4 w-[83vw] sm:w-[600px] md:w-[730px] md:max-w-[980px] lg:w-[1028px]'>
       {filename && <span className="text-sm bg-[#282a2e] text-[#9ca4b5] py-2 px-3 rounded-t-md tracking-wider">{filename}</span>}
       <div className="relative">
-        <CopyButton text={!Array.isArray(children) ? children : ""} />
-        <div className="absolute right-10 top-0">
+        <div className="absolute right-2 top-2 z-10 flex gap-2">
           <WrapToggleButton onToggleWrap={handleToggleWrap} />
+          <CopyButton text={!Array.isArray(children) ? children : ""} />
+        </div>
+        <div className={isWrapped ? '' : 'overflow-x-auto'}>
+          <SyntaxHighlighter 
+            language={lang} 
+            style={oneDark} 
+            customStyle={{ 
+              margin: 0,
+              whiteSpace: isWrapped ? 'pre-wrap' : 'pre',
+              wordBreak: isWrapped ? 'break-word' : 'normal',
+              overflowWrap: isWrapped ? 'break-word' : 'normal'
+            }}
+          >
+            {children}
+          </SyntaxHighlighter>
         </div>
       </div>
-      <SyntaxHighlighter 
-        language={lang} 
-        style={oneDark} 
-        customStyle={{ 
-          margin: 0,
-          whiteSpace: isWrapped ? 'pre-wrap' : 'pre',
-          wordBreak: isWrapped ? 'break-all' : 'normal'
-        }}
-      >
-        {children}
-      </SyntaxHighlighter>
     </div>
   );
 }
