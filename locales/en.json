@@ -8,7 +8,10 @@
     "blogs": "Blog",
     "about": "About",
     "contact": "Contact",
-    "search": "Search"
+    "search": "Search",
+    "languageSwitch": "Language",
+    "switchToEnglish": "English",
+    "switchToJapanese": "日本語"
   },
   "blog": {
     "recentPosts": "Recent Posts",
@@ -23,7 +26,8 @@
     "searchPlaceholder": "Search articles...",
     "noPostsFound": "No posts found",
     "allCategories": "All",
-    "zennArticles": "Zenn Articles"
+    "zennArticles": "Zenn Articles",
+    "page": "Page"
   },
   "pagination": {
     "previous": "Previous",
