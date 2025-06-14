@@ -2,7 +2,6 @@
 import { Link } from 'next-view-transitions';
 
 import SocialMediaNav from "@/components/Header/SocialMediaNav";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ExternalLink from "@/components/UiParts/ExternalLink";
 import type { HeaderNavItem } from "@/types/header";
 
@@ -31,9 +30,6 @@ const NavDrower = ({ isOpen, items, locale, onClick }: NavDrowerProps) => {
           ))}
         </nav>
         <div className="flex flex-col items-center space-y-4">
-          <div className="px-4">
-            <LanguageSwitcher />
-          </div>
           <div className="flex justify-center">
             <SocialMediaNav locale={locale} />
           </div>
