@@ -39,7 +39,7 @@ const MultiCodeBlock = ({
   // カスタムスタイルをメモ化
   const customStyle = useMemo(() => ({
     margin: 0,
-    borderRadius: filename ? '0 0 0.375rem 0.375rem' : '0.375rem',
+    borderRadius: filename ? '0 0.375rem 0.375rem 0.375rem' : '0.375rem',
     fontSize: '0.875rem',
     lineHeight: '1.5',
     backgroundColor: CODE_BLOCK_STYLES.background,
@@ -49,7 +49,7 @@ const MultiCodeBlock = ({
     <div className={`my-4 w-full max-w-[83vw] sm:max-w-[600px] md:max-w-[730px] lg:max-w-[1028px] ${className || ''}`}>
       {filename && (
         <div 
-          className={`text-sm bg-[${CODE_BLOCK_STYLES.background}] text-[#9ca4b5] py-2 px-3 rounded-t-md tracking-wider border-b border-[#3c3f43]`}
+          className={`inline-block text-sm bg-[${CODE_BLOCK_STYLES.background}] text-[#9ca4b5] py-2 px-3 rounded-t-md tracking-wider`}
           role="banner"
           aria-label={`ファイル名: ${filename}`}
         >
