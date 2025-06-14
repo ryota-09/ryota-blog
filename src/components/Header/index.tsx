@@ -2,7 +2,6 @@ import BlogTitle from "@/components/Header/BlogTitle";
 import LocaleAwareHeaderNav from "@/components/Header/LocaleAwareHeaderNav";
 import SPNav from "@/components/Header/SPNav";
 import SocialMediaNav from "@/components/Header/SocialMediaNav";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { SITE_TITLE } from "@/static/blogs";
 import { HEADER_NAV_ITEMS } from "@/static/header";
 
@@ -21,7 +20,6 @@ const Header = ({ locale }: HeaderProps) => {
               <div className="hidden md:block">
                 <SocialMediaNav locale={locale} />
               </div>
-              <LanguageSwitcher />
             </div>
           </div>
           <div className="block md:hidden">
