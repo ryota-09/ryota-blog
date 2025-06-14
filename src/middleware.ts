@@ -16,9 +16,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/404', request.url))
   }
 
-  // ルートパスを処理 - デフォルトlocaleにリダイレクト
+  // ルートパスを処理 - 保存されたlocale設定またはデフォルトlocaleにリダイレクト
   if (pathname === '/') {
-    return NextResponse.redirect(new URL(`/${routing.defaultLocale}`, request.url));
+    // Check for preferred locale in cookies
+    const preferredLocale = request.cookies.get('preferred-locale')?.value;
+    const targetLocale = preferredLocale && routing.locales.includes(preferredLocale as any) 
+      ? preferredLocale 
+      : routing.defaultLocale;
+    
+    return NextResponse.redirect(new URL(`/${targetLocale}`, request.url));
   }
 
   // pathnameにlocaleが含まれているかチェック
