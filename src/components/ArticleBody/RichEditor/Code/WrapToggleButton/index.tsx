@@ -24,18 +24,20 @@ const WrapToggleButton = ({ onToggleWrap }: WrapToggleButtonProps) => {
     >
       <svg xmlns="http://www.w3.org/2000/svg" className='w-6 h-6' viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         {isWrapped ? (
-          // Unwrap icon (horizontal arrows pointing outward)
+          // Unwrap icon - 一行の長いテキストを表現
           <>
-            <path d="M7 6L2 6M2 6L5 3M2 6L5 9"></path>
-            <path d="M17 6L22 6M22 6L19 3M22 6L19 9"></path>
-            <path d="M2 18H22"></path>
+            <rect x="3" y="6" width="18" height="2" rx="1"></rect>
+            <rect x="3" y="11" width="18" height="2" rx="1"></rect>
+            <rect x="3" y="16" width="18" height="2" rx="1"></rect>
           </>
         ) : (
-          // Wrap icon (vertical bars with arrow)
+          // Wrap icon - 改行される矢印（VS Code風）
           <>
-            <path d="M3 6H21"></path>
-            <path d="M3 12H15M15 12L12 9M15 12L12 15"></path>
-            <path d="M3 18H21"></path>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h12"></path>
+            <path d="M3 18h18"></path>
+            <path d="M15 9v6h4"></path>
+            <path d="M17 13l2 2-2 2"></path>
           </>
         )}
       </svg>
