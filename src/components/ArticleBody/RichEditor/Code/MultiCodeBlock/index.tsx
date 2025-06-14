@@ -30,12 +30,10 @@ const MultiCodeBlock = ({ lang, filename, children }: MultiCodeBlockProps) => {
         <div className={isWrapped ? '' : 'overflow-x-auto'}>
           <SyntaxHighlighter 
             language={lang} 
-            style={oneDark} 
+            style={oneDark}
+            wrapLongLines={isWrapped}
             customStyle={{ 
-              margin: 0,
-              whiteSpace: isWrapped ? 'pre-wrap' : 'pre',
-              wordBreak: isWrapped ? 'break-word' : 'normal',
-              overflowWrap: isWrapped ? 'break-word' : 'normal'
+              margin: 0
             }}
           >
             {children}
