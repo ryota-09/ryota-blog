@@ -1,32 +1,41 @@
 "use client"
 import { cltw } from "@/util"
 import { Link } from "next-view-transitions"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { ReactNode, useCallback } from "react"
+import { CATEGORY_MAPED_ID } from "@/static/blogs"
 
 type PaginationItemProps = {
   currentPage: number
   pageNumber?: number
   children: ReactNode
+  basePath?: string
 }
 
-const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemProps) => {
+const PaginationItem = ({ pageNumber, children, currentPage, basePath }: PaginationItemProps) => {
   const searchParams = useSearchParams()
+  const pathname = usePathname()
 
   const generateHref = useCallback(() => {
-    const baseHref = `/blogs`
     if (pageNumber === currentPage) return ""
 
-    const category = searchParams.get('category') ?? ""
-    const keyword = searchParams.get('keyword') ?? ""
+    // サーバーサイドでbasePathが提供されている場合はそれを使用
+    if (basePath) {
+      if (pageNumber === 1) {
+        return basePath
+      }
+      return `${basePath}/page/${pageNumber}`
+    }
 
-    if (category && keyword) {
-      const currentPath = `${baseHref}?category=${category}&keyword=${keyword}`
-      return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
-    } else if (category) {
-      const currentPath = `${baseHref}?category=${category}`
-      return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
-    } else if (keyword) {
+    // カテゴリページかどうかを確認
+    const categoryPathMatch = pathname?.match(/^\/blogs\/([^\/]+)$/)
+    const categoryId = categoryPathMatch ? categoryPathMatch[1] : null
+    
+    const keyword = searchParams?.get('keyword') ?? ""
+    
+    let baseHref = categoryId ? `/blogs/${categoryId}` : `/blogs`
+
+    if (keyword) {
       const currentPath = `${baseHref}?keyword=${keyword}`
       return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
     }
@@ -35,8 +44,9 @@ const PaginationItem = ({ pageNumber, children, currentPage }: PaginationItemPro
       return baseHref
     }
 
-    return `${baseHref}?page=${pageNumber}`
-  }, [searchParams, pageNumber, currentPage])
+    // 新しいパスベースのページネーション形式を使用
+    return `${baseHref}/page/${pageNumber}`
+  }, [searchParams, pathname, pageNumber, currentPage, basePath])
 
   return (
     <Link

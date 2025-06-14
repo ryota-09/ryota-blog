@@ -2,16 +2,18 @@
 import { Link } from 'next-view-transitions';
 
 import SocialMediaNav from "@/components/Header/SocialMediaNav";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ExternalLink from "@/components/UiParts/ExternalLink";
 import type { HeaderNavItem } from "@/types/header";
 
 type NavDrowerProps = {
   isOpen: boolean;
   items: HeaderNavItem[];
+  locale?: string;
   onClick: () => void;
 }
 
-const NavDrower = ({ isOpen, items, onClick }: NavDrowerProps) => {
+const NavDrower = ({ isOpen, items, locale, onClick }: NavDrowerProps) => {
   return (
     <>
       <div className={`bg-white dark:bg-black text-txt-base w-64 space-y-6 py-16 z-30 fixed inset-y-0 right-0 transform ${isOpen ? "translate-x-0" : "translate-x-full"} transition-transform duration-500 ease-in-out`}>
@@ -23,13 +25,18 @@ const NavDrower = ({ isOpen, items, onClick }: NavDrowerProps) => {
                 <span className="mx-4">{name}</span>
               </ExternalLink>
               :
-              <Link key={index} href={href} className="block py-2.5 px-0 transition dark:text-gray-300 duration-200 hover:bg-light dark:hover:bg-primary hover:text-white">
+              <Link key={index} href={href.startsWith('/') && locale ? `/${locale}${href}` : href} className="block py-2.5 px-0 transition dark:text-gray-300 duration-200 hover:bg-light dark:hover:bg-primary hover:text-white">
                 <span className="mx-4">{name}</span>
               </Link>
           ))}
         </nav>
-        <div className="flex justify-center">
-          <SocialMediaNav />
+        <div className="flex flex-col items-center space-y-4">
+          <div className="px-4">
+            <LanguageSwitcher />
+          </div>
+          <div className="flex justify-center">
+            <SocialMediaNav locale={locale} />
+          </div>
         </div>
       </div>
         

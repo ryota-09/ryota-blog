@@ -1,8 +1,14 @@
 import Image from "next/image";
 
 import { SOCIAL_MEDIA_NAV_ITEMS } from "@/static/header";
+import DarkModeToggle from "@/components/Header/DarkModeToggle";
+import LanguageSwitch from "@/components/Header/LanguageSwitch";
 
-const SocialMediaNav = () => {
+interface SocialMediaNavProps {
+  locale?: string;
+}
+
+const SocialMediaNav = ({ locale }: SocialMediaNavProps) => {
   return (
     <nav className="px-2 flex flex-wrap gap-5 md:gap-4">
       <a href={SOCIAL_MEDIA_NAV_ITEMS[0].href} target={SOCIAL_MEDIA_NAV_ITEMS[0].target} rel="noreferrer" className="w-8 h-8  border dark:border-[#333] dark:bg-gray-400 rounded-md font-extrabold flex justify-center items-center opacity-50 hover:opacity-30">
@@ -23,6 +29,8 @@ const SocialMediaNav = () => {
       <a href={SOCIAL_MEDIA_NAV_ITEMS[5].href} target={SOCIAL_MEDIA_NAV_ITEMS[5].target} className="w-8 h-8  border dark:border-[#333] dark:bg-gray-400 rounded-md font-extrabold flex justify-center items-center transition hover:opacity-50">
         <Image src={SOCIAL_MEDIA_NAV_ITEMS[5].icon ?? ""} alt={SOCIAL_MEDIA_NAV_ITEMS[5].name} width={30} height={30} />
       </a>
+      <LanguageSwitch />
+      <DarkModeToggle />
     </nav>
   );
 }

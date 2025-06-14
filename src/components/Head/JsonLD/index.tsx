@@ -1,7 +1,8 @@
 import type { BreadcrumbList, BlogPosting, WithContext, WebSite } from "schema-dts"
 import type { BlogsContentType } from "@/types/microcms"
 import { baseURL } from "@/config"
-import { SITE_TITLE } from "@/static/blogs"
+import { SITE_TITLE, CATEGORY_MAPED_NAME } from "@/static/blogs"
+import { getPrimaryCategoryId } from "@/lib"
 import Script from "next/script"
 
 
@@ -10,6 +11,9 @@ type JsonLDProps = {
 }
 
 const JsonLD = ({ data }: JsonLDProps) => {
+  const categoryId = getPrimaryCategoryId(data);
+  const categoryName = CATEGORY_MAPED_NAME[categoryId];
+  
   const breadcrumbJsonLD: WithContext<BreadcrumbList> = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -23,8 +27,14 @@ const JsonLD = ({ data }: JsonLDProps) => {
       {
         "@type": "ListItem",
         position: 2,
+        name: categoryName,
+        item: `${baseURL}/blogs/${categoryId}`
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
         name: data.title,
-        item: `${baseURL}/blogs/${data.id}`
+        item: `${baseURL}/blogs/${categoryId}/${data.id}`
       }
     ]
   }
@@ -34,7 +44,7 @@ const JsonLD = ({ data }: JsonLDProps) => {
     "@type": "BlogPosting",
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${baseURL}/blogs/${data.id}`
+      "@id": `${baseURL}/blogs/${categoryId}/${data.id}`
     },
     headline: data.title,
     datePublished: data.publishedAt || data.updatedAt,

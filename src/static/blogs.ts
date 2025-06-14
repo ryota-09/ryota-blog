@@ -12,6 +12,7 @@ export const CATEGORY_QUERY = "category";
 export const BLOG_TYPE_QUERY = "blogType";
 
 export const CATEGORY_MAPED_ID = {
+  "Python": "python",
   "TypeScript": "typescript",
   "CSS": "css",
   "Next.js": "next_js",
@@ -23,7 +24,7 @@ export const CATEGORY_MAPED_ID = {
   "OpenAI API": "openai_api",
   "ガジェット": "gadget",
   "TailwindCSS": "tailwindcss",
-  "UI": "ui-parts",
+  "UI": "ui_parts",
   "プログラミング": "programming",
   "Career": "career",
   "LifeHack": "life_hack",

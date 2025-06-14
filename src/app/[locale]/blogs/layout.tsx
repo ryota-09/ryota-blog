@@ -14,18 +14,24 @@ export const metadata: Metadata = {
   metadataBase: new URL(baseURL)
 };
 
+interface BlogLayoutProps {
+  children: React.ReactNode;
+  params: {
+    locale: string;
+  };
+}
+
 export default function BlogListLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+  params: { locale }
+}: BlogLayoutProps) {
   return (
     <GlobalStateProvider>
-      <Header />
+      <Header locale={locale} />
       <main className="bg-[#eee] dark:bg-[#333] flex-grow flex flex-col md:flex-row container mx-auto gap-4 my-4">
         {children}
       </main>
-      <Footer />
+      <Footer locale={locale} />
     </GlobalStateProvider>
   );
 }

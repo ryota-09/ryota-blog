@@ -84,13 +84,45 @@ export const getAllCategoryList = async (querys?: MicroCMSQueries, customRequest
   return data;
 }
 
+export const getCategoryById = (contentId: string, querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) =>
+  MicroCMSApiGetSingleObjectHandler<CategoriesContentType>(
+    "categories",
+    querys,
+    customRequestInit,
+    contentId,
+  );
+
+export const getPopularBlogsByCategory = async (
+  categoryName: string,
+  limit: number = 3,
+  customRequestInit?: CustomRequestInit
+) => {
+  const data = await client.get<BaseMicroCMSApiListDataType<BlogsContentType>>({
+    endpoint: "blogs",
+    queries: {
+      fields: "id,title,publishedAt,updatedAt,category,pageViews,thumbnail,description",
+      filters: `category[contains]${categoryName}`,
+      limit,
+      orders: "-pageViews,-publishedAt",
+    },
+    customRequestInit: customRequestInit || {
+      next: {
+        // NOTE: １日保持 60 * 60 * 24
+        revalidate: 86400
+      }
+    }
+  });
+
+  return data.contents;
+};
+
 export const getPrevAndNextBlog = async (data: BlogsContentType) => {
   const publishedAt = data.publishedAt;
   const [prev, next] = await Promise.all([
     client.get<BaseMicroCMSApiListDataType<BlogsContentType>>({
       endpoint: "blogs",
       queries: {
-        fields: "id,title,publishedAt,updatedAt",
+        fields: "id,title,publishedAt,updatedAt,category",
         filters: `publishedAt[less_than]${publishedAt}`,
         limit: 1,
         orders: "-publishedAt",
@@ -105,7 +137,7 @@ export const getPrevAndNextBlog = async (data: BlogsContentType) => {
     client.get<BaseMicroCMSApiListDataType<BlogsContentType>>({
       endpoint: "blogs",
       queries: {
-        fields: "id,title,publishedAt,updatedAt",
+        fields: "id,title,publishedAt,updatedAt,category",
         filters: `publishedAt[greater_than]${publishedAt}`,
         limit: 1,
         orders: "publishedAt",

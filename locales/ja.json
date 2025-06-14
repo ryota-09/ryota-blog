@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "siteTitle": "りょうたのWebエンジニアブログ",
+    "siteDescription": "Webエンジニアが技術、キャリア、日常について発信するブログ"
+  },
+  "navigation": {
+    "home": "ホーム",
+    "blogs": "ブログ",
+    "about": "プロフィール",
+    "contact": "お問い合わせ",
+    "search": "検索",
+    "languageSwitch": "言語切り替え",
+    "switchToEnglish": "English",
+    "switchToJapanese": "日本語"
+  },
+  "blog": {
+    "recentPosts": "最新の記事",
+    "categories": "カテゴリー",
+    "tags": "タグ",
+    "readMore": "続きを読む",
+    "publishedAt": "公開日",
+    "updatedAt": "更新日",
+    "tableOfContents": "目次",
+    "relatedPosts": "関連記事",
+    "shareOnTwitter": "Twitterでシェア",
+    "searchPlaceholder": "記事を検索...",
+    "noPostsFound": "記事が見つかりませんでした",
+    "allCategories": "すべて",
+    "zennArticles": "Zenn記事",
+    "mostReadArticles": "最も読まれている記事",
+    "page": "ページ"
+  },
+  "pagination": {
+    "previous": "前へ",
+    "next": "次へ",
+    "page": "ページ"
+  },
+  "footer": {
+    "copyright": "© {year} りょうたのWebエンジニアブログ",
+    "allRightsReserved": "All rights reserved."
+  }
+}

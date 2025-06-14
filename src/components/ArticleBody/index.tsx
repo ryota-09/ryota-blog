@@ -2,20 +2,18 @@ import Image from "next/image";
 
 import RichEditor from "@/components/ArticleBody/RichEditor";
 import ThumbnailCard from '@/components/ArticleBody/ThumbnailCard';
-import Chip from '@/components/UiParts/Chip';
 import BottomCard from '@/components/ArticleBody/BottomCard';
 import FixedButton from '@/components/UiParts/FixedButton';
 import { BlogsContentType } from '@/types/microcms';
-import { Link } from 'next-view-transitions';
-import { generateTOCAssets } from "@/lib";
+import { generateTOCAssets, getPrimaryCategoryId } from "@/lib";
 import TOCList from "@/components/ArticleBody/TOCList";
 import AdRevenueLabel from "@/components/AdRevenueLabel";
-import XShareButton from "@/components/UiParts/XShareButton";
-import { baseURL } from "@/config";
 import PrevAndNextBlogNav from "@/components/ArticleBody/PrevAndNextBlogNav";
 import IssueButton from "@/components/UiParts/IssueButton";
 import { calcDiffYears } from "@/util";
 import InfoYearsCard from "@/components/UiParts/InfoYearsCard";
+import CategoryTag from "./CategoryTag";
+import LocaleAwareShare from "./LocaleAwareShare";
 import dynamic from "next/dynamic";
 
 const HTMLArea = dynamic(() => import('@/components/ArticleBody/RichEditor/HTMLArea'), { ssr: false });
@@ -33,6 +31,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
   }).join('')
 
   const displayTime = data.publishedAt || data.updatedAt
+  const categoryId = getPrimaryCategoryId(data);
 
   const TOCdata = generateTOCAssets(joindedHTML)
   return (
@@ -69,11 +68,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
       )}
       <ul className='mt-4 flex flex-wrap gap-2'>
         {data.category.map(({ name }, index) => (
-          <li key={index} className="block cursor-pointer">
-            <Link href={`/blogs?category=${name}`}>
-              <Chip label={`#${name}`} classes="bg-gray-200 dark:bg-gray-600 dark:text-gray-300 px-3 py-2 text-sm text-txt-base hover:opacity-60" />
-            </Link>
-          </li>
+          <CategoryTag key={index} name={name} index={index} />
         ))}
       </ul>
       <div className="mt-4">
@@ -97,19 +92,14 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
               return <HTMLArea key={index} html={html} />
           }
         })}
-        <IssueButton currentPath={`${baseURL}/blogs/${data.id}`} />
+      </div>
+        <IssueButton currentPath={`https://ryotablog.com/ja/blogs/${categoryId}/${data.id}`} />
         <PrevAndNextBlogNav currentBlogData={data} />
         <aside className='flex flex-col-reverse md:flex-row gap-8 md:gap-4 mx-0.5 border-t dark:border-t-[#333] py-10'>
           <BottomCard />
         </aside>
         <FixedButton />
-        <XShareButton
-          classes="fixed z-50 bottom-4 bottom-4 left-4 bg-gray-400 dark:bg-gray-600 text-white text-sm w-auto h-10 px-2 flex items-center justify-center rounded-lg shadow-lg transition-opacity duration-300 hover:bg-opacity-70 active:bg-gray-500"
-          url={`${baseURL}/blogs/${data.id}`}
-        >
-          Post to X
-        </XShareButton>
-      </div>
+        <LocaleAwareShare categoryId={categoryId} blogId={data.id} title={data.title} />
     </div>
   )
 }

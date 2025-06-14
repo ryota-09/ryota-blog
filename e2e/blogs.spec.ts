@@ -64,13 +64,13 @@ test('should navigate to the Zenn page', async ({ page }) => {
   await page.waitForSelector('[data-testid=pw-blog-type-tabs-zenn]');
   await page.click('[data-testid=pw-blog-type-tabs-zenn]');
 
-  await page.waitForURL(`${baseURL}/blogs?blogType=zenn`);
+  await page.waitForURL(`${baseURL}/blogs/zenn`);
   const url = new URL(page.url());
-  expect(url.href).toContain('?blogType=zenn');
+  expect(url.href).toContain('/blogs/zenn');
 });
 
 test('should navigate to the default page', async ({ page }) => {
-  await page.goto(`${baseURL}/blogs?blogType=zenn`);
+  await page.goto(`${baseURL}/blogs/zenn`);
   await page.waitForSelector('[data-testid=pw-blog-type-tabs-blogs]');
   await page.click('[data-testid=pw-blog-type-tabs-blogs]');
 

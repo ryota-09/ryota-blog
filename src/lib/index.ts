@@ -1,9 +1,8 @@
 import type { MicroCMSQueries } from "microcms-js-sdk";
-import type { ImageLoader } from "next/image";
 
 import type { BreadcrumbItemType, TOCAssetsType } from "@/types";
-import { CATEGORY_MAPED_ID, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE } from "@/static/blogs";
-import type { MappedKeyLiteralType } from "@/types/microcms";
+import { CATEGORY_MAPED_ID, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE, CATEGORY_MAPED_NAME } from "@/static/blogs";
+import type { MappedKeyLiteralType, BlogsContentType } from "@/types/microcms";
 
 export const generateTOCAssets = (html: string) => {
   // 正規表現を使用して<h2>または<h3>タグのidとテキストを抽出
@@ -34,7 +33,7 @@ export const generateTOCAssets = (html: string) => {
   return results;
 }
 
-export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType, [KEYWORD_QUERY]: string }) => {
+export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType | string, [KEYWORD_QUERY]: string }) => {
   let filters = "";
   const query: MicroCMSQueries = { limit: PER_PAGE, offset: 0 }
 
@@ -44,7 +43,13 @@ export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QU
 
   // filters
   if (searchParams[CATEGORY_QUERY]) {
-    filters += `${CATEGORY_QUERY}[contains]${CATEGORY_MAPED_ID[searchParams[CATEGORY_QUERY]]}`;
+    const categoryValue = searchParams[CATEGORY_QUERY];
+    // If categoryValue is already a category name, use it directly
+    // If it's a category ID, convert it to name using CATEGORY_MAPED_NAME
+    const categoryId = typeof categoryValue === 'string' && CATEGORY_MAPED_ID[categoryValue as keyof typeof CATEGORY_MAPED_ID] 
+      ? CATEGORY_MAPED_ID[categoryValue as keyof typeof CATEGORY_MAPED_ID]
+      : categoryValue;
+    filters += `${CATEGORY_QUERY}[contains]${categoryId}`;
   }
 
   if (searchParams[KEYWORD_QUERY]) {
@@ -54,18 +59,31 @@ export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QU
   return { ...query, filters };
 }
 
-export const generateBreadcrumbAssets = (blogId: string, title: string): BreadcrumbItemType[] => {
-  const homePath = "/blogs"
+export const getPrimaryCategoryId = (blog: Pick<BlogsContentType, "category">): string => {
+  if (blog.category.length === 0) return "programming";
+  const categoryName = blog.category[0].name as keyof typeof CATEGORY_MAPED_ID;
+  return CATEGORY_MAPED_ID[categoryName] || "programming";
+}
+
+export const generateBreadcrumbAssets = (blog: BlogsContentType, locale?: string): BreadcrumbItemType[] => {
+  const categoryId = getPrimaryCategoryId(blog);
+  const categoryName = CATEGORY_MAPED_NAME[categoryId];
+  const localePrefix = locale ? `/${locale}` : '';
+  
   const results = [
     {
       label: "Home",
-      href: homePath
+      href: `${localePrefix}/blogs`
+    },
+    {
+      label: categoryName,
+      href: `${localePrefix}/blogs/${categoryId}`
     }
   ];
 
   results.push({
-    label: title,
-    href: `${homePath}/${blogId}`
+    label: blog.title,
+    href: `${localePrefix}/blogs/${categoryId}/${blog.id}`
   });
 
   return results;

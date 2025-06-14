@@ -1,4 +1,6 @@
 import { ImageResponse } from "next/og";
+import fs from "fs";
+import path from "path";
 
 import { getBlogById } from "@/lib/microcms";
 import { AUTHOR_NAME } from "@/static/blogs";
@@ -15,8 +17,13 @@ export default async function Image({
 }: {
   params: { blogId: string };
 }) {
+  const fontData = await fs.readFileSync(
+    path.join(process.cwd(), "public/KosugiMaru-Regular.ttf"),
+  );
+
   const blogId = params.blogId;
   const data = await getBlogById(blogId, { fields: "title" });
+
   return new ImageResponse(
     (
       <div
@@ -30,7 +37,10 @@ export default async function Image({
           flexDirection: "column",
           justifyContent: "center",
           paddingBottom: "80px",
-          border: "48px solid rgb(59 172 182)",
+          borderTop: "84px solid rgb(59 172 182)",
+          borderBottom: "84px solid rgb(59 172 182)",
+          borderLeft: "96px solid rgb(59 172 182)",
+          borderRight: "96px solid rgb(59 172 182)",
           borderRadius: "16px",
           fontSize: "48px",
           fontWeight: "bold",
@@ -62,6 +72,8 @@ export default async function Image({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://images.microcms-assets.io/assets/4626924a681346e9a0fcabe5478eb9fa/652ac7c701f14f858ad1cbb1ece163c6/author.png"
+            width="100"
+            height="100"
             style={{
               width: "100px",
               height: "100px",
@@ -75,6 +87,12 @@ export default async function Image({
     ),
     {
       ...size,
+      fonts: [
+        {
+          name: "Kosugi Maru",
+          data: fontData,
+        },
+      ],
     },
   );
 }
