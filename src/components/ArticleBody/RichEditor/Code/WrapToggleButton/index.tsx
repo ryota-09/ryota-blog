@@ -8,16 +8,11 @@ type WrapToggleButtonProps = {
 
 const WrapToggleButton = ({ onToggleWrap }: WrapToggleButtonProps) => {
   const [isWrapped, setIsWrapped] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
 
   const toggleWrap = useCallback(() => {
     const newWrappedState = !isWrapped;
     setIsWrapped(newWrappedState);
     onToggleWrap(newWrappedState);
-    
-    // ツールチップを一時的に表示
-    setShowTooltip(true);
-    setTimeout(() => setShowTooltip(false), 1500);
   }, [isWrapped, onToggleWrap]);
 
   return (
@@ -51,11 +46,9 @@ const WrapToggleButton = ({ onToggleWrap }: WrapToggleButtonProps) => {
     </>
   )}
 </svg>
-      {/* ツールチップ */}
+      {/* ホバー時のツールチップ */}
       <span 
-        className={`absolute -bottom-8 left-1/2 -translate-x-1/2 text-[#9ca4b5] text-xs whitespace-nowrap bg-[#282a2e] px-2 py-1 rounded transition-opacity ${
-          showTooltip ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[#9ca4b5] text-xs whitespace-nowrap bg-[#282a2e] px-2 py-1 rounded transition-opacity opacity-0 group-hover:opacity-100 pointer-events-none"
       >
         {isWrapped ? "折り返しなし" : "折り返し"}
       </span>
