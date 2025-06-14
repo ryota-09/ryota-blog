@@ -19,9 +19,10 @@ export const useTooltip = (): UseTooltipReturn => {
     setIsVisible(false);
   }, []);
 
-  const showTemporary = useCallback((duration = TIMING.tooltipDelay) => {
+  const showTemporary = useCallback((duration?: number) => {
+    const delay = duration ?? TIMING.tooltipDelay;
     setIsVisible(true);
-    setTimeout(() => setIsVisible(false), duration);
+    setTimeout(() => setIsVisible(false), delay);
   }, []);
 
   return {

@@ -36,6 +36,13 @@ jobs:
           echo "Repository: ${{ github.repository }}"
           echo "Ref: ${{ github.ref }}"
           echo "Actor: ${{ github.actor }}"
+          echo "SHA: ${{ github.sha }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Job: ${{ github.job }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Environment: ${{ github.environment }}"
+          echo "Token subject would be: repo:${{ github.repository }}:ref:${{ github.ref }}"
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
