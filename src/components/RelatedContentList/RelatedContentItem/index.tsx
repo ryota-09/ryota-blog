@@ -4,7 +4,7 @@ import Chip from "@/components/UiParts/Chip";
 import { CATEGORY_MAPED_NAME } from "@/static/blogs";
 import { CategoriesContentType } from "@/types/microcms";
 import { Link } from "next-view-transitions";
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 type RelatedContentItemProps = {
   id: string;
@@ -16,6 +16,7 @@ type RelatedContentItemProps = {
 
 const RelatedContentItem = ({ id, publishedAt, updatedAt, title, category }: RelatedContentItemProps) => {
   const locale = useLocale();
+  const t = useTranslations('categories');
   const displayTime = publishedAt || updatedAt;
   const primaryCategoryId = category.length > 0 ? category[0].id : "programming";
   
@@ -29,7 +30,7 @@ const RelatedContentItem = ({ id, publishedAt, updatedAt, title, category }: Rel
         <ul className="flex flex-wrap items-center gap-1 w-full md:w-auto justify-end">
           {category.map(({ id }) => (
             <li key={id}>
-              <Chip label={CATEGORY_MAPED_NAME[id]} classes="bg-gray-300 dark:bg-gray-600 dark:text-gray-300 px-2 py-0.5 text-xs text-txt-base" />
+              <Chip label={t(id)} classes="bg-gray-300 dark:bg-gray-600 dark:text-gray-300 px-2 py-0.5 text-xs text-txt-base" />
             </li>
           ))}
         </ul>

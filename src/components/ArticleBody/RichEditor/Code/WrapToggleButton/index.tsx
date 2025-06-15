@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from 'next-intl';
 import Tooltip from "../Tooltip";
 import { CODE_BLOCK_STYLES, ICONS } from "../constants";
 
@@ -15,6 +16,7 @@ const WrapToggleButton = ({
   defaultWrapped = false,
   className 
 }: WrapToggleButtonProps) => {
+  const t = useTranslations('blog');
   const [isWrapped, setIsWrapped] = useState(defaultWrapped);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -32,7 +34,7 @@ const WrapToggleButton = ({
     setIsHovered(false);
   }, []);
 
-  const tooltipText = isWrapped ? "折り返しなし" : "折り返し";
+  const tooltipText = isWrapped ? t('unwrapText') : t('wrapText');
 
   return (
     <button

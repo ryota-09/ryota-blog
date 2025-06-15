@@ -1,17 +1,13 @@
-"use client"
+'use client';
 
-import ErrorPageFooter from "@/components/ErrorPageFooter";
-import ErrorPageHeader from "@/components/ErrorPageHeader";
-import { Link } from 'next-view-transitions';
+import { Link } from 'next-view-transitions'
 import Image from "next/image";
 import { usePathname } from 'next/navigation';
 
-interface ErrorPageProps {
-  error: Error & { digest?: string };
-  reset: () => void;
-}
+import ErrorPageFooter from "@/components/ErrorPageFooter";
+import ErrorPageHeader from "@/components/ErrorPageHeader";
 
-const Page = ({ error, reset }: ErrorPageProps) => {
+const NotFoundContent = () => {
   const pathname = usePathname();
   // パスからロケールを取得（デフォルトは日本語）
   const locale = pathname?.startsWith('/en') ? 'en' : 'ja';
@@ -19,11 +15,11 @@ const Page = ({ error, reset }: ErrorPageProps) => {
   // ロケールに応じた翻訳を手動で定義
   const messages = {
     ja: {
-      message: 'サーバー内部のエラーが発生しました。',
+      message: 'お探しのページが見つかりませんでした。',
       backToHome: 'トップページに戻る'
     },
     en: {
-      message: 'An internal server error occurred.',
+      message: 'The page you are looking for could not be found.',
       backToHome: 'Back to Home'
     }
   };
@@ -34,10 +30,10 @@ const Page = ({ error, reset }: ErrorPageProps) => {
     <>
       <ErrorPageHeader locale={locale} />
       <main className="flex-grow flex flex-col md:flex-row container mx-auto gap-4 my-4 h-full px-2">
-        <div className="flex w-full flex-col items-center justify-center bg-white px-4 py-12 dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-600">
+        <div className="flex-grow flex w-full flex-col items-center justify-center bg-white p-4 dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-600">
           <div className="flex flex-col items-center justify-center space-y-4">
-          <Image src="/500.png" alt="Internal Server Error" width={300} height={300} sizes="100vw" style={{ width: '50%', height: 'auto' }} />
-            <h1 className="text-8xl font-bold text-gray-800 dark:text-gray-200">500</h1>
+          <Image src="/404.png" alt="No contents" width={300} height={300} sizes="100vw" style={{ width: '50%', height: 'auto' }} />
+            <h1 className="text-8xl font-bold text-gray-800 dark:text-gray-200">404</h1>
             <p className="text-lg font-medium text-gray-600 dark:text-gray-400">
               {t.message}
             </p>
@@ -51,4 +47,4 @@ const Page = ({ error, reset }: ErrorPageProps) => {
     </>
   )
 }
-export default Page
+export default NotFoundContent;

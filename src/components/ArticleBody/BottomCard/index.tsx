@@ -1,7 +1,10 @@
-import { AUTHOR_DESCRIPTION, AUTHOR_NAME } from "@/static/blogs";
+import { AUTHOR_DESCRIPTION, AUTHOR_DESCRIPTION_EN, AUTHOR_NAME, AUTHOR_NAME_EN } from "@/static/blogs";
 import Image from "next/image";
+import { useLocale } from 'next-intl';
 
 const BottomCard = () => {
+  const locale = useLocale();
+  
   return (
     <>
       <div className="mx-6 flex shrink-0 items-center justify-center">
@@ -15,9 +18,11 @@ const BottomCard = () => {
         />
       </div>
       <div>
-        <p className="text-3xl font-bold dark:text-gray-300">{AUTHOR_NAME}</p>
+        <p className="text-3xl font-bold dark:text-gray-300">
+          {locale === 'en' ? AUTHOR_NAME_EN : AUTHOR_NAME}
+        </p>
         <p className="mx-1 mt-4 text-gray-500 dark:text-gray-400">
-          {AUTHOR_DESCRIPTION}
+          {locale === 'en' ? AUTHOR_DESCRIPTION_EN : AUTHOR_DESCRIPTION}
         </p>
       </div>
     </>

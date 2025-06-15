@@ -5,17 +5,17 @@ import { notFound } from "next/navigation";
 import ArticleBody from "@/components/ArticleBody";
 import BreadcrumbList from "@/components/BreadcrumbList";
 import { generateBreadcrumbAssets, getPrimaryCategoryId } from "@/lib";
-import { getBlogById, getAllBlogList } from "@/lib/microcms";
+import { getBlogByIdByLocale, getAllBlogListByLocale } from "@/lib/microcms";
 import type { BlogsContentType } from "@/types/microcms";
 import JsonLD from "@/components/Head/JsonLD";
 import RelatedContentList from "@/components/RelatedContentList";
 import { locales } from '@/i18n/config';
 
 export async function generateStaticParams() {
-  const blogList = await getAllBlogList({ fields: "id,category" });
-  
   const params = [];
+  
   for (const locale of locales) {
+    const blogList = await getAllBlogListByLocale(locale, { fields: "id,category" });
     for (const blog of blogList) {
       const categoryId = getPrimaryCategoryId(blog);
       params.push({
@@ -33,7 +33,7 @@ export async function generateMetadata(
   { params }: { params: { locale: string; category: string; blogId: string } },
 ): Promise<Metadata> {
   const blogId = params.blogId;
-  const data = await getBlogById(blogId, { fields: "title,description,noIndex" });
+  const data = await getBlogByIdByLocale(params.locale, blogId, { fields: "title,description,noIndex" });
 
   return {
     title: data.title,
@@ -68,9 +68,9 @@ const Page = async ({ params }: PageProps) => {
   let data: BlogsContentType;
   try {
     if (isEnabled && draftKey) {
-      data = await getBlogById(blogId, { draftKey: draftKey });
+      data = await getBlogByIdByLocale(params.locale, blogId, { draftKey: draftKey });
     } else {
-      data = await getBlogById(blogId);
+      data = await getBlogByIdByLocale(params.locale, blogId);
     }
   } catch (error) {
     notFound();
@@ -82,12 +82,12 @@ const Page = async ({ params }: PageProps) => {
     notFound();
   }
 
-  const breadcrumbAssets = generateBreadcrumbAssets(data, params.locale);
+  const breadcrumbAssets = await generateBreadcrumbAssets(data, params.locale);
   return (
     <div className="max-w-[1028px] mx-auto px-2 md:px-0">
       <BreadcrumbList items={breadcrumbAssets} />
       <article className=" bg-white dark:bg-black border-2 dark:border-gray-600 px-4">
-        <ArticleBody data={data} />
+        <ArticleBody data={data} locale={params.locale} />
       </article>
       {data.relatedContent.length >= 1 && (
         <aside className="my-8">

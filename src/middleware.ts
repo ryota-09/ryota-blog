@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
-import { getBlogById } from './lib/microcms'
+import { getBlogByIdByLocale } from './lib/microcms'
 import { getPrimaryCategoryId } from './lib/index'
 
 // Create the intl middleware
@@ -43,7 +43,7 @@ export async function middleware(request: NextRequest) {
       console.log('Attempting to redirect blog:', blogId);
       
       try {
-        const blog = await getBlogById(blogId, { fields: 'category' })
+        const blog = await getBlogByIdByLocale(routing.defaultLocale, blogId, { fields: 'category' })
         const categoryId = getPrimaryCategoryId(blog)
         
         // 新しいURL構造にデフォルトlocaleでリダイレクト
@@ -80,7 +80,7 @@ export async function middleware(request: NextRequest) {
     
     console.log('Processing locale blog redirect:', locale, blogId);
     try {
-      const blog = await getBlogById(blogId, { fields: 'category' })
+      const blog = await getBlogByIdByLocale(locale, blogId, { fields: 'category' })
       const categoryId = getPrimaryCategoryId(blog)
       
       // localeありの新しいURL構造にリダイレクト

@@ -1,4 +1,5 @@
 import type { MicroCMSQueries } from "microcms-js-sdk";
+import { getTranslations } from 'next-intl/server';
 
 import type { BreadcrumbItemType, TOCAssetsType } from "@/types";
 import { CATEGORY_MAPED_ID, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE, CATEGORY_MAPED_NAME } from "@/static/blogs";
@@ -65,15 +66,18 @@ export const getPrimaryCategoryId = (blog: Pick<BlogsContentType, "category">): 
   return CATEGORY_MAPED_ID[categoryName] || "programming";
 }
 
-export const generateBreadcrumbAssets = (blog: BlogsContentType, locale?: string): BreadcrumbItemType[] => {
+export const generateBreadcrumbAssets = async (blog: BlogsContentType, locale: string = 'ja'): Promise<BreadcrumbItemType[]> => {
   const categoryId = getPrimaryCategoryId(blog);
-  const categoryName = CATEGORY_MAPED_NAME[categoryId];
-  const localePrefix = locale ? `/${locale}` : '';
+  const t = await getTranslations({ locale, namespace: 'navigation' });
+  const tCategories = await getTranslations({ locale, namespace: 'categories' });
+  
+  const categoryName = tCategories(categoryId);
+  const localePrefix = `/${locale}`;
   
   const results = [
     {
-      label: "Home",
-      href: `${localePrefix}/blogs`
+      label: t('home'),
+      href: localePrefix
     },
     {
       label: categoryName,
