@@ -1,8 +1,9 @@
 import { Feed } from "feed";
 import { baseURL } from "@/config";
-import { getAllBlogList } from "@/lib/microcms";
-import { AUTHOR_NAME, SITE_DESCRIPTION, SITE_TITLE } from "@/static/blogs";
+import { getAllBlogListByLocale } from "@/lib/microcms";
+import { AUTHOR_NAME, AUTHOR_NAME_EN, SITE_DESCRIPTION, SITE_DESCRIPTION_EN, SITE_TITLE } from "@/static/blogs";
 import { getPrimaryCategoryId } from "@/lib";
+import { getTranslations } from 'next-intl/server';
 
 // export const revalidate = 60 * 60 * 24
 export const revalidate = 86400;
@@ -16,19 +17,28 @@ interface RouteContext {
 export async function GET(request: Request, { params }: RouteContext) {
   const { locale } = params;
   const buildDate = new Date();
+  
+  // 翻訳を取得
+  const t = await getTranslations({ locale, namespace: 'metadata' });
+  
+  // ロケールに応じた作者名とサイト情報を取得
+  const authorName = locale === 'en' ? AUTHOR_NAME_EN : AUTHOR_NAME;
+  const siteTitle = t('siteTitle');
+  const siteDescription = t('siteDescription');
+  
   const author = {
-    name: AUTHOR_NAME,
+    name: authorName,
     link: baseURL,
   };
 
   const feed = new Feed({
     id: baseURL,
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
+    title: siteTitle,
+    description: siteDescription,
     link: baseURL,
     language: locale,
     image: `${baseURL}/author.png`,
-    copyright: `&copy; ${new Date().getFullYear()} ${AUTHOR_NAME}`,
+    copyright: `&copy; ${new Date().getFullYear()} ${authorName}`,
     updated: buildDate,
     feedLinks: {
       rss: `${baseURL}/${locale}/feed`,
@@ -36,7 +46,7 @@ export async function GET(request: Request, { params }: RouteContext) {
     author: author,
   });
 
-  const blogList = await getAllBlogList({
+  const blogList = await getAllBlogListByLocale(locale, {
     fields: "id,title,description,publishedAt,updatedAt,thumbnail,category",
     orders: "-updatedAt",
   });

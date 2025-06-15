@@ -1,7 +1,7 @@
 "use client"
 import { useContext, useRef, type FormEvent } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { useLocale } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { GlobalContext } from "@/providers"
 import { cltw } from "@/util"
 import { escapeHtml } from "@/lib"
@@ -11,6 +11,7 @@ const SearchBar = () => {
   const router = useRouter()
   const pathname = usePathname()
   const locale = useLocale()
+  const t = useTranslations('blog')
   const formRef = useRef<HTMLFormElement>(null)
 
   // stateがundefinedの場合のフォールバック
@@ -51,14 +52,14 @@ const SearchBar = () => {
         name="keyword"
         type="text"
         className={cltw("w-full px-4 py-2 border-2 transition-colors duration-500 dark:border-gray-600 dark:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-base-color dark:focus:ring-primary focus:border-transparent", blogType === "zenn" ? "bg-gray-300 cursor-not-allowed" : "bg-white")}
-        placeholder={blogType === "zenn" ? "※ Zennの記事は検索非対応" : "Search..."}
+        placeholder={blogType === "zenn" ? t('zennSearchNotSupported') : t('searchPlaceholder')}
         disabled={blogType === "zenn"}
         aria-disabled={blogType === "zenn"}
         data-testid="pw-search-bar-input"
       />
       <button
         type="submit"
-        aria-label="検索"
+        aria-label={t('search')}
         disabled={blogType === "zenn"}
         aria-disabled={blogType === "zenn"}
         className={cltw("text-white px-2 ml-2 block my-0.5 transition-all duration-500 rounded-sm ", blogType === "zenn" ? "bg-gray-500 cursor-not-allowed" : "bg-base-color hover:opacity-80 active:bg-secondary dark:bg-primary")}

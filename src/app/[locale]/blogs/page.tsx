@@ -1,20 +1,18 @@
 import { Suspense } from "react";
 import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { getTranslations } from 'next-intl/server';
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
+import ZennArticleList from "@/components/ZennArticleList";
 import { generateQuery } from "@/lib";
 import { BLOG_TYPE_QUERY, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY } from "@/static/blogs";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import type { MappedKeyLiteralType } from "@/types/microcms";
 import type { BlogTypeKeyLIteralType } from "@/types";
-
-const ZennArticleList = dynamic(() => import("@/components/ZennArticleList"));
 
 interface PageProps {
   params: {
@@ -99,15 +97,15 @@ const Page = ({ params: { locale }, searchParams }: PageProps) => {
           </div>
           {blogType === "zenn"
             ?
-            <ZennArticleList />
+            <ZennArticleList locale={locale} />
             :
             <Suspense fallback={<Skelton />}>
-              <ArticleList query={query} blogType={blogType} page={page} />
+              <ArticleList query={query} blogType={blogType} page={page} locale={locale} />
             </Suspense>
           }
         </div>
       </div>
-      <SideNav />
+      <SideNav locale={locale} />
     </>
   );
 }

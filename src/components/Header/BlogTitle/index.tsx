@@ -6,7 +6,7 @@ type PropsType = {
 }
 
 const BlogTitle = ({ title, locale }: PropsType) => {
-  const href = locale ? `/${locale}/blogs` : '/blogs';
+  const href = locale ? `/${locale}` : '/';
   
   return (
     <Link href={href}>

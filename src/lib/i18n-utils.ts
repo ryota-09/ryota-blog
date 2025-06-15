@@ -2,6 +2,8 @@
  * i18n関連のユーティリティ関数
  */
 
+import type { CategoriesContentType } from "@/types/microcms";
+
 /**
  * 現在のパスから別のlocaleのパスを生成
  */
@@ -74,4 +76,16 @@ export function getCategoryPaginationPath(locale: string, categoryId: string, pa
     return getCategoryPath(locale, categoryId);
   }
   return `/${locale}/blogs/${categoryId}/page/${page}`;
+}
+
+/**
+ * ロケールに応じたカテゴリ名を取得
+ */
+export function getLocalizedCategoryName(category: CategoriesContentType, locale: string): string {
+  // 英語ロケールでname_enが存在する場合はそれを使用
+  if (locale === 'en' && category.name_en) {
+    return category.name_en;
+  }
+  // それ以外は日本語名を使用
+  return category.name;
 }

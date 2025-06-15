@@ -2,39 +2,44 @@ import { Suspense } from "react";
 import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getTranslations } from 'next-intl/server';
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
 import { generateQuery } from "@/lib";
-import { getBlogList } from "@/lib/microcms";
+import { getBlogListByLocale } from "@/lib/microcms";
 import { PER_PAGE, CATEGORY_MAPED_NAME, CATEGORY_MAPED_ID } from "@/static/blogs";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
+import { locales } from '@/i18n/config';
 
 export async function generateStaticParams() {
   const categories = Object.entries(CATEGORY_MAPED_ID);
   const staticParams = [];
   
-  for (const [categoryName, categoryId] of categories) {
-    try {
-      const query: MicroCMSQueries = {
-        limit: 1,
-        filters: `category[contains]${categoryId}`
-      };
-      
-      const data = await getBlogList(query);
-      const totalPages = Math.ceil(data.totalCount / PER_PAGE);
-      
-      // ページ2以降のパラメータを生成（ページ1は /blogs/[category] にある）
-      for (let i = 2; i <= totalPages; i++) {
-        staticParams.push({
-          category: categoryId,
-          page: String(i)
-        });
+  for (const locale of locales) {
+    for (const [categoryName, categoryId] of categories) {
+      try {
+        const query: MicroCMSQueries = {
+          limit: 1,
+          filters: `category[contains]${categoryId}`
+        };
+        
+        const data = await getBlogListByLocale(locale, query);
+        const totalPages = Math.ceil(data.totalCount / PER_PAGE);
+        
+        // ページ2以降のパラメータを生成（ページ1は /blogs/[category] にある）
+        for (let i = 2; i <= totalPages; i++) {
+          staticParams.push({
+            locale,
+            category: categoryId,
+            page: String(i)
+          });
+        }
+      } catch (error) {
+        console.warn(`カテゴリの静的パラメータ生成に失敗しました: ${categoryName}`, error);
       }
-    } catch (error) {
-      console.warn(`カテゴリの静的パラメータ生成に失敗しました: ${categoryName}`, error);
     }
   }
   
@@ -42,8 +47,9 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(
-  { params }: { params: { category: string, page: string } }
+  { params }: { params: { locale: string, category: string, page: string } }
 ): Promise<Metadata> {
+  const t = await getTranslations({ locale: params.locale, namespace: 'blog' });
   const categoryName = CATEGORY_MAPED_NAME[params.category];
   const page = params.page;
   
@@ -52,17 +58,24 @@ export async function generateMetadata(
   }
 
   return {
-    title: `${categoryName}の記事一覧。${page}ページ目。`,
-    description: `${categoryName}に関する技術記事の一覧の${page}ページ目です。`,
+    title: `${categoryName} - ${t('page')} ${page}`,
+    description: `${categoryName} - ${t('page')} ${page}`,
     robots: "noindex",
     alternates: {
-      canonical: `/blogs/${params.category}/page/${page}`
+      canonical: `/${params.locale}/blogs/${params.category}/page/${page}`,
+      languages: Object.fromEntries(
+        locales.map((locale) => [
+          locale,
+          `/${locale}/blogs/${params.category}/page/${page}`
+        ])
+      )
     }
   };
 }
 
 type PageProps = {
   params: {
+    locale: string;
     category: string;
     page: string;
   };
@@ -86,7 +99,7 @@ const Page = async ({ params }: PageProps) => {
     limit: 1,
     filters: `category[contains]${params.category}`
   };
-  const data = await getBlogList(checkQuery);
+  const data = await getBlogListByLocale(params.locale, checkQuery);
   const totalPages = Math.ceil(data.totalCount / PER_PAGE);
   
   if (pageNum > totalPages) {
@@ -117,12 +130,13 @@ const Page = async ({ params }: PageProps) => {
               query={query} 
               blogType={blogType} 
               page={params.page} 
-              basePath={`/blogs/${params.category}`}
+              basePath={`/${params.locale}/blogs/${params.category}`}
+              locale={params.locale}
             />
           </Suspense>
         </div>
       </div>
-      <SideNav />
+      <SideNav locale={params.locale} />
     </>
   );
 };

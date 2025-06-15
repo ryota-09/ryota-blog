@@ -1,4 +1,10 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
 const AdRevenueLabel = () => {
+  const t = useTranslations('blog');
+  
   return (
     <div className="flex items-center text-txt-base  bg-gray-50 dark:bg-gray-600  p-4 w-fit">
       <svg
@@ -35,7 +41,7 @@ const AdRevenueLabel = () => {
           ></path>
         </g>
       </svg>
-      <span className="ml-2 text-md dark:text-gray-300">こちらの記事にはプロモーションを含みます</span>
+      <span className="ml-2 text-md dark:text-gray-300">{t('promotionalContent')}</span>
     </div>
   );
 };
