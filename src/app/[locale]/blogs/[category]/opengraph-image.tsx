@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import fs from "fs";
 import path from "path";
 
-import { AUTHOR_NAME, CATEGORY_MAPED_NAME } from "@/static/blogs";
+import { AUTHOR_NAME, AUTHOR_NAME_EN, CATEGORY_MAPED_NAME } from "@/static/blogs";
 import { getCategoryById } from "@/lib/microcms";
 
 export const size = {
@@ -12,16 +12,20 @@ export const size = {
 
 export const contentType = "image/png";
 
-export default async function Image({ params }: { params: { category: string } }) {
+export default async function Image({ params }: { params: { locale: string; category: string } }) {
   const fontData = fs.readFileSync(
     path.join(process.cwd(), "public/KosugiMaru-Regular.ttf"),
   );
+  
+  // localeに基づいて作者名を選択
+  const authorName = params.locale === 'en' ? AUTHOR_NAME_EN : AUTHOR_NAME;
   
   let categoryName = params.category;
   
   try {
     const categoryData = await getCategoryById(params.category);
-    categoryName = categoryData.name;
+    // localeに基づいてカテゴリー名を選択
+    categoryName = params.locale === 'en' && categoryData.name_en ? categoryData.name_en : categoryData.name;
   } catch (error) {
     // microCMSから取得できない場合は、CATEGORY_MAPED_NAMEから取得
     categoryName = CATEGORY_MAPED_NAME[params.category] || params.category;
@@ -61,7 +65,7 @@ export default async function Image({ params }: { params: { category: string } }
             fontWeight: "bold",
           }}
         >
-          カテゴリー
+          {params.locale === 'en' ? 'Category' : 'カテゴリー'}
         </div>
         <div
           style={{
@@ -102,7 +106,7 @@ export default async function Image({ params }: { params: { category: string } }
             }}
             alt="Icon"
           />
-          <p>{AUTHOR_NAME}</p>
+          <p>{authorName}</p>
         </div>
       </div>
     ),

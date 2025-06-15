@@ -19,6 +19,18 @@ type SearchStateCardProps = {
 const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
   const locale = useLocale();
   const t = useTranslations('blog');
+  const tCategories = useTranslations('categories');
+  
+  // カテゴリIDから翻訳を取得
+  const getCategoryLabel = (categoryValue: string) => {
+    // カテゴリIDが翻訳キーとして存在する場合は翻訳を使用
+    // それ以外の場合は元の値をそのまま使用
+    try {
+      return tCategories(categoryValue as any);
+    } catch {
+      return categoryValue;
+    }
+  };
   
   return (
     <div className="bg-white dark:bg-black px-3.5 flex flex-grow flex-col lg:flex-row items-center gap-2 lg:gap-10 border-2 border-gray-200 dark:border-gray-600">
@@ -33,7 +45,7 @@ const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
         <ul className="flex gap-4 items-center">
           {category && (
             <li data-testid="pw-search-chip-category">
-              <Chip classes=" text-xs lg:text-md bg-base-color dark:bg-primary px-3 py-2 text-sm text-txt-base dark:text-white" label={category} />
+              <Chip classes=" text-xs lg:text-md bg-base-color dark:bg-primary px-3 py-2 text-sm text-txt-base dark:text-white" label={getCategoryLabel(category)} />
             </li>
           )}
           {keyword && (

@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import fs from "fs";
 import path from "path";
 
-import { AUTHOR_NAME, SITE_TITLE } from "@/static/blogs";
+import { AUTHOR_NAME, AUTHOR_NAME_EN, SITE_TITLE } from "@/static/blogs";
 
 export const size = {
   width: 1200,
@@ -11,10 +11,14 @@ export const size = {
 
 export const contentType = "image/png";
 
-export default async function Image() {
+export default async function Image({ params }: { params: { locale: string } }) {
   const fontData = await fs.readFileSync(
     path.join(process.cwd(), "public/KosugiMaru-Regular.ttf"),
   );
+  
+  // localeに基づいて作者名を選択
+  const authorName = params.locale === 'en' ? AUTHOR_NAME_EN : AUTHOR_NAME;
+  
   return new ImageResponse(
     (
       <div
@@ -63,7 +67,7 @@ export default async function Image() {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.microcms-assets.io/assets/4626924a681346e9a0fcabe5478eb9fa/652ac7c701f14f858ad1cbb1ece163c6/author.pnghttps://images.microcms-assets.io/assets/4626924a681346e9a0fcabe5478eb9fa/652ac7c701f14f858ad1cbb1ece163c6/author.png"
+            src="https://images.microcms-assets.io/assets/4626924a681346e9a0fcabe5478eb9fa/652ac7c701f14f858ad1cbb1ece163c6/author.png"
             width="100"
             height="100"
             style={{
@@ -73,7 +77,7 @@ export default async function Image() {
             }}
             alt="Icon"
           />
-          <p>{AUTHOR_NAME}</p>
+          <p>{authorName}</p>
         </div>
       </div>
     ),
