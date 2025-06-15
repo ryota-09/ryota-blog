@@ -50,16 +50,27 @@ export async function generateMetadata(
   { params }: { params: { locale: string, category: string, page: string } }
 ): Promise<Metadata> {
   const t = await getTranslations({ locale: params.locale, namespace: 'blog' });
+  const tCategories = await getTranslations({ locale: params.locale, namespace: 'categories' });
   const categoryName = CATEGORY_MAPED_NAME[params.category];
   const page = params.page;
   
   if (!categoryName) {
     notFound();
   }
+  
+  // カテゴリ名を翻訳
+  let translatedCategoryName;
+  try {
+    // TypeScriptエラーを回避するために型アサーション
+    translatedCategoryName = (tCategories as any)(params.category);
+  } catch {
+    // 翻訳が見つからない場合は元の値を使用
+    translatedCategoryName = categoryName;
+  }
 
   return {
-    title: `${categoryName} - ${t('page')} ${page}`,
-    description: `${categoryName} - ${t('page')} ${page}`,
+    title: `${translatedCategoryName} - ${t('page')} ${page}`,
+    description: `${translatedCategoryName} - ${t('page')} ${page}`,
     robots: "noindex",
     alternates: {
       canonical: `/${params.locale}/blogs/${params.category}/page/${page}`,
