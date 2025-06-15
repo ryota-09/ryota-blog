@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 type PropsType = {
   children: React.ReactNode;
@@ -9,6 +10,7 @@ type PropsType = {
 
 const CopyableText = ({ children, className }: PropsType) => {
   const [copied, setCopied] = useState(false);
+  const t = useTranslations('blog');
 
   const handleCopy = async () => {
     const text = typeof children === 'string' ? children : children?.toString() || "";
@@ -40,7 +42,7 @@ const CopyableText = ({ children, className }: PropsType) => {
         onClick={handleCopy}
         onKeyDown={handleKeyDown}
         className="inline-flex items-center justify-center px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none rounded-r"
-        aria-label="コードをコピー"
+        aria-label={t('copyCodeAriaLabel')}
         type="button"
         tabIndex={0}
       >
@@ -82,7 +84,7 @@ const CopyableText = ({ children, className }: PropsType) => {
           role="status"
           aria-live="polite"
         >
-          コピーしました
+          {t('copied')}
         </span>
       )}
     </span>
