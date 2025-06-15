@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "siteTitle": "りょうたのWebエンジニアブログ",
+    "siteTitle": "Ryota-Blog",
     "siteDescription": "Webエンジニアが技術、キャリア、日常について発信するブログ"
   },
   "navigation": {
@@ -54,7 +54,7 @@
     "page": "ページ"
   },
   "footer": {
-    "copyright": "© {year} りょうたのWebエンジニアブログ",
+    "copyright": "© {year} Ryota-Blog",
     "allRightsReserved": "All rights reserved."
   },
   "error": {
