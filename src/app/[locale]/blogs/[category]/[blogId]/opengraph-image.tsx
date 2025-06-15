@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 import { getBlogByIdByLocale } from "@/lib/microcms";
-import { AUTHOR_NAME } from "@/static/blogs";
+import { AUTHOR_NAME, AUTHOR_NAME_EN } from "@/static/blogs";
 
 export const size = {
   width: 1200,
@@ -20,6 +20,9 @@ export default async function Image({
   const fontData = await fs.readFileSync(
     path.join(process.cwd(), "public/KosugiMaru-Regular.ttf"),
   );
+  
+  // localeに基づいて作者名を選択
+  const authorName = params.locale === 'en' ? AUTHOR_NAME_EN : AUTHOR_NAME;
 
   const blogId = params.blogId;
   const data = await getBlogByIdByLocale(params.locale, blogId, { fields: "title" });
@@ -81,7 +84,7 @@ export default async function Image({
             }}
             alt="Icon"
           />
-          <p>{AUTHOR_NAME}</p>
+          <p>{authorName}</p>
         </div>
       </div>
     ),
