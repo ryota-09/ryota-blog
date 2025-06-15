@@ -4,6 +4,7 @@ import { Link } from 'next-view-transitions';
 import { useLocale, useTranslations } from 'next-intl';
 import Chip from "@/components/UiParts/Chip";
 import type { MappedKeyLiteralType } from "@/types/microcms";
+import { CATEGORY_MAPED_ID } from "@/static/blogs";
 
 type SearchStateCardProps = {
   /**
@@ -21,13 +22,16 @@ const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
   const t = useTranslations('blog');
   const tCategories = useTranslations('categories');
   
-  // カテゴリIDから翻訳を取得
+  // カテゴリ表示名を取得
   const getCategoryLabel = (categoryValue: string) => {
+    // カテゴリ名からIDを取得（CATEGORY_MAPED_NAMEから渡される場合）
+    const categoryId = CATEGORY_MAPED_ID[categoryValue as keyof typeof CATEGORY_MAPED_ID] || categoryValue;
+    
     // カテゴリIDが翻訳キーとして存在する場合は翻訳を使用
-    // それ以外の場合は元の値をそのまま使用
     try {
-      return tCategories(categoryValue as any);
+      return tCategories(categoryId as any);
     } catch {
+      // 翻訳が見つからない場合は元の値を返す
       return categoryValue;
     }
   };
