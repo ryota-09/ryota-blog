@@ -2,21 +2,19 @@ import { Suspense } from "react";
 import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import dynamic from "next/dynamic";
 import { getTranslations } from 'next-intl/server';
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
+import ZennArticleList from "@/components/ZennArticleList";
 import { generateQuery } from "@/lib";
 import { BLOG_TYPE_QUERY, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, CATEGORY_MAPED_NAME, CATEGORY_MAPED_ID } from "@/static/blogs";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import type { MappedKeyLiteralType } from "@/types/microcms";
 import type { BlogTypeKeyLIteralType } from "@/types";
 import { locales } from '@/i18n/config';
-
-const ZennArticleList = dynamic(() => import("@/components/ZennArticleList"));
 
 export async function generateStaticParams() {
   const params = [];
@@ -118,15 +116,15 @@ const Page = ({ params, searchParams }: PageProps) => {
           </div>
           {blogType === "zenn"
             ?
-            <ZennArticleList />
+            <ZennArticleList locale={params.locale} />
             :
             <Suspense fallback={<Skelton />}>
-              <ArticleList query={query} blogType={blogType} page={page} basePath={`/${params.locale}/blogs/${params.category}`} />
+              <ArticleList query={query} blogType={blogType} page={page} basePath={`/${params.locale}/blogs/${params.category}`} locale={params.locale} />
             </Suspense>
           }
         </div>
       </div>
-      <SideNav />
+      <SideNav locale={params.locale} />
     </>
   );
 };

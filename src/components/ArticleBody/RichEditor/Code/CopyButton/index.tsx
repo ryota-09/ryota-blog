@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from 'next-intl';
 import Tooltip from "../Tooltip";
 import { CODE_BLOCK_STYLES, ICONS, TIMING } from "../constants";
 
@@ -10,6 +11,7 @@ type CopyButtonProps = {
 };
 
 const CopyButton = ({ text, className }: CopyButtonProps) => {
+  const t = useTranslations('blog');
   const [isCopied, setIsCopied] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -49,7 +51,7 @@ const CopyButton = ({ text, className }: CopyButtonProps) => {
     setIsHovered(false);
   }, []);
 
-  const tooltipText = isCopied ? "コピーしました!" : "コピー";
+  const tooltipText = isCopied ? t('copied') : t('copy');
 
   return (
     <button
@@ -58,7 +60,7 @@ const CopyButton = ({ text, className }: CopyButtonProps) => {
       onClick={copyToClipboard}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      aria-label={isCopied ? "コピー済み" : "コードをコピー"}
+      aria-label={isCopied ? t('copiedAriaLabel') : t('copyCodeAriaLabel')}
       title={tooltipText}
     >
       <svg

@@ -9,16 +9,18 @@ import Skelton from "@/components/ArticleList/skelton";
 import SideNav from "@/components/SideNav";
 import { generateQuery } from "@/lib";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
-import { getBlogList } from "@/lib/microcms";
+import { getBlogListByLocale } from "@/lib/microcms";
 import { PER_PAGE } from "@/static/blogs";
 import { locales } from '@/i18n/config';
 
 export async function generateStaticParams() {
-  const data = await getBlogList({ limit: 1 });
-  const totalPages = Math.ceil(data.totalCount / PER_PAGE);
-  
   const params = [];
+  
   for (const locale of locales) {
+    // 各ロケールごとにデータを取得
+    const data = await getBlogListByLocale(locale, { limit: 1 });
+    const totalPages = Math.ceil(data.totalCount / PER_PAGE);
+    
     // ページ2以降のパラメータを生成（ページ1は/[locale]/blogsにある）
     for (let i = 2; i <= totalPages; i++) {
       params.push({
@@ -62,7 +64,7 @@ const Page = async ({ params }: { params: { locale: string; page: string } }) =>
   }
   
   // ページが存在するかチェック
-  const data = await getBlogList({ limit: 1 });
+  const data = await getBlogListByLocale(params.locale, { limit: 1 });
   const totalPages = Math.ceil(data.totalCount / PER_PAGE);
   
   if (pageNum > totalPages) {
@@ -88,11 +90,11 @@ const Page = async ({ params }: { params: { locale: string; page: string } }) =>
             </div>
           </div>
           <Suspense fallback={<Skelton />}>
-            <ArticleList query={query} blogType={blogType} page={params.page} basePath={`/${params.locale}/blogs`} />
+            <ArticleList query={query} blogType={blogType} page={params.page} basePath={`/${params.locale}/blogs`} locale={params.locale} />
           </Suspense>
         </div>
       </div>
-      <SideNav />
+      <SideNav locale={params.locale} />
     </>
   );
 };

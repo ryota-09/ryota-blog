@@ -8,7 +8,7 @@ import type {
   CustomRequestInit,
 } from "microcms-js-sdk";
 
-const ENDPOINT_LIST = ["blogs", "categories"] as const;
+const ENDPOINT_LIST = ["blogs", "blogs_en", "categories"] as const;
 
 const CUSTOM_FIELD = {
   richEditor: "richEditor",
@@ -73,6 +73,7 @@ type APIContentType<T> = {
 
 export type CategoriesContentType = APIContentType<{
   name: MicroCMSFields["text"];
+  name_en?: MicroCMSFields["text"];
 }>
 
 export type BlogsContentType = APIContentType<{

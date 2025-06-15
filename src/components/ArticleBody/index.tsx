@@ -21,9 +21,10 @@ const AmazonLinkCard = dynamic(() => import('@/components/ArticleBody/RichEditor
 
 type ArticleBodyProps = {
   data: BlogsContentType
+  locale: string
 }
 
-const ArticleBody = ({ data }: ArticleBodyProps) => {
+const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
   const joindedHTML = data.body.map((body) => {
     if (body.fieldId === 'richEditor') {
       return body.richEditor
@@ -94,7 +95,7 @@ const ArticleBody = ({ data }: ArticleBodyProps) => {
         })}
       </div>
         <IssueButton currentPath={`https://ryotablog.com/ja/blogs/${categoryId}/${data.id}`} />
-        <PrevAndNextBlogNav currentBlogData={data} />
+        <PrevAndNextBlogNav currentBlogData={data} locale={locale} />
         <aside className='flex flex-col-reverse md:flex-row gap-8 md:gap-4 mx-0.5 border-t dark:border-t-[#333] py-10'>
           <BottomCard />
         </aside>

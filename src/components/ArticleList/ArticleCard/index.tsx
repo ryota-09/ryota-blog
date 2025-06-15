@@ -1,7 +1,7 @@
 'use client';
 
 import { Link } from 'next-view-transitions'
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { BlogsContentType } from "@/types/microcms"
 import NewLabel from "@/components/UiParts/NewLabel"
@@ -23,6 +23,7 @@ type ArticleCardProps = {
 
 const ArticleCard = ({ data, index }: ArticleCardProps) => {
   const locale = useLocale();
+  const t = useTranslations('blog');
   const categoryId = getPrimaryCategoryId(data);
   const blogPath = getBlogPath(locale, categoryId, data.id);
   
@@ -37,7 +38,7 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
             <Link href={blogPath} className="mt-4 text-md md:text-xs md:text-md border-2 transition duration-200 border-base-color dark:border-primary text-base-color dark:text-light hover:bg-secondary dark:hover:bg-primary hover:text-white hover:border-secondary dark:hover:border-primary font-bold py-3 md:py-2 px-6 md:px-4">
               {/* NOTE: アクセシビリティの都合上、「続きを読む」は不適切判定なのでsr-onlyを付与 */}
               <span className="sr-only">{data.title}の</span>
-              続きを読む
+              {t('readMore')}
             </Link>
           </div>
         </div>

@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server";
-import { getAllBlogList, getAllCategoryList } from "@/lib/microcms";
+import { getAllBlogListByLocale, getAllCategoryList } from "@/lib/microcms";
 import { baseURL } from "@/config";
 import type { BlogsContentType, CategoriesContentType } from "@/types/microcms";
 import {
   AUTHOR_E_MAIL,
   SITE_DESCRIPTION_EN,
+  SITE_DESCRIPTION,
   SITE_DOMAIN,
   SITE_TITLE,
 } from "@/static/blogs";
 import { getPrimaryCategoryId } from "@/lib";
+import { getTranslations } from 'next-intl/server';
 
 // 日付フォーマットの国際化 API
 const DATE_FMT = new Intl.DateTimeFormat("en-CA", {
@@ -65,16 +67,28 @@ function formatPublishDate(publishedAt: string): string {
 /**
  * サイトヘッダー部分を生成
  */
-function generateHeader(): string {
-  return `# ${SITE_TITLE} (${SITE_DOMAIN})
-> ${SITE_DESCRIPTION_EN}
+async function generateHeader(locale: string): Promise<string> {
+  const t = await getTranslations({ locale, namespace: 'metadata' });
+  const siteDescription = locale === 'en' ? SITE_DESCRIPTION_EN : SITE_DESCRIPTION;
+  
+  const licenseText = locale === 'en' 
+    ? `This content is made available under the ${LLMS_TXT_CONFIG.license}.
+You are free to share and adapt this material for any purpose, including commercial use, as long as you provide appropriate attribution.`
+    : `このコンテンツは${LLMS_TXT_CONFIG.license}の下で提供されています。
+適切な帰属表示を行う限り、商用利用を含むあらゆる目的でこの素材を自由に共有・改変できます。`;
+
+  const contactText = locale === 'en'
+    ? 'For inquiries regarding content usage, corrections, or collaborations:'
+    : 'コンテンツの利用、修正、コラボレーションに関するお問い合わせ:';
+
+  return `# ${t('siteTitle')} (${SITE_DOMAIN})
+> ${siteDescription}
 
 # License
-This content is made available under the ${LLMS_TXT_CONFIG.license}.
-You are free to share and adapt this material for any purpose, including commercial use, as long as you provide appropriate attribution.
+${licenseText}
 
 # Contact
-For inquiries regarding content usage, corrections, or collaborations:
+${contactText}
 - Email: ${AUTHOR_E_MAIL}
 - Website: ${baseURL}`;
 }
@@ -82,24 +96,48 @@ For inquiries regarding content usage, corrections, or collaborations:
 /**
  * カテゴリ一覧部分を生成
  */
-function generateCategoriesSection(
+async function generateCategoriesSection(
   categories: CategoriesContentType[],
-): string {
+  locale: string
+): Promise<string> {
+  const headerText = locale === 'en' ? '## Categories' : '## カテゴリ';
+  const noDataText = locale === 'en' ? 'No categories available.' : '利用可能なカテゴリがありません。';
+  
   if (categories.length === 0) {
-    return "## Categories\n\nNo categories available.";
+    return `${headerText}\n\n${noDataText}`;
   }
 
-  const categoryList = categories.map(({ name }) => `- ${name}`).join("\n");
+  // 翻訳を取得
+  const tCategories = await getTranslations({ locale, namespace: 'categories' });
 
-  return `## Categories\n\n${categoryList}`;
+  // カテゴリ名を取得（英語の場合は翻訳システムを使用）
+  const categoryList = categories.map(({ id, name, name_en }) => {
+    let displayName: string;
+    if (locale === 'en') {
+      // 英語の場合は翻訳システムを使用、フォールバックでname_enまたはname
+      try {
+        displayName = tCategories(id);
+      } catch {
+        displayName = name_en || name;
+      }
+    } else {
+      displayName = name;
+    }
+    return `- ${displayName}`;
+  }).join("\n");
+
+  return `${headerText}\n\n${categoryList}`;
 }
 
 /**
  * コンテンツ一覧部分を生成
  */
 function generateContentSection(posts: BlogsContentType[], locale: string): string {
+  const headerText = locale === 'en' ? '## Content' : '## コンテンツ';
+  const noDataText = locale === 'en' ? 'No content available.' : '利用可能なコンテンツがありません。';
+  
   if (posts.length === 0) {
-    return "## Content\n\nNo content available.";
+    return `${headerText}\n\n${noDataText}`;
   }
 
   const contentList = posts
@@ -114,18 +152,18 @@ function generateContentSection(posts: BlogsContentType[], locale: string): stri
     .filter(Boolean)
     .join("\n");
 
-  return `## Content\n\n${contentList}`;
+  return `${headerText}\n\n${contentList}`;
 }
 
 /**
  * llms.txt フォーマットのコンテンツを構築
  */
-function buildLlmsTxt({ posts, categories }: LlmsTxtData, locale: string): string {
+async function buildLlmsTxt({ posts, categories }: LlmsTxtData, locale: string): Promise<string> {
   const filteredPosts = filterAndSortPosts(posts);
 
   const sections = [
-    generateHeader(),
-    generateCategoriesSection(categories),
+    await generateHeader(locale),
+    await generateCategoriesSection(categories, locale),
     generateContentSection(filteredPosts, locale),
   ];
 
@@ -135,14 +173,14 @@ function buildLlmsTxt({ posts, categories }: LlmsTxtData, locale: string): strin
 /**
  * microCMSからデータを取得
  */
-async function fetchLlmsTxtData(): Promise<LlmsTxtData> {
+async function fetchLlmsTxtData(locale: string): Promise<LlmsTxtData> {
   const [posts, categories] = await Promise.all([
-    getAllBlogList({
+    getAllBlogListByLocale(locale, {
       fields: "id,title,publishedAt,noIndex,description,category",
       orders: "-publishedAt",
     }),
     getAllCategoryList({
-      fields: "id,name",
+      fields: "id,name,name_en",
       orders: "createdAt",
     }),
   ]);
@@ -195,10 +233,10 @@ export async function GET(request: Request, { params }: RouteContext): Promise<N
   const { locale } = params;
   
   try {
-    console.log("Starting llms.txt generation...");
+    console.log(`Starting llms.txt generation for locale: ${locale}...`);
 
-    const data = await fetchLlmsTxtData();
-    const content = buildLlmsTxt(data, locale);
+    const data = await fetchLlmsTxtData(locale);
+    const content = await buildLlmsTxt(data, locale);
 
     console.log(
       `Generated llms.txt with ${data.posts.length} posts and ${data.categories.length} categories`,

@@ -21,7 +21,7 @@ export async function generateMetadata({ params: { locale } }: ZennPageProps): P
   };
 }
 
-const ZennPage = () => {
+const ZennPage = ({ params }: ZennPageProps) => {
   return (
     <>
       <div className="w-full lg:w-[calc(100%_-_300px)] flex flex-col justify-between px-2 md:px-0">
@@ -31,10 +31,10 @@ const ZennPage = () => {
               <BlogTypeTabs blogType="zenn" />
             </div>
           </div>
-          <ZennArticleList />
+          <ZennArticleList locale={params.locale} />
         </div>
       </div>
-      <SideNav />
+      <SideNav locale={params.locale} />
     </>
   );
 };

@@ -27,13 +27,14 @@ const PaginationItem = ({ pageNumber, children, currentPage, basePath }: Paginat
       return `${basePath}/page/${pageNumber}`
     }
 
-    // カテゴリページかどうかを確認
-    const categoryPathMatch = pathname?.match(/^\/blogs\/([^\/]+)$/)
-    const categoryId = categoryPathMatch ? categoryPathMatch[1] : null
+    // 国際化対応: カテゴリページかどうかを確認
+    const categoryPathMatch = pathname?.match(/^\/([^\/]+)\/blogs\/([^\/]+)$/)
+    const locale = categoryPathMatch ? categoryPathMatch[1] : pathname?.match(/^\/([^\/]+)/)?.[1] || 'ja'
+    const categoryId = categoryPathMatch ? categoryPathMatch[2] : null
     
     const keyword = searchParams?.get('keyword') ?? ""
     
-    let baseHref = categoryId ? `/blogs/${categoryId}` : `/blogs`
+    let baseHref = categoryId ? `/${locale}/blogs/${categoryId}` : `/${locale}/blogs`
 
     if (keyword) {
       const currentPath = `${baseHref}?keyword=${keyword}`

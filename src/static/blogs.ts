@@ -1,5 +1,7 @@
 export const AUTHOR_NAME = 'りょた';
+export const AUTHOR_NAME_EN = 'Ryota';
 export const AUTHOR_DESCRIPTION = 'りょたといいます！ 都内でエンジニアやってます！ Software Developer | DevCan#2 hostedBy Classmethod | React.js | Next.js | AWS SAA / DVA / SOA';
+export const AUTHOR_DESCRIPTION_EN = 'Hi, I\'m Ryota! I\'m a software engineer working in Tokyo! Software Developer | DevCan#2 hostedBy Classmethod | React.js | Next.js | AWS SAA / DVA / SOA';
 export const SITE_TITLE = 'Ryota-Blog';
 export const SITE_DOMAIN = 'ryotablog.jp';
 export const AUTHOR_E_MAIL = "ryotadevelop@webclouddev.com";
