@@ -20,7 +20,7 @@ export async function generateMetadata({ params: { locale } }: LocaleLayoutProps
   return {
     title: {
       template: `%s | ${t('siteTitle')}`,
-      default: t('siteTitle'),
+      default: "Home",
     },
     description: t('siteDescription'),
     metadataBase: new URL(baseURL),

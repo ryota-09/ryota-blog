@@ -102,8 +102,9 @@ MICROCMS_SERVICE_DOMAIN=your_domain
 3. Test your changes locally: `npm run dev`
 4. Run linter: `npm run lint`
 5. Run tests: `npm run test`
-6. **Final step**: Run production build and fix any errors
+6. **Final step**: type check
    ```bash
-   npm run build
+   tsc --noEmit
+   ```
    # エラーがあれば修正してから完了
    ```
