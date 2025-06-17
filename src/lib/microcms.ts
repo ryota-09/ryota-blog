@@ -1,5 +1,6 @@
 import { createClient } from "microcms-js-sdk";
 import type { CustomRequestInit, MicroCMSQueries } from "microcms-js-sdk";
+import { mockedArticles } from "@/__tests__/mocks/data";
 import type {
   BaseMicroCMSApiListDataType,
   BaseMicroCMSApiType,
@@ -10,37 +11,49 @@ import type {
 } from "@/types/microcms";
 import { microCMSAPIKey, microCMSServiceDomain } from "@/config";
 
-if (!microCMSServiceDomain) {
+const skipMicroCMS = process.env.SKIP_MICROCMS === "true";
+
+if (!microCMSServiceDomain && !skipMicroCMS) {
   throw new Error("MICROCMS_SERVICE_DOMAIN is required");
 }
 
-if (!microCMSAPIKey) {
+if (!microCMSAPIKey && !skipMicroCMS) {
   throw new Error("MICROCMS_API_KEY is required");
 }
 
 // API取得用のクライアントを作成
-export const client = createClient({
-  serviceDomain: microCMSServiceDomain,
-  apiKey: microCMSAPIKey,
-});
+export const client = skipMicroCMS
+  ? ({
+      get: async () => mockedArticles,
+      getAllContents: async () => mockedArticles.contents,
+      getAllContentIds: async () =>
+        mockedArticles.contents.map((item) => ({ id: item.id })),
+    } as any)
+  : createClient({
+      serviceDomain: microCMSServiceDomain,
+      apiKey: microCMSAPIKey,
+    });
 
 const baseMicroCMSApiGetHandler: BaseMicroCMSApiType =
   (objectType: GetObjectType) =>
-    <T>(
+    async <T>(
       endpoint: EndPointLiteralType,
       queries?: MicroCMSQueries,
       customRequestInit?: CustomRequestInit,
       contentId?: string,
     ) => {
+      if (skipMicroCMS) {
+        if (objectType === "LIST") {
+          return mockedArticles as any;
+        }
+        return Promise.resolve({} as T);
+      }
+
       switch (objectType) {
         case "LIST":
-          return client.get<T>({
-            endpoint, queries, customRequestInit
-          });
+          return (client as any).get({ endpoint, queries, customRequestInit }) as Promise<T>;
         case "SINGLE":
-          return client.get<T>({
-            endpoint, queries, contentId, customRequestInit
-          });
+          return (client as any).get({ endpoint, queries, contentId, customRequestInit }) as Promise<T>;
         default:
           throw new Error(`🔥: objectTypeに誤りがあります。 ${objectType}`);
       }
@@ -54,13 +67,13 @@ export const getBlogList = (querys?: MicroCMSQueries, customRequestInit?: Custom
   MicroCMSApiGetListHandler<BlogsContentType>("blogs", querys, customRequestInit);
 
 export const getAllBlogList = async (querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) => {
-  const data = client.getAllContents<BlogsContentType>({ "endpoint": "blogs", ...querys, ...customRequestInit });
+  const data = (client as any).getAllContents({ endpoint: "blogs", ...querys, ...customRequestInit }) as Promise<BlogsContentType[]>;
   return data;
 }
 
 
 export const getAllCategoryList = async (querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) => {
-  const data = await client.getAllContents<CategoriesContentType>({ "endpoint": "categories", ...querys, ...customRequestInit });
+  const data = await (client as any).getAllContents({ endpoint: "categories", ...querys, ...customRequestInit }) as Promise<CategoriesContentType[]>;
   return data;
 }
 
@@ -78,7 +91,7 @@ export const getBlogListEn = (querys?: MicroCMSQueries, customRequestInit?: Cust
   MicroCMSApiGetListHandler<BlogsContentType>("blogs_en", querys, customRequestInit);
 
 export const getAllBlogListEn = async (querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) => {
-  const data = client.getAllContents<BlogsContentType>({ "endpoint": "blogs_en", ...querys, ...customRequestInit });
+  const data = (client as any).getAllContents({ endpoint: "blogs_en", ...querys, ...customRequestInit }) as Promise<BlogsContentType[]>;
   return data;
 }
 
@@ -91,7 +104,7 @@ export const getBlogByIdEn = (contentId: string, querys?: MicroCMSQueries, custo
   );
 
 export const getAllBlogIdsEn = async (alternatedField?: string) => {
-  const data = await client.getAllContentIds({ endpoint: "blogs_en", alternateField: alternatedField });
+  const data = await (client as any).getAllContentIds({ endpoint: "blogs_en", alternateField: alternatedField });
   return data;
 }
 
@@ -122,7 +135,7 @@ export const getAllBlogIdsByLocale = async (locale: string, alternatedField?: st
   if (locale === 'en') {
     return getAllBlogIdsEn(alternatedField);
   } else {
-    return await client.getAllContentIds({ endpoint: "blogs", alternateField: alternatedField });
+    return await (client as any).getAllContentIds({ endpoint: "blogs", alternateField: alternatedField });
   }
 }
 
@@ -142,7 +155,7 @@ export const getPopularBlogsByCategoryByLocale = async (
   customRequestInit?: CustomRequestInit
 ) => {
   const endpoint = locale === 'en' ? 'blogs_en' : 'blogs';
-  const data = await client.get<BaseMicroCMSApiListDataType<BlogsContentType>>({
+  const data = await (client as any).get({
     endpoint: endpoint as EndPointLiteralType,
     queries: {
       fields: "id,title,publishedAt,updatedAt,category,pageViews,thumbnail,description",
@@ -166,7 +179,7 @@ export const getPrevAndNextBlogByLocale = async (locale: string, data: BlogsCont
   const endpoint = locale === 'en' ? 'blogs_en' : 'blogs';
   
   const [prev, next] = await Promise.all([
-    client.get<BaseMicroCMSApiListDataType<BlogsContentType>>({
+    (client as any).get({
       endpoint: endpoint as EndPointLiteralType,
       queries: {
         fields: "id,title,publishedAt,updatedAt,category",
@@ -181,7 +194,7 @@ export const getPrevAndNextBlogByLocale = async (locale: string, data: BlogsCont
         }
       }
     }),
-    client.get<BaseMicroCMSApiListDataType<BlogsContentType>>({
+    (client as any).get({
       endpoint: endpoint as EndPointLiteralType,
       queries: {
         fields: "id,title,publishedAt,updatedAt,category",

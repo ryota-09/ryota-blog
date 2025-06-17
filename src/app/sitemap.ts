@@ -2,6 +2,7 @@ import { MetadataRoute } from "next";
 
 import { baseURL } from "@/config";
 import { getAllBlogList, getBlogList } from "@/lib/microcms";
+import type { BlogsContentType } from "@/types/microcms";
 import { getPrimaryCategoryId, generateQuery } from "@/lib";
 import { CATEGORY_MAPED_ID, PER_PAGE } from "@/static/blogs";
 import { SUPPORTED_LOCALES } from "@/types/locale";
@@ -33,10 +34,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // ブログ記事の動的パスの多言語対応
     let dynamicPaths: Array<{ url: string; lastModified: Date | string }> = [];
     try {
-      const blogList = (await getAllBlogList({ fields: "id,updatedAt,publishedAt,noIndex,category" })).filter((content) => !content.noIndex)
+      const blogList = (await getAllBlogList({ fields: "id,updatedAt,publishedAt,noIndex,category" })).filter(
+        (content: BlogsContentType) => !content.noIndex,
+      )
 
-      dynamicPaths = SUPPORTED_LOCALES.flatMap(locale => 
-        blogList.map((content) => {
+      dynamicPaths = SUPPORTED_LOCALES.flatMap(locale =>
+        blogList.map((content: BlogsContentType) => {
           const categoryId = getPrimaryCategoryId(content);
           return {
             url: `${baseURL}/${locale}/blogs/${categoryId}/${content.id}`,
