@@ -8,11 +8,11 @@ interface SocialMediaNavProps {
 
 const SocialMediaNav = ({ locale }: SocialMediaNavProps) => {
   return (
-    <nav className="px-2 flex flex-wrap gap-5 md:gap-4">
+    <nav className="flex flex-wrap gap-5 px-2 md:gap-4" role="navigation">
       <SocialMediaIcons locale={locale} />
       <LanguageSwitch />
       <DarkModeToggle />
     </nav>
   );
-}
+};
 export default SocialMediaNav;
