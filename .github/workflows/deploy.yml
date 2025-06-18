@@ -64,10 +64,12 @@ jobs:
       - name: Set tag based on branch
         id: set-tag
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
             echo "tag=prd" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
             echo "tag=stg" >> $GITHUB_OUTPUT
+          else
+            echo "tag=dev-$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
           fi
 
       - name: Build CMS
