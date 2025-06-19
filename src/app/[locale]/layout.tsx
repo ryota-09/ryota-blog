@@ -7,12 +7,12 @@ import { routing } from '@/i18n/routing';
 import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 import { baseURL, gaId, gtmId } from "@/config";
 
-interface LocaleLayoutProps {
+type LocaleLayoutProps = {
   children: React.ReactNode;
   params: {
     locale: string;
   };
-}
+};
 
 export async function generateMetadata({ params: { locale } }: LocaleLayoutProps): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'metadata' });
@@ -24,6 +24,11 @@ export async function generateMetadata({ params: { locale } }: LocaleLayoutProps
     },
     description: t('siteDescription'),
     metadataBase: new URL(baseURL),
+    openGraph: {
+      url: baseURL,
+      siteName: 'Ryota-Blog',
+      type: 'website'
+    }
   };
 }
 
