@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "siteTitle": "Ryota's Web Engineer Blog",
+    "siteTitle": "Ryota-Blog",
     "siteDescription": "A blog where a web engineer shares about technology, career, and daily life"
   },
   "navigation": {
@@ -8,7 +8,10 @@
     "blogs": "Blog",
     "about": "About",
     "contact": "Contact",
-    "search": "Search"
+    "search": "Search",
+    "languageSwitch": "Language",
+    "switchToEnglish": "English",
+    "switchToJapanese": "日本語"
   },
   "blog": {
     "recentPosts": "Recent Posts",
@@ -23,7 +26,26 @@
     "searchPlaceholder": "Search articles...",
     "noPostsFound": "No posts found",
     "allCategories": "All",
-    "zennArticles": "Zenn Articles"
+    "zennArticles": "Zenn Articles",
+    "page": "Page",
+    "searchConditions": "Search conditions", 
+    "search": "Search",
+    "resetSearchConditions": "Reset search conditions",
+    "zennSearchNotSupported": "※ Zenn articles don't support search",
+    "showMore": "Show more",
+    "oldArticleNotice": "This article was published <years>{diffYear}</years> years ago",
+    "requestCorrection": "Request Correction",
+    "previousArticle": "Previous Article",
+    "nextArticle": "Next Article",
+    "shareOnX": "Share on X",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "copiedAriaLabel": "Copied",
+    "copyCodeAriaLabel": "Copy code",
+    "wrapText": "Wrap",
+    "unwrapText": "Unwrap",
+    "promotionalContent": "This article contains promotional content",
+    "issueTemplate": "Target page: {url}\\n\\n■ Fix location\\n\\n■ Reason for fix\\n\\n■ Improvement suggestions\\n\\n■ Other\\n"
   },
   "pagination": {
     "previous": "Previous",
@@ -33,5 +55,41 @@
   "footer": {
     "copyright": "© {year} Ryota's Web Engineer Blog",
     "allRightsReserved": "All rights reserved."
+  },
+  "error": {
+    "notFound": {
+      "title": "Page Not Found",
+      "message": "The page you are looking for could not be found.",
+      "backToHome": "Back to Home"
+    },
+    "serverError": {
+      "title": "Server Error",
+      "message": "An internal server error occurred.",
+      "backToHome": "Back to Home"
+    },
+    "noContent": {
+      "message": "No content available to display.",
+      "backToHome": "Back to Home"
+    }
+  },
+  "categories": {
+    "python": "Python",
+    "typescript": "TypeScript",
+    "css": "CSS", 
+    "next_js": "Next.js",
+    "release_notes": "Release Notes",
+    "aws": "AWS",
+    "review": "Review",
+    "zakki": "Daily",
+    "react": "React",
+    "openai_api": "OpenAI API",
+    "gadget": "Gadget",
+    "tailwindcss": "TailwindCSS",
+    "ui_parts": "UI",
+    "programming": "Programming",
+    "career": "Career",
+    "life_hack": "LifeHack",
+    "news": "News",
+    "terraform": "Terraform"
   }
 }

@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
 import ArticleCard from "@/components/ArticleList/ArticleCard";
-import { getBlogList } from "@/lib/microcms";
+import { getBlogListByLocale } from "@/lib/microcms";
 import { PER_PAGE } from "@/static/blogs";
 import type { BlogTypeKeyLIteralType } from "@/types";
 import type { MicroCMSQueries } from "microcms-js-sdk";
@@ -16,10 +16,11 @@ type ArticleListProps = {
   blogType: BlogTypeKeyLIteralType
   page: string
   basePath?: string
+  locale: string
 }
 
-const ArticleList = async ({ query, blogType, page, basePath }: ArticleListProps) => {
-  const data = await getBlogList({ ...query, orders: "-publishedAt" }, { next: { revalidate: 86400 } });
+const ArticleList = async ({ query, blogType, page, basePath, locale }: ArticleListProps) => {
+  const data = await getBlogListByLocale(locale, { ...query, orders: "-publishedAt" }, { next: { revalidate: 86400 } });
   const contentCount = data.contents.length
   const emptyItem = PER_PAGE - contentCount
   return (

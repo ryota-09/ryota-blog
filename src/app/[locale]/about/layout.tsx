@@ -13,9 +13,10 @@ interface AboutLayoutProps {
 
 export async function generateMetadata({ params: { locale } }: AboutLayoutProps): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'metadata' });
+  const tNav = await getTranslations({ locale, namespace: 'navigation' });
   
   return {
-    title: 'About',
+    title: tNav('about'),
     description: t('siteDescription'),
     metadataBase: new URL(baseURL)
   };

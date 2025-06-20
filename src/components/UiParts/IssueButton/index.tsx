@@ -1,3 +1,5 @@
+'use client';
+import { useTranslations } from 'next-intl';
 import ExternalLink from "@/components/UiParts/ExternalLink";
 import Image from "next/image";
 
@@ -6,7 +8,8 @@ type IssueButtonProps = {
 }
 
 const IssueButton = ({ currentPath }: IssueButtonProps) => {
-  const bodyText = `対象ページ: ${currentPath}\n\n■修正箇所\n\n■修正の理由\n\n■改善提案\n\n■その他\n`;
+  const t = useTranslations('blog');
+  const bodyText = t('issueTemplate', { url: currentPath });
   const encodedBodyText = encodeURIComponent(bodyText);
   const href = `https://github.com/ryota-09/ryota-blog/issues/new?body=${encodedBodyText}`;
   return (
@@ -15,7 +18,7 @@ const IssueButton = ({ currentPath }: IssueButtonProps) => {
         <Image src="/icons/github.webp" alt="GitHub" width={24} height={24} />
       </figure>
       <div className=" text-txt-base dark:text-gray-400 text-center flex-grow">
-        修正をリクエストする
+        {t('requestCorrection')}
       </div>
     </ExternalLink>
   )

@@ -29,8 +29,10 @@ const NavDrower = ({ isOpen, items, locale, onClick }: NavDrowerProps) => {
               </Link>
           ))}
         </nav>
-        <div className="flex justify-center">
-          <SocialMediaNav locale={locale} />
+        <div className="flex flex-col items-center space-y-4">
+          <div className="flex justify-center">
+            <SocialMediaNav locale={locale} />
+          </div>
         </div>
       </div>
         

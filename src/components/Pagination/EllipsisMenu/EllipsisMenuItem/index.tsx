@@ -14,11 +14,12 @@ const EllipsisMenuItem = ({ pageNumber, children }: EllipsisMenuItemProps) => {
   const pathname = usePathname()
 
   const generateHref = useCallback(() => {
-    // カテゴリページかどうかを確認
-    const categoryPathMatch = pathname.match(/^\/blogs\/([^\/]+)$/)
-    const categoryId = categoryPathMatch ? categoryPathMatch[1] : null
+    // 国際化対応: カテゴリページかどうかを確認
+    const categoryPathMatch = pathname.match(/^\/([^\/]+)\/blogs\/([^\/]+)$/)
+    const locale = categoryPathMatch ? categoryPathMatch[1] : pathname.match(/^\/([^\/]+)/)?.[1] || 'ja'
+    const categoryId = categoryPathMatch ? categoryPathMatch[2] : null
     
-    let baseHref = categoryId ? `/blogs/${categoryId}` : `/blogs`
+    let baseHref = categoryId ? `/${locale}/blogs/${categoryId}` : `/${locale}/blogs`
     const keyword = searchParams?.get('keyword') ?? ""
 
     if (keyword) {

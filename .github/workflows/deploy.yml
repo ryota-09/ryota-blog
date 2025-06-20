@@ -31,10 +31,25 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Debug OIDC token
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "SHA: ${{ github.sha }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Job: ${{ github.job }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Environment: ${{ github.environment }}"
+          echo "Token subject would be: repo:${{ github.repository }}:ref:${{ github.ref }}"
+
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ap-northeast-1
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions-${{ github.run_id }}
+          audience: sts.amazonaws.com
 
       - uses: aws-actions/amazon-ecr-login@v1
         id: login-ecr
@@ -49,10 +64,12 @@ jobs:
       - name: Set tag based on branch
         id: set-tag
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
             echo "tag=prd" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
             echo "tag=stg" >> $GITHUB_OUTPUT
+          else
+            echo "tag=dev-$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
           fi
 
       - name: Build CMS

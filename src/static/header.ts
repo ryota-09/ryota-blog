@@ -4,7 +4,7 @@ import type { HeaderNavItem } from "@/types/header";
 export const getHeaderNavItems = (locale: string): HeaderNavItem[] => [
   {
     name: 'Home',
-    href: `/${locale}/blogs`,
+    href: `/${locale}`,
   },
   {
     name: 'About',
@@ -60,7 +60,7 @@ export const getSocialMediaNavItems = (locale: string): HeaderNavItem[] => [
 export const HEADER_NAV_ITEMS: HeaderNavItem[] = [
   {
     name: 'Home',
-    href: '/blogs',
+    href: '/',
   },
   {
     name: 'About',

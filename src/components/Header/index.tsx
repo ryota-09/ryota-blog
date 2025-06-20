@@ -16,8 +16,10 @@ const Header = ({ locale }: HeaderProps) => {
         <div className="flex justify-between items-center mb-4 px-2 md:px-0">
           <div className="flex justify-between w-full">
             <BlogTitle title={SITE_TITLE} locale={locale} />
-            <div className="hidden md:block">
-              <SocialMediaNav locale={locale} />
+            <div className="flex items-center space-x-4">
+              <div className="hidden md:block">
+                <SocialMediaNav locale={locale} />
+              </div>
             </div>
           </div>
           <div className="block md:hidden">

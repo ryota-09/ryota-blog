@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
-import { getBlogById } from './lib/microcms'
+import { getBlogByIdByLocale } from './lib/microcms'
 import { getPrimaryCategoryId } from './lib/index'
 
 // Create the intl middleware
@@ -16,9 +16,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/404', request.url))
   }
 
-  // ルートパスを処理 - デフォルトlocaleにリダイレクト
+  // ルートパスを処理 - 保存されたlocale設定またはデフォルトlocaleにリダイレクト
   if (pathname === '/') {
-    return NextResponse.redirect(new URL(`/${routing.defaultLocale}`, request.url));
+    // Check for preferred locale in cookies
+    const preferredLocale = request.cookies.get('preferred-locale')?.value;
+    const targetLocale = preferredLocale && routing.locales.includes(preferredLocale as any) 
+      ? preferredLocale 
+      : routing.defaultLocale;
+    
+    return NextResponse.redirect(new URL(`/${targetLocale}`, request.url));
   }
 
   // pathnameにlocaleが含まれているかチェック
@@ -37,7 +43,7 @@ export async function middleware(request: NextRequest) {
       console.log('Attempting to redirect blog:', blogId);
       
       try {
-        const blog = await getBlogById(blogId, { fields: 'category' })
+        const blog = await getBlogByIdByLocale(routing.defaultLocale, blogId, { fields: 'category' })
         const categoryId = getPrimaryCategoryId(blog)
         
         // 新しいURL構造にデフォルトlocaleでリダイレクト
@@ -74,7 +80,7 @@ export async function middleware(request: NextRequest) {
     
     console.log('Processing locale blog redirect:', locale, blogId);
     try {
-      const blog = await getBlogById(blogId, { fields: 'category' })
+      const blog = await getBlogByIdByLocale(locale, blogId, { fields: 'category' })
       const categoryId = getPrimaryCategoryId(blog)
       
       // localeありの新しいURL構造にリダイレクト

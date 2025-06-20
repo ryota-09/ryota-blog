@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "siteTitle": "りょうたのWebエンジニアブログ",
+    "siteTitle": "Ryota-Blog",
     "siteDescription": "Webエンジニアが技術、キャリア、日常について発信するブログ"
   },
   "navigation": {
@@ -8,7 +8,10 @@
     "blogs": "ブログ",
     "about": "プロフィール",
     "contact": "お問い合わせ",
-    "search": "検索"
+    "search": "検索",
+    "languageSwitch": "言語切り替え",
+    "switchToEnglish": "English",
+    "switchToJapanese": "日本語"
   },
   "blog": {
     "recentPosts": "最新の記事",
@@ -23,7 +26,27 @@
     "searchPlaceholder": "記事を検索...",
     "noPostsFound": "記事が見つかりませんでした",
     "allCategories": "すべて",
-    "zennArticles": "Zenn記事"
+    "zennArticles": "Zenn記事",
+    "mostReadArticles": "最も読まれている記事",
+    "page": "ページ",
+    "searchConditions": "検索条件",
+    "search": "検索",
+    "resetSearchConditions": "検索条件をリセット",
+    "zennSearchNotSupported": "※ Zennの記事は検索非対応",
+    "showMore": "もっと見る",
+    "oldArticleNotice": "こちらは <years>{diffYear}</years> 年前に公開された記事です",
+    "requestCorrection": "修正をリクエストする",
+    "previousArticle": "前の記事",
+    "nextArticle": "次の記事",
+    "shareOnX": "Xにシェア",
+    "copy": "コピー",
+    "copied": "コピーしました!",
+    "copiedAriaLabel": "コピー済み",
+    "copyCodeAriaLabel": "コードをコピー",
+    "wrapText": "折り返し",
+    "unwrapText": "折り返しなし",
+    "promotionalContent": "こちらの記事にはプロモーションを含みます",
+    "issueTemplate": "対象ページ: {url}\\n\\n■修正箇所\\n\\n■修正の理由\\n\\n■改善提案\\n\\n■その他\\n"
   },
   "pagination": {
     "previous": "前へ",
@@ -31,7 +54,43 @@
     "page": "ページ"
   },
   "footer": {
-    "copyright": "© {year} りょうたのWebエンジニアブログ",
+    "copyright": "© {year} Ryota-Blog",
     "allRightsReserved": "All rights reserved."
+  },
+  "error": {
+    "notFound": {
+      "title": "ページが見つかりません",
+      "message": "お探しのページが見つかりませんでした。",
+      "backToHome": "トップページに戻る"
+    },
+    "serverError": {
+      "title": "サーバーエラー",
+      "message": "サーバー内部のエラーが発生しました。",
+      "backToHome": "トップページに戻る"
+    },
+    "noContent": {
+      "message": "表示できるコンテンツがありません。",
+      "backToHome": "トップページに戻る"
+    }
+  },
+  "categories": {
+    "python": "Python",
+    "typescript": "TypeScript", 
+    "css": "CSS",
+    "next_js": "Next.js",
+    "release_notes": "Release Notes",
+    "aws": "AWS",
+    "review": "レビュー",
+    "zakki": "雑記",
+    "react": "React",
+    "openai_api": "OpenAI API",
+    "gadget": "ガジェット",
+    "tailwindcss": "TailwindCSS",
+    "ui_parts": "UI",
+    "programming": "プログラミング",
+    "career": "Career",
+    "life_hack": "LifeHack",
+    "news": "時事",
+    "terraform": "Terraform"
   }
 }
