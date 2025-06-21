@@ -125,7 +125,8 @@ export const customReplaceOptions: HTMLReactParserOptions = {
             if (domNode.parent) {
               filename = "attribs" in domNode.parent ? domNode.parent.attribs['data-filename'] : null;
             }
-            const lang = domNode.children[0].attribs.class.replace('language-', '');
+            const langAttr = 'attribs' in domNode.children[0] ? domNode.children[0].attribs.class : undefined;
+            const lang = langAttr ? langAttr.replace('language-', '') : '';
             return <MultiCodeBlock filename={filename} lang={lang}>{"data" in domNode.children[0].children[0] ? domNode.children[0].children[0].data : ""}</MultiCodeBlock>;
           }
           return <pre>{domToReact(domNode.children as DOMNode[], customReplaceOptions)}</pre>
