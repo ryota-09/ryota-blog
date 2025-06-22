@@ -98,3 +98,117 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ steps.set-tag.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  wait-for-apprunner-and-invalidate-cache:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.event_name == 'repository_dispatch'
+    
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-1
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions-Cache-${{ github.run_id }}
+          audience: sts.amazonaws.com
+
+      - name: Get AWS Account ID and find App Runner service
+        id: get-aws-info
+        run: |
+          # AWSアカウントIDを取得
+          AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
+          echo "AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID" >> $GITHUB_OUTPUT
+          echo "検出されたAWSアカウントID: $AWS_ACCOUNT_ID"
+          
+          # App Runnerサービス一覧を取得（最新のサービスを使用）
+          SERVICE_ARN=$(aws apprunner list-services \
+            --query 'ServiceSummaryList[0].ServiceArn' \
+            --output text)
+          
+          if [ "$SERVICE_ARN" = "None" ] || [ -z "$SERVICE_ARN" ]; then
+            echo "❌ App Runnerサービスが見つかりません"
+            exit 1
+          fi
+          
+          # サービス名をARNから抽出
+          SERVICE_NAME=$(echo "$SERVICE_ARN" | sed 's/.*service\///')
+          echo "SERVICE_ARN=$SERVICE_ARN" >> $GITHUB_OUTPUT
+          echo "SERVICE_NAME=$SERVICE_NAME" >> $GITHUB_OUTPUT
+          echo "検出されたApp Runnerサービス: $SERVICE_NAME"
+
+      - name: Wait for App Runner deployment to complete
+        id: wait-apprunner
+        run: |
+          SERVICE_ARN="${{ steps.get-aws-info.outputs.SERVICE_ARN }}"
+          SERVICE_NAME="${{ steps.get-aws-info.outputs.SERVICE_NAME }}"
+          
+          echo "App Runnerサービス '$SERVICE_NAME' のデプロイメント完了を待機中..."
+          
+          # 最大30分（1800秒）待機
+          MAX_WAIT=1800
+          WAIT_TIME=0
+          POLL_INTERVAL=30
+          
+          while [ $WAIT_TIME -lt $MAX_WAIT ]; do
+            # App Runnerサービスの状態を取得
+            STATUS=$(aws apprunner describe-service \
+              --service-arn "$SERVICE_ARN" \
+              --query 'Service.Status' \
+              --output text)
+            
+            echo "現在のApp Runnerステータス: $STATUS (待機時間: ${WAIT_TIME}秒)"
+            
+            if [ "$STATUS" = "RUNNING" ]; then
+              echo "✅ App Runnerサービスがrunning状態になりました"
+              break
+            elif [ "$STATUS" = "CREATE_FAILED" ] || [ "$STATUS" = "UPDATE_FAILED" ]; then
+              echo "❌ App Runnerサービスのデプロイメントが失敗しました: $STATUS"
+              exit 1
+            fi
+            
+            sleep $POLL_INTERVAL
+            WAIT_TIME=$((WAIT_TIME + POLL_INTERVAL))
+          done
+          
+          if [ $WAIT_TIME -ge $MAX_WAIT ]; then
+            echo "❌ タイムアウト: App Runnerサービスが30分以内にrunning状態になりませんでした"
+            exit 1
+          fi
+
+      - name: Invalidate CloudFront cache
+        run: |
+          # ryotablog.jpドメインのCloudFrontディストリビューションID
+          DISTRIBUTION_ID="E1JLX1V783C9UJ"
+          
+          echo "CloudFrontディストリビューション '$DISTRIBUTION_ID' のキャッシュを削除中..."
+          
+          # キャッシュ無効化を実行
+          INVALIDATION_ID=$(aws cloudfront create-invalidation \
+            --distribution-id "$DISTRIBUTION_ID" \
+            --paths "/*" \
+            --query 'Invalidation.Id' \
+            --output text)
+          
+          echo "キャッシュ無効化が開始されました (ID: $INVALIDATION_ID)"
+          
+          # キャッシュ無効化の完了を待機
+          echo "キャッシュ無効化の完了を待機中..."
+          aws cloudfront wait invalidation-completed \
+            --distribution-id "$DISTRIBUTION_ID" \
+            --id "$INVALIDATION_ID"
+          
+          echo "✅ CloudFrontキャッシュの削除が完了しました"
+
+      - name: Notify deployment completion
+        if: success()
+        run: |
+          echo "🚀 デプロイメントとキャッシュ削除が正常に完了しました"
+          echo "- App Runnerサービス: ${{ steps.get-aws-info.outputs.SERVICE_NAME }}"
+          echo "- CloudFrontディストリビューション: E1JLX1V783C9UJ (ryotablog.jp)"
+
+      - name: Notify deployment failure
+        if: failure()
+        run: |
+          echo "❌ デプロイメントまたはキャッシュ削除中にエラーが発生しました"
+          exit 1
