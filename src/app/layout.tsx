@@ -21,13 +21,17 @@ export const metadata: Metadata = {
   }
 };
 
+type RootLayoutProps = {
+  children: React.ReactNode;
+  params?: { locale?: string };
+};
+
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  // 静的生成のためデフォルトlocaleを使用
-  const locale = routing.defaultLocale;
+  params,
+}: RootLayoutProps) {
+  // URLから動的にlocaleを取得、フォールバックはデフォルトlocale
+  const locale = params?.locale || routing.defaultLocale;
 
   return (
     <ViewTransitions>
