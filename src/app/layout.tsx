@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Kosugi_Maru } from "next/font/google"
 import { ViewTransitions } from 'next-view-transitions'
 import NextTopLoader from "nextjs-toploader";
-import { headers } from 'next/headers';
 import { routing } from '@/i18n/routing'
 
 import ClientLayout from "@/components/ClientLayout";
@@ -27,9 +26,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // next-intlからlocaleを取得
-  const headersList = headers();
-  const locale = headersList.get('x-next-intl-locale') || routing.defaultLocale;
+  // 静的生成のためデフォルトlocaleを使用
+  const locale = routing.defaultLocale;
 
   return (
     <ViewTransitions>
