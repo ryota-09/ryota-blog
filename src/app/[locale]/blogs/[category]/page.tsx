@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
@@ -98,6 +98,8 @@ type PageProps = {
 };
 
 const Page = ({ params, searchParams }: PageProps) => {
+  setRequestLocale(params.locale);
+  
   const categoryName = CATEGORY_MAPED_NAME[params.category];
   
   if (!categoryName) {

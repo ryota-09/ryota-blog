@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
@@ -56,6 +56,8 @@ export async function generateMetadata(
 }
 
 const Page = async ({ params }: { params: { locale: string; page: string } }) => {
+  setRequestLocale(params.locale);
+  
   const pageNum = parseInt(params.page);
   
   // ページ番号の検証

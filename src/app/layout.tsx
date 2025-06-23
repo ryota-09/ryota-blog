@@ -21,21 +21,14 @@ export const metadata: Metadata = {
   }
 };
 
-type RootLayoutProps = {
-  children: React.ReactNode;
-  params?: { locale?: string };
-};
-
 export default function RootLayout({
   children,
-  params,
-}: RootLayoutProps) {
-  // URLから動的にlocaleを取得、フォールバックはデフォルトlocale
-  const locale = params?.locale || routing.defaultLocale;
-
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <ViewTransitions>
-      <html lang={locale}>
+      <html>
         <PreloadResources />
         <ClientLayout>
           <body className={`${KosugiMaru.className} bg-[#eee] dark:bg-[#333] flex flex-col min-h-screen`}>

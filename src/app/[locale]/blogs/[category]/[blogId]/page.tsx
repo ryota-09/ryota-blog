@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { cookies, draftMode } from "next/headers";
 import { notFound } from "next/navigation";
+import { setRequestLocale } from 'next-intl/server';
 
 import ArticleBody from "@/components/ArticleBody";
 import BreadcrumbList from "@/components/BreadcrumbList";
@@ -59,6 +60,8 @@ type PageProps = {
 };
 
 const Page = async ({ params }: PageProps) => {
+  setRequestLocale(params.locale);
+  
   const blogId = params.blogId;
   const categoryParam = params.category;
   const { isEnabled } = draftMode();

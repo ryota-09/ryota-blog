@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import SideNav from "@/components/SideNav";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
@@ -22,6 +22,8 @@ export async function generateMetadata({ params: { locale } }: ZennPageProps): P
 }
 
 const ZennPage = ({ params }: ZennPageProps) => {
+  setRequestLocale(params.locale);
+  
   return (
     <>
       <div className="w-full lg:w-[calc(100%_-_300px)] flex flex-col justify-between px-2 md:px-0">
