@@ -1,7 +1,7 @@
 'use client';
 
 import { Link } from 'next-view-transitions'
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 
 import { BlogsContentType } from "@/types/microcms"
 import NewLabel from "@/components/UiParts/NewLabel"
@@ -19,10 +19,13 @@ type ArticleCardProps = {
    * インデックス
    */
   index: number
+  /**
+   * ロケール
+   */
+  locale: string
 }
 
-const ArticleCard = ({ data, index }: ArticleCardProps) => {
-  const locale = useLocale();
+const ArticleCard = ({ data, index, locale }: ArticleCardProps) => {
   const t = useTranslations('blog');
   const categoryId = getPrimaryCategoryId(data);
   const blogPath = getBlogPath(locale, categoryId, data.id);

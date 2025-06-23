@@ -30,7 +30,7 @@ const ArticleList = async ({ query, blogType, page, basePath, locale }: ArticleL
         <ul className="flex-imtem grid grid-cols-1 xl:grid-cols-2 gap-4">
           {data.contents.map((item: BlogsContentType, index: number) => (
             <li key={item.id} data-testid={`pw-article-card-${index}`}>
-              <ArticleCard data={item} index={index} />
+              <ArticleCard data={item} index={index} locale={locale} />
             </li>
           ))}
           {Array.from({ length: emptyItem }).map((_, index) => (

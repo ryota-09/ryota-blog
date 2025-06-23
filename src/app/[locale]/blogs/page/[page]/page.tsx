@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
@@ -56,8 +56,6 @@ export async function generateMetadata(
 }
 
 const Page = async ({ params }: { params: { locale: string; page: string } }) => {
-  setRequestLocale(params.locale);
-  
   const pageNum = parseInt(params.page);
   
   // ページ番号の検証
@@ -87,7 +85,7 @@ const Page = async ({ params }: { params: { locale: string; page: string } }) =>
           <div className="flex gap-4 flex-col lg:flex-row">
             <div className="flex justify-center items-center p-3 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-600">
               <Suspense fallback={<div>Loading...</div>}>
-                <BlogTypeTabs blogType={blogType} />
+                <BlogTypeTabs blogType={blogType} locale={params.locale} />
               </Suspense>
             </div>
           </div>

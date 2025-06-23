@@ -1,7 +1,7 @@
 'use client';
 
 import { Link } from 'next-view-transitions';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import Chip from "@/components/UiParts/Chip";
 import type { MappedKeyLiteralType } from "@/types/microcms";
 import { CATEGORY_MAPED_ID } from "@/static/blogs";
@@ -15,10 +15,13 @@ type SearchStateCardProps = {
    * カテゴリー
    */
   category?: MappedKeyLiteralType | string
+  /**
+   * ロケール
+   */
+  locale: string
 }
 
-const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
-  const locale = useLocale();
+const SearchStateCard = ({ keyword, category, locale }: SearchStateCardProps) => {
   const t = useTranslations('blog');
   const tCategories = useTranslations('categories');
   

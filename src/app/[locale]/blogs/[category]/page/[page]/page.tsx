@@ -131,10 +131,10 @@ const Page = async ({ params }: PageProps) => {
           <div className="flex gap-4 flex-col lg:flex-row">
             <div className="flex justify-center items-center p-3 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-600">
               <Suspense fallback={<div>Loading...</div>}>
-                <BlogTypeTabs blogType={blogType} />
+                <BlogTypeTabs blogType={blogType} locale={params.locale} />
               </Suspense>
             </div>
-            <SearchStateCard category={categoryName} keyword={""} />
+            <SearchStateCard category={categoryName} keyword={""} locale={params.locale} />
           </div>
           <Suspense fallback={<Skelton />}>
             <ArticleList 

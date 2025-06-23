@@ -61,7 +61,8 @@ const data: BlogsContentType = {
 export const Default: Story = {
   args: {
     data,
-    index: 0
+    index: 0,
+    locale: 'ja'
   },
   decorators: [
     (Story) => (

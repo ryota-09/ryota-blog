@@ -3,7 +3,6 @@ import { GlobalContext } from '@/providers';
 import { BLOG_TYPE_ASSETS, BlogTypeKeyLIteralType } from '@/types';
 import { cltw } from '@/util';
 import { useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
 import React, { useCallback, useContext, useState } from 'react';
 
 type BlogTypeTabsProps = {
@@ -11,12 +10,15 @@ type BlogTypeTabsProps = {
    * 一覧表示するブログの種類
    */
   blogType: BlogTypeKeyLIteralType;
+  /**
+   * ロケール
+   */
+  locale: string;
 }
 
-const BlogTypeTabs = ({ blogType }: BlogTypeTabsProps) => {
+const BlogTypeTabs = ({ blogType, locale }: BlogTypeTabsProps) => {
   const { dispatch } = useContext(GlobalContext);
   const [activeTab, setActiveTab] = useState<BlogTypeKeyLIteralType>(blogType || "blogs");
-  const locale = useLocale();
   const router = useRouter();
 
   const blogButtonHandler = useCallback(() => {

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
@@ -105,8 +105,6 @@ export async function generateMetadata({
 }
 
 const Page = ({ params: { locale }, searchParams }: PageProps) => {
-  setRequestLocale(locale);
-  
   const category = searchParams[CATEGORY_QUERY];
   const keyword = searchParams[KEYWORD_QUERY];
   const blogType = searchParams[BLOG_TYPE_QUERY] || "blogs";
@@ -120,10 +118,10 @@ const Page = ({ params: { locale }, searchParams }: PageProps) => {
         <div className="flex flex-grow flex-col gap-4">
           <div className="flex flex-col gap-4 lg:flex-row">
             <div className="flex items-center justify-center border-2 border-gray-200 bg-white p-3 dark:border-gray-600 dark:bg-black">
-              <BlogTypeTabs blogType={blogType} />
+              <BlogTypeTabs blogType={blogType} locale={locale} />
             </div>
             {(category || keyword) && (
-              <SearchStateCard category={category} keyword={keyword} />
+              <SearchStateCard category={category} keyword={keyword} locale={locale} />
             )}
           </div>
           {blogType === "zenn" ? (

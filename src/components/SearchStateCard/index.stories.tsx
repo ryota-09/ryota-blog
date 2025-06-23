@@ -24,19 +24,22 @@ type Story = StoryObj<typeof meta>;
 
 export const KeyWord: Story = {
   args: {
-    keyword: "キーワード"
+    keyword: "キーワード",
+    locale: "ja"
   }
 };
 
 export const Category: Story = {
   args: {
-    category: "TypeScript"
+    category: "TypeScript",
+    locale: "ja"
   }
 };
 
 export const Both: Story = {
   args: {
     keyword: "テストキーワード",
-    category: "Next.js"
+    category: "Next.js",
+    locale: "ja"
   }
 };

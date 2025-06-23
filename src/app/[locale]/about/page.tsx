@@ -2,7 +2,6 @@ import SocialMediaIcons from "@/components/Header/SocialMediaIcons";
 import Chip from "@/components/UiParts/Chip";
 import ImageWithBlur from "@/components/UiParts/ImageWithBlur";
 import { AUTHOR_DESCRIPTION, AUTHOR_DESCRIPTION_EN, AUTHOR_NAME, AUTHOR_NAME_EN } from "@/static/blogs";
-import { setRequestLocale } from 'next-intl/server';
 
 interface AboutPageProps {
   params: {
@@ -11,8 +10,6 @@ interface AboutPageProps {
 }
 
 const Page = ({ params: { locale } }: AboutPageProps) => {
-  setRequestLocale(locale);
-  
   const authorName = locale === 'en' ? AUTHOR_NAME_EN : AUTHOR_NAME;
   const authorDescription = locale === 'en' ? AUTHOR_DESCRIPTION_EN : AUTHOR_DESCRIPTION;
   

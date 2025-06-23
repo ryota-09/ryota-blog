@@ -31,13 +31,15 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    "blogType": "blogs"
+    "blogType": "blogs",
+    "locale": "ja"
   }
 }
 
 export const ZennTab: Story = {
   args: {
-    "blogType": "zenn"
+    "blogType": "zenn",
+    "locale": "ja"
   },
   parameters: {
     // NOTE: useSearchParamsが機能できるように設定
