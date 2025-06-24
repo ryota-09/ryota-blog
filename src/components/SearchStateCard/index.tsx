@@ -1,6 +1,6 @@
 'use client';
 
-import { Link } from 'next-view-transitions';
+import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import Chip from "@/components/UiParts/Chip";
 import type { MappedKeyLiteralType } from "@/types/microcms";
@@ -62,7 +62,7 @@ const SearchStateCard = ({ keyword, category, locale }: SearchStateCardProps) =>
           )}
         </ul>
         <div className="w-full lg:w-auto text-right" data-testid="pw-reset-search-state">
-          <Link href={`/${locale}/blogs`} className="text-gray-400 text-xs cursor-pointer transition-colors hover:text-gray-700 dark:hover:text-gray-300">{t('resetSearchConditions')}</Link>
+          <Link href="/blogs" className="text-gray-400 text-xs cursor-pointer transition-colors hover:text-gray-700 dark:hover:text-gray-300">{t('resetSearchConditions')}</Link>
         </div>
       </div>
     </div>

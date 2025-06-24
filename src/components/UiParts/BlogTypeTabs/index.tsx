@@ -2,7 +2,7 @@
 import { GlobalContext } from '@/providers';
 import { BLOG_TYPE_ASSETS, BlogTypeKeyLIteralType } from '@/types';
 import { cltw } from '@/util';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import React, { useCallback, useContext, useState } from 'react';
 
 type BlogTypeTabsProps = {
@@ -24,14 +24,14 @@ const BlogTypeTabs = ({ blogType, locale }: BlogTypeTabsProps) => {
   const blogButtonHandler = useCallback(() => {
     setActiveTab("blogs")
     dispatch({ type: "SET_BLOG_TYPE", payload: { blogType: "blogs" } })
-    router.push(`/${locale}/blogs`)
-  }, [locale, dispatch, router])
+    router.push('/blogs')
+  }, [dispatch, router])
 
   const zennButtonHandler = useCallback(() => {
     setActiveTab("zenn")
     dispatch({ type: "SET_BLOG_TYPE", payload: { blogType: "zenn" } })
-    router.push(`/${locale}/blogs/zenn`)
-  }, [locale, dispatch, router])
+    router.push('/blogs/zenn')
+  }, [dispatch, router])
 
 
   return (

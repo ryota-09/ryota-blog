@@ -45,37 +45,37 @@ export function getLocalizedPath(path: string, locale: string): string {
 }
 
 /**
- * ブログ記事のパスを生成
+ * ブログ記事のパスを生成（localeなし）
  */
 export function getBlogPath(locale: string, categoryId: string, blogId: string): string {
-  return `/${locale}/blogs/${categoryId}/${blogId}`;
+  return `/blogs/${categoryId}/${blogId}`;
 }
 
 /**
- * カテゴリページのパスを生成
+ * カテゴリページのパスを生成（localeなし）
  */
 export function getCategoryPath(locale: string, categoryId: string): string {
-  return `/${locale}/blogs/${categoryId}`;
+  return `/blogs/${categoryId}`;
 }
 
 /**
- * ブログ一覧ページのパスを生成
+ * ブログ一覧ページのパスを生成（localeなし）
  */
 export function getBlogsPath(locale: string, page?: number): string {
   if (page && page > 1) {
-    return `/${locale}/blogs/page/${page}`;
+    return `/blogs/page/${page}`;
   }
-  return `/${locale}/blogs`;
+  return `/blogs`;
 }
 
 /**
- * カテゴリページのページネーションパスを生成
+ * カテゴリページのページネーションパスを生成（localeなし）
  */
 export function getCategoryPaginationPath(locale: string, categoryId: string, page: number): string {
   if (page === 1) {
     return getCategoryPath(locale, categoryId);
   }
-  return `/${locale}/blogs/${categoryId}/page/${page}`;
+  return `/blogs/${categoryId}/page/${page}`;
 }
 
 /**

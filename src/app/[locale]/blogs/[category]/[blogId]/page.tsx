@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { cookies, draftMode } from "next/headers";
 import { notFound } from "next/navigation";
+import { setRequestLocale } from 'next-intl/server';
 
 import ArticleBody from "@/components/ArticleBody";
 import BreadcrumbList from "@/components/BreadcrumbList";
@@ -59,6 +60,9 @@ type PageProps = {
 };
 
 const Page = async ({ params }: PageProps) => {
+  // 静的レンダリングを有効化
+  setRequestLocale(params.locale);
+  
   const blogId = params.blogId;
   const categoryParam = params.category;
   const { isEnabled } = draftMode();

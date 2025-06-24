@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import Script from 'next/script';
 
@@ -14,6 +14,10 @@ type LocaleLayoutProps = {
     locale: string;
   };
 };
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
 export async function generateMetadata({ params: { locale } }: LocaleLayoutProps): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'metadata' });
@@ -40,6 +44,9 @@ export default async function LocaleLayout({
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
+  
+  // 静的レンダリングを有効化（最重要！）
+  setRequestLocale(locale);
   
   const messages = await getMessages();
 

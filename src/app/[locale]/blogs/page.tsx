@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
@@ -105,6 +105,9 @@ export async function generateMetadata({
 }
 
 const Page = ({ params: { locale }, searchParams }: PageProps) => {
+  // 静的レンダリングを有効化
+  setRequestLocale(locale);
+  
   const category = searchParams[CATEGORY_QUERY];
   const keyword = searchParams[KEYWORD_QUERY];
   const blogType = searchParams[BLOG_TYPE_QUERY] || "blogs";
