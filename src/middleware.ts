@@ -11,9 +11,15 @@ const intlMiddleware = createMiddleware(routing);
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
+  // CloudFront経由のアクセスの場合、正しいホスト名を取得
+  const forwardedHost = request.headers.get('x-forwarded-host');
+  const host = forwardedHost || request.headers.get('host') || request.nextUrl.host;
+  const protocol = request.headers.get('x-forwarded-proto') || 'https';
+  const baseUrl = `${protocol}://${host}`;
+  
   // AWS App Runnerのホスト名をブロック
   if (request.nextUrl.hostname.includes('awsapprunner')) {
-    return NextResponse.redirect(new URL('/404', request.url))
+    return NextResponse.redirect(new URL('/404', baseUrl))
   }
 
   // ルートパスを処理 - 保存されたlocale設定またはデフォルトlocaleにリダイレクト
@@ -24,7 +30,7 @@ export async function middleware(request: NextRequest) {
       ? preferredLocale 
       : routing.defaultLocale;
     
-    return NextResponse.redirect(new URL(`/${targetLocale}`, request.url));
+    return NextResponse.redirect(new URL(`/${targetLocale}`, baseUrl));
   }
 
   // pathnameにlocaleが含まれているかチェック
@@ -47,13 +53,13 @@ export async function middleware(request: NextRequest) {
         const categoryId = getPrimaryCategoryId(blog)
         
         // 新しいURL構造にデフォルトlocaleでリダイレクト
-        const newUrl = new URL(`/${routing.defaultLocale}/blogs/${categoryId}/${blogId}`, request.url)
+        const newUrl = new URL(`/${routing.defaultLocale}/blogs/${categoryId}/${blogId}`, baseUrl)
         console.log('Redirecting to:', newUrl.toString());
         return NextResponse.redirect(newUrl, 301)
       } catch (error) {
         console.log('Blog not found, redirecting to blogs page:', error);
         // ブログが見つからない場合はデフォルトlocaleのブログページにリダイレクト
-        const newUrl = new URL(`/${routing.defaultLocale}/blogs`, request.url)
+        const newUrl = new URL(`/${routing.defaultLocale}/blogs`, baseUrl)
         return NextResponse.redirect(newUrl, 301)
       }
     }
@@ -61,7 +67,7 @@ export async function middleware(request: NextRequest) {
     // その他のlocaleなしルートはデフォルトlocaleにリダイレクト
     const segments = pathname.split('/').filter(Boolean);
     if (segments.length > 0) {
-      const newUrl = new URL(`/${routing.defaultLocale}/${segments.join('/')}`, request.url);
+      const newUrl = new URL(`/${routing.defaultLocale}/${segments.join('/')}`, baseUrl);
       console.log('Redirecting other route to:', newUrl.toString());
       return NextResponse.redirect(newUrl, 301);
     }
@@ -84,7 +90,7 @@ export async function middleware(request: NextRequest) {
       const categoryId = getPrimaryCategoryId(blog)
       
       // localeありの新しいURL構造にリダイレクト
-      const newUrl = new URL(`/${locale}/blogs/${categoryId}/${blogId}`, request.url)
+      const newUrl = new URL(`/${locale}/blogs/${categoryId}/${blogId}`, baseUrl)
       console.log('Redirecting locale blog to:', newUrl.toString());
       return NextResponse.redirect(newUrl, 301)
     } catch (error) {
