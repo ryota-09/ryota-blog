@@ -11,16 +11,17 @@ const intlMiddleware = createMiddleware(routing);
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
+  // AWS App Runnerのホスト名を先にチェック
+  if (request.nextUrl.hostname.includes('awsapprunner')) {
+    // 正しいドメインにリダイレクト
+    return NextResponse.redirect(new URL(pathname, 'https://ryotablog.jp'))
+  }
+  
   // CloudFront経由のアクセスの場合、正しいホスト名を取得
   const forwardedHost = request.headers.get('x-forwarded-host');
-  const host = forwardedHost || request.headers.get('host') || request.nextUrl.host;
+  const host = forwardedHost || 'ryotablog.jp'; // デフォルトを正しいドメインに
   const protocol = request.headers.get('x-forwarded-proto') || 'https';
   const baseUrl = `${protocol}://${host}`;
-  
-  // AWS App Runnerのホスト名をブロック
-  if (request.nextUrl.hostname.includes('awsapprunner')) {
-    return NextResponse.redirect(new URL('/404', baseUrl))
-  }
 
   // ルートパスを処理 - 保存されたlocale設定またはデフォルトlocaleにリダイレクト
   if (pathname === '/') {

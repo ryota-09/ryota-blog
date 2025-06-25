@@ -1,7 +1,7 @@
 import ExternalLink from "@/components/UiParts/ExternalLink";
 import Tooltip from "@/components/UiParts/Tooltip";
 import type { HeaderNavItem } from "@/types/header";
-import { Link } from 'next-view-transitions';
+import { Link } from '@/i18n/navigation';
 
 type FooterNavProps = {
   items: HeaderNavItem[];
@@ -24,7 +24,7 @@ const FooterNav = ({ items, locale }: FooterNavProps) => {
             </li>
             :
             <li key={index} className="min-w-20 flex justify-center md:text-start text-gray-600 dark:text-gray-400">
-              <Link href={href.startsWith('/') && locale ? `/${locale}${href}` : href} prefetch={false} className="block px-2 py-3 transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color">
+              <Link href={href} prefetch={false} className="block px-2 py-3 transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color">
                 {name}
               </Link>
             </li>

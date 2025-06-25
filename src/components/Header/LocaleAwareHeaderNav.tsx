@@ -1,7 +1,7 @@
 import ExternalLink from "@/components/UiParts/ExternalLink";
 import Tooltip from "@/components/UiParts/Tooltip";
 import type { HeaderNavItem } from "@/types/header";
-import { Link } from 'next-view-transitions';
+import { Link } from '@/i18n/navigation';
 
 type HeaderNavProps = {
   items: HeaderNavItem[];
@@ -24,7 +24,7 @@ const LocaleAwareHeaderNav = ({ items, locale }: HeaderNavProps) => {
             </li>
             :
             <li key={index} className=" text-gray-600 dark:text-gray-400 transition duration-200 hover:text-base-color hover:underline hover:underline-offset-2 hover:decoration-base-color">
-              <Link href={href.startsWith('/') && locale ? `/${locale}${href}` : href}>
+              <Link href={href}>
                 {name}
               </Link>
             </li>

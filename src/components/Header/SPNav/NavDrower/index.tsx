@@ -1,5 +1,5 @@
 "use client"
-import { Link } from 'next-view-transitions';
+import { Link } from '@/i18n/navigation';
 
 import SocialMediaNav from "@/components/Header/SocialMediaNav";
 import ExternalLink from "@/components/UiParts/ExternalLink";
@@ -24,7 +24,7 @@ const NavDrower = ({ isOpen, items, locale, onClick }: NavDrowerProps) => {
                 <span className="mx-4">{name}</span>
               </ExternalLink>
               :
-              <Link key={index} href={href.startsWith('/') && locale ? `/${locale}${href}` : href} className="block py-2.5 px-0 transition dark:text-gray-300 duration-200 hover:bg-light dark:hover:bg-primary hover:text-white">
+              <Link key={index} href={href} className="block py-2.5 px-0 transition dark:text-gray-300 duration-200 hover:bg-light dark:hover:bg-primary hover:text-white">
                 <span className="mx-4">{name}</span>
               </Link>
           ))}
