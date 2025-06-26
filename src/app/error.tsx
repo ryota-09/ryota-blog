@@ -2,7 +2,7 @@
 
 import ErrorPageFooter from "@/components/ErrorPageFooter";
 import ErrorPageHeader from "@/components/ErrorPageHeader";
-import { Link } from 'next-view-transitions';
+import { Link } from '@/i18n/navigation';
 import Image from "next/image";
 import { usePathname } from 'next/navigation';
 

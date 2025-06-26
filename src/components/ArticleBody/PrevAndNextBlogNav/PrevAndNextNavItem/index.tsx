@@ -1,6 +1,6 @@
 'use client';
 
-import { Link } from "next-view-transitions";
+import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 
 import type { BlogsContentType } from "@/types/microcms";

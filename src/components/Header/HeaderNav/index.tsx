@@ -1,7 +1,7 @@
 import ExternalLink from "@/components/UiParts/ExternalLink";
 import Tooltip from "@/components/UiParts/Tooltip";
 import type { HeaderNavItem } from "@/types/header";
-import { Link } from 'next-view-transitions';
+import { Link } from '@/i18n/navigation';
 
 type HeaderNavProps = {
   items: HeaderNavItem[];

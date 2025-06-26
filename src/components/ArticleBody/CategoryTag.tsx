@@ -1,6 +1,6 @@
 'use client';
 
-import { Link } from 'next-view-transitions';
+import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import Chip from '@/components/UiParts/Chip';
 import { CATEGORY_MAPED_ID } from '@/static/blogs';

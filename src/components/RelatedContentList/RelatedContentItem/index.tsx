@@ -3,7 +3,7 @@
 import Chip from "@/components/UiParts/Chip";
 import { CATEGORY_MAPED_NAME } from "@/static/blogs";
 import { CategoriesContentType } from "@/types/microcms";
-import { Link } from "next-view-transitions";
+import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 
 type RelatedContentItemProps = {

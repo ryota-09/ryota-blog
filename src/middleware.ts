@@ -17,11 +17,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(pathname, 'https://ryotablog.jp'))
   }
   
+  // RSCペイロードリクエストの場合は特別な処理
+  const acceptHeader = request.headers.get('accept') || '';
+  const isRSCRequest = acceptHeader.includes('text/x-component');
+  
   // CloudFront経由のアクセスの場合、正しいホスト名を取得
   const forwardedHost = request.headers.get('x-forwarded-host');
-  const host = forwardedHost || 'ryotablog.jp'; // デフォルトを正しいドメインに
+  const host = forwardedHost || request.headers.get('host') || 'ryotablog.jp';
   const protocol = request.headers.get('x-forwarded-proto') || 'https';
   const baseUrl = `${protocol}://${host}`;
+  
 
   // ルートパスを処理 - 保存されたlocale設定またはデフォルトlocaleにリダイレクト
   if (pathname === '/') {
@@ -100,6 +105,14 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // RSCリクエストの場合は特別な処理
+  if (isRSCRequest) {
+    const response = await intlMiddleware(request);
+    // RSCペイロードのための適切なヘッダーを設定
+    response.headers.set('vary', 'RSC, Accept');
+    return response;
+  }
+  
   // 最後にnext-intlミドルウェアを実行
   return intlMiddleware(request);
 }
