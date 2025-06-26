@@ -4,11 +4,11 @@ import type { HeaderNavItem } from "@/types/header";
 export const getHeaderNavItems = (locale: string): HeaderNavItem[] => [
   {
     name: 'Home',
-    href: `/${locale}`,
+    href: '/',
   },
   {
     name: 'About',
-    href: `/${locale}/about`,
+    href: '/about',
   },
   {
     name: 'Contact',
@@ -44,13 +44,13 @@ export const getSocialMediaNavItems = (locale: string): HeaderNavItem[] => [
   },
   {
     name: "Feed",
-    href: `/${locale}/feed`,
+    href: "/feed",
     icon: "/icons/rss.webp",
     target: "_self",
   },
   {
     name: "LLMs",
-    href: `/${locale}/docs/llms.txt`,
+    href: "/docs/llms.txt",
     icon: "/icons/llms.png",
     target: "_self",
   }

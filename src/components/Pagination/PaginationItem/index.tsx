@@ -1,7 +1,7 @@
 "use client"
 import { cltw } from "@/util"
-import { Link } from "next-view-transitions"
-import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import { Link } from '@/i18n/navigation'
+import { useSearchParams, usePathname } from "next/navigation"
 import { ReactNode, useCallback } from "react"
 import { CATEGORY_MAPED_ID } from "@/static/blogs"
 
@@ -27,14 +27,13 @@ const PaginationItem = ({ pageNumber, children, currentPage, basePath }: Paginat
       return `${basePath}/page/${pageNumber}`
     }
 
-    // 国際化対応: カテゴリページかどうかを確認
-    const categoryPathMatch = pathname?.match(/^\/([^\/]+)\/blogs\/([^\/]+)$/)
-    const locale = categoryPathMatch ? categoryPathMatch[1] : pathname?.match(/^\/([^\/]+)/)?.[1] || 'ja'
-    const categoryId = categoryPathMatch ? categoryPathMatch[2] : null
+    // カテゴリページかどうかを確認（localeプレフィックスなし）
+    const categoryPathMatch = pathname?.match(/^\/[^\/]+\/blogs\/([^\/]+)$/)
+    const categoryId = categoryPathMatch ? categoryPathMatch[1] : null
     
     const keyword = searchParams?.get('keyword') ?? ""
     
-    let baseHref = categoryId ? `/${locale}/blogs/${categoryId}` : `/${locale}/blogs`
+    let baseHref = categoryId ? `/blogs/${categoryId}` : `/blogs`
 
     if (keyword) {
       const currentPath = `${baseHref}?keyword=${keyword}`

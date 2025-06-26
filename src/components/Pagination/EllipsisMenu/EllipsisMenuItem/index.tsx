@@ -1,5 +1,5 @@
 "use client"
-import { Link } from "next-view-transitions"
+import { Link } from '@/i18n/navigation'
 import { useSearchParams, usePathname } from "next/navigation"
 import { useCallback, type ReactNode } from "react"
 import { cltw } from "@/util"
@@ -14,12 +14,11 @@ const EllipsisMenuItem = ({ pageNumber, children }: EllipsisMenuItemProps) => {
   const pathname = usePathname()
 
   const generateHref = useCallback(() => {
-    // 国際化対応: カテゴリページかどうかを確認
-    const categoryPathMatch = pathname.match(/^\/([^\/]+)\/blogs\/([^\/]+)$/)
-    const locale = categoryPathMatch ? categoryPathMatch[1] : pathname.match(/^\/([^\/]+)/)?.[1] || 'ja'
-    const categoryId = categoryPathMatch ? categoryPathMatch[2] : null
+    // カテゴリページかどうかを確認（localeプレフィックスなし）
+    const categoryPathMatch = pathname.match(/^\/[^\/]+\/blogs\/([^\/]+)$/)
+    const categoryId = categoryPathMatch ? categoryPathMatch[1] : null
     
-    let baseHref = categoryId ? `/${locale}/blogs/${categoryId}` : `/${locale}/blogs`
+    let baseHref = categoryId ? `/blogs/${categoryId}` : `/blogs`
     const keyword = searchParams?.get('keyword') ?? ""
 
     if (keyword) {

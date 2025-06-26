@@ -4,11 +4,11 @@ import type { FooterNavItem } from "@/types/footer";
 export const getFooterNavItems = (locale: string): FooterNavItem[] => [
   {
     name: 'Home',
-    href: `/${locale}/blogs`,
+    href: '/blogs',
   },
   {
     name: 'About',
-    href: `/${locale}/about`,
+    href: '/about',
   },
   {
     name: 'Contact',
@@ -22,11 +22,11 @@ export const getFooterNavItems = (locale: string): FooterNavItem[] => [
   },
   {
     name: "RSS",
-    href: `/${locale}/feed`,
+    href: "/feed",
   },
   {
     name: "llms.txt",
-    href: `/${locale}/docs/llms.txt`,
+    href: "/docs/llms.txt",
   }
 ] as const;
 
