@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Kosugi_Maru } from "next/font/google"
 import { ViewTransitions } from 'next-view-transitions'
 import NextTopLoader from "nextjs-toploader";
-import { headers } from 'next/headers';
 import { routing } from '@/i18n/routing'
 
 import ClientLayout from "@/components/ClientLayout";
@@ -22,14 +21,20 @@ export const metadata: Metadata = {
   }
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // next-intlからlocaleを取得
-  const headersList = headers();
-  const locale = headersList.get('x-next-intl-locale') || routing.defaultLocale;
+  // 本番環境では静的レンダリングを維持するため、headers()を使わない
+  let locale: string = routing.defaultLocale;
+  
+  // 開発環境でのみ動的なlocale取得を行う
+  if (process.env.NODE_ENV === 'development') {
+    const { headers } = await import('next/headers');
+    const headersList = headers();
+    locale = headersList.get('x-next-intl-locale') || routing.defaultLocale;
+  }
 
   return (
     <ViewTransitions>
