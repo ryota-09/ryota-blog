@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cookies, draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
 import ArticleBody from "@/components/ArticleBody";
@@ -10,6 +9,12 @@ import type { BlogsContentType } from "@/types/microcms";
 import JsonLD from "@/components/Head/JsonLD";
 import RelatedContentList from "@/components/RelatedContentList";
 import { locales } from '@/i18n/config';
+
+// キャッシュ設定: 24時間のISR（Incremental Static Regeneration）
+export const revalidate = 86400; // 24時間
+
+// 本番環境では静的生成を強制
+export const dynamic = process.env.NODE_ENV === 'production' ? 'force-static' : 'auto';
 
 export async function generateStaticParams() {
   const params = [];
@@ -61,11 +66,23 @@ type PageProps = {
 const Page = async ({ params }: PageProps) => {
   const blogId = params.blogId;
   const categoryParam = params.category;
-  const { isEnabled } = draftMode();
-  const currentCookies = cookies();
-  const draftKey = currentCookies.get('draftKey')?.value;
-
+  
   let data: BlogsContentType;
+  let isEnabled = false;
+  let draftKey: string | undefined;
+
+  // 開発環境でのみドラフトモードを有効化
+  if (process.env.NODE_ENV === 'development') {
+    const { draftMode, cookies } = await import('next/headers');
+    const draftModeResult = draftMode();
+    isEnabled = draftModeResult.isEnabled;
+    
+    if (isEnabled) {
+      const currentCookies = cookies();
+      draftKey = currentCookies.get('draftKey')?.value;
+    }
+  }
+
   try {
     if (isEnabled && draftKey) {
       data = await getBlogByIdByLocale(params.locale, blogId, { draftKey: draftKey });
