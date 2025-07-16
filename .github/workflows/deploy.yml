@@ -124,13 +124,15 @@ jobs:
           echo "AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID" >> $GITHUB_OUTPUT
           echo "検出されたAWSアカウントID: $AWS_ACCOUNT_ID"
           
-          # App Runnerサービス一覧を取得（最新のサービスを使用）
+          # App Runnerサービス一覧を取得（ryota-blog-prdサービスを使用）
           SERVICE_ARN=$(aws apprunner list-services \
-            --query 'ServiceSummaryList[0].ServiceArn' \
+            --query 'ServiceSummaryList[?ServiceName==`ryota-blog-prd`].ServiceArn' \
             --output text)
           
+          # ryota-blog-prdサービスが見つからない場合のエラーメッセージを改善
           if [ "$SERVICE_ARN" = "None" ] || [ -z "$SERVICE_ARN" ]; then
-            echo "❌ App Runnerサービスが見つかりません"
+            echo "❌ ryota-blog-prdサービスが見つかりません。利用可能なサービス一覧:"
+            aws apprunner list-services --query 'ServiceSummaryList[*].ServiceName' --output text
             exit 1
           fi
           
