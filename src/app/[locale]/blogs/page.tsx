@@ -20,6 +20,9 @@ import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import type { MappedKeyLiteralType } from "@/types/microcms";
 import type { BlogTypeKeyLIteralType } from "@/types";
 
+// キャッシュ設定: 1時間のISR
+export const revalidate = 3600; // 1時間
+
 interface PageProps {
   params: {
     locale: string;
