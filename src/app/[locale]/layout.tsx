@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
+import Script from 'next/script';
 
 import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 import { baseURL, gaId, gtmId } from "@/config";
@@ -43,10 +44,19 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <NextIntlClientProvider messages={messages}>
-      {children}
-      <GoogleTagManager gtmId={gtmId} />
-      <GoogleAnalytics gaId={gaId} />
-    </NextIntlClientProvider>
+    <>
+      <Script
+        id="set-lang"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `document.documentElement.lang = '${locale}'`
+        }}
+      />
+      <NextIntlClientProvider messages={messages}>
+        {children}
+        <GoogleTagManager gtmId={gtmId} />
+        <GoogleAnalytics gaId={gaId} />
+      </NextIntlClientProvider>
+    </>
   );
 }
