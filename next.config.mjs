@@ -22,7 +22,7 @@ const nextConfig = {
         has: [
           {
             type: 'query',
-            key: 'rsc',
+            key: '_rsc',
           },
         ],
         headers: [
