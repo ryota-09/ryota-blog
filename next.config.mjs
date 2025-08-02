@@ -17,13 +17,18 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // RSCリクエストの識別（_rscクエリパラメータ）
+        // RSCリクエストの識別（_rscクエリパラメータ + Acceptヘッダー）
         source: '/:path*',
         has: [
           {
             type: 'query',
             key: '_rsc',
           },
+          {
+            type: 'header',
+            key: 'accept',
+            value: '.*text/x-component.*'
+          }
         ],
         headers: [
           {
