@@ -83,6 +83,8 @@ jobs:
           NEXT_PUBLIC_GUEST_ROLE_ARN: ${{ secrets.NEXT_PUBLIC_GUEST_ROLE_ARN }}
           NEXT_PUBLIC_IDENTITY_POOL_ID: ${{ secrets.NEXT_PUBLIC_IDENTITY_POOL_ID }}
           NEXT_PUBLIC_APPLICATION_ID: ${{ secrets.NEXT_PUBLIC_APPLICATION_ID }}
+          NEXT_PUBLIC_GTM_ID: ${{ secrets.NEXT_PUBLIC_GTM_ID }}
+          NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
         with:
           file: ./Dockerfile
           context: .
@@ -94,6 +96,8 @@ jobs:
             "NEXT_PUBLIC_GUEST_ROLE_ARN=${{ secrets.NEXT_PUBLIC_GUEST_ROLE_ARN }}"
             "NEXT_PUBLIC_IDENTITY_POOL_ID=${{ secrets.NEXT_PUBLIC_IDENTITY_POOL_ID }}"
             "NEXT_PUBLIC_APPLICATION_ID=${{ secrets.NEXT_PUBLIC_APPLICATION_ID }}"
+            "NEXT_PUBLIC_GTM_ID=${{ secrets.NEXT_PUBLIC_GTM_ID }}"
+            "NEXT_PUBLIC_GA_ID=${{ secrets.NEXT_PUBLIC_GA_ID }}"
           provenance: false
           tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ steps.set-tag.outputs.tag }}
           cache-from: type=gha
