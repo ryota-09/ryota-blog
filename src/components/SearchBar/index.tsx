@@ -28,7 +28,6 @@ const SearchBar = () => {
 
     if (!keyword) {
       router.push(categoryId ? `/${locale}/blogs/${categoryId}` : `/${locale}/blogs`)
-      router.refresh()
       return
     }
 
@@ -37,13 +36,11 @@ const SearchBar = () => {
     if (categoryId) {
       formRef.current?.reset()
       router.push(`/${locale}/blogs/${categoryId}?keyword=${escapedKeyword}`)
-      router.refresh()
       return
     }
 
     formRef.current?.reset()
     router.push(`/${locale}/blogs?keyword=${escapedKeyword}`)
-    router.refresh()
   }
 
   return (

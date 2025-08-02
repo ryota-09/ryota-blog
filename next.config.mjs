@@ -14,30 +14,31 @@ const nextConfig = {
     deviceSizes: [640, 768, 1024, 1280, 1536],
     imageSizes: [16, 32, 48, 64, 96],
   },
-  async headers() {
-    return [
-      {
-        // RSCリクエストの識別（_rscクエリパラメータ）
-        source: '/:path*',
-        has: [
-          {
-            type: 'query',
-            key: '_rsc',
-          },
-        ],
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'text/x-component; charset=utf-8'
-          },
-          {
-            key: 'Cache-Control',
-            value: 'no-store'
-          }
-        ],
-      },
-    ];
-  },
+  // NOTE: RSCペイロード問題解決のため一時的にheaders設定を無効化
+  // async headers() {
+  //   return [
+  //     {
+  //       // RSCリクエストの識別（_rscクエリパラメータ）
+  //       source: '/:path*',
+  //       has: [
+  //         {
+  //           type: 'query',
+  //           key: '_rsc',
+  //         },
+  //       ],
+  //       headers: [
+  //         {
+  //           key: 'Content-Type',
+  //           value: 'text/x-component; charset=utf-8'
+  //         },
+  //         {
+  //           key: 'Cache-Control',
+  //           value: 'no-store'
+  //         }
+  //       ],
+  //     },
+  //   ];
+  // },
   async redirects() {
     return [
       // Redirect /blogs/page to /blogs
