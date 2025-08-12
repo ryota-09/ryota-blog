@@ -27,7 +27,7 @@ const nextConfig = {
           {
             type: 'header',
             key: 'accept',
-            value: '.*text/x-component.*'
+            value: '^text/x-component.*'
           }
         ],
         headers: [
