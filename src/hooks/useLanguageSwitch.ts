@@ -21,7 +21,7 @@ export const useLanguageSwitch = () => {
     try {
       const newPath = generateLocalePath(pathname, locale, targetLocale);
       saveLocaleToCookie(targetLocale);
-      router.push(newPath);
+      router.replace(newPath);
       setIsOpen(false);
     } catch (error) {
       console.error("言語切り替えに失敗しました:", error);
