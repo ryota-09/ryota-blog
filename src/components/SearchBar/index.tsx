@@ -27,7 +27,7 @@ const SearchBar = () => {
     const categoryId = categoryPathMatch ? categoryPathMatch[1] : null
 
     if (!keyword) {
-      router.push(categoryId ? `/${locale}/blogs/${categoryId}` : `/${locale}/blogs`)
+      router.replace(categoryId ? `/${locale}/blogs/${categoryId}` : `/${locale}/blogs`)
       return
     }
 
@@ -35,12 +35,12 @@ const SearchBar = () => {
 
     if (categoryId) {
       formRef.current?.reset()
-      router.push(`/${locale}/blogs/${categoryId}?keyword=${escapedKeyword}`)
+      router.replace(`/${locale}/blogs/${categoryId}?keyword=${escapedKeyword}`)
       return
     }
 
     formRef.current?.reset()
-    router.push(`/${locale}/blogs?keyword=${escapedKeyword}`)
+    router.replace(`/${locale}/blogs?keyword=${escapedKeyword}`)
   }
 
   return (
