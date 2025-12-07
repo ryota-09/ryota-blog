@@ -14,17 +14,20 @@ export const metadata: Metadata = {
   metadataBase: new URL(baseURL)
 };
 
+// Next.js 16では、Layout/Pageコンポーネントのparamsは非同期になった
 interface BlogLayoutProps {
   children: React.ReactNode;
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 }
 
-export default function BlogListLayout({
+export default async function BlogListLayout({
   children,
-  params: { locale }
+  params
 }: BlogLayoutProps) {
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { locale } = await params;
   return (
     <GlobalStateProvider>
       <Header locale={locale} />

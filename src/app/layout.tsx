@@ -29,7 +29,7 @@ export default function RootLayout({
   // locale は [locale] セグメントから自動的に渡される
   return (
     <ViewTransitions>
-      <html>
+      <html suppressHydrationWarning>
         <PreloadResources />
         <ClientLayout>
           <body className={`${KosugiMaru.className} bg-[#eee] dark:bg-[#333] flex flex-col min-h-screen`}>

@@ -30,11 +30,14 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(
-  { params, searchParams }: { params: { locale: string; category: string }, searchParams: { [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType, [PAGE_QUERY]: string, [KEYWORD_QUERY]: string } }
+  { params, searchParams }: { params: Promise<{ locale: string; category: string }>, searchParams: Promise<{ [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType, [PAGE_QUERY]: string, [KEYWORD_QUERY]: string }> }
 ): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale, namespace: 'blog' });
-  const tCategories = await getTranslations({ locale: params.locale, namespace: 'categories' });
-  const categoryName = CATEGORY_MAPED_NAME[params.category];
+  // Next.js 16では、paramsとsearchParamsを非同期で取得する必要がある
+  const { locale, category } = await params;
+  const resolvedSearchParams = await searchParams;
+  const t = await getTranslations({ locale, namespace: 'blog' });
+  const tCategories = await getTranslations({ locale, namespace: 'categories' });
+  const categoryName = CATEGORY_MAPED_NAME[category];
   
   if (!categoryName) {
     notFound();
@@ -44,15 +47,15 @@ export async function generateMetadata(
   let translatedCategoryName;
   try {
     // TypeScriptエラーを回避するために型アサーション
-    translatedCategoryName = (tCategories as any)(params.category);
+    translatedCategoryName = (tCategories as any)(category);
   } catch {
     // 翻訳が見つからない場合は元の値を使用
     translatedCategoryName = categoryName;
   }
 
-  const blogType = searchParams.blogType || "blogs";
-  const page = searchParams.page || null;
-  const keyword = searchParams.keyword || null;
+  const blogType = resolvedSearchParams.blogType || "blogs";
+  const page = resolvedSearchParams.page || null;
+  const keyword = resolvedSearchParams.keyword || null;
 
   if (blogType === "zenn") {
     return {
@@ -86,30 +89,33 @@ export async function generateMetadata(
 }
 
 type PageProps = {
-  params: {
+  params: Promise<{
     locale: string;
     category: string;
-  };
-  searchParams: { 
-    [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType, 
-    [PAGE_QUERY]: string, 
-    [KEYWORD_QUERY]: string 
-  };
+  }>;
+  searchParams: Promise<{
+    [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType,
+    [PAGE_QUERY]: string,
+    [KEYWORD_QUERY]: string
+  }>;
 };
 
-const Page = ({ params, searchParams }: PageProps) => {
-  const categoryName = CATEGORY_MAPED_NAME[params.category];
-  
+const Page = async ({ params, searchParams }: PageProps) => {
+  // Next.js 16では、paramsとsearchParamsを非同期で取得する必要がある
+  const { locale, category } = await params;
+  const resolvedSearchParams = await searchParams;
+  const categoryName = CATEGORY_MAPED_NAME[category];
+
   if (!categoryName) {
     notFound();
   }
 
-  const keyword = searchParams[KEYWORD_QUERY];
-  const blogType = searchParams[BLOG_TYPE_QUERY] || "blogs";
-  const page = searchParams[PAGE_QUERY] || "1";
+  const keyword = resolvedSearchParams[KEYWORD_QUERY];
+  const blogType = resolvedSearchParams[BLOG_TYPE_QUERY] || "blogs";
+  const page = resolvedSearchParams[PAGE_QUERY] || "1";
 
   const modifiedSearchParams = {
-    ...searchParams,
+    ...resolvedSearchParams,
     [CATEGORY_QUERY]: categoryName
   };
 
@@ -127,15 +133,15 @@ const Page = ({ params, searchParams }: PageProps) => {
           </div>
           {blogType === "zenn"
             ?
-            <ZennArticleList locale={params.locale} />
+            <ZennArticleList locale={locale} />
             :
             <Suspense fallback={<Skelton />}>
-              <ArticleList query={query} blogType={blogType} page={page} basePath={`/${params.locale}/blogs/${params.category}`} locale={params.locale} />
+              <ArticleList query={query} blogType={blogType} page={page} basePath={`/${locale}/blogs/${category}`} locale={locale} />
             </Suspense>
           }
         </div>
       </div>
-      <SideNav locale={params.locale} />
+      <SideNav locale={locale} />
     </>
   );
 };
