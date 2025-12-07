@@ -8,14 +8,17 @@ import Script from 'next/script';
 import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 import { baseURL, gaId, gtmId } from "@/config";
 
+// Next.js 16では、Layout/Pageコンポーネントのparamsは非同期になった
 type LocaleLayoutProps = {
   children: React.ReactNode;
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 };
 
-export async function generateMetadata({ params: { locale } }: LocaleLayoutProps): Promise<Metadata> {
+export async function generateMetadata({ params }: LocaleLayoutProps): Promise<Metadata> {
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'metadata' });
   
   return {
@@ -35,8 +38,10 @@ export async function generateMetadata({ params: { locale } }: LocaleLayoutProps
 
 export default async function LocaleLayout({
   children,
-  params: { locale }
+  params
 }: LocaleLayoutProps) {
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { locale } = await params;
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }

@@ -2,8 +2,9 @@ import metaFetcher from 'meta-fetcher';
 import { unstable_cache } from 'next/cache';
 import EmbeddedCard from '@/components/EmbeddedCard';
 
-const Page = async ({ searchParams }: { searchParams: { url: string } }) => {
-  const url = searchParams.url
+const Page = async ({ searchParams }: { searchParams: Promise<{ url: string }> }) => {
+  // Next.js 16では、searchParamsを非同期で取得する必要がある
+  const { url } = await searchParams;
   const metadata = await unstable_cache((url: string) => metaFetcher(url), [url], { revalidate: 24 * 60 * 60 })(url)
   return (
     <main className='w-full h-full'>

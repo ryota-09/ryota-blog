@@ -34,10 +34,11 @@ interface LlmsTxtData {
   categories: CategoriesContentType[];
 }
 
+// Next.js 16では、Route Handlerのparamsは非同期になった
 interface RouteContext {
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 }
 
 /**
@@ -230,7 +231,8 @@ function createErrorResponse(error: unknown): NextResponse {
  * llms.txt APIエンドポイント
  */
 export async function GET(request: Request, { params }: RouteContext): Promise<NextResponse> {
-  const { locale } = params;
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { locale } = await params;
   
   try {
     console.log(`Starting llms.txt generation for locale: ${locale}...`);

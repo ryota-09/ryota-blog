@@ -6,12 +6,14 @@ export const metadata: Metadata = {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 }
 
-const Page = ({ params: { locale } }: PageProps) => {
+const Page = async ({ params }: PageProps) => {
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { locale } = await params;
   redirect(`/${locale}/blogs`)
 }
 export default Page

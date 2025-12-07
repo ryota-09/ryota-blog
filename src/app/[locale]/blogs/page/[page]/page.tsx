@@ -34,46 +34,49 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(
-  { params }: { params: { locale: string; page: string } }
+  { params }: { params: Promise<{ locale: string; page: string }> }
 ): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale, namespace: 'blog' });
-  const page = params.page;
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { locale, page } = await params;
+  const t = await getTranslations({ locale, namespace: 'blog' });
   
   return {
     title: `${t('recentPosts')} - ${t('page')} ${page}`,
     description: `${t('recentPosts')} - ${t('page')} ${page}`,
     robots: "noindex",
     alternates: {
-      canonical: `/${params.locale}/blogs/page/${page}`,
+      canonical: `/${locale}/blogs/page/${page}`,
       languages: Object.fromEntries(
-        locales.map((locale) => [
-          locale,
-          `/${locale}/blogs/page/${page}`
+        locales.map((loc) => [
+          loc,
+          `/${loc}/blogs/page/${page}`
         ])
       )
     }
   };
 }
 
-const Page = async ({ params }: { params: { locale: string; page: string } }) => {
-  const pageNum = parseInt(params.page);
-  
+const Page = async ({ params }: { params: Promise<{ locale: string; page: string }> }) => {
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { locale, page } = await params;
+  const pageNum = parseInt(page);
+
   // ページ番号の検証
   if (isNaN(pageNum) || pageNum < 2) {
     notFound();
   }
-  
+
   // ページが存在するかチェック
-  const data = await getBlogListByLocale(params.locale, { limit: 1 });
+  const data = await getBlogListByLocale(locale, { limit: 1 });
   const totalPages = Math.ceil(data.totalCount / PER_PAGE);
-  
+
   if (pageNum > totalPages) {
     notFound();
   }
 
   const blogType = "blogs";
-  const query: MicroCMSQueries = generateQuery({ 
-    page: params.page,
+  const query: MicroCMSQueries = generateQuery({
+    page,
     category: "",
     keyword: ""
   });
@@ -90,11 +93,11 @@ const Page = async ({ params }: { params: { locale: string; page: string } }) =>
             </div>
           </div>
           <Suspense fallback={<Skelton />}>
-            <ArticleList query={query} blogType={blogType} page={params.page} basePath={`/${params.locale}/blogs`} locale={params.locale} />
+            <ArticleList query={query} blogType={blogType} page={page} basePath={`/${locale}/blogs`} locale={locale} />
           </Suspense>
         </div>
       </div>
-      <SideNav locale={params.locale} />
+      <SideNav locale={locale} />
     </>
   );
 };

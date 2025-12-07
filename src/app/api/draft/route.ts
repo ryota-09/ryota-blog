@@ -10,8 +10,11 @@ export async function GET(request: Request) {
     return redirect('/404')
   }
 
-  draftMode().enable()
-  cookies().set('draftKey', draftKey, { path: '/', httpOnly: true });
+  // Next.js 16では、draftMode()とcookies()も非同期になった
+  const draft = await draftMode();
+  draft.enable();
+  const cookiesStore = await cookies();
+  cookiesStore.set('draftKey', draftKey, { path: '/', httpOnly: true });
 
   redirect(`/blogs/${contentId}`)
 }

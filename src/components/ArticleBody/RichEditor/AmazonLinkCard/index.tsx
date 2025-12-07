@@ -1,3 +1,4 @@
+"use client"
 import { amazonLinkCardOptions } from "@/components/ArticleBody/RichEditor/ReplaceUiParts.lib";
 import parser from "html-react-parser";
 

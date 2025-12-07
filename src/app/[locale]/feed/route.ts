@@ -8,14 +8,16 @@ import { getTranslations } from 'next-intl/server';
 // export const revalidate = 60 * 60 * 24
 export const revalidate = 86400;
 
+// Next.js 16では、Route Handlerのparamsは非同期になった
 interface RouteContext {
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 }
 
 export async function GET(request: Request, { params }: RouteContext) {
-  const { locale } = params;
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { locale } = await params;
   const buildDate = new Date();
   
   // 翻訳を取得
