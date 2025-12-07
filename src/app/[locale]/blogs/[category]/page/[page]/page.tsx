@@ -47,12 +47,13 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(
-  { params }: { params: { locale: string, category: string, page: string } }
+  { params }: { params: Promise<{ locale: string, category: string, page: string }> }
 ): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale, namespace: 'blog' });
-  const tCategories = await getTranslations({ locale: params.locale, namespace: 'categories' });
-  const categoryName = CATEGORY_MAPED_NAME[params.category];
-  const page = params.page;
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { locale, category, page } = await params;
+  const t = await getTranslations({ locale, namespace: 'blog' });
+  const tCategories = await getTranslations({ locale, namespace: 'categories' });
+  const categoryName = CATEGORY_MAPED_NAME[category];
   
   if (!categoryName) {
     notFound();
@@ -62,7 +63,7 @@ export async function generateMetadata(
   let translatedCategoryName;
   try {
     // TypeScriptエラーを回避するために型アサーション
-    translatedCategoryName = (tCategories as any)(params.category);
+    translatedCategoryName = (tCategories as any)(category);
   } catch {
     // 翻訳が見つからない場合は元の値を使用
     translatedCategoryName = categoryName;
@@ -73,11 +74,11 @@ export async function generateMetadata(
     description: `${translatedCategoryName} - ${t('page')} ${page}`,
     robots: "noindex",
     alternates: {
-      canonical: `/${params.locale}/blogs/${params.category}/page/${page}`,
+      canonical: `/${locale}/blogs/${category}/page/${page}`,
       languages: Object.fromEntries(
-        locales.map((locale) => [
-          locale,
-          `/${locale}/blogs/${params.category}/page/${page}`
+        locales.map((loc) => [
+          loc,
+          `/${loc}/blogs/${category}/page/${page}`
         ])
       )
     }
@@ -85,42 +86,44 @@ export async function generateMetadata(
 }
 
 type PageProps = {
-  params: {
+  params: Promise<{
     locale: string;
     category: string;
     page: string;
-  };
+  }>;
 };
 
 const Page = async ({ params }: PageProps) => {
-  const categoryName = CATEGORY_MAPED_NAME[params.category];
-  const pageNum = parseInt(params.page);
-  
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { locale, category, page } = await params;
+  const categoryName = CATEGORY_MAPED_NAME[category];
+  const pageNum = parseInt(page);
+
   if (!categoryName) {
     notFound();
   }
-  
+
   // ページ番号のバリデーション
   if (isNaN(pageNum) || pageNum < 2) {
     notFound();
   }
-  
+
   // このカテゴリでページが存在するかチェック
   const checkQuery: MicroCMSQueries = {
     limit: 1,
-    filters: `category[contains]${params.category}`
+    filters: `category[contains]${category}`
   };
-  const data = await getBlogListByLocale(params.locale, checkQuery);
+  const data = await getBlogListByLocale(locale, checkQuery);
   const totalPages = Math.ceil(data.totalCount / PER_PAGE);
-  
+
   if (pageNum > totalPages) {
     notFound();
   }
 
   const blogType = "blogs";
-  const query: MicroCMSQueries = generateQuery({ 
-    page: params.page,
-    category: params.category,
+  const query: MicroCMSQueries = generateQuery({
+    page,
+    category,
     keyword: ""
   });
 
@@ -137,17 +140,17 @@ const Page = async ({ params }: PageProps) => {
             <SearchStateCard category={categoryName} keyword={""} />
           </div>
           <Suspense fallback={<Skelton />}>
-            <ArticleList 
-              query={query} 
-              blogType={blogType} 
-              page={params.page} 
-              basePath={`/${params.locale}/blogs/${params.category}`}
-              locale={params.locale}
+            <ArticleList
+              query={query}
+              blogType={blogType}
+              page={page}
+              basePath={`/${locale}/blogs/${category}`}
+              locale={locale}
             />
           </Suspense>
         </div>
       </div>
-      <SideNav locale={params.locale} />
+      <SideNav locale={locale} />
     </>
   );
 };

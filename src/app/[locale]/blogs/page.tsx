@@ -24,31 +24,34 @@ import type { BlogTypeKeyLIteralType } from "@/types";
 export const revalidate = 3600; // 1時間
 
 interface PageProps {
-  params: {
+  params: Promise<{
     locale: string;
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType;
     [PAGE_QUERY]: string;
     [CATEGORY_QUERY]: MappedKeyLiteralType;
     [KEYWORD_QUERY]: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({
-  params: { locale },
+  params,
   searchParams,
 }: PageProps): Promise<Metadata> {
+  // Next.js 16では、paramsとsearchParamsを非同期で取得する必要がある
+  const { locale } = await params;
+  const resolvedSearchParams = await searchParams;
   const t = await getTranslations({ locale, namespace: "blog" });
   const tMeta = await getTranslations({ locale, namespace: "metadata" });
   const tCategories = await getTranslations({
     locale,
     namespace: "categories",
   });
-  const blogType = searchParams.blogType || "blogs";
-  const page = searchParams.page || null;
-  const category = searchParams.category || null;
-  const keyword = searchParams.keyword || null;
+  const blogType = resolvedSearchParams.blogType || "blogs";
+  const page = resolvedSearchParams.page || null;
+  const category = resolvedSearchParams.category || null;
+  const keyword = resolvedSearchParams.keyword || null;
 
   // NOTE: ?blogType=zenn にアクセスした場合
   if (blogType === "zenn") {
@@ -107,13 +110,16 @@ export async function generateMetadata({
   };
 }
 
-const Page = ({ params: { locale }, searchParams }: PageProps) => {
-  const category = searchParams[CATEGORY_QUERY];
-  const keyword = searchParams[KEYWORD_QUERY];
-  const blogType = searchParams[BLOG_TYPE_QUERY] || "blogs";
-  const page = searchParams[PAGE_QUERY] || "1";
+const Page = async ({ params, searchParams }: PageProps) => {
+  // Next.js 16では、paramsとsearchParamsを非同期で取得する必要がある
+  const { locale } = await params;
+  const resolvedSearchParams = await searchParams;
+  const category = resolvedSearchParams[CATEGORY_QUERY];
+  const keyword = resolvedSearchParams[KEYWORD_QUERY];
+  const blogType = resolvedSearchParams[BLOG_TYPE_QUERY] || "blogs";
+  const page = resolvedSearchParams[PAGE_QUERY] || "1";
 
-  const query: MicroCMSQueries = generateQuery(searchParams);
+  const query: MicroCMSQueries = generateQuery(resolvedSearchParams);
 
   return (
     <>

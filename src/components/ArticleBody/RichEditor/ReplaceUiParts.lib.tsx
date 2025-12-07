@@ -1,5 +1,4 @@
 import { DOMNode, Element, attributesToProps, domToReact, HTMLReactParserOptions } from "html-react-parser";
-import dynamic from "next/dynamic";
 
 import CustomH3 from "@/components/ArticleBody/RichEditor/CustomUI/CustomH3";
 import CustomH2 from "@/components/ArticleBody/RichEditor/CustomUI/CustomH2";
@@ -23,7 +22,9 @@ import PopupModal from "@/components/UiParts/PopupModal";
 import CustomU from "@/components/ArticleBody/RichEditor/CustomUI/CustomU";
 import CopyableText from "@/components/ArticleBody/RichEditor/CopyableText";
 
-const TwitterCard = dynamic(() => import("@/components/ArticleBody/RichEditor/TwitterCard"), { ssr: false });
+// Next.js 16では、Client Componentに対してssr: falseを使用できない
+// TwitterCardは"use client"でマークされているため、通常のimportに変更
+import TwitterCard from "@/components/ArticleBody/RichEditor/TwitterCard";
 
 const isElement = (domNode: any): domNode is Element => {
   const isTag = ['tag', 'script'].includes(domNode.type);

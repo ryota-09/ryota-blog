@@ -14,10 +14,10 @@ import { calcDiffYears } from "@/util";
 import InfoYearsCard from "@/components/UiParts/InfoYearsCard";
 import CategoryTag from "./CategoryTag";
 import LocaleAwareShare from "./LocaleAwareShare";
-import dynamic from "next/dynamic";
-
-const HTMLArea = dynamic(() => import('@/components/ArticleBody/RichEditor/HTMLArea'), { ssr: false });
-const AmazonLinkCard = dynamic(() => import('@/components/ArticleBody/RichEditor/AmazonLinkCard'), { ssr: false });
+// Next.js 16では、Client Componentに対してssr: falseを使用できない
+// 各コンポーネントは"use client"でマークされているため、通常のimportに変更
+import HTMLArea from '@/components/ArticleBody/RichEditor/HTMLArea';
+import AmazonLinkCard from '@/components/ArticleBody/RichEditor/AmazonLinkCard';
 
 type ArticleBodyProps = {
   data: BlogsContentType

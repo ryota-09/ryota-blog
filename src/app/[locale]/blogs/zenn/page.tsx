@@ -6,12 +6,14 @@ import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import ZennArticleList from "@/components/ZennArticleList";
 
 interface ZennPageProps {
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 }
 
-export async function generateMetadata({ params: { locale } }: ZennPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: ZennPageProps): Promise<Metadata> {
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'blog' });
   
   return {
@@ -21,7 +23,9 @@ export async function generateMetadata({ params: { locale } }: ZennPageProps): P
   };
 }
 
-const ZennPage = ({ params }: ZennPageProps) => {
+const ZennPage = async ({ params }: ZennPageProps) => {
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { locale } = await params;
   return (
     <>
       <div className="w-full lg:w-[calc(100%_-_300px)] flex flex-col justify-between px-2 md:px-0">
@@ -31,10 +35,10 @@ const ZennPage = ({ params }: ZennPageProps) => {
               <BlogTypeTabs blogType="zenn" />
             </div>
           </div>
-          <ZennArticleList locale={params.locale} />
+          <ZennArticleList locale={locale} />
         </div>
       </div>
-      <SideNav locale={params.locale} />
+      <SideNav locale={locale} />
     </>
   );
 };

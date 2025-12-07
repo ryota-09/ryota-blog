@@ -13,8 +13,9 @@ import { locales } from '@/i18n/config';
 // キャッシュ設定: 24時間のISR（Incremental Static Regeneration）
 export const revalidate = 86400; // 24時間
 
-// 本番環境では静的生成を強制
-export const dynamic = process.env.NODE_ENV === 'production' ? 'force-static' : 'auto';
+// Next.js 16では静的な値のみ許可されるため、force-staticに統一
+// 開発環境でもISRで動作する
+export const dynamic = 'force-static';
 
 export async function generateStaticParams() {
   const params = [];
@@ -35,10 +36,11 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(
-  { params }: { params: { locale: string; category: string; blogId: string } },
+  { params }: { params: Promise<{ locale: string; category: string; blogId: string }> },
 ): Promise<Metadata> {
-  const blogId = params.blogId;
-  const data = await getBlogByIdByLocale(params.locale, blogId, { fields: "title,description,noIndex" });
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { blogId, locale, category } = await params;
+  const data = await getBlogByIdByLocale(locale, blogId, { fields: "title,description,noIndex" });
 
   return {
     title: data.title,
@@ -46,9 +48,9 @@ export async function generateMetadata(
     robots: data.noIndex ? "noindex" : null,
     alternates: {
       languages: Object.fromEntries(
-        locales.map((locale) => [
-          locale,
-          `/${locale}/blogs/${params.category}/${params.blogId}`
+        locales.map((loc) => [
+          loc,
+          `/${loc}/blogs/${category}/${blogId}`
         ])
       )
     }
@@ -56,16 +58,16 @@ export async function generateMetadata(
 }
 
 type PageProps = {
-  params: {
+  params: Promise<{
     locale: string;
     category: string;
     blogId: string;
-  };
+  }>;
 };
 
 const Page = async ({ params }: PageProps) => {
-  const blogId = params.blogId;
-  const categoryParam = params.category;
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { blogId, category: categoryParam, locale } = await params;
   
   let data: BlogsContentType;
   let isEnabled = false;
@@ -74,20 +76,21 @@ const Page = async ({ params }: PageProps) => {
   // 開発環境でのみドラフトモードを有効化
   if (process.env.NODE_ENV === 'development') {
     const { draftMode, cookies } = await import('next/headers');
-    const draftModeResult = draftMode();
+    // Next.js 16では、draftMode()とcookies()も非同期になった
+    const draftModeResult = await draftMode();
     isEnabled = draftModeResult.isEnabled;
-    
+
     if (isEnabled) {
-      const currentCookies = cookies();
+      const currentCookies = await cookies();
       draftKey = currentCookies.get('draftKey')?.value;
     }
   }
 
   try {
     if (isEnabled && draftKey) {
-      data = await getBlogByIdByLocale(params.locale, blogId, { draftKey: draftKey });
+      data = await getBlogByIdByLocale(locale, blogId, { draftKey: draftKey });
     } else {
-      data = await getBlogByIdByLocale(params.locale, blogId);
+      data = await getBlogByIdByLocale(locale, blogId);
     }
   } catch (error) {
     notFound();
@@ -99,12 +102,12 @@ const Page = async ({ params }: PageProps) => {
     notFound();
   }
 
-  const breadcrumbAssets = await generateBreadcrumbAssets(data, params.locale);
+  const breadcrumbAssets = await generateBreadcrumbAssets(data, locale);
   return (
     <div className="max-w-[1028px] mx-auto px-2 md:px-0">
       <BreadcrumbList items={breadcrumbAssets} />
       <article className=" bg-white dark:bg-black border-2 dark:border-gray-600 px-4">
-        <ArticleBody data={data} locale={params.locale} />
+        <ArticleBody data={data} locale={locale} />
       </article>
       {data.relatedContent.length >= 1 && (
         <aside className="my-8">

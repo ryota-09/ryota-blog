@@ -4,12 +4,14 @@ import ImageWithBlur from "@/components/UiParts/ImageWithBlur";
 import { AUTHOR_DESCRIPTION, AUTHOR_DESCRIPTION_EN, AUTHOR_NAME, AUTHOR_NAME_EN } from "@/static/blogs";
 
 interface AboutPageProps {
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 }
 
-const Page = ({ params: { locale } }: AboutPageProps) => {
+const Page = async ({ params }: AboutPageProps) => {
+  // Next.js 16では、paramsを非同期で取得する必要がある
+  const { locale } = await params;
   const authorName = locale === 'en' ? AUTHOR_NAME_EN : AUTHOR_NAME;
   const authorDescription = locale === 'en' ? AUTHOR_DESCRIPTION_EN : AUTHOR_DESCRIPTION;
   
