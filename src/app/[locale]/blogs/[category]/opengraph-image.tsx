@@ -12,23 +12,26 @@ export const size = {
 
 export const contentType = "image/png";
 
-export default async function Image({ params }: { params: { locale: string; category: string } }) {
+export default async function Image({ params }: { params: Promise<{ locale: string; category: string }> }) {
+  // Next.js 16ではparamsがPromiseになるため、awaitで解決
+  const { locale, category } = await params;
+
   const fontData = fs.readFileSync(
     path.join(process.cwd(), "public/KosugiMaru-Regular.ttf"),
   );
-  
+
   // localeに基づいて作者名を選択
-  const authorName = params.locale === 'en' ? AUTHOR_NAME_EN : AUTHOR_NAME;
-  
-  let categoryName = params.category;
-  
+  const authorName = locale === 'en' ? AUTHOR_NAME_EN : AUTHOR_NAME;
+
+  let categoryName = category;
+
   try {
-    const categoryData = await getCategoryById(params.category);
+    const categoryData = await getCategoryById(category);
     // localeに基づいてカテゴリー名を選択
-    categoryName = params.locale === 'en' && categoryData.name_en ? categoryData.name_en : categoryData.name;
+    categoryName = locale === 'en' && categoryData.name_en ? categoryData.name_en : categoryData.name;
   } catch (error) {
     // microCMSから取得できない場合は、CATEGORY_MAPED_NAMEから取得
-    categoryName = CATEGORY_MAPED_NAME[params.category] || params.category;
+    categoryName = CATEGORY_MAPED_NAME[category] || category;
   }
   
   return new ImageResponse(
@@ -65,7 +68,7 @@ export default async function Image({ params }: { params: { locale: string; cate
             fontWeight: "bold",
           }}
         >
-          {params.locale === 'en' ? 'Category' : 'カテゴリー'}
+          {locale === 'en' ? 'Category' : 'カテゴリー'}
         </div>
         <div
           style={{

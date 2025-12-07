@@ -15,17 +15,19 @@ export const contentType = "image/png";
 export default async function Image({
   params,
 }: {
-  params: { locale: string; blogId: string };
+  params: Promise<{ locale: string; blogId: string }>;
 }) {
+  // Next.js 16ではparamsがPromiseになるため、awaitで解決
+  const { locale, blogId } = await params;
+
   const fontData = await fs.readFileSync(
     path.join(process.cwd(), "public/KosugiMaru-Regular.ttf"),
   );
-  
-  // localeに基づいて作者名を選択
-  const authorName = params.locale === 'en' ? AUTHOR_NAME_EN : AUTHOR_NAME;
 
-  const blogId = params.blogId;
-  const data = await getBlogByIdByLocale(params.locale, blogId, { fields: "title" });
+  // localeに基づいて作者名を選択
+  const authorName = locale === 'en' ? AUTHOR_NAME_EN : AUTHOR_NAME;
+
+  const data = await getBlogByIdByLocale(locale, blogId, { fields: "title" });
 
   return new ImageResponse(
     (
