@@ -13,10 +13,12 @@ export const contentType = "image/png";
 export default async function Image({
   params,
 }: {
-  params: { locale: string; blogId: string };
+  params: Promise<{ locale: string; blogId: string }>;
 }) {
-  const blogId = params.blogId;
-  const data = await getBlogByIdByLocale(params.locale, blogId, { fields: "title" });
+  // Next.js 16ではparamsがPromiseになるため、awaitで解決
+  const { locale, blogId } = await params;
+
+  const data = await getBlogByIdByLocale(locale, blogId, { fields: "title" });
   return new ImageResponse(
     (
       <div
