@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Link } from 'next-view-transitions'
 import { useLocale, useTranslations } from 'next-intl';
 
@@ -22,6 +23,7 @@ type ArticleCardProps = {
 }
 
 const ArticleCard = ({ data, index }: ArticleCardProps) => {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const locale = useLocale();
   const t = useTranslations('blog');
   const categoryId = getPrimaryCategoryId(data);
@@ -45,7 +47,14 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
         {data.thumbnail ? (
           <div className="md:flex-shrink-0 md:w-[45%] lg:w-[28%] xl:w-[45%] mt-4 md:mt-2 max-h-[350px] sm:max-h-[300px] md:max-h-auto min-h-[220px] md:min-h-[140px] h-full overflow-hidden flex flex-col justify-center items-center">
             <Link href={blogPath} className='h-full w-full flex-grow flex justify-center items-center'>
-              <figure className="transition-opacity hover:opacity-80">
+              <figure className="transition-opacity hover:opacity-80 relative w-full">
+                {/* スケルトン: 画像の下に配置、読み込み完了後に非表示 */}
+                {!isImageLoaded && (
+                  <div
+                    className="absolute inset-0 -z-10 bg-gray-200 dark:bg-gray-600 animate-pulse"
+                    aria-hidden="true"
+                  />
+                )}
                 <Image
                   src={data.thumbnail.url}
                   alt={data.title}
@@ -56,8 +65,10 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
                     width: '100%',
                     height: 'auto'
                   }}
-                  priority={index === 0}
+                  className={!isImageLoaded ? 'opacity-0 transition-opacity duration-500' : 'opacity-100'}
+                  preload={index === 0}
                   loading={index === 0 ? 'eager' : 'lazy'}
+                  onLoad={() => setIsImageLoaded(true)}
                 />
               </figure>
             </Link>
