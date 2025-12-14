@@ -68,8 +68,8 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
               className="flex h-full w-full flex-grow items-center justify-center"
             >
               <figure className="relative w-full transition-opacity hover:opacity-80">
-                {/* スケルトン: 画像の下に配置、読み込み完了後に非表示 */}
-                {!isImageLoaded && (
+                {/* スケルトン: LCP候補以外の画像のみ表示（LCP候補はフェードインをスキップ） */}
+                {!isLcpCandidate && !isImageLoaded && (
                   <div
                     className="absolute inset-0 -z-10 animate-pulse bg-gray-200 dark:bg-gray-600"
                     aria-hidden="true"
@@ -86,9 +86,12 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
                     height: "auto",
                   }}
                   className={
-                    !isImageLoaded
-                      ? "opacity-0 transition-opacity duration-500"
-                      : "opacity-100"
+                    // LCP候補は常にopacity-100（フェードインによるRender delay回避）
+                    isLcpCandidate
+                      ? "opacity-100"
+                      : !isImageLoaded
+                        ? "opacity-0 transition-opacity duration-500"
+                        : "opacity-100"
                   }
                   onLoad={() => setIsImageLoaded(true)}
                   loading={isLcpCandidate ? "eager" : "lazy"}
