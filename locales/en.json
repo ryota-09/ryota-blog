@@ -31,7 +31,6 @@
     "searchConditions": "Search conditions", 
     "search": "Search",
     "resetSearchConditions": "Reset search conditions",
-    "zennSearchNotSupported": "※ Zenn articles don't support search",
     "showMore": "Show more",
     "oldArticleNotice": "This article was published <years>{diffYear}</years> years ago",
     "requestCorrection": "Request Correction",

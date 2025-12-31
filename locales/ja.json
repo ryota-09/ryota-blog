@@ -32,7 +32,6 @@
     "searchConditions": "検索条件",
     "search": "検索",
     "resetSearchConditions": "検索条件をリセット",
-    "zennSearchNotSupported": "※ Zennの記事は検索非対応",
     "showMore": "もっと見る",
     "oldArticleNotice": "こちらは <years>{diffYear}</years> 年前に公開された記事です",
     "requestCorrection": "修正をリクエストする",
