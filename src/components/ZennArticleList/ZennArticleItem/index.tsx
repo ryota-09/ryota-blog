@@ -5,6 +5,7 @@ type ZennArticleType = {
   link: string;
   title: string;
   date: string;
+  keyword?: string;
 }
 
 const ZennArticleItem = ({ link, title, date }: ZennArticleType) => {

@@ -15,18 +15,22 @@ type SearchStateCardProps = {
    * カテゴリー
    */
   category?: MappedKeyLiteralType | string
+  /**
+   * ブログタイプ (Zennモード時の色変更用)
+   */
+  blogType?: "blogs" | "zenn"
 }
 
-const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
+const SearchStateCard = ({ keyword, category, blogType = "blogs" }: SearchStateCardProps) => {
   const locale = useLocale();
   const t = useTranslations('blog');
   const tCategories = useTranslations('categories');
-  
+
   // カテゴリ表示名を取得
   const getCategoryLabel = (categoryValue: string) => {
     // カテゴリ名からIDを取得（CATEGORY_MAPED_NAMEから渡される場合）
     const categoryId = CATEGORY_MAPED_ID[categoryValue as keyof typeof CATEGORY_MAPED_ID] || categoryValue;
-    
+
     // カテゴリIDが翻訳キーとして存在する場合は翻訳を使用
     try {
       return tCategories(categoryId as any);
@@ -35,7 +39,14 @@ const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
       return categoryValue;
     }
   };
-  
+
+  // Zennモード時の色設定とリンク先
+  const isZennMode = blogType === "zenn"
+  const keywordChipClass = isZennMode
+    ? "text-xs lg:text-md bg-zenn px-3 py-2 text-sm text-white"
+    : "text-xs lg:text-md bg-light dark:bg-secondary px-3 py-2 text-sm text-txt-base dark:text-white"
+  const resetLink = isZennMode ? `/${locale}/blogs/zenn` : `/${locale}/blogs`
+
   return (
     <div className="bg-white dark:bg-black px-3.5 flex flex-grow flex-col lg:flex-row items-center gap-2 lg:gap-10 border-2 border-gray-200 dark:border-gray-600">
       <div className="flex items-center gap-2 w-full lg:w-auto">
@@ -54,12 +65,12 @@ const SearchStateCard = ({ keyword, category }: SearchStateCardProps) => {
           )}
           {keyword && (
             <li data-testid="pw-search-chip-keyword">
-              <Chip classes="text-xs lg:text-md bg-light dark:bg-secondary px-3 py-2 text-sm text-txt-base dark:text-white" label={keyword} />
+              <Chip classes={keywordChipClass} label={keyword} />
             </li>
           )}
         </ul>
         <div className="w-full lg:w-auto text-right" data-testid="pw-reset-search-state">
-          <Link href={`/${locale}/blogs`} className="text-gray-400 text-xs cursor-pointer transition-colors hover:text-gray-700 dark:hover:text-gray-300">{t('resetSearchConditions')}</Link>
+          <Link href={resetLink} className="text-gray-400 text-xs cursor-pointer transition-colors hover:text-gray-700 dark:hover:text-gray-300">{t('resetSearchConditions')}</Link>
         </div>
       </div>
     </div>

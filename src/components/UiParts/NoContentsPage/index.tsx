@@ -4,7 +4,18 @@ import Image from "next/image";
 import BackToTopLink from "./BackToTopLink";
 import { useTranslations } from "next-intl";
 
-const NoContents = () => {
+type NoContentsProps = {
+  /**
+   * 戻り先のパス（localeなし）
+   */
+  returnPath?: string;
+  /**
+   * ブログタイプ（Zennモード時の色変更用）
+   */
+  blogType?: "blogs" | "zenn";
+}
+
+const NoContents = ({ returnPath = "/blogs", blogType = "blogs" }: NoContentsProps) => {
   const t = useTranslations("error");
 
   return (
@@ -26,7 +37,7 @@ const NoContents = () => {
           {t("noContent.message")}
         </p>
         <div className="flex justify-center md:justify-start">
-          <BackToTopLink />
+          <BackToTopLink returnPath={returnPath} blogType={blogType} />
         </div>
       </div>
     </div>
