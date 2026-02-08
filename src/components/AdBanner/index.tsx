@@ -3,6 +3,7 @@
 // Mobile版: ヘッダー下に配置（横型バナー）
 
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 
 const CONTACT_URL =
   "https://docs.google.com/forms/d/1RP2EUWjYvEa2gwFd0bjFurmZxUFCfvxtwxqpm6ggO68/viewform";
@@ -12,7 +13,9 @@ type AdBannerProps = {
 };
 
 
-const AdBanner = ({ variant }: AdBannerProps) => {
+const AdBanner = async ({ variant }: AdBannerProps) => {
+  const t = await getTranslations("adBanner");
+
   if (variant === "sidebar") {
     // PC版サイドバーウィジェット
     return (
@@ -21,7 +24,9 @@ const AdBanner = ({ variant }: AdBannerProps) => {
         target="_blank"
         rel="noopener noreferrer"
         className="block group"
-        aria-label="広告掲載のお問い合わせ"
+        aria-label={t("ariaLabel")}
+        data-gtm-click="ad_banner_cta"
+        data-gtm-variant="sidebar"
       >
         <div
           className="rounded-xl overflow-hidden relative h-[290px]
@@ -41,14 +46,14 @@ const AdBanner = ({ variant }: AdBannerProps) => {
 
               {/* ラベル */}
               <div className="text-[10px] font-semibold tracking-[0.2em] uppercase opacity-70 mb-1">
-                Sponsor
+                {t("sponsorLabel")}
               </div>
 
               {/* タイトル */}
               <h3 className="text-xl font-bold leading-tight mb-2">
-                広告掲載
+                {t("sidebarTitle1")}
                 <br />
-                募集中
+                {t("sidebarTitle2")}
               </h3>
 
               {/* 区切り線 */}
@@ -56,11 +61,7 @@ const AdBanner = ({ variant }: AdBannerProps) => {
 
               {/* 説明文 */}
               <p className="text-[13px] text-white/75 leading-relaxed">
-                当ブログへの広告掲載に
-                <br />
-                ご興味のある方はお気軽に
-                <br />
-                お問い合わせください
+                {t("sidebarDescription")}
               </p>
             </div>
 
@@ -71,7 +72,7 @@ const AdBanner = ({ variant }: AdBannerProps) => {
               border-b border-white/30 group-hover:border-white/60
               pb-0.5 transition-all duration-300 self-start"
             >
-              <span>お問い合わせ</span>
+              <span>{t("sidebarCta")}</span>
             </div>
           </div>
         </div>
@@ -86,7 +87,9 @@ const AdBanner = ({ variant }: AdBannerProps) => {
       target="_blank"
       rel="noopener noreferrer"
       className="block group"
-      aria-label="広告掲載のお問い合わせ"
+      aria-label={t("ariaLabel")}
+      data-gtm-click="ad_banner_cta"
+      data-gtm-variant="banner"
     >
       <div
         className="bg-gradient-to-r from-[#1a5c66] via-primary to-secondary
@@ -99,10 +102,10 @@ const AdBanner = ({ variant }: AdBannerProps) => {
           <Image src="/icons/megaphone.svg" alt="" width={20} height={20} className="flex-shrink-0 opacity-90 brightness-0 invert" />
           <div className="flex items-baseline gap-2">
             <span className="text-sm font-bold tracking-wide">
-              広告掲載募集中
+              {t("bannerTitle")}
             </span>
             <span className="text-[11px] text-white/60 hidden min-[400px]:inline">
-              お気軽にお問い合わせください
+              {t("bannerSubtitle")}
             </span>
           </div>
         </div>
@@ -111,7 +114,7 @@ const AdBanner = ({ variant }: AdBannerProps) => {
           className="relative flex items-center gap-1 text-xs font-medium text-white/80
           group-hover:text-white transition-colors duration-300 flex-shrink-0"
         >
-          <span className="hidden min-[360px]:inline">詳細</span>
+          <span className="hidden min-[360px]:inline">{t("bannerCta")}</span>
         </div>
       </div>
     </a>
