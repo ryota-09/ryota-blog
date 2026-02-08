@@ -72,6 +72,17 @@
       "backToHome": "トップページに戻る"
     }
   },
+  "adBanner": {
+    "ariaLabel": "広告掲載のお問い合わせ",
+    "sponsorLabel": "Sponsor",
+    "sidebarTitle1": "広告掲載",
+    "sidebarTitle2": "募集中",
+    "sidebarDescription": "当ブログへの広告掲載にご興味のある方はお気軽にお問い合わせください",
+    "sidebarCta": "お問い合わせ",
+    "bannerTitle": "広告掲載募集中",
+    "bannerSubtitle": "お気軽にお問い合わせください",
+    "bannerCta": "詳細"
+  },
   "categories": {
     "python": "Python",
     "typescript": "TypeScript", 

@@ -71,6 +71,17 @@
       "backToHome": "Back to Home"
     }
   },
+  "adBanner": {
+    "ariaLabel": "Contact us about advertising",
+    "sponsorLabel": "Sponsor",
+    "sidebarTitle1": "Ad Space",
+    "sidebarTitle2": "Available",
+    "sidebarDescription": "Interested in advertising on this blog? Feel free to contact us.",
+    "sidebarCta": "Contact Us",
+    "bannerTitle": "Ad Space Available",
+    "bannerSubtitle": "Feel free to contact us",
+    "bannerCta": "Details"
+  },
   "categories": {
     "python": "Python",
     "typescript": "TypeScript",
