@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import AdBanner from "@/components/AdBanner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/static/blogs";
@@ -31,6 +32,10 @@ export default async function BlogListLayout({
   return (
     <GlobalStateProvider>
       <Header locale={locale} />
+      {/* Mobile版: ヘッダー下に広告募集バナーを配置 */}
+      <div className="block md:hidden">
+        <AdBanner variant="banner" />
+      </div>
       <main className="bg-[#eee] dark:bg-[#333] flex-grow flex flex-col md:flex-row container mx-auto gap-4 my-4">
         {children}
       </main>
