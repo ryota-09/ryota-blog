@@ -26,6 +26,14 @@
       "bucket_name": "ryota-blog-cache"
     }
   ],
+  // オンデマンドrevalidation用 D1データベース（タグキャッシュ）
+  "d1_databases": [
+    {
+      "binding": "NEXT_TAG_CACHE_D1",
+      "database_name": "ryota-blog-tag-cache",
+      "database_id": "809a6a0c-619e-40bc-9461-6e97782c3d7a"
+    }
+  ],
   // ISRリバリデーション用 Durable Objects
   "durable_objects": {
     "bindings": [
