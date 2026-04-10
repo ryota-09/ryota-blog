@@ -11,11 +11,6 @@ const intlMiddleware = createMiddleware(routing);
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
-  // AWS App Runnerのホスト名をブロック
-  if (request.nextUrl.hostname.includes('awsapprunner')) {
-    return NextResponse.redirect(new URL('/404', request.url))
-  }
-
   // ルートパスを処理 - 保存されたlocale設定またはデフォルトlocaleにリダイレクト
   if (pathname === '/') {
     // Check for preferred locale in cookies
@@ -99,5 +94,5 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   // Match only internationalized pathnames
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+  matcher: ['/((?!api|_next|.*\\..*).*)']
 };

@@ -1,0 +1,44 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ryota-blog",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-04-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public", "enable_request_signal"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  // Worker自身への参照（ISRリバリデーション等に必要）
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "ryota-blog"
+    }
+  ],
+  // 画像最適化にCloudflare Imagesを使用
+  "images": {
+    "binding": "IMAGES"
+  },
+  // ISR用 R2バケット
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "ryota-blog-cache"
+    }
+  ],
+  // ISRリバリデーション用 Durable Objects
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "NEXT_CACHE_DO_QUEUE",
+        "class_name": "DOQueueHandler"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DOQueueHandler"]
+    }
+  ]
+}

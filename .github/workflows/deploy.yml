@@ -1,13 +1,10 @@
-name: Deploy
+name: Deploy (AWS App Runner - DEPRECATED)
 
+# NOTE: Cloudflare Workersへの移行に伴い無効化
+# 新しいデプロイは deploy-cloudflare.yml を使用
+# 移行完了後にこのファイルを削除すること
 on:
-  push:
-    branches:
-      - main
-      - staging
-  # webhookをトリガーにする場合
-  repository_dispatch:
-    types: [posts_update]
+  workflow_dispatch: # 手動実行のみ許可
 
 jobs:
   build:
