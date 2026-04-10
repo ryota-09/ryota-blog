@@ -14,8 +14,10 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "update-rss": "node ./src/static/rss/rss-parser.js",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy:cf": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "preview:stg": "opennextjs-cloudflare build && opennextjs-cloudflare preview --config wrangler.stg.jsonc",
+    "preview:prd": "opennextjs-cloudflare build && opennextjs-cloudflare preview --config wrangler.prd.jsonc",
+    "deploy:stg": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --config wrangler.stg.jsonc",
+    "deploy:prd": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --config wrangler.prd.jsonc",
     "update-lh:desktop": "lhci autorun --config=.desktop-lighthouserc.js",
     "update-lh:mobile": "lhci autorun --config=.mobile-lighthouserc.js && node ./webvitals/update-mobile-vitals.js"
   },

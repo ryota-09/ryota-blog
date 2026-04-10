@@ -2,7 +2,9 @@ name: Deploy to Cloudflare
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - staging
   repository_dispatch:
     types: [posts_update]
 
@@ -22,7 +24,16 @@ jobs:
 
       - run: npm ci
 
-      - name: Build and Deploy to Cloudflare Workers
+      - name: Set deploy environment
+        id: set-env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
+            echo "env=prd" >> $GITHUB_OUTPUT
+          else
+            echo "env=stg" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Deploy to Cloudflare Workers (${{ steps.set-env.outputs.env }})
         env:
           NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
           MICROCMS_SERVICE_DOMAIN: ${{ secrets.MICROCMS_SERVICE_DOMAIN }}
@@ -31,4 +42,4 @@ jobs:
           NEXT_PUBLIC_GTM_ID: ${{ secrets.NEXT_PUBLIC_GTM_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npm run deploy:cf
+        run: npm run deploy:${{ steps.set-env.outputs.env }}

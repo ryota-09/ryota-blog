@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "ryota-blog",
+  "name": "ryota-blog-prd",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-04-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public", "enable_request_signal"],
@@ -12,7 +12,7 @@
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "ryota-blog"
+      "service": "ryota-blog-prd"
     }
   ],
   // 画像最適化にCloudflare Imagesを使用
@@ -23,15 +23,15 @@
   "r2_buckets": [
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "ryota-blog-cache"
+      "bucket_name": "ryota-blog-cache-prd"
     }
   ],
   // オンデマンドrevalidation用 D1データベース（タグキャッシュ）
   "d1_databases": [
     {
       "binding": "NEXT_TAG_CACHE_D1",
-      "database_name": "ryota-blog-tag-cache",
-      "database_id": "809a6a0c-619e-40bc-9461-6e97782c3d7a"
+      "database_name": "ryota-blog-tags-prd",
+      "database_id": "<TODO: prd用D1のdatabase_idを設定>"
     }
   ],
   // ISRリバリデーション用 Durable Objects
