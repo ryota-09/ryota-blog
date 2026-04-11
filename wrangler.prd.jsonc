@@ -31,7 +31,7 @@
     {
       "binding": "NEXT_TAG_CACHE_D1",
       "database_name": "ryota-blog-tags-prd",
-      "database_id": "<TODO: prd用D1のdatabase_idを設定>"
+      "database_id": "1a6b58c7-84ca-4bad-84dc-b665810bf3aa"
     }
   ],
   // ISRリバリデーション用 Durable Objects
