@@ -1,0 +1,3 @@
+NEXTJS_ENV=development
+MICROCMS_SERVICE_DOMAIN=your_domain
+MICROCMS_API_KEY=your_api_key

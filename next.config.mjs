@@ -1,5 +1,12 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 
+// Cloudflare Workersバインディングのローカル開発用初期化
+// R2/DO等のバインディングをローカルで使う場合はコメントを外す
+// import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+// if (process.env.NODE_ENV === "development") {
+//   await initOpenNextCloudflareForDev();
+// }
+
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 // const withBundleAnalyzer = require('@next/bundle-analyzer')({
@@ -15,7 +22,7 @@ const nextConfig = {
     deviceSizes: [640, 768, 1024, 1280, 1536],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 512],
     formats: ['image/webp'], // WebP優先で配信
-    minimumCacheTTL: 31536000, // 1年間のキャッシュ
+    // minimumCacheTTL は Cloudflare Workers 非対応のため削除
   },
   async headers() {
     return [
