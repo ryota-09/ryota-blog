@@ -1,0 +1,52 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ryota-blog-prd",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-04-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public", "enable_request_signal"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  // Worker自身への参照（ISRリバリデーション等に必要）
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "ryota-blog-prd"
+    }
+  ],
+  // 画像最適化にCloudflare Imagesを使用
+  "images": {
+    "binding": "IMAGES"
+  },
+  // ISR用 R2バケット
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "ryota-blog-cache-prd"
+    }
+  ],
+  // オンデマンドrevalidation用 D1データベース（タグキャッシュ）
+  "d1_databases": [
+    {
+      "binding": "NEXT_TAG_CACHE_D1",
+      "database_name": "ryota-blog-tags-prd",
+      "database_id": "<TODO: prd用D1のdatabase_idを設定>"
+    }
+  ],
+  // ISRリバリデーション用 Durable Objects
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "NEXT_CACHE_DO_QUEUE",
+        "class_name": "DOQueueHandler"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DOQueueHandler"]
+    }
+  ]
+}
