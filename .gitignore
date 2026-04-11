@@ -36,6 +36,9 @@ yarn-error.log*
 .wrangler/
 .dev.vars
 
+# storybook
+storybook-static/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
