@@ -24,30 +24,8 @@ const nextConfig = {
     formats: ['image/webp'], // WebP優先で配信
     // minimumCacheTTL は Cloudflare Workers 非対応のため削除
   },
-  async headers() {
-    return [
-      {
-        // RSCリクエストの識別（_rscクエリパラメータ）
-        source: '/:path*',
-        has: [
-          {
-            type: 'query',
-            key: '_rsc',
-          },
-        ],
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'text/x-component; charset=utf-8'
-          },
-          {
-            key: 'Cache-Control',
-            value: 'no-store'
-          }
-        ],
-      },
-    ];
-  },
+  // NOTE: RSCリクエストのContent-TypeはNext.jsが自動設定するため、
+  // カスタムheaders()でのオーバーライドは不要（Cloudflare Workersでリダイレクト時に問題を引き起こすため削除）
   async redirects() {
     return [
       // Redirect /blogs/page to /blogs
