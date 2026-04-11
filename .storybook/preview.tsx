@@ -1,10 +1,10 @@
 import React from "react";
-import { Kosugi_Maru } from "next/font/google";
 import type { Preview } from "@storybook/react";
 
 import "../src/styles/globals.css"
 
-const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"], display: "swap" });
+// next/font/googleはVite環境では使用不可のため、CSS @importで代替
+import "./storybook.css"
 
 const preview: Preview = {
   parameters: {
@@ -17,7 +17,7 @@ const preview: Preview = {
   },
   decorators: [
     (Story) => (
-      <div className={`${KosugiMaru.className}`}>
+      <div style={{ fontFamily: "'Kosugi Maru', sans-serif" }}>
         <Story />
       </div>
     )
