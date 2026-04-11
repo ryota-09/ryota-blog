@@ -24,12 +24,15 @@ const config: StorybookConfig = {
   typescript: {
     reactDocgen: "react-docgen-typescript"
   },
-  // tsconfigのpaths(@/*)をViteで解決するためのエイリアス設定
+  // tsconfigのpaths(@/*)とNext.jsモジュールをViteで解決するためのエイリアス設定
   viteFinal: async (config) => {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
       ...config.resolve.alias,
       "@": path.resolve(__dirname, "../src"),
+      // Next.jsモジュールのモック（Vite環境では動作しないため）
+      "next/image": path.resolve(__dirname, "./mocks/next-image.tsx"),
+      "next/link": path.resolve(__dirname, "./mocks/next-link.tsx"),
     };
     return config;
   },
