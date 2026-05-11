@@ -28,6 +28,20 @@ const nextConfig = {
   // カスタムheaders()でのオーバーライドは不要（Cloudflare Workersでリダイレクト時に問題を引き起こすため削除）
   async redirects() {
     return [
+      // HTTP で到達したリクエストを HTTPS に永続リダイレクト
+      // Cloudflare → Origin 間で http のまま渡されたケースをここで弾く（Search Console の HTTPS 評価対策）
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'header',
+            key: 'x-forwarded-proto',
+            value: 'http',
+          },
+        ],
+        destination: 'https://ryotablog.jp/:path*',
+        permanent: true,
+      },
       // Redirect /blogs/page to /blogs
       {
         source: '/blogs/page',
