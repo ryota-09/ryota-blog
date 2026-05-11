@@ -30,10 +30,8 @@ const nextConfig = {
     return [
       // HTTP で到達したリクエストを HTTPS に永続リダイレクト
       // Cloudflare → Origin 間で http のまま渡されたケースをここで弾く（Search Console の HTTPS 評価対策）
-      // OpenNext (Cloudflare Workers) の path-to-regexp で :path* の 0 個マッチが
-      // 展開されないため root パスは別エントリに分離
       {
-        source: '/',
+        source: '/:path*',
         has: [
           {
             type: 'header',
@@ -41,19 +39,7 @@ const nextConfig = {
             value: 'http',
           },
         ],
-        destination: 'https://ryotablog.jp/',
-        permanent: true,
-      },
-      {
-        source: '/:path+',
-        has: [
-          {
-            type: 'header',
-            key: 'x-forwarded-proto',
-            value: 'http',
-          },
-        ],
-        destination: 'https://ryotablog.jp/:path+',
+        destination: 'https://ryotablog.jp/:path*',
         permanent: true,
       },
       // Redirect /blogs/page to /blogs
