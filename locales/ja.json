@@ -85,7 +85,7 @@
   },
   "categories": {
     "python": "Python",
-    "typescript": "TypeScript", 
+    "typescript": "TypeScript",
     "css": "CSS",
     "next_js": "Next.js",
     "release_notes": "Release Notes",
@@ -102,5 +102,9 @@
     "life_hack": "LifeHack",
     "news": "時事",
     "terraform": "Terraform"
+  },
+  "about": {
+    "pageTitle": "りょた — Software Engineer / フルスタックエンジニア",
+    "pageDescription": "東京の物流スタートアップで、Next.js / TypeScript / AWS を扱うフルスタックエンジニア。教育・SES・物流と3つの業界を渡り歩いてきました。「同じ場所で詰まった人の時間を5分でも短くする」をミッションに、業務で得た知見をブログで発信しています。"
   }
 }
