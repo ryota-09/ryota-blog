@@ -85,7 +85,7 @@
   "categories": {
     "python": "Python",
     "typescript": "TypeScript",
-    "css": "CSS", 
+    "css": "CSS",
     "next_js": "Next.js",
     "release_notes": "Release Notes",
     "aws": "AWS",
@@ -101,5 +101,9 @@
     "life_hack": "LifeHack",
     "news": "News",
     "terraform": "Terraform"
+  },
+  "about": {
+    "pageTitle": "Ryota — Software Engineer / Fullstack",
+    "pageDescription": "Fullstack software engineer at a Tokyo-based logistics startup, working across Next.js, TypeScript, and AWS. Writing about the kind of web development problems that don't fit cleanly in tutorials."
   }
 }

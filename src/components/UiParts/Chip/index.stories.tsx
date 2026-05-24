@@ -16,3 +16,18 @@ export const Default: Story = {
     classes: 'bg-secondary text-white w-12',
   }
 }
+
+export const WithLongLabel: Story = {
+  args: {
+    label: 'これは長いラベルのテストケースです',
+    classes: 'bg-secondary text-white px-3',
+  }
+}
+
+export const NoTruncate: Story = {
+  args: {
+    label: 'GitHub Actions / Terraform / Playwright',
+    classes: 'bg-base-color text-white px-3',
+    noTruncate: true,
+  }
+}

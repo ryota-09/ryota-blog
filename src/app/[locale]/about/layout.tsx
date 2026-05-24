@@ -6,19 +6,37 @@ import { baseURL } from "@/config";
 
 interface AboutLayoutProps {
   children: React.ReactNode;
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 }
 
-export async function generateMetadata({ params: { locale } }: AboutLayoutProps): Promise<Metadata> {
-  const t = await getTranslations({ locale, namespace: 'metadata' });
-  const tNav = await getTranslations({ locale, namespace: 'navigation' });
-  
+export async function generateMetadata({ params }: AboutLayoutProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'about' });
+
   return {
-    title: tNav('about'),
-    description: t('siteDescription'),
-    metadataBase: new URL(baseURL)
+    title: t('pageTitle'),
+    description: t('pageDescription'),
+    metadataBase: new URL(baseURL),
+    alternates: {
+      canonical: `${baseURL}/${locale}/about`,
+      languages: {
+        ja: `${baseURL}/ja/about`,
+        en: `${baseURL}/en/about`,
+      },
+    },
+    openGraph: {
+      url: `${baseURL}/${locale}/about`,
+      title: t('pageTitle'),
+      description: t('pageDescription'),
+      images: [{ url: `${baseURL}/og-image.png`, width: 1200, height: 630 }],
+      type: 'profile',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      images: [`${baseURL}/og-image.png`],
+    },
   };
 }
 
