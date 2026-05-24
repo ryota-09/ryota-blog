@@ -89,3 +89,57 @@ export function getLocalizedCategoryName(category: CategoriesContentType, locale
   // それ以外は日本語名を使用
   return category.name;
 }
+
+/**
+ * 多言語データから現在のロケールに合致する値を取り出す
+ */
+export const pickLocalized = <T,>(value: { ja: T; en: T }, locale: string): T =>
+  locale === "en" ? value.en : value.ja;
+
+/**
+ * "YYYY-MM" を年月の表示用に整形する
+ */
+const formatYearMonth = (yyyyMm: string, locale: string): string => {
+  const [yearStr, monthStr] = yyyyMm.split("-");
+  const year = Number(yearStr);
+  const month = Number(monthStr);
+  if (locale === "en") {
+    const monthsEn = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ];
+    return `${monthsEn[month - 1]} ${year}`;
+  }
+  return `${year}年${month}月`;
+};
+
+/**
+ * キャリアタイムラインの期間表示文字列
+ */
+export const formatPeriod = (
+  period: { start: string; end: string | null },
+  locale: string,
+): string => {
+  const start = formatYearMonth(period.start, locale);
+  if (period.end === null) {
+    return locale === "en" ? `${start} — Present` : `${start} 〜 現在`;
+  }
+  const end = formatYearMonth(period.end, locale);
+  return locale === "en" ? `${start} — ${end}` : `${start} 〜 ${end}`;
+};
+
+/**
+ * OutputEntry の種別ラベル（執筆/登壇/選抜/主催）
+ */
+export const outputKindLabel = (
+  kind: "writing" | "speaking" | "selection" | "organize",
+  locale: string,
+): string => {
+  const labelMap = {
+    writing: { ja: "執筆", en: "Writing" },
+    speaking: { ja: "登壇", en: "Speaking" },
+    selection: { ja: "選抜", en: "Selection" },
+    organize: { ja: "主催", en: "Organize" },
+  };
+  return pickLocalized(labelMap[kind], locale);
+};

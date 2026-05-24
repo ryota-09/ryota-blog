@@ -1,7 +1,8 @@
-import { clsx } from "clsx";
+import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-export const cltw = (...inputs: (string | undefined)[]) => {
+// 条件式（boolean）も受け取れるよう ClassValue で受ける
+export const cltw = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
 }
 
