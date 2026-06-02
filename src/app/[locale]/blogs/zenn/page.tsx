@@ -5,6 +5,7 @@ import SideNav from "@/components/SideNav";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import ZennArticleList from "@/components/ZennArticleList";
 import SearchStateCard from "@/components/SearchStateCard";
+import { buildPageUrl } from "@/lib";
 
 interface ZennPageProps {
   params: Promise<{
@@ -19,11 +20,15 @@ export async function generateMetadata({ params }: ZennPageProps): Promise<Metad
   // Next.js 16では、paramsを非同期で取得する必要がある
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'blog' });
-  
+
+  const zennUrl = buildPageUrl(locale, "blogs", "zenn");
+
   return {
     title: t('zennArticles'),
     description: t('zennArticles'),
-    robots: "noindex"
+    robots: "noindex",
+    alternates: { canonical: zennUrl },
+    openGraph: { url: zennUrl, title: t('zennArticles'), description: t('zennArticles'), siteName: "Ryota-Blog", type: "website" }
   };
 }
 
