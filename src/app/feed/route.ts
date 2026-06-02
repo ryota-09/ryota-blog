@@ -38,7 +38,8 @@ export async function GET() {
     feed.addItem({
       id: blog.id,
       title: blog.title,
-      link: `${baseURL}/blogs/${categoryId}/${blog.id}`,
+      // 実ルーティング（/[locale]/blogs/...）に合わせ、既定ロケール ja 込みのURLにする
+      link: `${baseURL}/ja/blogs/${categoryId}/${blog.id}`,
       description: blog.description,
       date: new Date(blog.publishedAt || blog.updatedAt),
     });

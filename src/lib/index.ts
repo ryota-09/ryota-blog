@@ -4,6 +4,8 @@ import { getTranslations } from 'next-intl/server';
 import type { BreadcrumbItemType, TOCAssetsType } from "@/types";
 import { CATEGORY_MAPED_ID, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE, CATEGORY_MAPED_NAME } from "@/static/blogs";
 import type { MappedKeyLiteralType, BlogsContentType } from "@/types/microcms";
+import { baseURL } from "@/config";
+import { locales } from "@/i18n/config";
 
 export const generateTOCAssets = (html: string) => {
   // 正規表現を使用して<h2>または<h3>タグのidとテキストを抽出
@@ -112,3 +114,14 @@ export const pickHostname = (url: string) => {
   const _url = new URL(url);
   return _url.hostname;
 }
+
+// ロケールとパスセグメントから絶対URLを構築する
+// 例: buildPageUrl('ja', 'blogs', 'programming', 'abc') => https://ryotablog.jp/ja/blogs/programming/abc
+export const buildPageUrl = (locale: string, ...segments: string[]): string => {
+  const path = segments.filter(Boolean).join("/");
+  return `${baseURL}/${locale}${path ? `/${path}` : ""}`;
+}
+
+// 全ロケール分の hreflang(languages) マップを生成する
+export const buildLanguageAlternates = (...segments: string[]): Record<string, string> =>
+  Object.fromEntries(locales.map((loc) => [loc, buildPageUrl(loc, ...segments)]));

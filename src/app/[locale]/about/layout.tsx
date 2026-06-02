@@ -26,16 +26,16 @@ export async function generateMetadata({ params }: AboutLayoutProps): Promise<Me
         en: `${baseURL}/en/about`,
       },
     },
+    // og:image は同セグメントの opengraph-image.tsx が自動生成・付与するため images は指定しない
     openGraph: {
       url: `${baseURL}/${locale}/about`,
       title: t('pageTitle'),
       description: t('pageDescription'),
-      images: [{ url: `${baseURL}/og-image.png`, width: 1200, height: 630 }],
+      siteName: 'Ryota-Blog',
       type: 'profile',
     },
     twitter: {
       card: 'summary_large_image',
-      images: [`${baseURL}/og-image.png`],
     },
   };
 }

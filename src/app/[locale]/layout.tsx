@@ -28,10 +28,16 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
     },
     description: t('siteDescription'),
     metadataBase: new URL(baseURL),
+    // og:url はページ固有のため各ページの generateMetadata で設定する。
+    // ここでは openGraph を定義しないページ向けのデフォルト値（site名・タイトル等）のみ保持する
     openGraph: {
-      url: baseURL,
+      title: t('siteTitle'),
+      description: t('siteDescription'),
       siteName: 'Ryota-Blog',
       type: 'website'
+    },
+    twitter: {
+      card: 'summary_large_image'
     }
   };
 }

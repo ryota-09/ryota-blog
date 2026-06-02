@@ -7,7 +7,7 @@ import { getTranslations } from 'next-intl/server';
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
 import SideNav from "@/components/SideNav";
-import { generateQuery } from "@/lib";
+import { generateQuery, buildPageUrl, buildLanguageAlternates } from "@/lib";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import { getBlogListByLocale } from "@/lib/microcms";
 import { PER_PAGE } from "@/static/blogs";
@@ -39,20 +39,19 @@ export async function generateMetadata(
   // Next.js 16では、paramsを非同期で取得する必要がある
   const { locale, page } = await params;
   const t = await getTranslations({ locale, namespace: 'blog' });
-  
+
+  const pageUrl = buildPageUrl(locale, "blogs", "page", page);
+  const title = `${t('recentPosts')} - ${t('page')} ${page}`;
+
   return {
-    title: `${t('recentPosts')} - ${t('page')} ${page}`,
-    description: `${t('recentPosts')} - ${t('page')} ${page}`,
+    title,
+    description: title,
     robots: "noindex",
     alternates: {
-      canonical: `/${locale}/blogs/page/${page}`,
-      languages: Object.fromEntries(
-        locales.map((loc) => [
-          loc,
-          `/${loc}/blogs/page/${page}`
-        ])
-      )
-    }
+      canonical: pageUrl,
+      languages: buildLanguageAlternates("blogs", "page", page)
+    },
+    openGraph: { url: pageUrl, title, description: title, siteName: "Ryota-Blog", type: "website" }
   };
 }
 

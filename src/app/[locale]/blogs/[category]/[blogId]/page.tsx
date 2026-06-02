@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import ArticleBody from "@/components/ArticleBody";
 import BreadcrumbList from "@/components/BreadcrumbList";
-import { generateBreadcrumbAssets, getPrimaryCategoryId } from "@/lib";
+import { generateBreadcrumbAssets, getPrimaryCategoryId, buildPageUrl, buildLanguageAlternates } from "@/lib";
 import { getBlogByIdByLocale, getAllBlogListByLocale } from "@/lib/microcms";
 import type { BlogsContentType } from "@/types/microcms";
 import JsonLD from "@/components/Head/JsonLD";
@@ -42,17 +42,28 @@ export async function generateMetadata(
   const { blogId, locale, category } = await params;
   const data = await getBlogByIdByLocale(locale, blogId, { fields: "title,description,noIndex" });
 
+  // 記事自身の絶対URL（og:url / canonical に使用）
+  const blogUrl = buildPageUrl(locale, "blogs", category, blogId);
+
   return {
     title: data.title,
     description: data.description,
     robots: data.noIndex ? "noindex" : null,
     alternates: {
-      languages: Object.fromEntries(
-        locales.map((loc) => [
-          loc,
-          `/${loc}/blogs/${category}/${blogId}`
-        ])
-      )
+      canonical: blogUrl,
+      languages: buildLanguageAlternates("blogs", category, blogId)
+    },
+    // openGraph は子で定義すると親（ルートレイアウト）の値が置換されるため siteName/type も明示する。
+    // 画像は同セグメントの opengraph-image.tsx / twitter-image.tsx が自動付与するため images は指定しない
+    openGraph: {
+      url: blogUrl,
+      title: data.title,
+      description: data.description,
+      siteName: "Ryota-Blog",
+      type: "article"
+    },
+    twitter: {
+      card: "summary_large_image"
     }
   };
 }
@@ -114,7 +125,7 @@ const Page = async ({ params }: PageProps) => {
           <RelatedContentList data={data.relatedContent} />
         </aside>
       )}
-      <JsonLD data={data} />
+      <JsonLD data={data} locale={locale} />
     </div>
   );
 };
