@@ -8,7 +8,7 @@ import Skelton from "@/components/ArticleList/skelton";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
 import ZennArticleList from "@/components/ZennArticleList";
-import { generateQuery } from "@/lib";
+import { generateQuery, buildPageUrl, buildLanguageAlternates } from "@/lib";
 import {
   BLOG_TYPE_QUERY,
   CATEGORY_QUERY,
@@ -53,19 +53,31 @@ export async function generateMetadata({
   const category = resolvedSearchParams.category || null;
   const keyword = resolvedSearchParams.keyword || null;
 
+  // canonical / og:url は検索・カテゴリ・ページのクエリを含めず素の /blogs に正規化して集約する
+  const blogsUrl = buildPageUrl(locale, "blogs");
+  const blogsLanguages = buildLanguageAlternates("blogs");
+
   // NOTE: ?blogType=zenn にアクセスした場合
   if (blogType === "zenn") {
     return {
       title: t("zennArticles"),
       description: t("zennArticles"),
+      alternates: { canonical: blogsUrl, languages: blogsLanguages },
+      openGraph: { url: blogsUrl, title: t("zennArticles"), description: t("zennArticles"), siteName: "Ryota-Blog", type: "website" },
+      twitter: { card: "summary_large_image" },
     };
   }
   // NOTE: /blogs にアクセスした場合
   if (blogType === "blogs" && !category && !keyword) {
+    const title = page ? `${t("recentPosts")} - ${t("page")} ${page}` : "HOME";
+    const description = tMeta("siteDescription");
     return {
-      title: page ? `${t("recentPosts")} - ${t("page")} ${page}` : "HOME",
-      description: tMeta("siteDescription"),
+      title,
+      description,
       robots: page ? "noindex" : "index",
+      alternates: { canonical: blogsUrl, languages: blogsLanguages },
+      openGraph: { url: blogsUrl, title, description, siteName: "Ryota-Blog", type: "website" },
+      twitter: { card: "summary_large_image" },
     };
   }
 
@@ -107,6 +119,9 @@ export async function generateMetadata({
     title: title,
     description: description,
     robots: page ? "noindex" : "index",
+    alternates: { canonical: blogsUrl, languages: blogsLanguages },
+    openGraph: { url: blogsUrl, title, description, siteName: "Ryota-Blog", type: "website" },
+    twitter: { card: "summary_large_image" },
   };
 }
 

@@ -9,7 +9,7 @@ import Skelton from "@/components/ArticleList/skelton";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
 import ZennArticleList from "@/components/ZennArticleList";
-import { generateQuery } from "@/lib";
+import { generateQuery, buildPageUrl, buildLanguageAlternates } from "@/lib";
 import { BLOG_TYPE_QUERY, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, CATEGORY_MAPED_NAME, CATEGORY_MAPED_ID } from "@/static/blogs";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import type { MappedKeyLiteralType } from "@/types/microcms";
@@ -57,10 +57,17 @@ export async function generateMetadata(
   const page = resolvedSearchParams.page || null;
   const keyword = resolvedSearchParams.keyword || null;
 
+  // canonical / og:url は検索・ページのクエリを含めず素のカテゴリURLに正規化して集約する
+  const categoryUrl = buildPageUrl(locale, "blogs", category);
+  const categoryLanguages = buildLanguageAlternates("blogs", category);
+
   if (blogType === "zenn") {
     return {
       title: t('zennArticles'),
-      description: t('zennArticles')
+      description: t('zennArticles'),
+      alternates: { canonical: categoryUrl, languages: categoryLanguages },
+      openGraph: { url: categoryUrl, title: t('zennArticles'), description: t('zennArticles'), siteName: "Ryota-Blog", type: "website" },
+      twitter: { card: "summary_large_image" },
     }
   }
 
@@ -69,13 +76,16 @@ export async function generateMetadata(
     return {
       title,
       description: translatedCategoryName,
-      robots: page ? "noindex" : "index"
+      robots: page ? "noindex" : "index",
+      alternates: { canonical: categoryUrl, languages: categoryLanguages },
+      openGraph: { url: categoryUrl, title, description: translatedCategoryName, siteName: "Ryota-Blog", type: "website" },
+      twitter: { card: "summary_large_image" },
     }
   }
 
   let title = page ? ` - ${t('page')} ${page}` : ""
   let description = ""
-  
+
   if (keyword) {
     title = `${translatedCategoryName} & ${keyword}` + title
     description = `${translatedCategoryName} & ${keyword}`
@@ -84,7 +94,10 @@ export async function generateMetadata(
   return {
     title: title,
     description: description,
-    robots: page ? "noindex" : "index"
+    robots: page ? "noindex" : "index",
+    alternates: { canonical: categoryUrl, languages: categoryLanguages },
+    openGraph: { url: categoryUrl, title, description, siteName: "Ryota-Blog", type: "website" },
+    twitter: { card: "summary_large_image" },
   }
 }
 

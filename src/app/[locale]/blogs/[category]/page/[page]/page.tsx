@@ -8,7 +8,7 @@ import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
-import { generateQuery } from "@/lib";
+import { generateQuery, buildPageUrl, buildLanguageAlternates } from "@/lib";
 import { getBlogListByLocale } from "@/lib/microcms";
 import { PER_PAGE, CATEGORY_MAPED_NAME, CATEGORY_MAPED_ID } from "@/static/blogs";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
@@ -69,19 +69,18 @@ export async function generateMetadata(
     translatedCategoryName = categoryName;
   }
 
+  const pageUrl = buildPageUrl(locale, "blogs", category, "page", page);
+  const title = `${translatedCategoryName} - ${t('page')} ${page}`;
+
   return {
-    title: `${translatedCategoryName} - ${t('page')} ${page}`,
-    description: `${translatedCategoryName} - ${t('page')} ${page}`,
+    title,
+    description: title,
     robots: "noindex",
     alternates: {
-      canonical: `/${locale}/blogs/${category}/page/${page}`,
-      languages: Object.fromEntries(
-        locales.map((loc) => [
-          loc,
-          `/${loc}/blogs/${category}/page/${page}`
-        ])
-      )
-    }
+      canonical: pageUrl,
+      languages: buildLanguageAlternates("blogs", category, "page", page)
+    },
+    openGraph: { url: pageUrl, title, description: title, siteName: "Ryota-Blog", type: "website" }
   };
 }
 
