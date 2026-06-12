@@ -15,7 +15,8 @@ type NavDrowerProps = {
 const NavDrower = ({ isOpen, items, locale, onClick }: NavDrowerProps) => {
   return (
     <>
-      <div className={`bg-white dark:bg-black text-txt-base w-64 space-y-6 py-16 z-30 fixed inset-y-0 right-0 transform ${isOpen ? "translate-x-0" : "translate-x-full"} transition-transform duration-500 ease-in-out`}>
+      {/* 閉状態では inert でフォーカス・支援技術の対象から外す（画面外リンクへのTab移動を防ぐ） */}
+      <div inert={!isOpen} className={`bg-white dark:bg-black text-txt-base w-64 space-y-6 py-16 z-30 fixed inset-y-0 right-0 transform ${isOpen ? "translate-x-0" : "translate-x-full"} transition-transform duration-500 ease-in-out`}>
         <nav>
           {items.map(({ name, href, target }, index) => (
             target
