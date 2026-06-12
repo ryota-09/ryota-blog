@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 
 import { getBlogByIdByLocale } from "@/lib/microcms";
+import { loadOgFont } from "@/lib/ogFont";
 import { AUTHOR_NAME, AUTHOR_NAME_EN } from "@/static/blogs";
 
 export const size = {
@@ -18,16 +19,8 @@ export default async function Image({
   // Next.js 16ではparamsがPromiseになるため、awaitで解決
   const { locale, blogId } = await params;
 
-  // Kosugi Maru フォントをGoogle Fonts CDNから取得
-  // Cloudflare Workersランタイムでは fs.readFileSync が使用不可のためfetchで代替
-  const fontResponse = await fetch(
-    "https://fonts.gstatic.com/s/kosugimaru/v17/0nksC9PgP_wGh21A2KeqGiTq.ttf",
-    { cf: { cacheTtl: 86400 } } as RequestInit,
-  );
-  if (!fontResponse.ok) {
-    throw new Error(`フォントの取得に失敗しました: ${fontResponse.status}`);
-  }
-  const fontData = await fontResponse.arrayBuffer();
+  // Kosugi Maru フォント（モジュールスコープでメモ化済み）
+  const fontData = await loadOgFont();
 
   // localeに基づいて作者名を選択
   const authorName = locale === 'en' ? AUTHOR_NAME_EN : AUTHOR_NAME;

@@ -53,7 +53,7 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
           <div className="flex justify-end">
             <Link
               href={blogPath}
-              className="text-md md:text-md mt-4 border-2 border-base-color px-6 py-3 font-bold text-base-color transition duration-200 hover:border-secondary hover:bg-secondary hover:text-white dark:border-primary dark:text-light dark:hover:border-primary dark:hover:bg-primary md:px-4 md:py-2 md:text-xs"
+              className="text-md md:text-md mt-4 border-2 border-primary px-6 py-3 font-bold text-primary transition duration-200 hover:border-secondary hover:bg-secondary hover:text-white dark:border-primary dark:text-light dark:hover:border-primary dark:hover:bg-primary md:px-4 md:py-2 md:text-xs"
             >
               {/* NOTE: アクセシビリティの都合上、「続きを読む」は不適切判定なのでsr-onlyを付与 */}
               <span className="sr-only">{data.title}の</span>

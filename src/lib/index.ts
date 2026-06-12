@@ -41,7 +41,9 @@ export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QU
   const query: MicroCMSQueries = { limit: PER_PAGE, offset: 0 }
 
   if (searchParams[PAGE_QUERY]) {
-    query.offset = (parseInt(searchParams[PAGE_QUERY]) - 1) * PER_PAGE;
+    // NOTE: 不正な page 値（非数値・負値）で offset が NaN / 負値になるのを防ぐ
+    const pageNum = parseInt(searchParams[PAGE_QUERY]);
+    query.offset = Number.isNaN(pageNum) || pageNum < 1 ? 0 : (pageNum - 1) * PER_PAGE;
   }
 
   // filters

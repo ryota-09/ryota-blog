@@ -5,7 +5,7 @@ import ThumbnailCard from '@/components/ArticleBody/ThumbnailCard';
 import BottomCard from '@/components/ArticleBody/BottomCard';
 import FixedButton from '@/components/UiParts/FixedButton';
 import { BlogsContentType } from '@/types/microcms';
-import { generateTOCAssets, getPrimaryCategoryId } from "@/lib";
+import { generateTOCAssets, getPrimaryCategoryId, buildPageUrl } from "@/lib";
 import TOCList from "@/components/ArticleBody/TOCList";
 import AdRevenueLabel from "@/components/AdRevenueLabel";
 import PrevAndNextBlogNav from "@/components/ArticleBody/PrevAndNextBlogNav";
@@ -94,7 +94,7 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
           }
         })}
       </div>
-        <IssueButton currentPath={`https://ryotablog.com/ja/blogs/${categoryId}/${data.id}`} />
+        <IssueButton currentPath={buildPageUrl(locale, "blogs", categoryId, data.id)} />
         <PrevAndNextBlogNav currentBlogData={data} locale={locale} />
         <aside className='flex flex-col-reverse md:flex-row gap-8 md:gap-4 mx-0.5 border-t dark:border-t-[#333] py-10'>
           <BottomCard />

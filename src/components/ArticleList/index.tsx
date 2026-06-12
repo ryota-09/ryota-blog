@@ -20,7 +20,12 @@ type ArticleListProps = {
 }
 
 const ArticleList = async ({ query, blogType, page, basePath, locale }: ArticleListProps) => {
-  const data = await getBlogListByLocale(locale, { ...query, orders: "-publishedAt" }, { next: { revalidate: 86400 } });
+  // NOTE: 一覧で使うフィールドのみ取得し、記事本文(body)がRSCペイロードに混入するのを防ぐ
+  const data = await getBlogListByLocale(
+    locale,
+    { ...query, orders: "-publishedAt", fields: "id,title,description,publishedAt,updatedAt,thumbnail,category" },
+    { next: { revalidate: 86400 } }
+  );
   const contentCount = data.contents.length
   const emptyItem = PER_PAGE - contentCount
   return (

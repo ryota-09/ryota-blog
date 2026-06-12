@@ -14,7 +14,12 @@ export async function GET(request: Request) {
   const draft = await draftMode();
   draft.enable();
   const cookiesStore = await cookies();
-  cookiesStore.set('draftKey', draftKey, { path: '/', httpOnly: true });
+  cookiesStore.set('draftKey', draftKey, {
+    path: '/',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
 
   redirect(`/blogs/${contentId}`)
 }

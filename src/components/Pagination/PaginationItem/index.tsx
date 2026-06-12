@@ -37,7 +37,8 @@ const PaginationItem = ({ pageNumber, children, currentPage, basePath }: Paginat
     let baseHref = categoryId ? `/${locale}/blogs/${categoryId}` : `/${locale}/blogs`
 
     if (keyword) {
-      const currentPath = `${baseHref}?keyword=${keyword}`
+      // NOTE: keyword はデコード済みの生文字列のため、再エンコードしてからクエリに埋め込む
+      const currentPath = `${baseHref}?keyword=${encodeURIComponent(keyword)}`
       return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
     }
 

@@ -73,7 +73,8 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run start',
+    // baseURL(3001)に合わせて起動ポートを明示する（next start は既定で3000のため不整合だった）
+    command: 'npm run start -- -p 3001',
     url: 'http://localhost:3001',
     reuseExistingServer: !process.env.CI,
   },
