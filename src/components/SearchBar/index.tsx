@@ -64,6 +64,7 @@ const SearchBar = () => {
       <input
         name="keyword"
         type="text"
+        aria-label={t('searchPlaceholder')}
         className={cltw(
           "w-full px-4 py-2 border-2 transition-colors duration-500 bg-white dark:border-gray-600 dark:bg-gray-500 focus:outline-none focus:ring-2 focus:border-transparent",
           isZennMode ? "focus:ring-zenn" : "focus:ring-base-color dark:focus:ring-primary"

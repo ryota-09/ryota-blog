@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import ArticleBody from "@/components/ArticleBody";
 import BreadcrumbList from "@/components/BreadcrumbList";
 import { generateBreadcrumbAssets, getPrimaryCategoryId, buildPageUrl, buildLanguageAlternates } from "@/lib";
-import { getBlogByIdByLocale, getAllBlogListByLocale } from "@/lib/microcms";
+import { getBlogByIdByLocale, getBlogByIdByLocaleCached, getAllBlogListByLocale } from "@/lib/microcms";
 import type { BlogsContentType } from "@/types/microcms";
 import JsonLD from "@/components/Head/JsonLD";
 import RelatedContentList from "@/components/RelatedContentList";
@@ -40,7 +40,8 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   // Next.js 16では、paramsを非同期で取得する必要がある
   const { blogId, locale, category } = await params;
-  const data = await getBlogByIdByLocale(locale, blogId, { fields: "title,description,noIndex" });
+  // NOTE: ページ本体と同じ cached フェッチを使い、同一リクエスト内の二重フェッチを避ける
+  const data = await getBlogByIdByLocaleCached(locale, blogId);
 
   // 記事自身の絶対URL（og:url / canonical に使用）
   const blogUrl = buildPageUrl(locale, "blogs", category, blogId);
@@ -101,7 +102,8 @@ const Page = async ({ params }: PageProps) => {
     if (isEnabled && draftKey) {
       data = await getBlogByIdByLocale(locale, blogId, { draftKey: draftKey });
     } else {
-      data = await getBlogByIdByLocale(locale, blogId);
+      // generateMetadata と同じ cached フェッチで重複排除する
+      data = await getBlogByIdByLocaleCached(locale, blogId);
     }
   } catch (error) {
     notFound();

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "microcms-js-sdk";
 import type { CustomRequestInit, MicroCMSQueries } from "microcms-js-sdk";
 import type {
@@ -118,6 +119,11 @@ export const getAllBlogIdsByLocale = async (locale: string, alternatedField?: st
     return await client.getAllContentIds({ endpoint: "blogs", alternateField: alternatedField });
   }
 }
+
+// NOTE: 同一リクエスト内で記事の全フィールド取得を重複排除する（generateMetadata とページ本体の二重フェッチを1回にまとめる）
+export const getBlogByIdByLocaleCached = cache((locale: string, contentId: string) =>
+  getBlogByIdByLocale(locale, contentId)
+);
 
 export const getPrevAndNextBlogByLocale = async (locale: string, data: BlogsContentType) => {
   const publishedAt = data.publishedAt;

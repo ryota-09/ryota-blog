@@ -66,32 +66,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     // カテゴリ別ページネーションパスの多言語対応（/[locale]/blogs/next_js/page/2, ...）
-    const categoryPaginationPaths = [];
-    for (const locale of SUPPORTED_LOCALES) {
-      for (const [categoryName, categoryId] of Object.entries(CATEGORY_MAPED_ID)) {
+    // NOTE: カテゴリごとの件数取得はロケール非依存（blogsエンドポイント）なので、
+    //       カテゴリ単位で1回だけ並列フェッチし、両ロケールのURL生成に使い回す
+    const categoryTotals = await Promise.all(
+      Object.entries(CATEGORY_MAPED_ID).map(async ([categoryName, categoryId]) => {
         try {
-          // generateQuery関数と同じアプローチを使用
-          const query = generateQuery({ 
-            page: "1",
-            category: categoryName,
-            keyword: ""
-          });
-          
-          const categoryData = await getBlogList(query);
-          const categoryTotalPages = Math.ceil(categoryData.totalCount / PER_PAGE);
-          
-          // ページ2以降を生成（ページ1は /[locale]/blogs/[category] にある）
-          for (let i = 2; i <= categoryTotalPages; i++) {
-            categoryPaginationPaths.push({
-              url: `${baseURL}/${locale}/blogs/${categoryId}/page/${i}`,
-              lastModified: new Date()
-            });
-          }
+          const query = generateQuery({ page: "1", category: categoryName, keyword: "" });
+          const categoryData = await getBlogList({ ...query, fields: "id" });
+          return { categoryId, totalPages: Math.ceil(categoryData.totalCount / PER_PAGE) };
         } catch (error) {
-          console.warn(`カテゴリのサイトマップ生成に失敗しました: ${locale}/${categoryName}`, error);
+          console.warn(`カテゴリのサイトマップ生成に失敗しました: ${categoryName}`, error);
+          return { categoryId, totalPages: 0 };
         }
-      }
-    }
+      })
+    );
+
+    const categoryPaginationPaths = SUPPORTED_LOCALES.flatMap((locale) =>
+      categoryTotals.flatMap(({ categoryId, totalPages }) =>
+        // ページ2以降を生成（ページ1は /[locale]/blogs/[category] にある）
+        Array.from({ length: Math.max(totalPages - 1, 0) }, (_, i) => ({
+          url: `${baseURL}/${locale}/blogs/${categoryId}/page/${i + 2}`,
+          lastModified: new Date()
+        }))
+      )
+    );
 
     return [...staticPaths, ...categoryPaths, ...dynamicPaths, ...paginationPaths, ...categoryPaginationPaths]
   } catch (error) {

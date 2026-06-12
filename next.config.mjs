@@ -24,8 +24,22 @@ const nextConfig = {
     formats: ['image/webp'], // WebP優先で配信
     // minimumCacheTTL は Cloudflare Workers 非対応のため削除
   },
-  // NOTE: RSCリクエストのContent-TypeはNext.jsが自動設定するため、
-  // カスタムheaders()でのオーバーライドは不要（Cloudflare Workersでリダイレクト時に問題を引き起こすため削除）
+  // NOTE: RSCリクエストのContent-TypeはNext.jsが自動設定するため上書きしない。
+  // ここでは全レスポンス共通の標準セキュリティヘッダーのみ付与する（CSPは外部埋め込みとの兼ね合いで別途検討）。
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       // Redirect /blogs/page to /blogs
