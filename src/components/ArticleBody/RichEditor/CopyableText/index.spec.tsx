@@ -47,7 +47,7 @@ describe('CopyableText', () => {
     fireEvent.click(copyButton);
     
     await waitFor(() => {
-      expect(screen.getByText('コピーしました')).toBeInTheDocument();
+      expect(screen.getByText('コピーしました!')).toBeInTheDocument();
     });
   });
 

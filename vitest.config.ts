@@ -8,6 +8,8 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/__tests__/setup.ts',
+    // ネストしたworktreeコピーや生成物・e2eを対象から除外する
+    exclude: ['**/node_modules/**', '**/.claude/**', '**/.superset/**', '**/.next/**', '**/.open-next/**', '**/e2e/**', '**/dist/**'],
     env: {
       MICROCMS_SERVICE_DOMAIN: 'example',
       MICROCMS_API_KEY: 'api-key',
