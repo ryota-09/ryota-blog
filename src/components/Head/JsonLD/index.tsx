@@ -2,7 +2,6 @@ import type { BreadcrumbList, BlogPosting, WithContext, WebSite } from "schema-d
 import type { BlogsContentType } from "@/types/microcms"
 import { SITE_TITLE, CATEGORY_MAPED_NAME } from "@/static/blogs"
 import { getPrimaryCategoryId, buildPageUrl } from "@/lib"
-import Script from "next/script"
 
 
 type JsonLDProps = {
@@ -76,11 +75,10 @@ const JsonLD = ({ data, locale }: JsonLDProps) => {
     },
   }
 
+  // NOTE: クローラーが確実に読めるよう初期HTMLに直接埋め込む（next/scriptのafterInteractiveだとJS実行後注入になる）
   return (
-    <Script
-      id="json-ld"
+    <script
       type="application/ld+json"
-      strategy="afterInteractive"
       dangerouslySetInnerHTML={{ __html: JSON.stringify([blogPostingJsonLD, { ...breadcrumbJsonLD }, siteNameJsonLD]) }}
     />
   )

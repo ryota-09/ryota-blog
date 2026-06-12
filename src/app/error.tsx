@@ -5,8 +5,9 @@ import ErrorPageHeader from "@/components/ErrorPageHeader";
 import { Link } from 'next-view-transitions';
 import Image from "next/image";
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
-interface ErrorPageProps {
+type ErrorPageProps = {
   error: Error & { digest?: string };
   reset: () => void;
 }
@@ -15,16 +16,23 @@ const Page = ({ error, reset }: ErrorPageProps) => {
   const pathname = usePathname();
   // パスからロケールを取得（デフォルトは日本語）
   const locale = pathname?.startsWith('/en') ? 'en' : 'ja';
-  
+
+  // エラーバウンダリで捕捉した例外をログ出力する（監視サービスへの送信ポイント）
+  useEffect(() => {
+    console.error('[error-boundary]', error.digest ?? '', error.message);
+  }, [error]);
+
   // ロケールに応じた翻訳を手動で定義
   const messages = {
     ja: {
       message: 'サーバー内部のエラーが発生しました。',
-      backToHome: 'トップページに戻る'
+      backToHome: 'トップページに戻る',
+      retry: '再試行する'
     },
     en: {
       message: 'An internal server error occurred.',
-      backToHome: 'Back to Home'
+      backToHome: 'Back to Home',
+      retry: 'Try again'
     }
   };
   
@@ -41,9 +49,14 @@ const Page = ({ error, reset }: ErrorPageProps) => {
             <p className="text-lg font-medium text-gray-600 dark:text-gray-400">
               {t.message}
             </p>
-            <Link href={`/${locale}/blogs`} className="text-base-color border-2 border-base-color px-4 py-2 hover:bg-base-color hover:text-white hover:border-base-color transition duration-200">
-              {t.backToHome}
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button onClick={() => reset()} className="text-white bg-base-color border-2 border-base-color px-4 py-2 hover:opacity-90 transition duration-200">
+                {t.retry}
+              </button>
+              <Link href={`/${locale}/blogs`} className="text-base-color border-2 border-base-color px-4 py-2 hover:bg-base-color hover:text-white hover:border-base-color transition duration-200">
+                {t.backToHome}
+              </Link>
+            </div>
           </div>
         </div>
       </main>

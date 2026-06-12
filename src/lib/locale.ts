@@ -5,7 +5,8 @@ import { LOCALE_COOKIE_NAME, LOCALE_COOKIE_MAX_AGE, SUPPORTED_LOCALES } from "@/
  * 現在のパスから新しいロケールのパスを生成
  */
 export const generateLocalePath = (pathname: string, currentLocale: SupportedLocale, targetLocale: SupportedLocale): string => {
-  const pathWithoutLocale = pathname.replace(`/${currentLocale}`, "");
+  // NOTE: 先頭のロケールセグメントのみを境界付きで除去する（"/enterprise" 等の途中一致を防ぐ）
+  const pathWithoutLocale = pathname.replace(new RegExp(`^/${currentLocale}(?=/|$)`), "");
   return `/${targetLocale}${pathWithoutLocale}`;
 };
 

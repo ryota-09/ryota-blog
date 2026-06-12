@@ -40,7 +40,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           const categoryId = getPrimaryCategoryId(content);
           return {
             url: `${baseURL}/${locale}/blogs/${categoryId}/${content.id}`,
-            lastModified: content.publishedAt || content.updatedAt
+            // NOTE: 最終更新日は updatedAt を優先する（無ければ publishedAt）
+            lastModified: content.updatedAt || content.publishedAt || new Date()
           }
         })
       )

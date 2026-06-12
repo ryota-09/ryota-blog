@@ -1,4 +1,3 @@
-"use client"
 import { customReplaceOptions } from "@/components/ArticleBody/RichEditor/ReplaceUiParts.lib";
 import parser from "html-react-parser";
 

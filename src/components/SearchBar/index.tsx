@@ -4,7 +4,6 @@ import { useRouter, usePathname } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import { GlobalContext } from "@/providers"
 import { cltw } from "@/util"
-import { escapeHtml } from "@/lib"
 
 const SearchBar = () => {
   const { state } = useContext(GlobalContext)
@@ -28,7 +27,8 @@ const SearchBar = () => {
         router.replace(`/${locale}/blogs/zenn`)
         return
       }
-      const escapedKeyword = escapeHtml(keyword.toString()).trim()
+      // NOTE: URLクエリにはHTMLエスケープではなくURLエンコードを使う（"C&A" 等が別パラメータに化けるのを防ぐ）
+    const escapedKeyword = encodeURIComponent(keyword.toString().trim())
       formRef.current?.reset()
       router.replace(`/${locale}/blogs/zenn?keyword=${escapedKeyword}`)
       return
@@ -43,7 +43,8 @@ const SearchBar = () => {
       return
     }
 
-    const escapedKeyword = escapeHtml(keyword.toString()).trim()
+    // NOTE: URLクエリにはHTMLエスケープではなくURLエンコードを使う（"C&A" 等が別パラメータに化けるのを防ぐ）
+    const escapedKeyword = encodeURIComponent(keyword.toString().trim())
 
     if (categoryId) {
       formRef.current?.reset()

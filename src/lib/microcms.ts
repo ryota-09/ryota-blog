@@ -54,13 +54,14 @@ export const getBlogList = (querys?: MicroCMSQueries, customRequestInit?: Custom
   MicroCMSApiGetListHandler<BlogsContentType>("blogs", querys, customRequestInit);
 
 export const getAllBlogList = async (querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) => {
-  const data = client.getAllContents<BlogsContentType>({ "endpoint": "blogs", ...querys, ...customRequestInit });
+  // NOTE: getAllContents は queries/customRequestInit をネストして渡す必要がある（トップレベルspreadだと fields 等が無視される）
+  const data = client.getAllContents<BlogsContentType>({ endpoint: "blogs", queries: querys, customRequestInit });
   return data;
 }
 
 
 export const getAllCategoryList = async (querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) => {
-  const data = await client.getAllContents<CategoriesContentType>({ "endpoint": "categories", ...querys, ...customRequestInit });
+  const data = await client.getAllContents<CategoriesContentType>({ endpoint: "categories", queries: querys, customRequestInit });
   return data;
 }
 
@@ -78,7 +79,7 @@ export const getBlogListEn = (querys?: MicroCMSQueries, customRequestInit?: Cust
   MicroCMSApiGetListHandler<BlogsContentType>("blogs_en", querys, customRequestInit);
 
 export const getAllBlogListEn = async (querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) => {
-  const data = client.getAllContents<BlogsContentType>({ "endpoint": "blogs_en", ...querys, ...customRequestInit });
+  const data = client.getAllContents<BlogsContentType>({ endpoint: "blogs_en", queries: querys, customRequestInit });
   return data;
 }
 
@@ -93,14 +94,6 @@ export const getBlogByIdEn = (contentId: string, querys?: MicroCMSQueries, custo
 export const getAllBlogIdsEn = async (alternatedField?: string) => {
   const data = await client.getAllContentIds({ endpoint: "blogs_en", alternateField: alternatedField });
   return data;
-}
-
-export const getBlogByKeywordEn = (keyword: string, querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) => {
-  return MicroCMSApiGetListHandler<BlogsContentType>("blogs_en", {
-    q: keyword,
-    ...querys,
-    ...customRequestInit,
-  });
 }
 
 // Locale-aware wrapper functions
@@ -125,41 +118,6 @@ export const getAllBlogIdsByLocale = async (locale: string, alternatedField?: st
     return await client.getAllContentIds({ endpoint: "blogs", alternateField: alternatedField });
   }
 }
-
-export const getBlogByKeywordByLocale = (locale: string, keyword: string, querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) => {
-  const endpoint = locale === 'en' ? 'blogs_en' : 'blogs';
-  return MicroCMSApiGetListHandler<BlogsContentType>(endpoint as EndPointLiteralType, {
-    q: keyword,
-    ...querys,
-    ...customRequestInit,
-  });
-}
-
-export const getPopularBlogsByCategoryByLocale = async (
-  locale: string,
-  categoryName: string,
-  limit: number = 3,
-  customRequestInit?: CustomRequestInit
-) => {
-  const endpoint = locale === 'en' ? 'blogs_en' : 'blogs';
-  const data = await client.get<BaseMicroCMSApiListDataType<BlogsContentType>>({
-    endpoint: endpoint as EndPointLiteralType,
-    queries: {
-      fields: "id,title,publishedAt,updatedAt,category,pageViews,thumbnail,description",
-      filters: `category[contains]${categoryName}`,
-      limit,
-      orders: "-pageViews,-publishedAt",
-    },
-    customRequestInit: customRequestInit || {
-      next: {
-        // NOTE: １日保持 60 * 60 * 24
-        revalidate: 86400
-      }
-    }
-  });
-
-  return data.contents;
-};
 
 export const getPrevAndNextBlogByLocale = async (locale: string, data: BlogsContentType) => {
   const publishedAt = data.publishedAt;
