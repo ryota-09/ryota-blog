@@ -8,7 +8,8 @@ const CustomImg = ({ src, alt, width, height, ...restProps }: CustomImgProps) =>
   const isGif = src.endsWith(".gif");
   return (
     <p className="flex justify-center my-8">
-      <Image src={src} alt={alt} width={+width} height={+height} unoptimized={isGif} loading="lazy" className="md:w-[70%]"  {...restProps} />
+      {/* NOTE: モバイルで横幅をはみ出さないよう max-w-full / h-auto を付与（md以上は70%幅） */}
+      <Image src={src} alt={alt} width={+width} height={+height} unoptimized={isGif} loading="lazy" className="max-w-full h-auto md:w-[70%]"  {...restProps} />
     </p>
   )
 }

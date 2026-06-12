@@ -49,7 +49,6 @@ RUN echo "NEXT_PUBLIC_IDENTITY_POOL_ID=${NEXT_PUBLIC_IDENTITY_POOL_ID}" >> .env
 RUN echo "NEXT_PUBLIC_APPLICATION_ID=${NEXT_PUBLIC_APPLICATION_ID}" >> .env
 RUN echo "NEXT_PUBLIC_GA_ID=${NEXT_PUBLIC_GA_ID}" >> .env
 RUN echo "NEXT_PUBLIC_GTM_ID=${NEXT_PUBLIC_GTM_ID}" >> .env
-RUN cat .env
 
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
