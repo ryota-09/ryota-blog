@@ -42,17 +42,29 @@ jobs:
           NEXT_PUBLIC_GTM_ID: ${{ secrets.NEXT_PUBLIC_GTM_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        # デプロイ戦略：
-        # 1. OpenNext deploy（populate-cache 含む）を最大2回試行（一過性ネットワークエラーの自動復旧）
-        # 2. それでも失敗したら、build → wrangler 直接 deploy で populate-cache を bypass
-        #    （Cloudflare R2 API の持続的エラーから本番デプロイを守るフェイルセーフ）
-        # ※ fallback時は ISR cache populate がスキップされ、新規ページのISR初回アクセスが多少遅くなる。
-        #   次の OpenNext deploy 成功時に R2 cache は populate される。
+        # デプロイ戦略（Cloudflare R2 incremental cache の持続障害対応・3段ハイブリッド）：
+        #
+        # 背景：2026-06-18頃から Cloudflare R2 incremental cache populate で持続的なエラー
+        # （`Premature close` / 503 / timeout）が発生中。upstream [Issue #1284](
+        # https://github.com/opennextjs/opennextjs-cloudflare/issues/1284) でも複数報告あり、
+        # OpenNext maintainer の推奨ワークアラウンドは `--cacheChunkSize` で concurrency を最小化。
+        #
+        # この workflow は upstream 推奨に従いつつ、最悪ケースでも本番デプロイが確保できるよう
+        # 3段構えで保護する：
+        #
+        # 1. OpenNext deploy with `--cacheChunkSize 1`（最小 concurrency）を2回試行
+        #    → 通常時はここで成功（concurrency が下がってもコストはわずか）
+        # 2. それでも失敗したら、wrangler 直接 deploy で populate-cache 全bypass
+        #    → Workers コードは最新、ISR cache は前回キャッシュ流用（次回成功時に正常化）
+        # 3. fallback 経路も失敗したら exit 1
         run: |
           set +e
+          CONFIG="wrangler.${{ steps.set-env.outputs.env }}.jsonc"
+
           for attempt in 1 2; do
-            echo "::group::OpenNext deploy attempt $attempt of 2"
-            npm run deploy:${{ steps.set-env.outputs.env }}
+            echo "::group::OpenNext deploy attempt $attempt of 2 (cacheChunkSize=1)"
+            npx opennextjs-cloudflare build --config "$CONFIG" && \
+              npx opennextjs-cloudflare deploy --config "$CONFIG" --cacheChunkSize 1
             exit_code=$?
             echo "::endgroup::"
             if [ $exit_code -eq 0 ]; then
@@ -64,22 +76,25 @@ jobs:
               sleep 30
             fi
           done
-          echo "::warning::OpenNext deploy failed twice. Falling back to direct wrangler deploy (bypasses populate-cache). ISR cache may stay stale for new pages until the next successful OpenNext deploy."
+
+          echo "::warning::OpenNext deploy failed twice (even with --cacheChunkSize 1). Falling back to direct wrangler deploy (bypasses populate-cache). ISR cache may stay stale for new pages until the next successful OpenNext deploy."
+
           echo "::group::Rebuild for wrangler-direct fallback"
-          npx opennextjs-cloudflare build --config wrangler.${{ steps.set-env.outputs.env }}.jsonc
+          npx opennextjs-cloudflare build --config "$CONFIG"
           build_exit=$?
           echo "::endgroup::"
           if [ $build_exit -ne 0 ]; then
             echo "❌ OpenNext build failed during fallback (exit $build_exit)"
             exit $build_exit
           fi
+
           echo "::group::wrangler deploy (fallback)"
-          npx wrangler deploy --config wrangler.${{ steps.set-env.outputs.env }}.jsonc
+          npx wrangler deploy --config "$CONFIG"
           deploy_exit=$?
           echo "::endgroup::"
           if [ $deploy_exit -eq 0 ]; then
             echo "✅ Wrangler direct deploy succeeded (fallback)"
             exit 0
           fi
-          echo "❌ Both OpenNext deploy (2x) and wrangler direct deploy failed"
+          echo "❌ Both OpenNext deploy (2x with cacheChunkSize=1) and wrangler direct deploy failed"
           exit 1
