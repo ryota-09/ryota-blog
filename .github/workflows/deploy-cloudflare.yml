@@ -44,19 +44,20 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         # デプロイ戦略（Cloudflare R2 incremental cache の持続障害対応・3段ハイブリッド）：
         #
-        # 背景：2026-06-18頃から Cloudflare R2 incremental cache populate で持続的なエラー
-        # （`Premature close` / 503 / timeout）が発生中。upstream [Issue #1284](
-        # https://github.com/opennextjs/opennextjs-cloudflare/issues/1284) でも複数報告あり、
-        # OpenNext maintainer の推奨ワークアラウンドは `--cacheChunkSize` で concurrency を最小化。
+        # 背景：2026-06-18頃から Cloudflare R2 API で持続的なエラー（`Premature close`）が発生中。
+        # upstream [Issue #1284](https://github.com/opennextjs/opennextjs-cloudflare/issues/1284) で
+        # 複数報告あり、OpenNext maintainer の推奨ワークアラウンドは `--cacheChunkSize` で
+        # concurrency を最小化。
         #
-        # この workflow は upstream 推奨に従いつつ、最悪ケースでも本番デプロイが確保できるよう
-        # 3段構えで保護する：
-        #
+        # 3段戦略：
         # 1. OpenNext deploy with `--cacheChunkSize 1`（最小 concurrency）を2回試行
-        #    → 通常時はここで成功（concurrency が下がってもコストはわずか）
-        # 2. それでも失敗したら、wrangler 直接 deploy で populate-cache 全bypass
-        #    → Workers コードは最新、ISR cache は前回キャッシュ流用（次回成功時に正常化）
+        # 2. それでも失敗したら、wrangler 直接 deploy with `--no-x-provision`
+        #    （wrangler の自動 R2 provisioning も bypass する真の bypass）
         # 3. fallback 経路も失敗したら exit 1
+        #
+        # 注：単純な wrangler deploy も内部で R2 binding の provision を試みるため、
+        # `--no-x-provision` が必須（[Cloudflare changelog 2025-10-24](
+        # https://developers.cloudflare.com/changelog/post/2025-10-24-automatic-resource-provisioning/) 参照）。
         run: |
           set +e
           CONFIG="wrangler.${{ steps.set-env.outputs.env }}.jsonc"
@@ -77,7 +78,7 @@ jobs:
             fi
           done
 
-          echo "::warning::OpenNext deploy failed twice (even with --cacheChunkSize 1). Falling back to direct wrangler deploy (bypasses populate-cache). ISR cache may stay stale for new pages until the next successful OpenNext deploy."
+          echo "::warning::OpenNext deploy failed twice (even with --cacheChunkSize 1). Falling back to direct wrangler deploy with --no-x-provision (bypasses both populate-cache and R2 bucket provisioning). ISR cache may stay stale for new pages until the next successful OpenNext deploy."
 
           echo "::group::Rebuild for wrangler-direct fallback"
           npx opennextjs-cloudflare build --config "$CONFIG"
@@ -88,13 +89,13 @@ jobs:
             exit $build_exit
           fi
 
-          echo "::group::wrangler deploy (fallback)"
-          npx wrangler deploy --config "$CONFIG"
+          echo "::group::wrangler deploy --no-x-provision (fallback)"
+          npx wrangler deploy --config "$CONFIG" --no-x-provision
           deploy_exit=$?
           echo "::endgroup::"
           if [ $deploy_exit -eq 0 ]; then
             echo "✅ Wrangler direct deploy succeeded (fallback)"
             exit 0
           fi
-          echo "❌ Both OpenNext deploy (2x with cacheChunkSize=1) and wrangler direct deploy failed"
+          echo "❌ Both OpenNext deploy (2x with cacheChunkSize=1) and wrangler direct deploy (--no-x-provision) failed"
           exit 1
