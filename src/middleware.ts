@@ -1,21 +1,32 @@
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import type { NextFetchEvent, NextRequest } from 'next/server'
 import createMiddleware from 'next-intl/middleware';
+import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { routing } from './i18n/routing';
 import { getBlogByIdByLocale } from './lib/microcms'
 import { getPrimaryCategoryId } from './lib/index'
 import { LOCALE_COOKIE_NAME } from './types/locale'
 import { CATEGORY_MAPED_ID } from './static/blogs'
+import { classifyAiAccess } from './lib/ai-access/classify'
+import { recordAiAccessHit } from './lib/ai-access/repository'
+import type { AiBotDefinition } from './lib/ai-access/types'
 
 // 旧URL（/[locale]/blogs/[blogId]）リダイレクト判定でフェッチ対象外にする既知セグメント
 const NON_BLOG_ID_SEGMENTS = new Set<string>([...Object.values(CATEGORY_MAPED_ID), 'zenn', 'page'])
 
+// 記事詳細ページのcanonical URL: /{locale}/blogs/{categoryId}/{blogId}
+const ARTICLE_PATH_PATTERN = /^\/([^/]+)\/blogs\/([^/]+)\/([^/]+)$/
+const KNOWN_CATEGORY_IDS = new Set<string>(Object.values(CATEGORY_MAPED_ID))
+
 // Create the intl middleware
 const intlMiddleware = createMiddleware(routing);
 
-export async function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const pathname = request.nextUrl.pathname;
-  
+
+  // AIボットによる記事アクセスを検出したら、レスポンスに影響させず非同期でD1へ記録する
+  recordAiAccessIfArticleRequest(request, event, pathname)
+
   // ルートパスを処理 - 保存されたlocale設定またはデフォルトlocaleにリダイレクト
   if (pathname === '/') {
     // 言語切替で保存される NEXT_LOCALE クッキーから優先ロケールを取得する
@@ -87,6 +98,45 @@ export async function middleware(request: NextRequest) {
 
   // 最後にnext-intlミドルウェアを実行
   return intlMiddleware(request);
+}
+
+// canonical記事URLへのアクセスをUA判定し、AIボットであればD1への記録をバックグラウンドで実行する
+function recordAiAccessIfArticleRequest(request: NextRequest, event: NextFetchEvent, pathname: string): void {
+  const match = pathname.match(ARTICLE_PATH_PATTERN)
+  if (!match) return
+
+  const [, locale, categoryId, blogId] = match
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number]) || !KNOWN_CATEGORY_IDS.has(categoryId)) {
+    return
+  }
+
+  const classification = classifyAiAccess(request.headers.get('user-agent'))
+  if (!classification.isAiAccess) return
+
+  event.waitUntil(recordAiAccessSafely({ locale, categoryId, blogId, bot: classification.bot }))
+}
+
+async function recordAiAccessSafely(params: {
+  locale: string
+  categoryId: string
+  blogId: string
+  bot: AiBotDefinition
+}): Promise<void> {
+  try {
+    const { env } = await getCloudflareContext({ async: true })
+    if (!env.AI_ACCESS_DB) return // ローカルdev等バインディング未提供時は何もしない
+
+    await recordAiAccessHit(env.AI_ACCESS_DB, {
+      accessDate: new Date().toISOString().slice(0, 10),
+      locale: params.locale,
+      categoryId: params.categoryId,
+      blogId: params.blogId,
+      bot: params.bot,
+    })
+  } catch (error) {
+    // 計測の失敗が記事表示という本体機能に波及しないよう握りつぶす
+    console.error('[ai-access] record failed', error)
+  }
 }
 
 export const config = {
