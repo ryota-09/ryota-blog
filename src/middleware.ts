@@ -18,11 +18,20 @@ const NON_BLOG_ID_SEGMENTS = new Set<string>([...Object.values(CATEGORY_MAPED_ID
 const ARTICLE_PATH_PATTERN = /^\/([^/]+)\/blogs\/([^/]+)\/([^/]+)$/
 const KNOWN_CATEGORY_IDS = new Set<string>(Object.values(CATEGORY_MAPED_ID))
 
+// 管理者ページのcanonical URL: /{locale}/admin(/...)
+const ADMIN_PATH_PATTERN = /^\/[^/]+\/admin(\/.*)?$/
+
 // Create the intl middleware
 const intlMiddleware = createMiddleware(routing);
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const pathname = request.nextUrl.pathname;
+
+  // 管理者ページはBasic認証で保護する
+  if (ADMIN_PATH_PATTERN.test(pathname)) {
+    const unauthorized = await checkAdminBasicAuth(request)
+    if (unauthorized) return unauthorized
+  }
 
   // AIボットによる記事アクセスを検出したら、レスポンスに影響させず非同期でD1へ記録する
   recordAiAccessIfArticleRequest(request, event, pathname)
@@ -98,6 +107,41 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 
   // 最後にnext-intlミドルウェアを実行
   return intlMiddleware(request);
+}
+
+// 管理者ページへのBasic認証チェック。認証済みなら null、未認証なら401レスポンスを返す
+async function checkAdminBasicAuth(request: NextRequest): Promise<NextResponse | null> {
+  const unauthorizedResponse = new NextResponse('Authentication required', {
+    status: 401,
+    headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
+  })
+
+  let expectedUser: string | undefined
+  let expectedPassword: string | undefined
+  try {
+    const { env } = await getCloudflareContext({ async: true })
+    expectedUser = env.ADMIN_BASIC_AUTH_USER
+    expectedPassword = env.ADMIN_BASIC_AUTH_PASSWORD
+  } catch {
+    // ローカル開発(next dev)ではCloudflareランタイムが存在せず取得に失敗するため、Basic認証をスキップする
+    return null
+  }
+
+  // 認証情報が未設定の環境（シークレット未設定のデプロイ）ではフェイルクローズし、常に認証を要求する
+  if (!expectedUser || !expectedPassword) return unauthorizedResponse
+
+  const authHeader = request.headers.get('authorization')
+  if (authHeader?.startsWith('Basic ')) {
+    const decoded = atob(authHeader.slice('Basic '.length))
+    const separatorIndex = decoded.indexOf(':')
+    const user = decoded.slice(0, separatorIndex)
+    const password = decoded.slice(separatorIndex + 1)
+    if (user === expectedUser && password === expectedPassword) {
+      return null
+    }
+  }
+
+  return unauthorizedResponse
 }
 
 // canonical記事URLへのアクセスをUA判定し、AIボットであればD1への記録をバックグラウンドで実行する
