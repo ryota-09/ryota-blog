@@ -19,7 +19,8 @@
     "deploy:stg": "opennextjs-cloudflare build --config wrangler.stg.jsonc && opennextjs-cloudflare deploy --config wrangler.stg.jsonc",
     "deploy:prd": "opennextjs-cloudflare build --config wrangler.prd.jsonc && opennextjs-cloudflare deploy --config wrangler.prd.jsonc",
     "update-lh:desktop": "lhci autorun --config=.desktop-lighthouserc.js",
-    "update-lh:mobile": "lhci autorun --config=.mobile-lighthouserc.js && node ./webvitals/update-mobile-vitals.js"
+    "update-lh:mobile": "lhci autorun --config=.mobile-lighthouserc.js && node ./webvitals/update-mobile-vitals.js",
+    "cf-typegen": "wrangler types --config wrangler.stg.jsonc"
   },
   "dependencies": {
     "@next/third-parties": "^16.2.3",
