@@ -27,11 +27,17 @@
     }
   ],
   // オンデマンドrevalidation用 D1データベース（タグキャッシュ）
+  // AIアクセス解析用 D1データベース（記事×ボット×日付の集計）
   "d1_databases": [
     {
       "binding": "NEXT_TAG_CACHE_D1",
       "database_name": "ryota-blog-tags-stg",
       "database_id": "809a6a0c-619e-40bc-9461-6e97782c3d7a"
+    },
+    {
+      "binding": "AI_ACCESS_DB",
+      "database_name": "ryota-blog-ai-access-stg",
+      "database_id": "e29b6abe-b125-4961-8c75-a7340ecdab33"
     }
   ],
   // ISRリバリデーション用 Durable Objects
