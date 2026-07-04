@@ -1,0 +1,43 @@
+import { CATEGORIES } from "@/static/categories.generated";
+import type { CategoryEntry } from "@/static/categories.generated";
+
+export type { CategoryEntry };
+export { CATEGORIES };
+
+// 記事にカテゴリが1件も紐付かない場合のみ使う最終フォールバック
+export const DEFAULT_CATEGORY_ID = "programming";
+
+export const findCategoryBySlug = (slug: string): CategoryEntry | undefined =>
+  CATEGORIES.find((category) => category.slug === slug);
+
+export const findCategoryByContentId = (id: string): CategoryEntry | undefined =>
+  CATEGORIES.find((category) => category.id === id);
+
+// URLスラッグ・content id・表示名(ja/en)のいずれでもカテゴリを解決する（?category=クエリの後方互換のため）
+export const resolveCategoryEntry = (value: string): CategoryEntry | undefined =>
+  CATEGORIES.find(
+    (category) =>
+      category.slug === value ||
+      category.id === value ||
+      category.name === value ||
+      category.name_en === value,
+  );
+
+// "programming"がCATEGORIES自体に存在しない極端なケースのみ使う最終手段のフォールバック
+const HARD_FALLBACK_ENTRY: CategoryEntry = {
+  id: DEFAULT_CATEGORY_ID,
+  slug: DEFAULT_CATEGORY_ID,
+  name: "プログラミング",
+  name_en: "Programming",
+};
+
+// content idからカテゴリを解決する唯一の入り口。見つからない場合（記事に紐づくカテゴリが
+// microCMS側で削除された等）は必ずDEFAULT_CATEGORY_IDのエントリにフォールバックし、
+// 呼び出し箇所ごとに異なる場当たり的なフォールバック（生idの通過・未翻訳文字列の表示等）を防ぐ。
+export const resolveCategoryOrDefault = (contentId: string | undefined): CategoryEntry => {
+  if (contentId) {
+    const entry = findCategoryByContentId(contentId);
+    if (entry) return entry;
+  }
+  return findCategoryBySlug(DEFAULT_CATEGORY_ID) ?? HARD_FALLBACK_ENTRY;
+};

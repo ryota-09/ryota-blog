@@ -1,7 +1,8 @@
 import { ImageResponse } from "next/og";
 
-import { AUTHOR_NAME, AUTHOR_NAME_EN, CATEGORY_MAPED_NAME } from "@/static/blogs";
-import { getCategoryById } from "@/lib/microcms";
+import { AUTHOR_NAME, AUTHOR_NAME_EN } from "@/static/blogs";
+import { findCategoryBySlug } from "@/static/categories";
+import { getLocalizedCategoryName } from "@/lib/i18n-utils";
 
 export const size = {
   width: 1200,
@@ -28,16 +29,8 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
   // localeに基づいて作者名を選択
   const authorName = locale === 'en' ? AUTHOR_NAME_EN : AUTHOR_NAME;
 
-  let categoryName = category;
-
-  try {
-    const categoryData = await getCategoryById(category);
-    // localeに基づいてカテゴリー名を選択
-    categoryName = locale === 'en' && categoryData.name_en ? categoryData.name_en : categoryData.name;
-  } catch (error) {
-    // microCMSから取得できない場合は、CATEGORY_MAPED_NAMEから取得
-    categoryName = CATEGORY_MAPED_NAME[category] || category;
-  }
+  const categoryEntry = findCategoryBySlug(category);
+  const categoryName = categoryEntry ? getLocalizedCategoryName(categoryEntry, locale) : category;
   
   return new ImageResponse(
     (

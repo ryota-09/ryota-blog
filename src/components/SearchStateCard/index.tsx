@@ -3,8 +3,6 @@
 import { Link } from 'next-view-transitions';
 import { useLocale, useTranslations } from 'next-intl';
 import Chip from "@/components/UiParts/Chip";
-import type { MappedKeyLiteralType } from "@/types/microcms";
-import { CATEGORY_MAPED_ID } from "@/static/blogs";
 
 type SearchStateCardProps = {
   /**
@@ -12,9 +10,9 @@ type SearchStateCardProps = {
    */
   keyword?: string;
   /**
-   * カテゴリー
+   * カテゴリーの表示ラベル（呼び出し元で解決済みのものを渡す）
    */
-  category?: MappedKeyLiteralType | string
+  category?: string
   /**
    * ブログタイプ (Zennモード時の色変更用)
    */
@@ -24,21 +22,6 @@ type SearchStateCardProps = {
 const SearchStateCard = ({ keyword, category, blogType = "blogs" }: SearchStateCardProps) => {
   const locale = useLocale();
   const t = useTranslations('blog');
-  const tCategories = useTranslations('categories');
-
-  // カテゴリ表示名を取得
-  const getCategoryLabel = (categoryValue: string) => {
-    // カテゴリ名からIDを取得（CATEGORY_MAPED_NAMEから渡される場合）
-    const categoryId = CATEGORY_MAPED_ID[categoryValue as keyof typeof CATEGORY_MAPED_ID] || categoryValue;
-
-    // カテゴリIDが翻訳キーとして存在する場合は翻訳を使用
-    try {
-      return tCategories(categoryId as any);
-    } catch {
-      // 翻訳が見つからない場合は元の値を返す
-      return categoryValue;
-    }
-  };
 
   // Zennモード時の色設定とリンク先
   const isZennMode = blogType === "zenn"
@@ -60,7 +43,7 @@ const SearchStateCard = ({ keyword, category, blogType = "blogs" }: SearchStateC
         <ul className="flex gap-4 items-center">
           {category && (
             <li data-testid="pw-search-chip-category">
-              <Chip classes=" text-xs lg:text-md bg-base-color dark:bg-primary px-3 py-2 text-sm text-txt-base dark:text-white" label={getCategoryLabel(category)} />
+              <Chip classes=" text-xs lg:text-md bg-base-color dark:bg-primary px-3 py-2 text-sm text-txt-base dark:text-white" label={category} />
             </li>
           )}
           {keyword && (

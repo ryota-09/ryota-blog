@@ -1,19 +1,19 @@
 import { getTranslations } from 'next-intl/server';
 import CategoryItem from "@/components/CategoryList/CategoryItem";
-import { CATEGORY_MAPED_ID } from "@/static/blogs";
+import { getLocalizedCategoryName } from "@/lib/i18n-utils";
+import { CATEGORIES } from "@/static/categories";
 
 type CategoryListProps = {
   locale: string;
 }
 
 const CategoryList = async ({ locale }: CategoryListProps) => {
-  const t = await getTranslations({ locale, namespace: 'categories' });
   const tBlog = await getTranslations({ locale, namespace: 'blog' });
-  
-  // カテゴリ配列を翻訳データで生成
-  const categoryArray = Object.entries(CATEGORY_MAPED_ID).map(([_, id]) => ({
-    id,
-    name: t(id)
+
+  // カテゴリ配列をmicroCMSのcategoriesコンテンツから生成
+  const categoryArray = CATEGORIES.map((category) => ({
+    id: category.slug,
+    name: getLocalizedCategoryName(category, locale)
   }));
 
   return (

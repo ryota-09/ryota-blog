@@ -6,17 +6,19 @@ import { routing } from './i18n/routing';
 import { getBlogByIdByLocale } from './lib/microcms'
 import { getPrimaryCategoryId } from './lib/index'
 import { LOCALE_COOKIE_NAME } from './types/locale'
-import { CATEGORY_MAPED_ID } from './static/blogs'
+import { CATEGORIES } from './static/categories'
 import { classifyAiAccess } from './lib/ai-access/classify'
 import { recordAiAccessHit } from './lib/ai-access/repository'
 import type { AiBotDefinition } from './lib/ai-access/types'
 
+const CATEGORY_SLUGS = CATEGORIES.map((category) => category.slug)
+
 // 旧URL（/[locale]/blogs/[blogId]）リダイレクト判定でフェッチ対象外にする既知セグメント
-const NON_BLOG_ID_SEGMENTS = new Set<string>([...Object.values(CATEGORY_MAPED_ID), 'zenn', 'page'])
+const NON_BLOG_ID_SEGMENTS = new Set<string>([...CATEGORY_SLUGS, 'zenn', 'page'])
 
 // 記事詳細ページのcanonical URL: /{locale}/blogs/{categoryId}/{blogId}
 const ARTICLE_PATH_PATTERN = /^\/([^/]+)\/blogs\/([^/]+)\/([^/]+)$/
-const KNOWN_CATEGORY_IDS = new Set<string>(Object.values(CATEGORY_MAPED_ID))
+const KNOWN_CATEGORY_IDS = new Set<string>(CATEGORY_SLUGS)
 
 // 管理者ページのcanonical URL: /{locale}/admin(/...)
 const ADMIN_PATH_PATTERN = /^\/[^/]+\/admin(\/.*)?$/

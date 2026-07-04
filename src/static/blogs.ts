@@ -12,33 +12,3 @@ export const KEYWORD_QUERY = "keyword";
 export const PAGE_QUERY = "page";
 export const CATEGORY_QUERY = "category";
 export const BLOG_TYPE_QUERY = "blogType";
-
-export const CATEGORY_MAPED_ID = {
-  "Python": "python",
-  "TypeScript": "typescript",
-  "CSS": "css",
-  "Next.js": "next_js",
-  "Release Notes": "release_notes",
-  "AWS": "aws",
-  "レビュー": "review",
-  "雑記": "zakki",
-  "React": "react",
-  "OpenAI API": "openai_api",
-  "ガジェット": "gadget",
-  "TailwindCSS": "tailwindcss",
-  "UI": "ui_parts",
-  "プログラミング": "programming",
-  "Career": "career",
-  "LifeHack": "life_hack",
-  "時事": "news",
-  "Terraform": "terraform",
-} as const;
-
-export const CATEGORY_ARRAY = Object.entries(CATEGORY_MAPED_ID).map(([name, id]) => ({
-  id,
-  name
-}));
-
-export const CATEGORY_MAPED_NAME = Object.fromEntries(
-  Object.entries(CATEGORY_MAPED_ID).map(([key, value]) => [value, key])
-) as { [key: string]: string };

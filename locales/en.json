@@ -82,26 +82,6 @@
     "bannerSubtitle": "Feel free to contact us",
     "bannerCta": "Details"
   },
-  "categories": {
-    "python": "Python",
-    "typescript": "TypeScript",
-    "css": "CSS",
-    "next_js": "Next.js",
-    "release_notes": "Release Notes",
-    "aws": "AWS",
-    "review": "Review",
-    "zakki": "Daily",
-    "react": "React",
-    "openai_api": "OpenAI API",
-    "gadget": "Gadget",
-    "tailwindcss": "TailwindCSS",
-    "ui_parts": "UI",
-    "programming": "Programming",
-    "career": "Career",
-    "life_hack": "LifeHack",
-    "news": "News",
-    "terraform": "Terraform"
-  },
   "about": {
     "pageTitle": "Ryota — Software Engineer / Fullstack",
     "pageDescription": "Fullstack software engineer at a Tokyo-based logistics startup, working across Next.js, TypeScript, and AWS. Writing about the kind of web development problems that don't fit cleanly in tutorials."

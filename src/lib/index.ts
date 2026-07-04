@@ -2,8 +2,10 @@ import type { MicroCMSQueries } from "microcms-js-sdk";
 import { getTranslations } from 'next-intl/server';
 
 import type { BreadcrumbItemType, TOCAssetsType } from "@/types";
-import { CATEGORY_MAPED_ID, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE, CATEGORY_MAPED_NAME } from "@/static/blogs";
-import type { MappedKeyLiteralType, BlogsContentType } from "@/types/microcms";
+import { CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE } from "@/static/blogs";
+import { resolveCategoryEntry, resolveCategoryOrDefault } from "@/static/categories";
+import { getLocalizedCategoryName } from "@/lib/i18n-utils";
+import type { BlogsContentType } from "@/types/microcms";
 import { baseURL } from "@/config";
 import { locales } from "@/i18n/config";
 
@@ -36,7 +38,7 @@ export const generateTOCAssets = (html: string) => {
   return results;
 }
 
-export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: MappedKeyLiteralType | string, [KEYWORD_QUERY]: string }) => {
+export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: string, [KEYWORD_QUERY]: string }) => {
   let filters = "";
   const query: MicroCMSQueries = { limit: PER_PAGE, offset: 0 }
 
@@ -49,11 +51,9 @@ export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QU
   // filters
   if (searchParams[CATEGORY_QUERY]) {
     const categoryValue = searchParams[CATEGORY_QUERY];
-    // If categoryValue is already a category name, use it directly
-    // If it's a category ID, convert it to name using CATEGORY_MAPED_NAME
-    const categoryId = typeof categoryValue === 'string' && CATEGORY_MAPED_ID[categoryValue as keyof typeof CATEGORY_MAPED_ID] 
-      ? CATEGORY_MAPED_ID[categoryValue as keyof typeof CATEGORY_MAPED_ID]
-      : categoryValue;
+    // カテゴリの表示名(ja/en)・URLスラッグ・content idのいずれで渡されてもmicroCMSのcontent idに解決する
+    const categoryEntry = resolveCategoryEntry(categoryValue);
+    const categoryId = categoryEntry?.id ?? categoryValue;
     filters += `${CATEGORY_QUERY}[contains]${categoryId}`;
   }
 
@@ -64,18 +64,19 @@ export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QU
   return { ...query, filters };
 }
 
+// 記事のプライマリカテゴリのURLスラッグを返す。該当カテゴリがcategories.generated.tsに
+// 見つからない場合（CMS側での削除等）は必ずDEFAULT_CATEGORY_IDにフォールバックする
+// （CategoryTag/RelatedContentItemと同じresolveCategoryOrDefaultを使うことで挙動を統一する）。
 export const getPrimaryCategoryId = (blog: Pick<BlogsContentType, "category">): string => {
-  if (blog.category.length === 0) return "programming";
-  const categoryName = blog.category[0].name as keyof typeof CATEGORY_MAPED_ID;
-  return CATEGORY_MAPED_ID[categoryName] || "programming";
+  return resolveCategoryOrDefault(blog.category[0]?.id).slug;
 }
 
 export const generateBreadcrumbAssets = async (blog: BlogsContentType, locale: string = 'ja'): Promise<BreadcrumbItemType[]> => {
-  const categoryId = getPrimaryCategoryId(blog);
+  const categoryEntry = resolveCategoryOrDefault(blog.category[0]?.id);
+  const categoryId = categoryEntry.slug;
   const t = await getTranslations({ locale, namespace: 'navigation' });
-  const tCategories = await getTranslations({ locale, namespace: 'categories' });
-  
-  const categoryName = tCategories(categoryId);
+
+  const categoryName = getLocalizedCategoryName(categoryEntry, locale);
   const localePrefix = `/${locale}`;
   
   const results = [
