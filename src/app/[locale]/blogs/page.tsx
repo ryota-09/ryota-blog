@@ -9,15 +9,15 @@ import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
 import ZennArticleList from "@/components/ZennArticleList";
 import { generateQuery, buildPageUrl, buildLanguageAlternates } from "@/lib";
+import { getLocalizedCategoryName } from "@/lib/i18n-utils";
 import {
   BLOG_TYPE_QUERY,
   CATEGORY_QUERY,
   KEYWORD_QUERY,
   PAGE_QUERY,
-  CATEGORY_MAPED_ID,
 } from "@/static/blogs";
+import { resolveCategoryEntry } from "@/static/categories";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
-import type { MappedKeyLiteralType } from "@/types/microcms";
 import type { BlogTypeKeyLIteralType } from "@/types";
 
 // キャッシュ設定: 1時間のISR
@@ -30,7 +30,7 @@ interface PageProps {
   searchParams: Promise<{
     [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType;
     [PAGE_QUERY]: string;
-    [CATEGORY_QUERY]: MappedKeyLiteralType;
+    [CATEGORY_QUERY]: string;
     [KEYWORD_QUERY]: string;
   }>;
 }
@@ -44,10 +44,6 @@ export async function generateMetadata({
   const resolvedSearchParams = await searchParams;
   const t = await getTranslations({ locale, namespace: "blog" });
   const tMeta = await getTranslations({ locale, namespace: "metadata" });
-  const tCategories = await getTranslations({
-    locale,
-    namespace: "categories",
-  });
   const blogType = resolvedSearchParams.blogType || "blogs";
   const page = resolvedSearchParams.page || null;
   const category = resolvedSearchParams.category || null;
@@ -84,19 +80,11 @@ export async function generateMetadata({
   let title = page ? ` - ${t("page")} ${page}` : "";
   let description = "";
 
-  // カテゴリ名を翻訳
+  // カテゴリ名を翻訳（id・スラッグ・表示名(ja/en)のいずれで渡されても解決する）
   let translatedCategory = category;
   if (category) {
-    // カテゴリ名からIDを取得（CATEGORY_MAPED_NAMEから渡される場合を考慮）
-    const categoryId =
-      CATEGORY_MAPED_ID[category as keyof typeof CATEGORY_MAPED_ID] || category;
-    try {
-      // TypeScriptエラーを回避するために型アサーション
-      translatedCategory = (tCategories as any)(categoryId);
-    } catch {
-      // 翻訳が見つからない場合は元の値を使用
-      translatedCategory = category;
-    }
+    const categoryEntry = resolveCategoryEntry(category);
+    translatedCategory = categoryEntry ? getLocalizedCategoryName(categoryEntry, locale) : category;
   }
 
   // NOTE: ?category=hoge&keyword=fuga にアクセスした場合
@@ -135,6 +123,8 @@ const Page = async ({ params, searchParams }: PageProps) => {
   const page = resolvedSearchParams[PAGE_QUERY] || "1";
 
   const query: MicroCMSQueries = generateQuery(resolvedSearchParams);
+  const categoryEntry = category ? resolveCategoryEntry(category) : undefined;
+  const categoryLabel = categoryEntry ? getLocalizedCategoryName(categoryEntry, locale) : category;
 
   return (
     <>
@@ -145,7 +135,7 @@ const Page = async ({ params, searchParams }: PageProps) => {
               <BlogTypeTabs blogType={blogType} />
             </div>
             {(category || keyword) && (
-              <SearchStateCard category={category} keyword={keyword} />
+              <SearchStateCard category={categoryLabel} keyword={keyword} />
             )}
           </div>
           {blogType === "zenn" ? (

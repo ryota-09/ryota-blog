@@ -10,6 +10,7 @@ import {
   SITE_TITLE,
 } from "@/static/blogs";
 import { getPrimaryCategoryId } from "@/lib";
+import { getLocalizedCategoryName } from "@/lib/i18n-utils";
 import { getTranslations } from 'next-intl/server';
 
 // 日付フォーマットの国際化 API
@@ -108,24 +109,10 @@ async function generateCategoriesSection(
     return `${headerText}\n\n${noDataText}`;
   }
 
-  // 翻訳を取得
-  const tCategories = await getTranslations({ locale, namespace: 'categories' });
-
-  // カテゴリ名を取得（英語の場合は翻訳システムを使用）
-  const categoryList = categories.map(({ id, name, name_en }) => {
-    let displayName: string;
-    if (locale === 'en') {
-      // 英語の場合は翻訳システムを使用、フォールバックでname_enまたはname
-      try {
-        displayName = tCategories(id);
-      } catch {
-        displayName = name_en || name;
-      }
-    } else {
-      displayName = name;
-    }
-    return `- ${displayName}`;
-  }).join("\n");
+  // カテゴリ名はmicroCMSの name / name_en を正として使う
+  const categoryList = categories
+    .map((category) => `- ${getLocalizedCategoryName(category, locale)}`)
+    .join("\n");
 
   return `${headerText}\n\n${categoryList}`;
 }

@@ -3,7 +3,8 @@ import { MetadataRoute } from "next";
 import { baseURL } from "@/config";
 import { getAllBlogList, getBlogList } from "@/lib/microcms";
 import { getPrimaryCategoryId, generateQuery } from "@/lib";
-import { CATEGORY_MAPED_ID, PER_PAGE } from "@/static/blogs";
+import { PER_PAGE } from "@/static/blogs";
+import { CATEGORIES } from "@/static/categories";
 import { SUPPORTED_LOCALES } from "@/types/locale";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -21,10 +22,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ])
 
     // カテゴリページのパスの多言語対応
-    const categoryPaths = SUPPORTED_LOCALES.flatMap(locale => 
-      Object.values(CATEGORY_MAPED_ID).map((categoryId) => {
+    const categoryPaths = SUPPORTED_LOCALES.flatMap(locale =>
+      CATEGORIES.map((category) => {
         return {
-          url: `${baseURL}/${locale}/blogs/${categoryId}`,
+          url: `${baseURL}/${locale}/blogs/${category.slug}`,
           lastModified: new Date()
         }
       })
@@ -69,23 +70,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // NOTE: カテゴリごとの件数取得はロケール非依存（blogsエンドポイント）なので、
     //       カテゴリ単位で1回だけ並列フェッチし、両ロケールのURL生成に使い回す
     const categoryTotals = await Promise.all(
-      Object.entries(CATEGORY_MAPED_ID).map(async ([categoryName, categoryId]) => {
+      CATEGORIES.map(async (category) => {
         try {
-          const query = generateQuery({ page: "1", category: categoryName, keyword: "" });
+          const query = generateQuery({ page: "1", category: category.id, keyword: "" });
           const categoryData = await getBlogList({ ...query, fields: "id" });
-          return { categoryId, totalPages: Math.ceil(categoryData.totalCount / PER_PAGE) };
+          return { categorySlug: category.slug, totalPages: Math.ceil(categoryData.totalCount / PER_PAGE) };
         } catch (error) {
-          console.warn(`カテゴリのサイトマップ生成に失敗しました: ${categoryName}`, error);
-          return { categoryId, totalPages: 0 };
+          console.warn(`カテゴリのサイトマップ生成に失敗しました: ${category.name}`, error);
+          return { categorySlug: category.slug, totalPages: 0 };
         }
       })
     );
 
     const categoryPaginationPaths = SUPPORTED_LOCALES.flatMap((locale) =>
-      categoryTotals.flatMap(({ categoryId, totalPages }) =>
+      categoryTotals.flatMap(({ categorySlug, totalPages }) =>
         // ページ2以降を生成（ページ1は /[locale]/blogs/[category] にある）
         Array.from({ length: Math.max(totalPages - 1, 0) }, (_, i) => ({
-          url: `${baseURL}/${locale}/blogs/${categoryId}/page/${i + 2}`,
+          url: `${baseURL}/${locale}/blogs/${categorySlug}/page/${i + 2}`,
           lastModified: new Date()
         }))
       )

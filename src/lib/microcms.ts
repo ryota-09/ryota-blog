@@ -66,14 +66,6 @@ export const getAllCategoryList = async (querys?: MicroCMSQueries, customRequest
   return data;
 }
 
-export const getCategoryById = (contentId: string, querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) =>
-  MicroCMSApiGetSingleObjectHandler<CategoriesContentType>(
-    "categories",
-    querys,
-    customRequestInit,
-    contentId,
-  );
-
 
 // English blog functions
 export const getBlogListEn = (querys?: MicroCMSQueries, customRequestInit?: CustomRequestInit) =>

@@ -10,19 +10,20 @@ import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
 import ZennArticleList from "@/components/ZennArticleList";
 import { generateQuery, buildPageUrl, buildLanguageAlternates } from "@/lib";
-import { BLOG_TYPE_QUERY, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, CATEGORY_MAPED_NAME, CATEGORY_MAPED_ID } from "@/static/blogs";
+import { getLocalizedCategoryName } from "@/lib/i18n-utils";
+import { BLOG_TYPE_QUERY, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY } from "@/static/blogs";
+import { CATEGORIES, findCategoryBySlug } from "@/static/categories";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
-import type { MappedKeyLiteralType } from "@/types/microcms";
 import type { BlogTypeKeyLIteralType } from "@/types";
 import { locales } from '@/i18n/config';
 
 export async function generateStaticParams() {
   const params = [];
   for (const locale of locales) {
-    for (const categoryId of Object.values(CATEGORY_MAPED_ID)) {
+    for (const category of CATEGORIES) {
       params.push({
         locale,
-        category: categoryId
+        category: category.slug
       });
     }
   }
@@ -36,22 +37,13 @@ export async function generateMetadata(
   const { locale, category } = await params;
   const resolvedSearchParams = await searchParams;
   const t = await getTranslations({ locale, namespace: 'blog' });
-  const tCategories = await getTranslations({ locale, namespace: 'categories' });
-  const categoryName = CATEGORY_MAPED_NAME[category];
-  
-  if (!categoryName) {
+  const categoryEntry = findCategoryBySlug(category);
+
+  if (!categoryEntry) {
     notFound();
   }
-  
-  // カテゴリ名を翻訳
-  let translatedCategoryName;
-  try {
-    // TypeScriptエラーを回避するために型アサーション
-    translatedCategoryName = (tCategories as any)(category);
-  } catch {
-    // 翻訳が見つからない場合は元の値を使用
-    translatedCategoryName = categoryName;
-  }
+
+  const translatedCategoryName = getLocalizedCategoryName(categoryEntry, locale);
 
   const blogType = resolvedSearchParams.blogType || "blogs";
   const page = resolvedSearchParams.page || null;
@@ -117,9 +109,9 @@ const Page = async ({ params, searchParams }: PageProps) => {
   // Next.js 16では、paramsとsearchParamsを非同期で取得する必要がある
   const { locale, category } = await params;
   const resolvedSearchParams = await searchParams;
-  const categoryName = CATEGORY_MAPED_NAME[category];
+  const categoryEntry = findCategoryBySlug(category);
 
-  if (!categoryName) {
+  if (!categoryEntry) {
     notFound();
   }
 
@@ -129,7 +121,7 @@ const Page = async ({ params, searchParams }: PageProps) => {
 
   const modifiedSearchParams = {
     ...resolvedSearchParams,
-    [CATEGORY_QUERY]: categoryName
+    [CATEGORY_QUERY]: categoryEntry.id
   };
 
   const query: MicroCMSQueries = generateQuery(modifiedSearchParams);
@@ -142,7 +134,7 @@ const Page = async ({ params, searchParams }: PageProps) => {
             <div className="flex justify-center items-center p-3 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-600">
               <BlogTypeTabs blogType={blogType} />
             </div>
-            <SearchStateCard category={categoryName} keyword={keyword} />
+            <SearchStateCard category={getLocalizedCategoryName(categoryEntry, locale)} keyword={keyword} />
           </div>
           {blogType === "zenn"
             ?

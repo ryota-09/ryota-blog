@@ -9,41 +9,43 @@ import Skelton from "@/components/ArticleList/skelton";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
 import { generateQuery, buildPageUrl, buildLanguageAlternates } from "@/lib";
+import { getLocalizedCategoryName } from "@/lib/i18n-utils";
 import { getBlogListByLocale } from "@/lib/microcms";
-import { PER_PAGE, CATEGORY_MAPED_NAME, CATEGORY_MAPED_ID } from "@/static/blogs";
+import { PER_PAGE } from "@/static/blogs";
+import { CATEGORIES, findCategoryBySlug } from "@/static/categories";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import { locales } from '@/i18n/config';
 
 export async function generateStaticParams() {
-  const categories = Object.entries(CATEGORY_MAPED_ID);
-  const staticParams = [];
-  
-  for (const locale of locales) {
-    for (const [categoryName, categoryId] of categories) {
+  // ロケール×カテゴリの組み合わせを並列フェッチする（sitemap.tsのcategoryTotalsと同じ方針。
+  // 直列await(for-of内)だとカテゴリ数×ロケール数分のリクエストがビルド時間に積み上がるため）
+  const combinations = locales.flatMap((locale) => CATEGORIES.map((category) => ({ locale, category })));
+
+  const totalPagesByCombination = await Promise.all(
+    combinations.map(async ({ locale, category }) => {
       try {
         const query: MicroCMSQueries = {
           limit: 1,
-          filters: `category[contains]${categoryId}`
+          filters: `category[contains]${category.id}`
         };
-        
+
         const data = await getBlogListByLocale(locale, query);
-        const totalPages = Math.ceil(data.totalCount / PER_PAGE);
-        
-        // ページ2以降のパラメータを生成（ページ1は /blogs/[category] にある）
-        for (let i = 2; i <= totalPages; i++) {
-          staticParams.push({
-            locale,
-            category: categoryId,
-            page: String(i)
-          });
-        }
+        return { locale, category, totalPages: Math.ceil(data.totalCount / PER_PAGE) };
       } catch (error) {
-        console.warn(`カテゴリの静的パラメータ生成に失敗しました: ${categoryName}`, error);
+        console.warn(`カテゴリの静的パラメータ生成に失敗しました: ${category.name}`, error);
+        return { locale, category, totalPages: 0 };
       }
-    }
-  }
-  
-  return staticParams;
+    })
+  );
+
+  return totalPagesByCombination.flatMap(({ locale, category, totalPages }) =>
+    // ページ2以降のパラメータを生成（ページ1は /blogs/[category] にある）
+    Array.from({ length: Math.max(totalPages - 1, 0) }, (_, i) => ({
+      locale,
+      category: category.slug,
+      page: String(i + 2)
+    }))
+  );
 }
 
 export async function generateMetadata(
@@ -52,22 +54,13 @@ export async function generateMetadata(
   // Next.js 16では、paramsを非同期で取得する必要がある
   const { locale, category, page } = await params;
   const t = await getTranslations({ locale, namespace: 'blog' });
-  const tCategories = await getTranslations({ locale, namespace: 'categories' });
-  const categoryName = CATEGORY_MAPED_NAME[category];
-  
-  if (!categoryName) {
+  const categoryEntry = findCategoryBySlug(category);
+
+  if (!categoryEntry) {
     notFound();
   }
-  
-  // カテゴリ名を翻訳
-  let translatedCategoryName;
-  try {
-    // TypeScriptエラーを回避するために型アサーション
-    translatedCategoryName = (tCategories as any)(category);
-  } catch {
-    // 翻訳が見つからない場合は元の値を使用
-    translatedCategoryName = categoryName;
-  }
+
+  const translatedCategoryName = getLocalizedCategoryName(categoryEntry, locale);
 
   const pageUrl = buildPageUrl(locale, "blogs", category, "page", page);
   const title = `${translatedCategoryName} - ${t('page')} ${page}`;
@@ -95,10 +88,10 @@ type PageProps = {
 const Page = async ({ params }: PageProps) => {
   // Next.js 16では、paramsを非同期で取得する必要がある
   const { locale, category, page } = await params;
-  const categoryName = CATEGORY_MAPED_NAME[category];
+  const categoryEntry = findCategoryBySlug(category);
   const pageNum = parseInt(page);
 
-  if (!categoryName) {
+  if (!categoryEntry) {
     notFound();
   }
 
@@ -107,10 +100,10 @@ const Page = async ({ params }: PageProps) => {
     notFound();
   }
 
-  // このカテゴリでページが存在するかチェック
+  // このカテゴリでページが存在するかチェック（microCMSへのフィルタは必ずcontent idを使う）
   const checkQuery: MicroCMSQueries = {
     limit: 1,
-    filters: `category[contains]${category}`
+    filters: `category[contains]${categoryEntry.id}`
   };
   const data = await getBlogListByLocale(locale, checkQuery);
   const totalPages = Math.ceil(data.totalCount / PER_PAGE);
@@ -122,7 +115,7 @@ const Page = async ({ params }: PageProps) => {
   const blogType = "blogs";
   const query: MicroCMSQueries = generateQuery({
     page,
-    category,
+    category: categoryEntry.id,
     keyword: ""
   });
 
@@ -136,7 +129,7 @@ const Page = async ({ params }: PageProps) => {
                 <BlogTypeTabs blogType={blogType} />
               </Suspense>
             </div>
-            <SearchStateCard category={categoryName} keyword={""} />
+            <SearchStateCard category={getLocalizedCategoryName(categoryEntry, locale)} keyword={""} />
           </div>
           <Suspense fallback={<Skelton />}>
             <ArticleList
