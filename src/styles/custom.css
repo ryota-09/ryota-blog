@@ -39,6 +39,18 @@ summary:focus-visible,
   outline-color: #2F8F9D; /* primary */
 }
 
+/* View Transitions API のクロスフェード/モーフの質感調整。
+   (*) はrootを含む全ての名前付きグループに一致するため、
+   ページ全体のデフォルト遷移にも一貫して適用される */
+::view-transition-group(*) {
+  animation-duration: 450ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 300ms;
+}
+
 /* reduced-motion ユーザーには全アニメ・トランジションを止める */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -48,6 +60,13 @@ summary:focus-visible,
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* View Transition疑似要素ツリーは `*` セレクタの対象外のため個別に無効化する */
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }
 

@@ -49,7 +49,12 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
                 width={data.thumbnail.width}
                 height={data.thumbnail.height}
                 sizes="100vw"
-                style={{ height: "auto", width: "100%" }}
+                style={{
+                  height: "auto",
+                  width: "100%",
+                  // 記事一覧のサムネイル画像と同じ名前を付け、遷移直後にサムネイルがそのままモーフするようにする
+                  viewTransitionName: `thumb-${data.id}`,
+                }}
                 loading="eager"
                 preload
               />

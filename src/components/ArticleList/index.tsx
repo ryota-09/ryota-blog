@@ -29,12 +29,17 @@ const ArticleList = async ({ query, blogType, page, basePath, locale }: ArticleL
   const contentCount = data.contents.length
   const emptyItem = PER_PAGE - contentCount
   return (
-    <div className="opacity-50 animate-fadeIn flex flex-col justify-between h-full">
+    <div className="flex flex-col justify-between h-full">
       {data.totalCount !== 0
         ?
         <ul className="flex-imtem grid grid-cols-1 xl:grid-cols-2 gap-4">
           {data.contents.map((item: BlogsContentType, index: number) => (
-            <li key={item.id} data-testid={`pw-article-card-${index}`}>
+            <li
+              key={item.id}
+              data-testid={`pw-article-card-${index}`}
+              className="animate-fadeIn"
+              style={{ animationDelay: `${Math.min(index, 6) * 50}ms` }}
+            >
               <ArticleCard data={item} index={index} />
             </li>
           ))}

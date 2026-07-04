@@ -11,22 +11,22 @@ const config: Config = {
     extend: {
       keyframes: {
         fadeInAnime: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
+          '0%': { opacity: '0', transform: 'translateY(-4px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         fadeIn: {
-          '0%': { 
-            opacity: '0', 
-            transform: 'translateY(-4px)' 
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(-4px)'
           },
-          '100%': { 
-            opacity: '1', 
-            transform: 'translateY(0)' 
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)'
           },
         },
       },
       animation: {
-        'fadeIn': 'fadeInAnime 1s forwards',
+        'fadeIn': 'fadeInAnime 0.45s ease-out forwards',
         'fade-in': 'fadeIn 0.2s ease-out',
       },
       textUnderlineOffset: {
