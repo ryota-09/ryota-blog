@@ -1,20 +1,22 @@
 import { AUTHOR_DESCRIPTION, AUTHOR_DESCRIPTION_EN, AUTHOR_NAME, AUTHOR_NAME_EN } from "@/static/blogs";
-import Image from "next/image";
+import ImageWithSkeleton from "@/components/UiParts/ImageWithSkeleton";
 import { useLocale } from 'next-intl';
 
 const BottomCard = () => {
   const locale = useLocale();
-  
+
   return (
     <>
       <div className="mx-6 flex shrink-0 items-center justify-center">
-        <Image
+        <ImageWithSkeleton
           src="/author.png"
           alt="author"
           width={80}
           height={80}
           sizes="100vw"
           className="rounded-full"
+          wrapperClassName=""
+          skeletonClassName="rounded-full"
         />
       </div>
       <div>

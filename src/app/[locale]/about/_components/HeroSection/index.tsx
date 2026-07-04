@@ -24,8 +24,10 @@ const HeroSection = ({ locale }: HeroSectionProps) => {
           alt={`${nameAlt} のプロフィール写真`}
           width={96}
           height={96}
-          className="aspect-square w-20 shrink-0 rounded-full object-cover shadow-md"
-          priority
+          className="aspect-square w-20 rounded-full object-cover shadow-md"
+          wrapperClassName="shrink-0"
+          skeletonClassName="rounded-full"
+          preload
         />
         <div>
           <h1
@@ -71,7 +73,8 @@ const HeroSection = ({ locale }: HeroSectionProps) => {
             width={280}
             height={280}
             className="aspect-square w-[200px] md:w-[280px] rounded-full object-cover shadow-2xl"
-            priority
+            skeletonClassName="rounded-full"
+            preload
           />
         </figure>
       </div>
