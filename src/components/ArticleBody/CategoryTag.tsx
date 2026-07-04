@@ -1,26 +1,26 @@
 'use client';
 
 import { Link } from 'next-view-transitions';
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import Chip from '@/components/UiParts/Chip';
-import { CATEGORY_MAPED_ID } from '@/static/blogs';
+import { getLocalizedCategoryName } from '@/lib/i18n-utils';
+import { resolveCategoryOrDefault } from '@/static/categories';
 
 type CategoryTagProps = {
-  name: string;
+  id: string;
   index: number;
 };
 
-const CategoryTag = ({ name, index }: CategoryTagProps) => {
+const CategoryTag = ({ id, index }: CategoryTagProps) => {
   const locale = useLocale();
-  const t = useTranslations('categories');
-  
-  // カテゴリ名から対応するIDを取得
-  const categoryId = CATEGORY_MAPED_ID[name as keyof typeof CATEGORY_MAPED_ID] || 'programming';
-  const localizedName = t(categoryId);
-  
+
+  const categoryEntry = resolveCategoryOrDefault(id);
+  const categorySlug = categoryEntry.slug;
+  const localizedName = getLocalizedCategoryName(categoryEntry, locale);
+
   return (
     <li key={index} className="block cursor-pointer">
-      <Link href={`/${locale}/blogs/${categoryId}`}> 
+      <Link href={`/${locale}/blogs/${categorySlug}`}>
         <Chip label={`#${localizedName}`} classes="bg-gray-200 dark:bg-gray-600 dark:text-gray-300 px-3 py-2 text-sm text-txt-base hover:opacity-60" />
       </Link>
     </li>

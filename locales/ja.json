@@ -83,26 +83,6 @@
     "bannerSubtitle": "お気軽にお問い合わせください",
     "bannerCta": "詳細"
   },
-  "categories": {
-    "python": "Python",
-    "typescript": "TypeScript",
-    "css": "CSS",
-    "next_js": "Next.js",
-    "release_notes": "Release Notes",
-    "aws": "AWS",
-    "review": "レビュー",
-    "zakki": "雑記",
-    "react": "React",
-    "openai_api": "OpenAI API",
-    "gadget": "ガジェット",
-    "tailwindcss": "TailwindCSS",
-    "ui_parts": "UI",
-    "programming": "プログラミング",
-    "career": "Career",
-    "life_hack": "LifeHack",
-    "news": "時事",
-    "terraform": "Terraform"
-  },
   "about": {
     "pageTitle": "りょた — Software Engineer / フルスタックエンジニア",
     "pageDescription": "東京の物流スタートアップで、Next.js / TypeScript / AWS を扱うフルスタックエンジニア。教育・SES・物流と3つの業界を渡り歩いてきました。「同じ場所で詰まった人の時間を5分でも短くする」をミッションに、業務で得た知見をブログで発信しています。"

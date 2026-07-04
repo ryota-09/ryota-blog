@@ -1,7 +1,9 @@
 import type { BreadcrumbList, BlogPosting, WithContext, WebSite } from "schema-dts"
 import type { BlogsContentType } from "@/types/microcms"
-import { SITE_TITLE, CATEGORY_MAPED_NAME } from "@/static/blogs"
+import { SITE_TITLE } from "@/static/blogs"
+import { findCategoryBySlug } from "@/static/categories"
 import { getPrimaryCategoryId, buildPageUrl } from "@/lib"
+import { getLocalizedCategoryName } from "@/lib/i18n-utils"
 
 
 type JsonLDProps = {
@@ -11,7 +13,8 @@ type JsonLDProps = {
 
 const JsonLD = ({ data, locale }: JsonLDProps) => {
   const categoryId = getPrimaryCategoryId(data);
-  const categoryName = CATEGORY_MAPED_NAME[categoryId];
+  const categoryEntry = findCategoryBySlug(categoryId);
+  const categoryName = categoryEntry ? getLocalizedCategoryName(categoryEntry, locale) : categoryId;
   // 構造化データのURLは実ルーティング（/[locale]/blogs/...）に合わせて locale 込みで構築する
   const articleUrl = buildPageUrl(locale, "blogs", categoryId, data.id);
   const authorUrl = buildPageUrl(locale, "about");

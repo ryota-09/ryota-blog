@@ -68,8 +68,8 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
         </aside>
       )}
       <ul className='mt-4 flex flex-wrap gap-2'>
-        {data.category.map(({ name }, index) => (
-          <CategoryTag key={index} name={name} index={index} />
+        {data.category.map(({ id }, index) => (
+          <CategoryTag key={index} id={id} index={index} />
         ))}
       </ul>
       <div className="mt-4">

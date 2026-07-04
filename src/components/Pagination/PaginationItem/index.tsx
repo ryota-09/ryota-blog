@@ -3,7 +3,6 @@ import { cltw } from "@/util"
 import { Link } from "next-view-transitions"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { ReactNode, useCallback } from "react"
-import { CATEGORY_MAPED_ID } from "@/static/blogs"
 
 type PaginationItemProps = {
   currentPage: number

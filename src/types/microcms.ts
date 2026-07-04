@@ -1,4 +1,3 @@
-import { CATEGORY_MAPED_ID } from "@/static/blogs";
 import type {
   MicroCMSDate,
   MicroCMSImage,
@@ -114,8 +113,6 @@ export type TableOfContentsType = {
   label: string;
   domName: "h2" | "h3";
 };
-
-export type MappedKeyLiteralType = keyof typeof CATEGORY_MAPED_ID;
 
 // カテゴリAPIのレスポンス型
 export type CategoriesApiResponseType = BaseMicroCMSApiListDataType<CategoriesContentType>;

@@ -2,7 +2,10 @@
  * i18n関連のユーティリティ関数
  */
 
-import type { CategoriesContentType } from "@/types/microcms";
+type LocalizableCategory = {
+  name: string;
+  name_en?: string;
+};
 
 /**
  * 現在のパスから別のlocaleのパスを生成
@@ -81,7 +84,7 @@ export function getCategoryPaginationPath(locale: string, categoryId: string, pa
 /**
  * ロケールに応じたカテゴリ名を取得
  */
-export function getLocalizedCategoryName(category: CategoriesContentType, locale: string): string {
+export function getLocalizedCategoryName(category: LocalizableCategory, locale: string): string {
   // 英語ロケールでname_enが存在する場合はそれを使用
   if (locale === 'en' && category.name_en) {
     return category.name_en;
