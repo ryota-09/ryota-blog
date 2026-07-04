@@ -1,5 +1,5 @@
 import { AUTHOR_NAME } from "@/static/blogs";
-import Image from "next/image";
+import ImageWithSkeleton from "@/components/UiParts/ImageWithSkeleton";
 
 type ThumbnailCardProps = {
   /**
@@ -15,13 +15,15 @@ const ThumbnailCard = ({ title }: ThumbnailCardProps) => {
         {title}
       </h1>
       <div className="mx-4 mb-4 flex items-center justify-end gap-4 sm:m-6">
-        <Image
+        <ImageWithSkeleton
           src="/author.png"
           alt="author"
           width={80}
           height={80}
           sizes="100vw"
           className="w-[50px] rounded-full md:w-[80px]"
+          wrapperClassName=""
+          skeletonClassName="rounded-full"
         />
         <p className="text-lg font-bold md:text-3xl dark:text-gray-300">
           {AUTHOR_NAME}
