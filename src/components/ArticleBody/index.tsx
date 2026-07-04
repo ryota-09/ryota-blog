@@ -1,4 +1,4 @@
-import Image from "next/image";
+import ImageWithSkeleton from "@/components/UiParts/ImageWithSkeleton";
 
 import RichEditor from "@/components/ArticleBody/RichEditor";
 import ThumbnailCard from '@/components/ArticleBody/ThumbnailCard';
@@ -42,8 +42,8 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
           ?
           <div className="flex flex-col gap-8">
             <h1 className="text-2xl md:text-3xl font-bold dark:text-gray-300">{data.title}</h1>
-            <figure className="max-h-[300px] md:max-h-[540px] overflow-hidden shadow-2xl">
-              <Image
+            <figure className="relative max-h-[300px] md:max-h-[540px] overflow-hidden shadow-2xl">
+              <ImageWithSkeleton
                 src={data.thumbnail.url}
                 alt={data.title}
                 width={data.thumbnail.width}
@@ -51,7 +51,7 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
                 sizes="100vw"
                 style={{ height: "auto", width: "100%" }}
                 loading="eager"
-                priority
+                preload
               />
             </figure>
           </div>

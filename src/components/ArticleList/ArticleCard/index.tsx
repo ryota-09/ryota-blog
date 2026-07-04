@@ -1,15 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { Link } from "next-view-transitions";
 import { useLocale, useTranslations } from "next-intl";
 
 import { BlogsContentType } from "@/types/microcms";
 import NewLabel from "@/components/UiParts/NewLabel";
+import ImageWithSkeleton from "@/components/UiParts/ImageWithSkeleton";
 import { isWithinTwoWeeks } from "@/util";
 import { getPrimaryCategoryId } from "@/lib";
 import { getBlogPath } from "@/lib/i18n-utils";
-import Image from "next/image";
 
 type ArticleCardProps = {
   /**
@@ -23,7 +22,6 @@ type ArticleCardProps = {
 };
 
 const ArticleCard = ({ data, index }: ArticleCardProps) => {
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const locale = useLocale();
   const t = useTranslations("blog");
   const categoryId = getPrimaryCategoryId(data);
@@ -32,6 +30,11 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
   // LCP最適化: モバイル（1列）は最初の1枚、デスクトップ（2列）は最初の2枚がLCP候補
   // SSR時に正しい値を出力する必要があるため、両方をカバーするindex <= 1を使用
   const isLcpCandidate = index <= 1;
+  // loading/fetchPriority/preload はLCP候補かどうかで常にセットで一致すべき値のため、
+  // 個別の三項演算子に分散させず1箇所にまとめて導出する（将来どれか1つだけ変更されるズレを防ぐ）
+  const lcpImageProps = isLcpCandidate
+    ? { loading: "eager" as const, fetchPriority: "high" as const, preload: true }
+    : { loading: "lazy" as const, fetchPriority: "auto" as const, preload: false };
 
   return (
     <div className="relative flex h-[540px] flex-col border-2 border-gray-200 bg-white p-6 dark:dark:border-gray-600 dark:bg-black md:h-[290px]">
@@ -68,14 +71,7 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
               className="flex h-full w-full flex-grow items-center justify-center"
             >
               <figure className="relative w-full transition-opacity hover:opacity-80">
-                {/* スケルトン: LCP候補以外の画像のみ表示（LCP候補はフェードインをスキップ） */}
-                {!isLcpCandidate && !isImageLoaded && (
-                  <div
-                    className="absolute inset-0 -z-10 animate-pulse bg-gray-200 dark:bg-gray-600"
-                    aria-hidden="true"
-                  />
-                )}
-                <Image
+                <ImageWithSkeleton
                   src={data.thumbnail.url}
                   alt={data.title}
                   width={data.thumbnail.width}
@@ -85,17 +81,7 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
                     width: "100%",
                     height: "auto",
                   }}
-                  className={
-                    // LCP候補は常にopacity-100（フェードインによるRender delay回避）
-                    isLcpCandidate
-                      ? "opacity-100"
-                      : !isImageLoaded
-                        ? "opacity-0 transition-opacity duration-500"
-                        : "opacity-100"
-                  }
-                  onLoad={() => setIsImageLoaded(true)}
-                  loading={isLcpCandidate ? "eager" : "lazy"}
-                  fetchPriority={isLcpCandidate ? "high" : "auto"}
+                  {...lcpImageProps}
                 />
               </figure>
             </Link>
