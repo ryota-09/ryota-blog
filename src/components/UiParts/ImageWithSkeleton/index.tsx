@@ -89,7 +89,7 @@ const ImageWithSkeleton = ({
       <span
         aria-hidden="true"
         className={cltw(
-          "pointer-events-none absolute inset-0 bg-gray-200 transition-opacity duration-300 dark:bg-gray-600",
+          "pointer-events-none absolute inset-0 bg-gray-200 transition-opacity duration-500 ease-out dark:bg-gray-600",
           isLoaded ? "opacity-0" : "animate-pulse opacity-100",
           skeletonClassName
         )}
