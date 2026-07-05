@@ -21,6 +21,7 @@ import ExternalLink from "@/components/UiParts/ExternalLink";
 import PopupModal from "@/components/UiParts/PopupModal";
 import CustomU from "@/components/ArticleBody/RichEditor/CustomUI/CustomU";
 import CopyableText from "@/components/ArticleBody/RichEditor/CopyableText";
+import ExecutableScript from "@/components/ArticleBody/RichEditor/ExecutableScript";
 
 // Next.js 16では、Client Componentに対してssr: falseを使用できない
 // TwitterCardは"use client"でマークされているため、通常のimportに変更
@@ -41,6 +42,15 @@ export const customReplaceOptions: HTMLReactParserOptions = {
       // ハイドレーションエラーが生じるため、scriptタグを削除
       if (domNode.name === "script" && domNode.attribs.src === "//cdn.iframe.ly/embed.js") {
         return <></>;
+      }
+
+      // React経由でDOMに挿入されたscriptタグはブラウザが実行しないため、
+      // ソフトナビゲーションではアフィリエイトウィジェット等が描画されない。
+      // クライアント側でscript要素を生成し直して実行するコンポーネントに置き換える
+      if (domNode.name === "script") {
+        const child = domNode.children[0];
+        const code = child && "data" in child ? child.data : "";
+        return <ExecutableScript attribs={domNode.attribs} code={code} />;
       }
 
       if (
