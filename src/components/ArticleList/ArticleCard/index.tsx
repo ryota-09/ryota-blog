@@ -80,6 +80,8 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
                   style={{
                     width: "100%",
                     height: "auto",
+                    // 記事詳細のアイキャッチ画像と同じ名前を付け、遷移時にサムネイルがそのままモーフするようにする
+                    viewTransitionName: `thumb-${data.id}`,
                   }}
                   {...lcpImageProps}
                 />
