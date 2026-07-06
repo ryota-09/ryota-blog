@@ -2,17 +2,16 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
 import ArticleCard from "@/components/ArticleList/ArticleCard";
-import { getBlogListByLocale } from "@/lib/microcms";
+import { getBlogList } from "@/lib/content";
 import { PER_PAGE } from "@/static/blogs";
 import type { BlogTypeKeyLIteralType } from "@/types";
-import type { MicroCMSQueries } from "microcms-js-sdk";
+import type { BlogListQuery, BlogPost, ContentLocale } from "@/types/content";
 import NoContents from "@/components/UiParts/NoContentsPage";
-import { BlogsContentType } from "@/types/microcms";
 
 const Pagination = dynamic(() => import("@/components/Pagination"));
 
 type ArticleListProps = {
-  query: MicroCMSQueries
+  query: BlogListQuery
   blogType: BlogTypeKeyLIteralType
   page: string
   basePath?: string
@@ -20,12 +19,9 @@ type ArticleListProps = {
 }
 
 const ArticleList = async ({ query, blogType, page, basePath, locale }: ArticleListProps) => {
-  // NOTE: 一覧で使うフィールドのみ取得し、記事本文(body)がRSCペイロードに混入するのを防ぐ
-  const data = await getBlogListByLocale(
-    locale,
-    { ...query, orders: "-publishedAt", fields: "id,title,description,publishedAt,updatedAt,thumbnail,category" },
-    { next: { revalidate: 86400 } }
-  );
+  // NOTE: content.tsのgetBlogListは常にpublishedAt降順で返すため、
+  // microCMS時代のorders/fields指定(取得フィールド絞り込み)は不要になった
+  const data = getBlogList(locale as ContentLocale, query);
   const contentCount = data.contents.length
   const emptyItem = PER_PAGE - contentCount
   return (
@@ -33,9 +29,9 @@ const ArticleList = async ({ query, blogType, page, basePath, locale }: ArticleL
       {data.totalCount !== 0
         ?
         <ul className="flex-imtem grid grid-cols-1 xl:grid-cols-2 gap-4">
-          {data.contents.map((item: BlogsContentType, index: number) => (
+          {data.contents.map((item: BlogPost, index: number) => (
             <li
-              key={item.id}
+              key={item.slug}
               data-testid={`pw-article-card-${index}`}
               className="animate-fadeIn"
               style={{ animationDelay: `${Math.min(index, 6) * 50}ms` }}

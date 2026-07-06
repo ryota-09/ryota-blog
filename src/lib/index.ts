@@ -1,4 +1,3 @@
-import type { MicroCMSQueries } from "microcms-js-sdk";
 import { getTranslations } from 'next-intl/server';
 
 import type { BreadcrumbItemType, TOCAssetsType } from "@/types";
@@ -6,6 +5,7 @@ import { CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE } from "@/static/bl
 import { resolveCategoryEntry, resolveCategoryOrDefault } from "@/static/categories";
 import { getLocalizedCategoryName } from "@/lib/i18n-utils";
 import type { BlogsContentType } from "@/types/microcms";
+import type { BlogListQuery } from "@/types/content";
 import { baseURL } from "@/config";
 import { locales } from "@/i18n/config";
 
@@ -38,9 +38,13 @@ export const generateTOCAssets = (html: string) => {
   return results;
 }
 
-export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: string, [KEYWORD_QUERY]: string }) => {
-  let filters = "";
-  const query: MicroCMSQueries = { limit: PER_PAGE, offset: 0 }
+// searchParams(?page=&category=&keyword=)を lib/content.ts の getBlogList が受け取る
+// BlogListQuery({offset,limit,category,keyword})に変換する。
+// 旧実装はmicroCMSのクエリ文字列(filters/q)を組み立てていたが、#238でデータ層をVeliteベースの
+// lib/content.tsに切り替えたことに伴い、クエリ文字列ではなく構造化引数を返す形に書き換えた。
+// 呼び出し側(page → generateQuery → ArticleList)の3段構成・関数名は維持している。
+export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QUERY]: string, [KEYWORD_QUERY]: string }): BlogListQuery => {
+  const query: BlogListQuery = { limit: PER_PAGE, offset: 0 };
 
   if (searchParams[PAGE_QUERY]) {
     // NOTE: 不正な page 値（非数値・負値）で offset が NaN / 負値になるのを防ぐ
@@ -48,20 +52,18 @@ export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QU
     query.offset = Number.isNaN(pageNum) || pageNum < 1 ? 0 : (pageNum - 1) * PER_PAGE;
   }
 
-  // filters
   if (searchParams[CATEGORY_QUERY]) {
     const categoryValue = searchParams[CATEGORY_QUERY];
-    // カテゴリの表示名(ja/en)・URLスラッグ・content idのいずれで渡されてもmicroCMSのcontent idに解決する
+    // カテゴリの表示名(ja/en)・URLスラッグ・content idのいずれで渡されてもcontent.ts側のカテゴリslugに解決する
     const categoryEntry = resolveCategoryEntry(categoryValue);
-    const categoryId = categoryEntry?.id ?? categoryValue;
-    filters += `${CATEGORY_QUERY}[contains]${categoryId}`;
+    query.category = categoryEntry?.id ?? categoryValue;
   }
 
   if (searchParams[KEYWORD_QUERY]) {
-    query.q = searchParams[KEYWORD_QUERY];
+    query.keyword = searchParams[KEYWORD_QUERY];
   }
 
-  return { ...query, filters };
+  return query;
 }
 
 // 記事のプライマリカテゴリのURLスラッグを返す。該当カテゴリがCATEGORIES(src/static/categories.ts)に
