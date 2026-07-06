@@ -29,14 +29,19 @@ const blogsByLocale = (locale: ContentLocale): BlogPost[] =>
 const getPublishedBlogsByLocale = (locale: ContentLocale): BlogPost[] =>
   blogsByLocale(locale);
 
-// キーワードがtitle/description/plainTextのいずれかに大文字小文字無視で部分一致するか判定する
+// 検索語・対象文字列の表記ゆれを吸収する正規化。
+// NFKC正規化で全角英数字/記号と半角を同一視し(例: "Ｎｅｘｔ" と "Next"を一致させる)、
+// その後toLowerCaseで大文字小文字を無視する。
+const normalizeForSearch = (value: string): string => value.normalize("NFKC").toLowerCase();
+
+// キーワードがtitle/description/plainTextのいずれかに大文字小文字・全半角無視で部分一致するか判定する
 // (microCMSの `q` パラメータ相当。microCMSの`q`は全文検索だが、本データ層ではこの3フィールドに限定する)
 const matchesKeyword = (blog: BlogPost, keyword: string): boolean => {
-  const normalizedKeyword = keyword.toLowerCase();
+  const normalizedKeyword = normalizeForSearch(keyword);
   return (
-    blog.title.toLowerCase().includes(normalizedKeyword) ||
-    blog.description.toLowerCase().includes(normalizedKeyword) ||
-    blog.plainText.toLowerCase().includes(normalizedKeyword)
+    normalizeForSearch(blog.title).includes(normalizedKeyword) ||
+    normalizeForSearch(blog.description).includes(normalizedKeyword) ||
+    normalizeForSearch(blog.plainText).includes(normalizedKeyword)
   );
 };
 

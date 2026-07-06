@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import ArticleCard from ".";
-import type { BlogsContentType } from "@/types/microcms";
+import type { BlogPost } from "@/types/content";
 
 const meta = {
   title: 'Components/ArticleCard',
@@ -16,46 +16,31 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const data: BlogsContentType = {
-  "id": "customdomain-apprunner-with-terraform-route53",
-  "createdAt": "2024-06-14T05:36:56.274Z",
-  "updatedAt": "2024-06-15T04:26:30.883Z",
-  "publishedAt": new Date().toString(),
-  "revisedAt": "2024-06-15T04:26:30.883Z",
+const data: BlogPost = {
+  "slug": "customdomain-apprunner-with-terraform-route53",
+  "locale": "ja",
+  "publishedAt": new Date().toISOString(),
+  "updatedAt": new Date().toISOString(),
   "title": "タイトルテキストタイトルテキストタイトルテキストタイトルテキストタイトルテキスト",
-  "body": [
-    {
-      "fieldId": "richEditor",
-      "richEditor": ""
-    }
-  ],
   "description": "今回は〇〇する方法を紹介していきます！今回は〇〇する方法を紹介していきます！今回は〇〇する方法を紹介していきます！今回は〇〇する方法を紹介していきます！",
   "noIndex": false,
   "isAdvertisement": false,
   "thumbnail": {
-    "url": "./no_contents.png",
+    "src": "./no_contents.png",
     "height": 1080,
-    "width": 1920
+    "width": 1920,
+    "blurDataURL": "",
+    "blurWidth": 8,
+    "blurHeight": 8
   },
-  "category": [
-    {
-      "id": "aws",
-      "createdAt": "2024-05-25T05:31:41.218Z",
-      "updatedAt": "2024-05-25T07:13:41.932Z",
-      "publishedAt": "2024-05-25T05:31:41.218Z",
-      "revisedAt": "2024-05-25T05:31:41.218Z",
-      "name": "AWS"
-    },
-    {
-      "id": "terraform",
-      "createdAt": "2024-06-14T05:40:43.012Z",
-      "updatedAt": "2024-06-14T06:08:40.759Z",
-      "publishedAt": "2024-06-14T05:40:43.012Z",
-      "revisedAt": "2024-06-14T05:40:43.012Z",
-      "name": "Terraform"
-    }
-  ],
-  "relatedContent": []
+  "categories": ["aws", "terraform"],
+  "related": [],
+  "headingIds": [],
+  "moshimoWidgets": [],
+  "body": "",
+  "raw": "",
+  "toc": [],
+  "plainText": "",
 }
 
 export const Default: Story = {

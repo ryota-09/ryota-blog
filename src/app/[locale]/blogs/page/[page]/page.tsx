@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from 'next-intl/server';
@@ -9,16 +8,17 @@ import Skelton from "@/components/ArticleList/skelton";
 import SideNav from "@/components/SideNav";
 import { generateQuery, buildPageUrl, buildLanguageAlternates } from "@/lib";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
-import { getBlogListByLocale } from "@/lib/microcms";
+import { getBlogList } from "@/lib/content";
+import type { BlogListQuery, ContentLocale } from "@/types/content";
 import { PER_PAGE } from "@/static/blogs";
 import { locales } from '@/i18n/config';
 
 export async function generateStaticParams() {
   const params = [];
-  
+
   for (const locale of locales) {
     // 各ロケールごとにデータを取得
-    const data = await getBlogListByLocale(locale, { limit: 1 });
+    const data = getBlogList(locale as ContentLocale, { limit: 1 });
     const totalPages = Math.ceil(data.totalCount / PER_PAGE);
     
     // ページ2以降のパラメータを生成（ページ1は/[locale]/blogsにある）
@@ -66,7 +66,7 @@ const Page = async ({ params }: { params: Promise<{ locale: string; page: string
   }
 
   // ページが存在するかチェック
-  const data = await getBlogListByLocale(locale, { limit: 1 });
+  const data = getBlogList(locale as ContentLocale, { limit: 1 });
   const totalPages = Math.ceil(data.totalCount / PER_PAGE);
 
   if (pageNum > totalPages) {
@@ -74,7 +74,7 @@ const Page = async ({ params }: { params: Promise<{ locale: string; page: string
   }
 
   const blogType = "blogs";
-  const query: MicroCMSQueries = generateQuery({
+  const query: BlogListQuery = generateQuery({
     page,
     category: "",
     keyword: ""

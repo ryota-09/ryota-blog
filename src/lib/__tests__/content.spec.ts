@@ -90,6 +90,30 @@ describe("content.ts", () => {
       expect(result.totalCount).toBe(0);
     });
 
+    it("キーワード検索: 大文字小文字を無視して一致する", () => {
+      const lower = getBlogList("en", { offset: 0, limit: 100, keyword: "next" });
+      const upper = getBlogList("en", { offset: 0, limit: 100, keyword: "NEXT" });
+      const mixed = getBlogList("en", { offset: 0, limit: 100, keyword: "NeXt" });
+      expect(lower.totalCount).toBeGreaterThan(0);
+      expect(upper.totalCount).toBe(lower.totalCount);
+      expect(mixed.totalCount).toBe(lower.totalCount);
+    });
+
+    it("キーワード検索: 全角英数字と半角英数字をNFKC正規化により同一視する", () => {
+      // "Ｎｅｘｔ"(全角) と "Next"(半角) が同じヒット件数になる
+      const halfWidth = getBlogList("en", { offset: 0, limit: 100, keyword: "Next" });
+      const fullWidth = getBlogList("en", { offset: 0, limit: 100, keyword: "Ｎｅｘｔ" });
+      expect(halfWidth.totalCount).toBeGreaterThan(0);
+      expect(fullWidth.totalCount).toBe(halfWidth.totalCount);
+    });
+
+    it("キーワード検索: 全角カタカナと半角カタカナをNFKC正規化により同一視する", () => {
+      const fullWidthKana = getBlogList("ja", { offset: 0, limit: 100, keyword: "ヒトオシ" });
+      const halfWidthKana = getBlogList("ja", { offset: 0, limit: 100, keyword: "ﾋﾄｵｼ" });
+      expect(fullWidthKana.totalCount).toBeGreaterThan(0);
+      expect(halfWidthKana.totalCount).toBe(fullWidthKana.totalCount);
+    });
+
     it("カテゴリとキーワードを同時に指定するとAND条件になる", () => {
       const categoryOnly = getBlogList("ja", { offset: 0, limit: 100, category: "aws" });
       expect(categoryOnly.totalCount).toBe(4);
