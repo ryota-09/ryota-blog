@@ -26,6 +26,12 @@ jobs:
 
       - run: npm ci
 
+      # src/lib/content.ts が import する .velite/ はビルド時生成物のため、
+      # Storybookビルド前にVeliteでコンテンツデータを生成する必要がある
+      # (package.jsonのprebuild-storybookフックでも実行されるが、CIでは明示しておく)
+      - name: Generate content data (Velite)
+        run: NODE_ENV=development npx velite build
+
       - name: Build Storybook
         run: npm run build-storybook
 
