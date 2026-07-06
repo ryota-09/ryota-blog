@@ -86,6 +86,9 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
     const segments = pathname.split('/').filter(Boolean);
     if (segments.length > 0) {
       const newUrl = new URL(`/${routing.defaultLocale}/${segments.join('/')}`, request.url);
+      // NOTE: new URL(path, base)はbase側のクエリ文字列を引き継がないため、明示的に引き継ぐ。
+      // 旧URL(/blogs?keyword=xxx等)の検索条件がリダイレクトで失われるバグの修正(#241)
+      newUrl.search = request.nextUrl.search;
       return NextResponse.redirect(newUrl, 301);
     }
   }
