@@ -18,6 +18,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': __dirname + '/src',
+      '#content': __dirname + '/.velite',
     },
   },
 })

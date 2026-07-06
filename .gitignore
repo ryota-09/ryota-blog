@@ -54,3 +54,7 @@ next-env.d.ts
 
 # microCMSバックアップ（移行用エクスポートデータ、リポジトリには含めない）
 .backup/
+
+# Velite（ビルド時生成物。.velite=JSON+型、public/static=コロケーション画像のコピー先）
+.velite
+public/static
