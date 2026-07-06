@@ -21,20 +21,17 @@ https://story.ryotablog.jp
 - **[TypeScript](https://www.typescriptlang.org/)**: A strongly typed programming language that builds on JavaScript.
 - **[Next.js App Router](https://nextjs.org/docs)**: A React framework enabling server-side rendering and static site generation.
 - **[TailwindCSS](https://tailwindcss.com/)**: A utility-first CSS framework for rapid styling.
-- **[html-react-parser](https://github.com/remarkablemark/html-react-parser)**: A library to convert HTML strings into React components.
+- **[MDX](https://mdxjs.com/)** / **[html-react-parser](https://github.com/remarkablemark/html-react-parser)**: Used to render blog content (MDX components / legacy inline HTML blocks) as React components.
 
-### Backend
+### Content
 
-- **[microCMS](https://microcms.io/)**: A content management system used for managing the blog's content.
+- **[Velite](https://velite.js.org/)**: Builds and type-validates blog content from local MDX files under `content/`. The site is fully file-based; there is no external CMS API call at runtime.
+
+  This repository previously used [microCMS](https://microcms.io/) as a headless CMS backend. Content was migrated to file-based MDX (see `docs/adr/0001-content-layer.md` and `docs/migration-parity-report.md`). A snapshot of the original microCMS data is preserved in the `microcms-backup-2026-07-06` GitHub Release for reference; see `docs/rollback-plan.md` for rollback procedures.
 
 ## Environment Variables
 
-This project requires some environment variables. Create a `.env.local` file at the root of the project and set the following:
-
-```
-MICROCMS_API_KEY=your_microcms_api_key
-MICROCMS_SERVICE_DOMAIN=your_microcms_service_domain
-```
+This project no longer requires any CMS API keys. See `.dev.vars.example` for the local development variables (admin Basic auth, etc.).
 
 ## Other
   

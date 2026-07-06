@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import parser from "html-react-parser";
 
 import CustomLink from ".";
-import { customReplaceOptions } from "@/components/ArticleBody/RichEditor/ReplaceUiParts.lib";
+import ExternalLink from "@/components/UiParts/ExternalLink";
 
 const meta = {
   title: 'RichEditor/Link',
@@ -10,33 +9,38 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     nextjs: {
-      appDirectory: true, 
+      appDirectory: true,
     },
   },
+  decorators: [(Story) => <div className="m-8"><Story /></div>],
 } satisfies Meta<typeof CustomLink>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const Template = (args: { html: string }) => <div className="m-8" >{parser(args.html, customReplaceOptions)}</div>
-
 export const Default: Story = {
-  render: () => {
-    const testHTML = "<a href='#'>Anchorテキスト</a>"
-    return <Template html={testHTML} />
-  }
+  args: {
+    href: "#",
+    children: "Anchorテキスト",
+  },
 }
 
 export const Internal: Story = {
-  render: () => {
-    const testHTML = "<a href='/blogs'>内部リンクテキスト</a>"
-    return <Template html={testHTML} />
-  }
+  args: {
+    href: "/blogs",
+    children: "内部リンクテキスト",
+  },
 }
 
+// NOTE: 外部リンクはReplaceUiParts.lib(旧)ではCustomLinkでなくExternalLinkに振り分けられていた。
+// CustomLink自体は内部リンク(next-view-transitionsのLink)専用のため、外部リンクの見た目はExternalLinkで再現する。
 export const External: Story = {
-  render: () => {
-    const testHTML = "<a href='https://hogehoge' target=\"_blank\" rel=\"noopener noreferrer nofollow\">外部リンクテキスト(別タブ)</a>"
-    return <Template html={testHTML} />
-  }
+  render: () => (
+    <ExternalLink
+      href="https://hogehoge"
+      className="underline underline-offset-4 transition hover:text-base-color dark:hover:text-primary hover:no-underline break-all"
+    >
+      外部リンクテキスト(別タブ)
+    </ExternalLink>
+  ),
 }

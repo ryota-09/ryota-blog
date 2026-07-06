@@ -12,6 +12,12 @@
 - 本移行はコンテンツのデータソースをmicroCMS(headless CMS)からリポジトリ内MDXファイル(Velite管理)へ切り替えるものだが、**移行後もmicroCMSのプロジェクト・データ自体は解約せず保持している**。
 - そのため、マージ前の`main`ブランチのコード(旧microCMS版)をそのままデプロイし直せば、追加のデータ復元作業なしに旧実装がそのまま動作する。
 - `backup-before-rollback`ブランチに移行直前の状態が保存されている(要:マージ前時点での内容確認、下記1.3参照)。
+- 加えて、移行元データ(記事・カテゴリ・アセット)のスナップショットはGitHub Release **`microcms-backup-2026-07-06`**としてリポジトリに保存されている。`backup-before-rollback`ブランチやmicroCMS本体が万一失われた場合の最終手段として、このReleaseから復元できる。
+
+### 0.1 Issue #243(コード撤去)後の注意
+
+- Issue #243で`src/lib/microcms.ts` / `src/types/microcms.ts`等の旧microCMS呼び出しコード自体をリポジトリから削除した。そのため**#243マージ後のコミットに対しては、本ドキュメントの「1. Cloudflare Workersの前バージョンへの巻き戻し」または「2.2 backup-before-rollbackブランチの利用」のみが有効**であり、「#243時点のコードにmicroCMS用環境変数を注入して再デプロイする」という手段は使えない(該当コード自体が存在しないため)。
+- #243以降にmicroCMS版コードへ戻す必要が生じた場合は、`backup-before-rollback`ブランチ、または`microcms-backup-2026-07-06` Releaseのデータと、#243より前のコミット(旧`src/lib/microcms.ts`が存在する時点)を組み合わせて復元する。
 
 ---
 
@@ -145,3 +151,4 @@ git log backup-before-rollback -5   # 内容が移行直前の想定と一致す
 ## 関連ドキュメント
 - `docs/migration-parity-report.md` — 移行前後パリティ検証の全結果(Issue #242)
 - `scripts/migration/verify-parity.mjs`(および`check-a`〜`check-g-*.mjs`) — 再検証用スクリプト群
+- GitHub Release `microcms-backup-2026-07-06` — 移行元microCMSデータ(記事・カテゴリ・アセット)のスナップショット
