@@ -1,11 +1,11 @@
 import ImageWithSkeleton from "@/components/UiParts/ImageWithSkeleton";
 
-import RichEditor from "@/components/ArticleBody/RichEditor";
 import ThumbnailCard from '@/components/ArticleBody/ThumbnailCard';
 import BottomCard from '@/components/ArticleBody/BottomCard';
 import FixedButton from '@/components/UiParts/FixedButton';
-import { BlogsContentType } from '@/types/microcms';
-import { generateTOCAssets, getPrimaryCategoryId, buildPageUrl } from "@/lib";
+import type { BlogPost, ContentLocale } from '@/types/content';
+import { buildPageUrl } from "@/lib";
+import { getPrimaryCategoryIdFromBlogPost, buildTocAssets } from "@/lib/content";
 import TOCList from "@/components/ArticleBody/TOCList";
 import AdRevenueLabel from "@/components/AdRevenueLabel";
 import PrevAndNextBlogNav from "@/components/ArticleBody/PrevAndNextBlogNav";
@@ -14,27 +14,18 @@ import { calcDiffYears } from "@/util";
 import InfoYearsCard from "@/components/UiParts/InfoYearsCard";
 import CategoryTag from "./CategoryTag";
 import LocaleAwareShare from "./LocaleAwareShare";
-// Next.js 16では、Client Componentに対してssr: falseを使用できない
-// 各コンポーネントは"use client"でマークされているため、通常のimportに変更
-import HTMLArea from '@/components/ArticleBody/RichEditor/HTMLArea';
-import AmazonLinkCard from '@/components/ArticleBody/RichEditor/AmazonLinkCard';
+import MdxContent from "@/components/ArticleBody/MdxContent";
 
 type ArticleBodyProps = {
-  data: BlogsContentType
-  locale: string
+  data: BlogPost
+  locale: ContentLocale
 }
 
 const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
-  const joindedHTML = data.body.map((body) => {
-    if (body.fieldId === 'richEditor') {
-      return body.richEditor
-    }
-  }).join('')
-
   const displayTime = data.publishedAt || data.updatedAt
-  const categoryId = getPrimaryCategoryId(data);
+  const categoryId = getPrimaryCategoryIdFromBlogPost(data);
+  const tocData = buildTocAssets(data.toc);
 
-  const TOCdata = generateTOCAssets(joindedHTML)
   return (
     <div>
       <div className='md:w-[80%] mx-auto my-6 md:my-16'>
@@ -44,7 +35,7 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
             <h1 className="text-2xl md:text-3xl font-bold dark:text-gray-300">{data.title}</h1>
             <figure className="relative max-h-[300px] md:max-h-[540px] overflow-hidden shadow-2xl">
               <ImageWithSkeleton
-                src={data.thumbnail.url}
+                src={data.thumbnail.src}
                 alt={data.title}
                 width={data.thumbnail.width}
                 height={data.thumbnail.height}
@@ -53,7 +44,7 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
                   height: "auto",
                   width: "100%",
                   // 記事一覧のサムネイル画像と同じ名前を付け、遷移直後にサムネイルがそのままモーフするようにする
-                  viewTransitionName: `thumb-${data.id}`,
+                  viewTransitionName: `thumb-${data.slug}`,
                 }}
                 loading="eager"
                 preload
@@ -73,12 +64,12 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
         </aside>
       )}
       <ul className='mt-4 flex flex-wrap gap-2'>
-        {data.category.map(({ id }, index) => (
-          <CategoryTag key={index} id={id} index={index} />
+        {data.categories.map((id, index) => (
+          <CategoryTag key={id} id={id} index={index} />
         ))}
       </ul>
       <div className="mt-4">
-        <TOCList data={TOCdata} />
+        <TOCList data={tocData} />
       </div>
       {data.isAdvertisement && (
         <aside className="mt-4">
@@ -86,26 +77,15 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
         </aside>
       )}
       <div className='my-12'>
-        {data.body.map((body, index) => {
-          switch (body.fieldId) {
-            case "richEditor":
-              return <RichEditor key={index} html={body.richEditor} />
-            case "html":
-              const html = body.html
-              if (html.startsWith('AMAZON')) {
-                return <AmazonLinkCard key={index} html={html.replace("AMAZON", "")} />
-              }
-              return <HTMLArea key={index} html={html} />
-          }
-        })}
+        <MdxContent blog={data} />
       </div>
-        <IssueButton currentPath={buildPageUrl(locale, "blogs", categoryId, data.id)} />
+        <IssueButton currentPath={buildPageUrl(locale, "blogs", categoryId, data.slug)} />
         <PrevAndNextBlogNav currentBlogData={data} locale={locale} />
         <aside className='flex flex-col-reverse md:flex-row gap-8 md:gap-4 mx-0.5 border-t dark:border-t-[#333] py-10'>
           <BottomCard />
         </aside>
         <FixedButton />
-        <LocaleAwareShare categoryId={categoryId} blogId={data.id} title={data.title} />
+        <LocaleAwareShare categoryId={categoryId} blogId={data.slug} title={data.title} />
     </div>
   )
 }

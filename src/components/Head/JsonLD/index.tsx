@@ -1,22 +1,24 @@
 import type { BreadcrumbList, BlogPosting, WithContext, WebSite } from "schema-dts"
-import type { BlogsContentType } from "@/types/microcms"
+import type { BlogPost } from "@/types/content"
 import { SITE_TITLE } from "@/static/blogs"
 import { findCategoryBySlug } from "@/static/categories"
-import { getPrimaryCategoryId, buildPageUrl } from "@/lib"
+import { buildPageUrl } from "@/lib"
+import { getPrimaryCategoryIdFromBlogPost } from "@/lib/content"
 import { getLocalizedCategoryName } from "@/lib/i18n-utils"
+import { baseURL } from "@/config"
 
 
 type JsonLDProps = {
-  data: BlogsContentType
+  data: BlogPost
   locale: string
 }
 
 const JsonLD = ({ data, locale }: JsonLDProps) => {
-  const categoryId = getPrimaryCategoryId(data);
+  const categoryId = getPrimaryCategoryIdFromBlogPost(data);
   const categoryEntry = findCategoryBySlug(categoryId);
   const categoryName = categoryEntry ? getLocalizedCategoryName(categoryEntry, locale) : categoryId;
   // 構造化データのURLは実ルーティング（/[locale]/blogs/...）に合わせて locale 込みで構築する
-  const articleUrl = buildPageUrl(locale, "blogs", categoryId, data.id);
+  const articleUrl = buildPageUrl(locale, "blogs", categoryId, data.slug);
   const authorUrl = buildPageUrl(locale, "about");
 
   const breadcrumbJsonLD: WithContext<BreadcrumbList> = {
@@ -54,9 +56,16 @@ const JsonLD = ({ data, locale }: JsonLDProps) => {
     headline: data.title,
     datePublished: data.publishedAt || data.updatedAt,
     dateModified: data.updatedAt,
-    keywords: [...data.category.map(({ name }) => name), data.title].join(","),
+    keywords: [
+      ...data.categories.map((slug) => {
+        const entry = findCategoryBySlug(slug);
+        return entry ? getLocalizedCategoryName(entry, locale) : slug;
+      }),
+      data.title,
+    ].join(","),
     description: data.description,
-    image: data.thumbnail?.url,
+    // thumbnail.srcはVeliteが生成する `/static/...` のサイト内相対パスのため、絶対URL化して埋め込む
+    image: data.thumbnail ? `${baseURL}${data.thumbnail.src}` : undefined,
     author: {
       "@type": "Person",
       name: "Ryota",

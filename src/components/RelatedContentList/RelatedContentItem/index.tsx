@@ -3,7 +3,6 @@
 import Chip from "@/components/UiParts/Chip";
 import { getLocalizedCategoryName } from "@/lib/i18n-utils";
 import { resolveCategoryOrDefault } from "@/static/categories";
-import { CategoriesContentType } from "@/types/microcms";
 import { Link } from "next-view-transitions";
 import { useLocale } from 'next-intl';
 
@@ -11,14 +10,15 @@ type RelatedContentItemProps = {
   id: string;
   updatedAt: string;
   title: string;
-  category: Pick<CategoriesContentType, "id">[];
+  // BlogPost.categories相当(カテゴリslugの配列。先頭がプライマリ)
+  categories: string[];
   publishedAt?: string;
 }
 
-const RelatedContentItem = ({ id, publishedAt, updatedAt, title, category }: RelatedContentItemProps) => {
+const RelatedContentItem = ({ id, publishedAt, updatedAt, title, categories }: RelatedContentItemProps) => {
   const locale = useLocale();
   const displayTime = publishedAt || updatedAt;
-  const primaryCategoryId = resolveCategoryOrDefault(category[0]?.id).slug;
+  const primaryCategoryId = resolveCategoryOrDefault(categories[0]).slug;
 
   return (
     <li>
@@ -28,7 +28,7 @@ const RelatedContentItem = ({ id, publishedAt, updatedAt, title, category }: Rel
           <p className="line-clamp-2 md:line-clamp-3 text-txt-base dark:text-gray-300 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-txt-base dark:group-hover:decoration-gray-300">{title}</p>
         </div>
         <ul className="flex flex-wrap items-center gap-1 w-full md:w-auto justify-end">
-          {category.map(({ id: categoryId }) => {
+          {categories.map((categoryId) => {
             const entry = resolveCategoryOrDefault(categoryId);
             return (
               <li key={categoryId}>

@@ -1,9 +1,13 @@
 // Velite(content/配下のMDX/JSON)を情報源とするコンテンツ取得層。
 // 既存の src/lib/microcms.ts と同等のセマンティクスを持つ関数群を提供する。
-// #235時点では新設のみ行い、既存ページ・コンポーネントの置き換えは行わない(#236/#238/#239で対応)。
+// #236で記事詳細ページ(src/app/[locale]/blogs/[category]/[blogId]/page.tsx)をこの層に切り替えた。
 import { cache } from "react";
+import { getTranslations } from "next-intl/server";
 
 import { blogs as ALL_BLOGS } from "#content/index";
+import { resolveCategoryOrDefault } from "@/static/categories";
+import { getLocalizedCategoryName } from "@/lib/i18n-utils";
+import type { BreadcrumbItemType, TOCAssetsType } from "@/types";
 import type {
   BlogListQuery,
   BlogListResult,
@@ -119,4 +123,71 @@ export const getPrevAndNextBlogByLocale = (
     null;
 
   return { prevBlogData, nextBlogData };
+};
+
+/**
+ * getPrimaryCategoryId(src/lib/index.ts)のBlogPost版。
+ * BlogPost.categoriesは文字列配列(slug)なので、BlogsContentType版のように category[0].id を
+ * 取り出す必要はなく、先頭要素をそのままresolveCategoryOrDefaultに渡すだけでよい。
+ */
+export const getPrimaryCategoryIdFromBlogPost = (blog: Pick<BlogPost, "categories">): string => {
+  return resolveCategoryOrDefault(blog.categories[0]).slug;
+};
+
+/**
+ * BlogPost.toc(文書順のフラット配列: {depth, text, id}[])を、
+ * TOCList(src/components/ArticleBody/TOCList)が期待するネスト形状(TOCAssetsType[])に変換する。
+ * 現行のgenerateTOCAssets(depth2をトップレベル、depth3をsubListにネスト)と同じ構造にする。
+ * id が null の見出し(headingIdsが見出し数より少ない場合)はTOC自体から除外する
+ * (TOCListはidをキー・アンカーリンク先として必須で使うため)。
+ */
+export const buildTocAssets = (toc: BlogPost["toc"]): TOCAssetsType[] => {
+  const results: TOCAssetsType[] = [];
+
+  for (const entry of toc) {
+    if (!entry.id) continue;
+
+    if (entry.depth === 2) {
+      results.push({ id: entry.id, text: entry.text, subList: [] });
+    } else if (entry.depth === 3 && results.length > 0) {
+      results[results.length - 1].subList.push({ id: entry.id, text: entry.text });
+    }
+  }
+
+  return results;
+};
+
+/**
+ * BlogPost.related(slug配列)から、実在する関連記事(BlogPost[])を解決する。
+ * 現行のrelatedContent(microCMSのリレーションフィールド)相当。
+ * 存在しないslug(記事削除等)は黙って除外する。
+ */
+export const resolveRelatedBlogs = (locale: ContentLocale, related: string[]): BlogPost[] => {
+  const blogs = getPublishedBlogsByLocale(locale);
+  return related
+    .map((slug) => blogs.find((blog) => blog.slug === slug))
+    .filter((blog): blog is BlogPost => blog !== undefined);
+};
+
+/**
+ * generateBreadcrumbAssets(src/lib/index.ts)のBlogPost版。パンくずリストの3階層
+ * (ホーム/カテゴリ/記事タイトル)を生成する。ロジックはBlogsContentType版と同一で、
+ * カテゴリ解決とタイトル・スラッグの取り出し元をBlogPostの形状に合わせただけ。
+ */
+export const generateBreadcrumbAssetsFromBlogPost = async (
+  blog: Pick<BlogPost, "categories" | "title" | "slug">,
+  locale: ContentLocale = "ja",
+): Promise<BreadcrumbItemType[]> => {
+  const categoryEntry = resolveCategoryOrDefault(blog.categories[0]);
+  const categoryId = categoryEntry.slug;
+  const t = await getTranslations({ locale, namespace: "navigation" });
+
+  const categoryName = getLocalizedCategoryName(categoryEntry, locale);
+  const localePrefix = `/${locale}`;
+
+  return [
+    { label: t("home"), href: localePrefix },
+    { label: categoryName, href: `${localePrefix}/blogs/${categoryId}` },
+    { label: blog.title, href: `${localePrefix}/blogs/${categoryId}/${blog.slug}` },
+  ];
 };

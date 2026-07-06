@@ -24,12 +24,15 @@ const config: StorybookConfig = {
   typescript: {
     reactDocgen: "react-docgen-typescript"
   },
-  // tsconfigのpaths(@/*)とNext.jsモジュールをViteで解決するためのエイリアス設定
+  // tsconfigのpaths(@/*, #content/*)とNext.jsモジュールをViteで解決するためのエイリアス設定
   viteFinal: async (config) => {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
       ...config.resolve.alias,
       "@": path.resolve(__dirname, "../src"),
+      // #content/* はVelite生成物(.velite/、tsconfig.jsonのpathsと同じマッピング)。
+      // static/categories.ts等がVeliteデータを参照するため、Storybookのビルドにも解決先が必要
+      "#content": path.resolve(__dirname, "../.velite"),
       // Next.jsモジュールのモック（Vite環境では動作しないため）
       "next/image": path.resolve(__dirname, "./mocks/next-image.tsx"),
       "next/link": path.resolve(__dirname, "./mocks/next-link.tsx"),
