@@ -64,7 +64,7 @@ export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QU
   return { ...query, filters };
 }
 
-// 記事のプライマリカテゴリのURLスラッグを返す。該当カテゴリがcategories.generated.tsに
+// 記事のプライマリカテゴリのURLスラッグを返す。該当カテゴリがCATEGORIES(src/static/categories.ts)に
 // 見つからない場合（CMS側での削除等）は必ずDEFAULT_CATEGORY_IDにフォールバックする
 // （CategoryTag/RelatedContentItemと同じresolveCategoryOrDefaultを使うことで挙動を統一する）。
 export const getPrimaryCategoryId = (blog: Pick<BlogsContentType, "category">): string => {
