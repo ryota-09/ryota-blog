@@ -139,4 +139,14 @@ test.describe('記事詳細ページのテスト', () => {
       }
     }
   });
+
+  test('ART-07: 存在しない記事slugは404を返す（500にならない）', async ({ page }) => {
+    // generateMetadataが未捕捉例外で落ちると404ではなく500になるリグレッションの検知用(本番検証で発見)
+    const pageRes = await page.request.get('/ja/blogs/zakki/no-such-article-xyz');
+    expect(pageRes.status()).toBe(404);
+
+    // OGP/Twitter画像ルートも同様に404を返すこと
+    const ogRes = await page.request.get('/ja/blogs/zakki/no-such-article-xyz/opengraph-image');
+    expect(ogRes.status()).toBe(404);
+  });
 });

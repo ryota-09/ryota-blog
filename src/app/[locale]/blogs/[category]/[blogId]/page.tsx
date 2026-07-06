@@ -47,8 +47,15 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   // Next.js 16では、paramsを非同期で取得する必要がある
   const { blogId, locale, category } = await params;
-  // NOTE: ページ本体と同じ cached フェッチを使い、同一リクエスト内の二重フェッチを避ける
-  const data = getBlogBySlugByLocaleCached(locale as ContentLocale, blogId);
+  // NOTE: ページ本体と同じ cached フェッチを使い、同一リクエスト内の二重フェッチを避ける。
+  // 存在しないslugでは例外が投げられるが、generateMetadataはページ本体より先に評価されるため、
+  // ここで捕捉してnotFound()しないと404ではなく500になってしまう(本番検証で発見)
+  let data;
+  try {
+    data = getBlogBySlugByLocaleCached(locale as ContentLocale, blogId);
+  } catch {
+    notFound();
+  }
 
   // 記事自身の絶対URL（og:url / canonical に使用）
   const blogUrl = buildPageUrl(locale, "blogs", category, blogId);
