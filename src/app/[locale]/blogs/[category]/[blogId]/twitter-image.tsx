@@ -20,8 +20,14 @@ export default async function Image({
   // Next.js 16ではparamsがPromiseになるため、awaitで解決
   const { locale, blogId } = await params;
 
-  // タイトルのみ使用するため、ファイルベースのコンテンツ層から取得する
-  const data = getBlogBySlugByLocale(locale as ContentLocale, blogId);
+  // タイトルのみ使用するため、ファイルベースのコンテンツ層から取得する。
+  // 存在しないslugでは例外になるため、500ではなく404を返す(本番検証で発見)
+  let data;
+  try {
+    data = getBlogBySlugByLocale(locale as ContentLocale, blogId);
+  } catch {
+    return new Response("Not Found", { status: 404 });
+  }
   return new ImageResponse(
     (
       <div
