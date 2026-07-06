@@ -103,11 +103,6 @@ export type BaseMicroCMSApiType = {
   ) => Promise<BaseMicroCMSApiSingleDataType<T>>;
 };
 
-export type _PreviewData = {
-  draftKey: string;
-  directory: string;
-};
-
 export type TableOfContentsType = {
   id: string;
   label: string;

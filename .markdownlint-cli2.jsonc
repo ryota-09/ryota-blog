@@ -1,0 +1,44 @@
+{
+  // markdownlint設定(#240)。対象は content/blogs/**/index.*.mdx。
+  //
+  // 既存記事30本(日英合わせて60ファイル)がMDX特有の書き方(<br />や<AmazonLink>等の
+  // 埋め込みコンポーネント、折り返さない長文段落、見出し代わりの強調表現など)を多用しており、
+  // markdownlintの既定ルールをそのまま適用すると2000件超のエラーになる。
+  // コンテンツフリーズ(既存記事の文面を書き換えない)を優先し、既存記事を壊すルールは全てoffにする。
+  //
+  // off にした主なルールと理由:
+  // - MD013(line-length):        段落を折り返さずに書くスタイルのため長い行が大量に存在する
+  // - MD033(no-inline-html):     <br /> や <AmazonLink>/<Tweet>/<LinkCard>/<MoshimoAffiliate> 等の
+  //                               MDX埋め込みコンポーネントそのものを誤検知するため(MDXの本質的な機能)
+  // - MD060(table-column-style): 既存テーブルの列幅が不揃い(手打ちのため)
+  // - MD036(no-emphasis-as-heading): 強調(**text**)を小見出し代わりに使う既存の書き方
+  // - MD045(no-alt-text):        画像alt未設定の既存記事が複数あり、書き換えはコンテンツフリーズに反する
+  // - MD010(no-hard-tabs):       コードブロック内のハードタブ(コード自体の内容なので変更しない)
+  // - MD024(no-duplicate-heading): 「概要」「期待される出力」等、記事内で同じ見出しが複数回登場する構成
+  // - MD026(no-trailing-punctuation): 見出し末尾の「！」等、既存の口語的な見出し文体
+  // - MD040(fenced-code-language): 言語指定なしのコードフェンスが既存記事に存在
+  // - MD028(no-blanks-blockquote): blockquote内の空行(既存記事の引用の書き方)
+  // - MD038(no-space-in-code):    コードスパン内のスペース(コード内容そのもの)
+  // - MD012(no-multiple-blanks):  連続空行(既存記事のスタイル)
+  // - MD025(single-title):        本文中に複数のトップレベル見出しがある記事が存在
+  //
+  // 新規記事はできるだけ上記も守ることが望ましいが、CIのゲートとしては既存記事を壊さないことを優先する。
+  // 書き方の目安は docs/writing.md を参照。
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD033": false,
+    "MD060": false,
+    "MD036": false,
+    "MD045": false,
+    "MD010": false,
+    "MD024": false,
+    "MD026": false,
+    "MD040": false,
+    "MD028": false,
+    "MD038": false,
+    "MD012": false,
+    "MD025": false
+  },
+  "ignores": ["node_modules", ".velite", ".next"]
+}
