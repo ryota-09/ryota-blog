@@ -55,6 +55,9 @@ next-env.d.ts
 # microCMSバックアップ（移行用エクスポートデータ、リポジトリには含めない）
 .backup/
 
+# 移行パリティ検証(#242)の一時成果物（スクリーンショット等、コミットしない）
+.parity/
+
 # Velite（ビルド時生成物。.velite=JSON+型、public/static=コロケーション画像のコピー先）
 .velite
 public/static

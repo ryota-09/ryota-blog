@@ -76,7 +76,10 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
           <AdRevenueLabel />
         </aside>
       )}
-      <div className='my-12'>
+      {/* NOTE: w-full min-w-0 を明示しないと、内部のoverflow-x-autoコードブロック等の
+          intrinsic width(実文字幅)がこのブロックのshrink-to-fit計算に伝播し、
+          記事コンテナ全体が横に広がって不要な横スクロールが生じることがある(#242パリティ検証で発見)。 */}
+      <div className='my-12 w-full min-w-0'>
         <MdxContent blog={data} />
       </div>
         <IssueButton currentPath={buildPageUrl(locale, "blogs", categoryId, data.slug)} />
