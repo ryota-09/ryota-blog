@@ -8,6 +8,13 @@ import type { Blogs, Categories } from "#content/index";
 //  headingIds/moshimoWidgets/body/raw/slug/locale/toc/plainText を含む)
 export type BlogPost = Blogs;
 
+// もしもアフィリエイトウィジェット1件分の型(MoshimoAffiliateコンポーネントのprops用)。
+// フィールド名の意味はvelite.config.tsのmoshimoWidgetSchemaコメントを参照。
+export type MoshimoWidget = BlogPost["moshimoWidgets"][number];
+
+// TOCエントリ(velite/mdast-utils.tsのextractTocが生成する形状)。
+export type TocEntry = BlogPost["toc"][number];
+
 // Veliteが生成するカテゴリコレクションの型をそのまま公開する。
 export type Category = Categories;
 

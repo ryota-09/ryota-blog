@@ -9,6 +9,9 @@ import path from "node:path";
 import { context, defineCollection, defineConfig, s } from "velite";
 
 import { extractPlainText, extractToc } from "./velite/mdast-utils";
+import { rehypeCodeMeta } from "./velite/rehype-code-meta";
+import { rehypeImageSize } from "./velite/rehype-image-size";
+import { rehypeRestoreHeadingIds } from "./velite/rehype-restore-heading-ids";
 
 // 現在パース中のファイルのパス(blogs/{slug}/index.{locale}.mdx)から slug と locale を抽出する
 // (VeliteFile.pathはconfig.rootからの絶対パスのため、まずroot相対パスに正規化してから照合する)
@@ -116,7 +119,11 @@ const categories = defineCollection({
 export default defineConfig({
   collections: { blogs, categories },
   mdx: {
-    // 現時点ではremark/rehypeプラグインは追加しない(見出しid注入・embedコンポーネント対応は#236で行う)
+    // 見出しid復元・画像サイズ注入・codeメタ受け渡し(#236)。
+    // 実行順序: rehypePluginsはremark段階(remarkCopyLinkedFiles含む)より後に実行されるため、
+    // rehypeImageSizeは画像パスが/static/...へ書き換わった後の状態で実ファイルを解決する
+    // (詳細はvelite/rehype-image-size.tsのコメント参照)。
+    rehypePlugins: [rehypeRestoreHeadingIds, rehypeImageSize, rehypeCodeMeta],
   },
   complete: (data, { config }) => {
     // middleware.ts の旧URL(/blogs/{slug})リダイレクト用に、
