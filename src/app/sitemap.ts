@@ -1,11 +1,12 @@
 import { MetadataRoute } from "next";
 
 import { baseURL } from "@/config";
-import { getAllBlogList, getBlogList } from "@/lib/microcms";
-import { getPrimaryCategoryId, generateQuery } from "@/lib";
+import { getAllBlogListByLocale, getBlogList } from "@/lib/content";
+import { resolveCategoryOrDefault } from "@/static/categories";
 import { PER_PAGE } from "@/static/blogs";
 import { CATEGORIES } from "@/static/categories";
 import { SUPPORTED_LOCALES } from "@/types/locale";
+import type { ContentLocale } from "@/types/content";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
@@ -32,64 +33,61 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     )
 
     // ブログ記事の動的パスの多言語対応
+    // NOTE: ロケールごとにファイルベースの記事一覧を取得する（ja/enで記事のプライマリカテゴリが
+    //       異なるケースが存在するため、ロケール非依存の使い回しはせずロケールごとに正しく計算する）
     let dynamicPaths: Array<{ url: string; lastModified: Date | string }> = [];
     try {
-      const blogList = (await getAllBlogList({ fields: "id,updatedAt,publishedAt,noIndex,category" })).filter((content) => !content.noIndex)
-
-      dynamicPaths = SUPPORTED_LOCALES.flatMap(locale => 
-        blogList.map((content) => {
-          const categoryId = getPrimaryCategoryId(content);
+      dynamicPaths = SUPPORTED_LOCALES.flatMap((locale) => {
+        const blogList = getAllBlogListByLocale(locale as ContentLocale).filter(
+          (content) => !content.noIndex,
+        );
+        return blogList.map((content) => {
+          const categoryId = resolveCategoryOrDefault(content.categories[0]).slug;
           return {
-            url: `${baseURL}/${locale}/blogs/${categoryId}/${content.id}`,
+            url: `${baseURL}/${locale}/blogs/${categoryId}/${content.slug}`,
             // NOTE: 最終更新日は updatedAt を優先する（無ければ publishedAt）
             lastModified: content.updatedAt || content.publishedAt || new Date()
           }
-        })
-      )
+        });
+      })
     } catch (error) {
       console.warn('ブログ記事のサイトマップ生成に失敗しました:', error);
     }
 
     // 全体のページネーションパスの多言語対応（/[locale]/blogs/page/2, /[locale]/blogs/page/3, ...）
+    // NOTE: 総件数はロケールごとに正しく計算する（ja/enで記事数が異なる可能性があるため）
     let paginationPaths: Array<{ url: string; lastModified: Date }> = [];
     try {
-      const totalBlogData = await getBlogList({ limit: 1 });
-      const totalPages = Math.ceil(totalBlogData.totalCount / PER_PAGE);
-      
-      paginationPaths = SUPPORTED_LOCALES.flatMap(locale => 
-        Array.from({ length: Math.max(totalPages - 1, 0) }, (_, i) => ({
+      paginationPaths = SUPPORTED_LOCALES.flatMap((locale) => {
+        const totalBlogData = getBlogList(locale as ContentLocale, { limit: 1 });
+        const totalPages = Math.ceil(totalBlogData.totalCount / PER_PAGE);
+
+        return Array.from({ length: Math.max(totalPages - 1, 0) }, (_, i) => ({
           url: `${baseURL}/${locale}/blogs/page/${i + 2}`,
           lastModified: new Date()
-        }))
-      );
+        }));
+      });
     } catch (error) {
       console.warn('ページネーションのサイトマップ生成に失敗しました:', error);
     }
 
     // カテゴリ別ページネーションパスの多言語対応（/[locale]/blogs/next_js/page/2, ...）
-    // NOTE: カテゴリごとの件数取得はロケール非依存（blogsエンドポイント）なので、
-    //       カテゴリ単位で1回だけ並列フェッチし、両ロケールのURL生成に使い回す
-    const categoryTotals = await Promise.all(
-      CATEGORIES.map(async (category) => {
+    // NOTE: カテゴリごとの件数もロケールごとに正しく計算する
+    const categoryPaginationPaths = SUPPORTED_LOCALES.flatMap((locale) =>
+      CATEGORIES.flatMap((category) => {
         try {
-          const query = generateQuery({ page: "1", category: category.id, keyword: "" });
-          const categoryData = await getBlogList({ ...query, fields: "id" });
-          return { categorySlug: category.slug, totalPages: Math.ceil(categoryData.totalCount / PER_PAGE) };
+          const categoryData = getBlogList(locale as ContentLocale, { category: category.id, limit: PER_PAGE });
+          const totalPages = Math.ceil(categoryData.totalCount / PER_PAGE);
+          // ページ2以降を生成（ページ1は /[locale]/blogs/[category] にある）
+          return Array.from({ length: Math.max(totalPages - 1, 0) }, (_, i) => ({
+            url: `${baseURL}/${locale}/blogs/${category.slug}/page/${i + 2}`,
+            lastModified: new Date()
+          }));
         } catch (error) {
           console.warn(`カテゴリのサイトマップ生成に失敗しました: ${category.name}`, error);
-          return { categorySlug: category.slug, totalPages: 0 };
+          return [];
         }
       })
-    );
-
-    const categoryPaginationPaths = SUPPORTED_LOCALES.flatMap((locale) =>
-      categoryTotals.flatMap(({ categorySlug, totalPages }) =>
-        // ページ2以降を生成（ページ1は /[locale]/blogs/[category] にある）
-        Array.from({ length: Math.max(totalPages - 1, 0) }, (_, i) => ({
-          url: `${baseURL}/${locale}/blogs/${categorySlug}/page/${i + 2}`,
-          lastModified: new Date()
-        }))
-      )
     );
 
     return [...staticPaths, ...categoryPaths, ...dynamicPaths, ...paginationPaths, ...categoryPaginationPaths]

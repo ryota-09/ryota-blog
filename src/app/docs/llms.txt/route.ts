@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
-import { getAllBlogList, getAllCategoryList } from "@/lib/microcms";
+import { getAllBlogListByLocale } from "@/lib/content";
+import { CATEGORIES, resolveCategoryOrDefault } from "@/static/categories";
 import { baseURL } from "@/config";
-import type { BlogsContentType, CategoriesContentType } from "@/types/microcms";
+import type { BlogPost } from "@/types/content";
+import type { CategoryEntry } from "@/static/categories";
 import {
   AUTHOR_E_MAIL,
   SITE_DESCRIPTION_EN,
   SITE_DOMAIN,
   SITE_TITLE,
 } from "@/static/blogs";
-import { getPrimaryCategoryId } from "@/lib";
 
 // 日付フォーマットの国際化 API
 const DATE_FMT = new Intl.DateTimeFormat("en-CA", {
@@ -27,15 +28,15 @@ const LLMS_TXT_CONFIG = {
   license: "Creative Commons Attribution 4.0 International License (CC BY 4.0)",
 } as const;
 
-interface LlmsTxtData {
-  posts: BlogsContentType[];
-  categories: CategoriesContentType[];
+type LlmsTxtData = {
+  posts: BlogPost[];
+  categories: CategoryEntry[];
 }
 
 /**
  * 公開可能な投稿をフィルタリング・ソートする
  */
-function filterAndSortPosts(posts: BlogsContentType[]): BlogsContentType[] {
+function filterAndSortPosts(posts: BlogPost[]): BlogPost[] {
   return posts
     .filter(({ publishedAt, noIndex }) => publishedAt && !noIndex)
     .sort(({ publishedAt: aDate }, { publishedAt: bDate }) => {
@@ -77,7 +78,7 @@ For inquiries regarding content usage, corrections, or collaborations:
  * カテゴリ一覧部分を生成
  */
 function generateCategoriesSection(
-  categories: CategoriesContentType[],
+  categories: CategoryEntry[],
 ): string {
   if (categories.length === 0) {
     return "## Categories\n\nNo categories available.";
@@ -91,7 +92,7 @@ function generateCategoriesSection(
 /**
  * コンテンツ一覧部分を生成
  */
-function generateContentSection(posts: BlogsContentType[]): string {
+function generateContentSection(posts: BlogPost[]): string {
   if (posts.length === 0) {
     return "## Content\n\nNo content available.";
   }
@@ -99,9 +100,9 @@ function generateContentSection(posts: BlogsContentType[]): string {
   const contentList = posts
     .map((post) => {
       if (!post.publishedAt) return null;
-      
-      const categoryId = getPrimaryCategoryId(post);
-      const url = `${baseURL}/blogs/${categoryId}/${post.id}`;
+
+      const categoryId = resolveCategoryOrDefault(post.categories[0]).slug;
+      const url = `${baseURL}/blogs/${categoryId}/${post.slug}`;
       const linkDetails = post.description ? `: ${post.description}` : "";
       return `- [${post.title}](${url})${linkDetails}`;
     })
@@ -127,19 +128,11 @@ function buildLlmsTxt({ posts, categories }: LlmsTxtData): string {
 }
 
 /**
- * microCMSからデータを取得
+ * ファイルベースのコンテンツ層からデータを取得
  */
-async function fetchLlmsTxtData(): Promise<LlmsTxtData> {
-  const [posts, categories] = await Promise.all([
-    getAllBlogList({
-      fields: "id,title,publishedAt,noIndex,description,category",
-      orders: "-publishedAt",
-    }),
-    getAllCategoryList({
-      fields: "id,name",
-      orders: "createdAt",
-    }),
-  ]);
+function fetchLlmsTxtData(): LlmsTxtData {
+  const posts = getAllBlogListByLocale("ja");
+  const categories = CATEGORIES;
 
   return { posts, categories };
 }
@@ -189,7 +182,7 @@ export async function GET(): Promise<NextResponse> {
   try {
     console.log("Starting llms.txt generation...");
 
-    const data = await fetchLlmsTxtData();
+    const data = fetchLlmsTxtData();
     const content = buildLlmsTxt(data);
 
     console.log(

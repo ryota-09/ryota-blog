@@ -1,0 +1,251 @@
+# URL: https://ryotablog.jp/en/feed
+# Status: 200
+# Headers:
+alt-svc: h3=":443"; ma=86400
+cf-ray: a16ba3a3ec46260d-NRT
+connection: keep-alive
+content-encoding: br
+content-type: application/xml
+link: <https://ryotablog.jp/ja/feed>; rel="alternate"; hreflang="ja", <https://ryotablog.jp/en/feed>; rel="alternate"; hreflang="en", <https://ryotablog.jp/feed>; rel="alternate"; hreflang="x-default"
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+permissions-policy: camera=(), microphone=(), geolocation=()
+referrer-policy: strict-origin-when-cross-origin
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=hGFdUHNqXpXM7qyagnjOfjjfS23iFTJcavTfsJdVtMyZWcf30qPaSVnePiDl9L3DL14wdVAmw6Yt8%2B9D0EYzkPLg7GTrRZqD9JwgZ5scnzE9BUMszcIy%2FURW%2BSsoaRBhErNXGieG7Mow7Vs%3D"}]}
+server: cloudflare
+set-cookie: NEXT_LOCALE=en; Path=/; SameSite=lax
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+transfer-encoding: chunked
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-opennext: 1
+# Body:
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Ryota-Blog</title>
+        <link>https://ryotablog.jp</link>
+        <description>A blog where a web engineer shares about technology, career, and daily life</description>
+        <lastBuildDate>Mon, 06 Jul 2026 03:49:23 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>en</language>
+        <image>
+            <title>Ryota-Blog</title>
+            <url>https://ryotablog.jp/author.png</url>
+            <link>https://ryotablog.jp</link>
+        </image>
+        <copyright>&amp;copy; 2026 Ryota</copyright>
+        <atom:link href="https://ryotablog.jp/en/feed" rel="self" type="application/rss+xml"/>
+        <item>
+            <title><![CDATA[The 10 Best Things We Bought in the First Half of 2026 | Furniture & Appliances for a Newlywed Home]]></title>
+            <link>https://ryotablog.jp/en/blogs/zakki/best-buy-2026-first-half</link>
+            <guid>best-buy-2026-first-half</guid>
+            <pubDate>Sun, 05 Jul 2026 21:55:26 GMT</pubDate>
+            <description><![CDATA[A ranked countdown of our best buys from the first half of 2026! After getting married, we furnished our new home from scratch — furniture, appliances, and storage. Here are the top 10 purchases that genuinely raised our quality of life.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[How I Passed the JSTQB Foundation Level in 1.5 Months by Generating 535 Mock Exam Questions with AI]]></title>
+            <link>https://ryotablog.jp/en/blogs/test/jstqb-foundation-study-method</link>
+            <guid>jstqb-foundation-study-method</guid>
+            <pubDate>Sat, 04 Jul 2026 05:06:27 GMT</pubDate>
+            <description><![CDATA[A pass report for the JSTQB Foundation Level (CTFL) after 1.5 months of studying. Covers the textbook and free app I used, my generative-AI study method — building a question-authoring engine with Claude Code and drilling 535 questions — and how to check your pass/fail result online.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[Who Are Hitooshi's Members? Age, Income, Education, and Looks Based on a User's Real Experience]]></title>
+            <link>https://ryotablog.jp/en/blogs/zakki/hitooshi-members</link>
+            <guid>hitooshi-members</guid>
+            <pubDate>Tue, 30 Jun 2026 09:34:18 GMT</pubDate>
+            <description><![CDATA[What are Hitooshi's members really like? A user who actually got introduced to people lays out the age range, income, education ratio, and looks ("are there beauties / handsome men?") backed by official data and first-hand impressions. Material to judge in about 5 minutes whether someone who fits you is on the service.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[My Ultimate Household Finance System, Fully Explained (Married Couple, No Kids)]]></title>
+            <link>https://ryotablog.jp/en/blogs/zakki/saikyo-kakei-system</link>
+            <guid>saikyo-kakei-system</guid>
+            <pubDate>Mon, 22 Jun 2026 00:10:00 GMT</pubDate>
+            <description><![CDATA[A dual-income married couple (no kids) shares the household money system they built over three months, in interview format. SBI Sumishin Net Bank's purpose-specific accounts and auto-transfers, automatic Rakuten Card statement collection, and logging cash with a single LINE message. An engineer's 'minimum running cost' approach to household finances.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[[Curious About Reviews?] My Experience with Hitooshi Matchmaking Service (Referral Code Included)]]></title>
+            <link>https://ryotablog.jp/en/blogs/zakki/hitooshi-review</link>
+            <guid>hitooshi-review</guid>
+            <pubDate>Tue, 11 Feb 2025 11:38:50 GMT</pubDate>
+            <description><![CDATA[A review of the matchmaking service "Hitooshi". A Tokyo engineer shares his real matchmaking experience! Detailed explanation of the flow from 2-hour counseling to online meetings, reviews, reputation, advantages and disadvantages. Includes a referral code at the end.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[What Does Hitooshi's First Interview Ask? A User Explains the Questions, Flow, and Preparation]]></title>
+            <link>https://ryotablog.jp/en/blogs/zakki/hitooshi-interview</link>
+            <guid>hitooshi-interview</guid>
+            <pubDate>Wed, 23 Apr 2025 05:03:00 GMT</pubDate>
+            <description><![CDATA[A real user explains Hitooshi's first interview: the roughly 45-minute Zoom session, what you are asked (the questions), the flow up to the day, how to prepare, and dress-code tips. Includes a referral code for 5,000 yen off the enrollment fee.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[Is Hitooshi Expensive? Total Cost of the Enrollment & Monthly Fees, and How to Save 5,000 Yen]]></title>
+            <link>https://ryotablog.jp/en/blogs/zakki/hitooshi-price</link>
+            <guid>hitooshi-price</guid>
+            <pubDate>Sun, 20 Apr 2025 06:06:00 GMT</pubDate>
+            <description><![CDATA[A real, numbers-based breakdown of the marriage-hunting service "Hitooshi." Covers the 17,800 yen enrollment fee + 17,800 yen monthly fee with zero success fee, a 3/6/12-month total-cost simulation, a comparison against matching apps and traditional marriage agencies, and how to save 5,000 yen with a referral code.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[What Is Hitooshi Marriage-Hunting? How It Differs from Apps and Agencies, and Who It Suits]]></title>
+            <link>https://ryotablog.jp/en/blogs/zakki/hitooshi-konkatsu</link>
+            <guid>hitooshi-konkatsu</guid>
+            <pubDate>Tue, 09 Jun 2026 07:04:04 GMT</pubDate>
+            <description><![CDATA[What is Hitooshi's marriage-hunting service? A former user neutrally explains how it works, the cost, how it differs from matching apps and marriage agencies, the member age range, and who it suits. With links to detailed review and interview articles.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[A Complete Guide to Bringing Your Own SSL Certificate to AWS Amplify Hosting (CSR, ACM Import, Terraform, and Verification)]]></title>
+            <link>https://ryotablog.jp/en/blogs/aws/amplify-custom-ssl-acm-import</link>
+            <guid>amplify-custom-ssl-acm-import</guid>
+            <pubDate>Wed, 06 May 2026 08:35:36 GMT</pubDate>
+            <description><![CDATA[A step-by-step guide to applying a custom SSL/TLS certificate (issued by a CA of your choice) to an AWS Amplify Hosting custom domain. Covers CSR creation, chain construction, integrity verification, Terraform configuration, post-deployment verification, and expiry monitoring — written so junior engineers can follow along.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[Fix CloudFront + Next.js Image Optimization Error: Complete Solution Guide for App Runner]]></title>
+            <link>https://ryotablog.jp/en/blogs/terraform/apprunner-and-cloudfront-image-bugfix</link>
+            <guid>apprunner-and-cloudfront-image-bugfix</guid>
+            <pubDate>Sat, 21 Jun 2025 03:20:47 GMT</pubDate>
+            <description><![CDATA[Complete solution guide for CloudFront + Next.js image optimization error. Solve "url parameter is not allowed" error with AllViewerExceptHostHeader policy, detailed debugging steps, and implementation examples for AWS App Runner integration.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[May 2025 Release Notes - Ryota-Blog: Major Updates & New Features]]></title>
+            <link>https://ryotablog.jp/en/blogs/release_notes/release-notes-202505</link>
+            <guid>release-notes-202505</guid>
+            <pubDate>Wed, 18 Jun 2025 07:00:08 GMT</pubDate>
+            <description><![CDATA[May 2025 Ryota-Blog release notes covering internationalization (i18n) implementation, code block enhancements, LLMs integration, SEO optimization, and major infrastructure updates for improved performance and user experience.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[June 2024 Release Notes (Ryota-Blog)]]></title>
+            <link>https://ryotablog.jp/en/blogs/release_notes/release-notes-202406</link>
+            <guid>release-notes-202406</guid>
+            <pubDate>Fri, 21 Jun 2024 15:00:00 GMT</pubDate>
+            <description><![CDATA[This month I'll introduce the updates to this media platform! Image popup functionality, navigation to previous/next articles, using requestIdleCallback for RUM loading, implementing buttons for issue reporting, adding "New" labels, adding labels to articles older than one year, and more.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[[For Beginners] Implementing Materialized Views with Alembic (Python)]]></title>
+            <link>https://ryotablog.jp/en/blogs/python/aiembic-materialized-view</link>
+            <guid>aiembic-materialized-view</guid>
+            <pubDate>Tue, 27 May 2025 11:34:44 GMT</pubDate>
+            <description><![CDATA[A beginner-friendly guide to creating materialized views with Alembic using Python and PostgreSQL. Includes SQL implementation examples and troubleshooting tips.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[Setting Up App Runner Custom Domain with Terraform and Route53]]></title>
+            <link>https://ryotablog.jp/en/blogs/aws/customdomain-apprunner-with-terraform-route53</link>
+            <guid>customdomain-apprunner-with-terraform-route53</guid>
+            <pubDate>Sat, 15 Jun 2024 11:36:00 GMT</pubDate>
+            <description><![CDATA[This article explains how to configure App Runner DNS targets as A records in Route53 using Terraform!]]></description>
+        </item>
+        <item>
+            <title><![CDATA[The Pros and Cons of Name Tags on School Athletic Wear]]></title>
+            <link>https://ryotablog.jp/en/blogs/zakki/display-sports-wear</link>
+            <guid>display-sports-wear</guid>
+            <pubDate>Sun, 09 Jun 2024 11:37:40 GMT</pubDate>
+            <description><![CDATA[Nowadays, whether to wear name tags is sparking debate in various places. I researched the pros and cons of name tags on athletic wear and gym clothes.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[My Thoughts on Visiting the Giant Dinosaur Exhibition 2024]]></title>
+            <link>https://ryotablog.jp/en/blogs/news/giant-dinos-2024-review</link>
+            <guid>giant-dinos-2024-review</guid>
+            <pubDate>Mon, 15 Jul 2024 11:38:02 GMT</pubDate>
+            <description><![CDATA[I visited the Giant Dinosaur Exhibition at Pacifico Yokohama! Here I'll share the parts that got me excited and left an impression on me - just my personal thoughts lol]]></description>
+        </item>
+        <item>
+            <title><![CDATA[My SEO Optimization TODO List for Next.js App Router]]></title>
+            <link>https://ryotablog.jp/en/blogs/next_js/my-seo-todo-list</link>
+            <guid>my-seo-todo-list</guid>
+            <pubDate>Sun, 14 Jul 2024 11:39:39 GMT</pubDate>
+            <description><![CDATA[This time I'll introduce the SEO optimizations I always implement when using App Router!]]></description>
+        </item>
+        <item>
+            <title><![CDATA[Container and Presenter Structure in Next.js]]></title>
+            <link>https://ryotablog.jp/en/blogs/next_js/nextjs-container-presenter</link>
+            <guid>nextjs-container-presenter</guid>
+            <pubDate>Sun, 31 Jul 2022 11:40:23 GMT</pubDate>
+            <description><![CDATA[This time I'll write about Container and Presenter structure. For people who want to know component design other than Atomic Design and want to understand Container and Presenter structure!]]></description>
+        </item>
+        <item>
+            <title><![CDATA[[Review Part 2] TypeScript and React/Next.js Practical Web Application Development - Explaining toPropValue]]></title>
+            <link>https://ryotablog.jp/en/blogs/review/nextjs-typescript-book-review2</link>
+            <guid>nextjs-typescript-book-review2</guid>
+            <pubDate>Mon, 10 Oct 2022 11:43:19 GMT</pubDate>
+            <description><![CDATA[This time I finished reading the Next.js book "TypeScript and React/Next.js Practical Web Application Development" and will write a review. Part 1 reviewed the overview sections, so this time I'll review the hands-on sections.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[[Review Part 1] TypeScript and React/Next.js Practical Web Application Development]]></title>
+            <link>https://ryotablog.jp/en/blogs/review/nextjs-typescript-book-review1</link>
+            <guid>nextjs-typescript-book-review1</guid>
+            <pubDate>Sun, 11 Sep 2022 11:41:25 GMT</pubDate>
+            <description><![CDATA[This time I finished reading the Next.js book "TypeScript and React/Next.js Practical Web Application Development" and will write a review.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[My Experience Using PayCareer: What I Actually Felt]]></title>
+            <link>https://ryotablog.jp/en/blogs/review/paycareer-review</link>
+            <guid>paycareer-review</guid>
+            <pubDate>Sat, 20 Jul 2024 11:43:50 GMT</pubDate>
+            <description><![CDATA[I used PayCareer during my recent job search! I had several interviews and received a job offer from one of the companies. Here's what I experienced during that process.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[Implementing Pagination with Ellipsis Menu]]></title>
+            <link>https://ryotablog.jp/en/blogs/react/react-ellipsismenu-pagination</link>
+            <guid>react-ellipsismenu-pagination</guid>
+            <pubDate>Wed, 19 Jun 2024 11:44:45 GMT</pubDate>
+            <description><![CDATA[This time I'll introduce how to implement pagination with an ellipsis menu!]]></description>
+        </item>
+        <item>
+            <title><![CDATA[[Readable Code] What Does "Extracting Unrelated Subproblems" Mean?]]></title>
+            <link>https://ryotablog.jp/en/blogs/programming/readablecode-underproblem-solution</link>
+            <guid>readablecode-underproblem-solution</guid>
+            <pubDate>Sat, 22 Jan 2022 15:00:00 GMT</pubDate>
+            <description><![CDATA[I'll explain "extracting unrelated subproblems" in an intuitive way. For people who don't understand what subproblems mean and want to grasp the concept of extracting unrelated subproblems through imagery. I hope this helps with understanding the book Readable Code.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[July 2024 Release Notes - Ryota Blog]]></title>
+            <link>https://ryotablog.jp/en/blogs/release_notes/release-notes-202407</link>
+            <guid>release-notes-202407</guid>
+            <pubDate>Sun, 04 Aug 2024 11:47:26 GMT</pubDate>
+            <description><![CDATA[Introducing this month's media updates! Including sidebar bottom blur adjustments, Instagram error fixes, underline component additions, and custom font integration for OG images.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[What to Check When You Get CORS Errors When Calling Route Handler Endpoints from a Different Domain Client-Side]]></title>
+            <link>https://ryotablog.jp/en/blogs/next_js/route-handler-cors</link>
+            <guid>route-handler-cors</guid>
+            <pubDate>Mon, 23 Sep 2024 11:48:05 GMT</pubDate>
+            <description><![CDATA[Explains the causes and solutions for CORS errors. Introduces specific methods to solve the problem of external domain requests being blocked by CORS policy in Next.js Route Handler API endpoints, through response header configuration and OPTIONS method permission.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[[Failure Experience] I Failed the AWS SAA-C03 Exam...]]></title>
+            <link>https://ryotablog.jp/en/blogs/aws/saa-c03-failed</link>
+            <guid>saa-c03-failed</guid>
+            <pubDate>Sun, 18 Dec 2022 11:49:02 GMT</pubDate>
+            <description><![CDATA[This time I'll write about my failure experience with the AWS SAA-C03 exam. This is for people who want to know: 1. How to study for AWS SAA, 2. How much study is needed to pass?, 3. Experience from someone who took the exam to avoid troubles on test day!]]></description>
+        </item>
+        <item>
+            <title><![CDATA[Reflections on Solo Travel in Thailand]]></title>
+            <link>https://ryotablog.jp/en/blogs/zakki/thailand-travel-alone</link>
+            <guid>thailand-travel-alone</guid>
+            <pubDate>Sun, 21 Jan 2024 11:49:24 GMT</pubDate>
+            <description><![CDATA[Hello! Thailand! My first solo international trip! It was a really great experience! I'll ramble about what I felt. Basically, there's nothing particularly useful here lol]]></description>
+        </item>
+        <item>
+            <title><![CDATA[[Tokyo Governor Election 2024] VDR (Voting Decision Record) Instead of ADR - I Voted for Takahiro Yasuno]]></title>
+            <link>https://ryotablog.jp/en/blogs/zakki/tochijisen-vdr-2024</link>
+            <guid>tochijisen-vdr-2024</guid>
+            <pubDate>Fri, 05 Jul 2024 11:49:57 GMT</pubDate>
+            <description><![CDATA[Everywhere I go, people are talking about the Tokyo governor election. It's truly the topic on everyone's lips. After much consideration, I voted for Takahiro Yasuno.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[What is Object-Oriented UI?]]></title>
+            <link>https://ryotablog.jp/en/blogs/review/what-object-ui</link>
+            <guid>what-object-ui</guid>
+            <pubDate>Sun, 22 May 2022 11:50:37 GMT</pubDate>
+            <description><![CDATA[This time I'll introduce Object-Oriented UI. What is Object-Oriented UI? For people who want to learn about UI design patterns, I hope this can be helpful (^^)]]></description>
+        </item>
+        <item>
+            <title><![CDATA[[Review] I Read "Learn by Building HTML & CSS Modern Coding"]]></title>
+            <link>https://ryotablog.jp/en/blogs/css/modern-coding-review</link>
+            <guid>modern-coding-review</guid>
+            <pubDate>Sun, 14 May 2023 11:51:00 GMT</pubDate>
+            <description><![CDATA[This time I'll write a review of the book "Learn by Building HTML & CSS Modern Coding". This review is intended for people who are studying HTML/CSS, those who have completed basic learning, and people creating portfolios!]]></description>
+        </item>
+    </channel>
+</rss>
