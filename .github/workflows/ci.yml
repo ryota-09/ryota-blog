@@ -22,8 +22,6 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          MICROCMS_SERVICE_DOMAIN: ${{ secrets.MICROCMS_SERVICE_DOMAIN }}
-          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY }}
           NEXT_PUBLIC_BASE_URL: https://ryotablog.jp
 
   # 記事ファイル(content/blogs/**)向けの品質ゲート(#240)。
