@@ -82,11 +82,7 @@ This is a Next.js 16 blog application using App Router, TypeScript, and Tailwind
 5. **State Management**: Minimal client state using React Context (theme only). Most state is derived from URL params.
 
 ### Environment Setup
-`microcms.ts` は管理画面(`/admin`)・AIアクセス解析ページでのみ残存しており(削除予定はIssue #243)、通常の記事取得には使用しない。管理画面を使う場合のみ以下の環境変数が必要:
-```
-MICROCMS_API_KEY=your_api_key
-MICROCMS_SERVICE_DOMAIN=your_domain
-```
+Issue #243でmicroCMS関連コード(`src/lib/microcms.ts`等)は完全に撤去済み。管理画面(`/admin`)・AIアクセス解析ページを含め、全ての記事取得は`src/lib/content.ts`(Veliteベース)経由で行われ、CMS APIキーは不要。
 
 ### Testing Strategy
 - **Unit Tests**: Components with complex logic, located in `__tests__` directories
@@ -101,7 +97,6 @@ MICROCMS_SERVICE_DOMAIN=your_domain
 - `/src/app/` - Next.js pages and API routes
 - `/src/components/` - React components organized by feature
 - `/src/lib/content.ts` - 記事データ取得層(Velite出力を情報源とする)
-- `/src/lib/microcms.ts` - microCMS APIクライアント(管理画面・AIアクセス解析でのみ使用。削除予定は#243)
 - `/src/components/ArticleBody/MdxContent/` - MDXレンダリングシステム
 - `/src/components/ArticleBody/Embeds/` - 埋め込みコンポーネント(Tweet/LinkCard/AmazonLink/MoshimoAffiliate/Copyable)
 - `/docs/writing.md` - 記事の書き方ガイド

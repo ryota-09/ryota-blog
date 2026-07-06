@@ -12,8 +12,6 @@ declare namespace Cloudflare {
 		AI_ACCESS_DB: D1Database;
 		IMAGES: ImagesBinding;
 		ASSETS: Fetcher;
-		MICROCMS_SERVICE_DOMAIN: string;
-		MICROCMS_API_KEY: string;
 		NEXT_PUBLIC_GA_ID: string;
 		NEXT_PUBLIC_GTM_ID: string;
 		GOOGLE_SPREADSHEET_CLIENT_ID: string;
@@ -28,7 +26,7 @@ type StringifyValues<EnvType extends Record<string, unknown>> = {
 	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
 };
 declare namespace NodeJS {
-	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "MICROCMS_SERVICE_DOMAIN" | "MICROCMS_API_KEY" | "NEXT_PUBLIC_GA_ID" | "NEXT_PUBLIC_GTM_ID" | "GOOGLE_SPREADSHEET_CLIENT_ID" | "GOOGLE_SPREADSHEET_CLIENT_SECRET" | "GOOGLE_SPREADSHEET_ACCESS_TOKEN">> {}
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "NEXT_PUBLIC_GA_ID" | "NEXT_PUBLIC_GTM_ID" | "GOOGLE_SPREADSHEET_CLIENT_ID" | "GOOGLE_SPREADSHEET_CLIENT_SECRET" | "GOOGLE_SPREADSHEET_ACCESS_TOKEN">> {}
 }
 
 // Begin runtime types

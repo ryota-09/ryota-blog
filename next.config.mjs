@@ -17,7 +17,9 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 const nextConfig = {
   output: "standalone",
   images: {
-    "remotePatterns": [{ protocol: "https", hostname: "images.microcms-assets.io" }],
+    // 記事画像・アイコン画像は全てリポジトリ内(public/)にローカルホスティングされているため、
+    // 外部画像ドメインの許可(remotePatterns)は不要になった(#243)
+    "remotePatterns": [],
     // 一覧ページのサムネイル表示サイズに最適化（496px前後）
     deviceSizes: [640, 768, 1024, 1280, 1536],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 512],
