@@ -19,6 +19,7 @@
     "e2e:dev": "./run-e2e-tests.sh",
     "e2e:serve": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && PORT=3001 node .next/standalone/server.js",
     "storybook": "storybook dev -p 6006",
+    "prebuild-storybook": "NODE_ENV=development velite build",
     "build-storybook": "storybook build",
     "update-rss": "node ./src/static/rss/rss-parser.js",
     "preview:stg": "opennextjs-cloudflare build --config wrangler.stg.jsonc && opennextjs-cloudflare preview --config wrangler.stg.jsonc",
