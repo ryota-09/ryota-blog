@@ -1,11 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 test.describe('記事詳細ページのテスト', () => {
-  async function getFirstArticleUrl(page) {
+  async function getFirstArticleUrl(page: Page): Promise<string> {
     await page.goto('/blogs');
-    const articleLink = await page.locator('article a[href*="/blogs/"]').first();
+    // NOTE: 記事一覧(ArticleList)の記事カードは<article>タグではなく
+    // data-testid="pw-article-card-N"付きの<li>でマークアップされている(実装: src/components/ArticleList/index.tsx)。
+    // 記事詳細ページは<article>タグを使うため、一覧側のみ書き換える。
+    const articleLink = await page.locator('[data-testid^="pw-article-card-"] a[href*="/blogs/"]').first();
     const href = await articleLink.getAttribute('href');
-    return href;
+    // 記事リンクが取得できないのは一覧の回帰なのでここで失敗させる
+    expect(href).toBeTruthy();
+    return href!;
   }
 
   test('ART-01: 記事コンテンツ表示', async ({ page }) => {
@@ -31,14 +36,15 @@ test.describe('記事詳細ページのテスト', () => {
     await page.goto(articleUrl);
     
     const breadcrumb = await page.locator('nav[aria-label="breadcrumb"], .breadcrumb').first();
-    
+
     if (await breadcrumb.count() > 0) {
       const homeLink = await breadcrumb.locator('a').first();
-      
+
       await homeLink.click();
-      
-      await page.waitForURL('**/');
-      await expect(page.url()).toContain('/');
+
+      // パンくずのHomeは/{locale}へ遷移し、さらに/{locale}/blogsへリダイレクトされる。
+      // SPA遷移のためwaitForURL(load待ち)ではなくtoHaveURLのポーリングで待つ
+      await expect(page).toHaveURL(/\/ja(\/blogs)?\/?$/);
     }
   });
 
@@ -53,7 +59,9 @@ test.describe('記事詳細ページのテスト', () => {
       const href = await shareButtons.getAttribute('href');
       
       if (href) {
-        expect(href).toContain('url=') || expect(href).toContain('text=');
+        // NOTE: 旧実装の `expect(...).toContain() || expect(...)` はvoid同士の論理和で型エラーかつ
+        // 意図(いずれかを含む)を表現できていなかったため、正規表現マッチに置き換える
+        expect(href).toMatch(/url=|text=/);
       }
     }
   });

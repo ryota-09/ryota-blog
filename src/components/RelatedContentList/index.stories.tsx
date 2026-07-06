@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import RelatedContentList from ".";
+import type { BlogPost } from "@/types/content";
 
 const meta = {
   title: 'Components/RelatedContentList',
@@ -15,7 +16,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const data = {
+const data: Pick<BlogPost, "slug" | "publishedAt" | "updatedAt" | "title" | "categories"> = {
   slug: "customdomain-apprunner-with-terraform-route53",
   updatedAt: "2024-06-15T04:26:30.883Z",
   publishedAt: new Date().toISOString(),

@@ -39,8 +39,9 @@ const EllipsisMenuItem = ({ pageNumber, children }: EllipsisMenuItemProps) => {
     <Link
       href={generateHref()}
       className={cltw("block w-full text-left px-4 py-2 text-md text-txt-base dark:text-gray-400 hover:bg-light dark:hover:bg-secondary hover:text-white")}
-      role="navigation"
-      aria-label="ページネーションボタン"
+      // NOTE: 親のmenu(role="menu")と整合するARIAロール。以前はrole="navigation"だったが、
+      // menuの子要素としては誤用のためmenuitemに是正する(a11y改善)。
+      role="menuitem"
     >
       {children}
     </Link>
