@@ -1,10 +1,6 @@
-import { getTranslations } from 'next-intl/server';
-
-import type { BreadcrumbItemType, TOCAssetsType } from "@/types";
+import type { TOCAssetsType } from "@/types";
 import { CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE } from "@/static/blogs";
-import { resolveCategoryEntry, resolveCategoryOrDefault } from "@/static/categories";
-import { getLocalizedCategoryName } from "@/lib/i18n-utils";
-import type { BlogsContentType } from "@/types/microcms";
+import { resolveCategoryEntry } from "@/static/categories";
 import type { BlogListQuery } from "@/types/content";
 import { baseURL } from "@/config";
 import { locales } from "@/i18n/config";
@@ -66,39 +62,6 @@ export const generateQuery = (searchParams: { [PAGE_QUERY]: string, [CATEGORY_QU
   return query;
 }
 
-// 記事のプライマリカテゴリのURLスラッグを返す。該当カテゴリがCATEGORIES(src/static/categories.ts)に
-// 見つからない場合（CMS側での削除等）は必ずDEFAULT_CATEGORY_IDにフォールバックする
-// （CategoryTag/RelatedContentItemと同じresolveCategoryOrDefaultを使うことで挙動を統一する）。
-export const getPrimaryCategoryId = (blog: Pick<BlogsContentType, "category">): string => {
-  return resolveCategoryOrDefault(blog.category[0]?.id).slug;
-}
-
-export const generateBreadcrumbAssets = async (blog: BlogsContentType, locale: string = 'ja'): Promise<BreadcrumbItemType[]> => {
-  const categoryEntry = resolveCategoryOrDefault(blog.category[0]?.id);
-  const categoryId = categoryEntry.slug;
-  const t = await getTranslations({ locale, namespace: 'navigation' });
-
-  const categoryName = getLocalizedCategoryName(categoryEntry, locale);
-  const localePrefix = `/${locale}`;
-  
-  const results = [
-    {
-      label: t('home'),
-      href: localePrefix
-    },
-    {
-      label: categoryName,
-      href: `${localePrefix}/blogs/${categoryId}`
-    }
-  ];
-
-  results.push({
-    label: blog.title,
-    href: `${localePrefix}/blogs/${categoryId}/${blog.id}`
-  });
-
-  return results;
-}
 export const escapeHtml = (text: string | null) => {
 
   if (!text) return "";
