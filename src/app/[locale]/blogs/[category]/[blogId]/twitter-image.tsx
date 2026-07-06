@@ -1,7 +1,8 @@
 import { ImageResponse } from "next/og";
 
-import { getBlogByIdByLocale } from "@/lib/microcms";
+import { getBlogBySlugByLocale } from "@/lib/content";
 import { AUTHOR_NAME } from "@/static/blogs";
+import type { ContentLocale } from "@/types/content";
 
 export const size = {
   width: 1200,
@@ -18,7 +19,8 @@ export default async function Image({
   // Next.js 16ではparamsがPromiseになるため、awaitで解決
   const { locale, blogId } = await params;
 
-  const data = await getBlogByIdByLocale(locale, blogId, { fields: "title" });
+  // タイトルのみ使用するため、ファイルベースのコンテンツ層から取得する
+  const data = getBlogBySlugByLocale(locale as ContentLocale, blogId);
   return new ImageResponse(
     (
       <div

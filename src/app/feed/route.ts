@@ -1,12 +1,15 @@
 import { Feed } from "feed";
 import { baseURL } from "@/config";
-import { getAllBlogList } from "@/lib/microcms";
+import { getAllBlogListByLocale } from "@/lib/content";
+import { resolveCategoryOrDefault } from "@/static/categories";
 import { AUTHOR_NAME, SITE_DESCRIPTION, SITE_TITLE } from "@/static/blogs";
-import { getPrimaryCategoryId } from "@/lib";
 
 // export const revalidate = 60 * 60 * 24
 export const revalidate = 86400;
 
+// NOTE: このルート（ロケールなし固定URL）は既存購読者との互換性を優先し、
+//       [locale]/feed への統合リダイレクトはあえて行わない。
+//       データソースのみ content.ts (ファイルベース) に差し替える。
 export async function GET() {
   const buildDate = new Date();
   const author = {
@@ -29,17 +32,18 @@ export async function GET() {
     author: author,
   });
 
-  const blogList = await getAllBlogList({
-    fields: "id,title,description,publishedAt,updatedAt,thumbnail,category",
-    orders: "-updatedAt",
-  });
+  // NOTE: 現行実装(orders: "-updatedAt")と同じ並び順にするためupdatedAt降順に並べ替える
+  //       (content.tsのgetAllBlogListByLocaleはpublishedAt降順固定のため)
+  const blogList = [...getAllBlogListByLocale("ja")].sort(
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+  );
   for (const blog of blogList) {
-    const categoryId = getPrimaryCategoryId(blog);
+    const categoryId = resolveCategoryOrDefault(blog.categories[0]).slug;
     feed.addItem({
-      id: blog.id,
+      id: blog.slug,
       title: blog.title,
       // 実ルーティング（/[locale]/blogs/...）に合わせ、既定ロケール ja 込みのURLにする
-      link: `${baseURL}/ja/blogs/${categoryId}/${blog.id}`,
+      link: `${baseURL}/ja/blogs/${categoryId}/${blog.slug}`,
       description: blog.description,
       date: new Date(blog.publishedAt || blog.updatedAt),
     });
