@@ -1,0 +1,135 @@
+[
+  {
+    "id": "test",
+    "name": "テスト",
+    "name_en": "test",
+    "icon": "./images/categories/gemini-svg.svg",
+    "bg_color": "#FFEC89"
+  },
+  {
+    "id": "typescript",
+    "name": "TypeScript",
+    "name_en": "TypeScript",
+    "icon": "./images/categories/typescript-original.svg",
+    "bg_color": "#3178c6"
+  },
+  {
+    "id": "css",
+    "name": "CSS",
+    "name_en": "CSS",
+    "icon": "./images/categories/css3-original.svg",
+    "bg_color": "#1572b6"
+  },
+  {
+    "id": "next_js",
+    "name": "Next.js",
+    "name_en": "Next.js",
+    "icon": "./images/categories/nextjs-original.svg",
+    "bg_color": "#000000"
+  },
+  {
+    "id": "aws",
+    "name": "AWS",
+    "name_en": "AWS",
+    "icon": "./images/categories/amazonaws.svg",
+    "bg_color": "#ff9900"
+  },
+  {
+    "id": "zakki",
+    "name": "雑記",
+    "name_en": "daily",
+    "icon": "./images/categories/pen-to-square.svg",
+    "bg_color": "#64748b"
+  },
+  {
+    "id": "release_notes",
+    "name": "Release Notes",
+    "name_en": "Release Notes",
+    "icon": "./images/categories/scroll.svg",
+    "bg_color": "#10b981"
+  },
+  {
+    "id": "review",
+    "name": "レビュー",
+    "name_en": "Review",
+    "icon": "./images/categories/star.svg",
+    "bg_color": "#f59e0b"
+  },
+  {
+    "id": "python",
+    "name": "Python",
+    "name_en": "Python",
+    "icon": "./images/categories/python-original.svg",
+    "bg_color": "#3776ab"
+  },
+  {
+    "id": "openai_api",
+    "name": "OpenAI API",
+    "name_en": "OpenAI API",
+    "icon": "./images/categories/openai.svg",
+    "bg_color": "#412991"
+  },
+  {
+    "id": "news",
+    "name": "時事",
+    "name_en": "News",
+    "icon": "./images/categories/newspaper.svg",
+    "bg_color": "#ef4444"
+  },
+  {
+    "id": "ui_parts",
+    "name": "UI",
+    "name_en": "UI",
+    "icon": "./images/categories/palette.svg",
+    "bg_color": "#8b5cf6"
+  },
+  {
+    "id": "react",
+    "name": "React",
+    "name_en": "React",
+    "icon": "./images/categories/react-original.svg",
+    "bg_color": "#61dafb"
+  },
+  {
+    "id": "terraform",
+    "name": "Terraform",
+    "name_en": "Terraform",
+    "icon": "./images/categories/terraform-original.svg",
+    "bg_color": "#7b42bc"
+  },
+  {
+    "id": "gadget",
+    "name": "ガジェット",
+    "name_en": "Gadget",
+    "icon": "./images/categories/mobile-screen-button.svg",
+    "bg_color": "#0891b2"
+  },
+  {
+    "id": "tailwindcss",
+    "name": "TailwindCSS",
+    "name_en": "TailwindCSS",
+    "icon": "./images/categories/tailwindcss-original.svg",
+    "bg_color": "#06b6d4"
+  },
+  {
+    "id": "programming",
+    "name": "プログラミング",
+    "name_en": "Programming",
+    "icon": "./images/categories/code.svg",
+    "bg_color": "#2563eb"
+  },
+  {
+    "id": "career",
+    "name": "Career",
+    "name_en": "Career",
+    "icon": "./images/categories/chart-line.svg",
+    "bg_color": "#059669"
+  },
+  {
+    "id": "life_hack",
+    "name": "LifeHack",
+    "name_en": "LifeHack",
+    "icon": "./images/categories/lightbulb.svg",
+    "bg_color": "#ea580c"
+  }
+]

@@ -1,0 +1,289 @@
+---
+title: June 2024 Release Notes (Ryota-Blog)
+description: This month I'll introduce the updates to this media platform! Image popup functionality, navigation to previous/next articles, using requestIdleCallback for RUM loading, implementing buttons for issue reporting, adding "New" labels, adding labels to articles older than one year, and more.
+publishedAt: "2024-06-21T15:00:00.000Z"
+updatedAt: "2025-06-18T07:04:53.540Z"
+categories:
+  - release_notes
+thumbnail: ./images/release202406.webp
+related:
+  - release-notes-202407
+headingIds:
+  - h37df8db74b
+  - h2efb4c5649
+  - h953236ce9b
+  - hc0ede34328
+  - habcdbc57a9
+  - h8fa09bfd06
+  - hbdea054173
+  - h89016b91b3
+  - h18e8f2da9f
+  - h9caa063955
+  - h9400418fa7
+  - h92823ce57d
+  - h46c787d07c
+  - h366171250e
+  - hc4e373db69
+  - hffca7b29d2
+  - h7f8e47ec95
+  - hc8dfc6f736
+  - hc818b8b9fb
+  - he26af36bce
+---
+
+Hello! I'm [@Ryo54388667](https://twitter.com/Ryo54388667)! ☺️
+
+I usually work as an engineer in Tokyo!
+
+I mainly work with technologies like TypeScript and Next.js.
+
+<br />
+
+This month I'll introduce the updates to this media platform!
+
+<br />
+
+## Application Updates
+
+<br />
+
+### Image Popup Functionality
+
+I added a popup feature that allows you to view images in a larger display when you click on images in detail pages.
+
+When you click on small photos within articles, you can view them enlarged on a bigger screen (like the one below). For some images that become larger than the view area, this will be a future improvement point...
+
+<br />
+
+![](./images/cup-of-coffee-1280537_1280.jpg)
+
+<br />
+
+<br />
+
+### Navigation to Previous/Next Articles
+
+As a new feature, I added navigation that allows easy movement to previous and next articles. You can find it at the bottom of this article.
+
+When reading an article, clicking "Next Article" lets you quickly move to the next article. What I struggled with during implementation was whether to place the "Next Article" on the left or right side for users - what would feel natural. In the end, I decided to clearly display the dates.
+
+Reference
+
+[https://wk-partners.co.jp/homepage/blog/hpseisaku/next-prev/](https://wk-partners.co.jp/homepage/blog/hpseisaku/next-prev/)
+
+<br />
+
+<br />
+
+### Using requestIdleCallback for AWS RUM Loading
+
+To improve the app's performance, I implemented loading Real User Monitoring (RUM) data using [requestIdleCallback](https://developer.mozilla.org/ja/docs/Web/API/Window/requestIdleCallback).
+
+This should enable more efficient loading. However, since Safari doesn't support it, I reluctantly added conditional branching 😇
+
+For details, please see [this commit](https://github.com/ryota-09/ryota-blog/commit/98140ebe67911d99a3b23b35893bfa2217a5a2ab).
+
+For B2C performance improvements, I use this Yahoo article as a reference! So grateful\~
+
+<br />
+
+<br />
+
+### Implementing Button for Issue Reporting
+
+I added a "Correction Request Button" that allows users to report problems. You can find it at the bottom of this article.
+
+I also wrote details on Zenn!
+
+[https://zenn.dev/ryota\_09/articles/77ca2efe5d23d0](https://zenn.dev/ryota_09/articles/77ca2efe5d23d0)
+
+<br />
+
+<br />
+
+### Adding "New" Labels
+
+I made newly published articles display a "New" label.
+
+For now, I'm labeling articles "within 2 weeks" (2 weeks! Old! I won't accept that criticism). I'm satisfied with the color tone I personally like 👌
+
+<br />
+
+<br />
+
+### Adding Labels to Articles Over One Year Old
+
+I made articles published over a year ago display an "Old" label.
+
+[https://ryotablog.jp/blogs/modern-coding-review](/en/blogs/css/modern-coding-review)
+
+<br />
+
+<br />
+
+### Separate OG Image for Twitter
+
+I set up dedicated OGP tags to improve the appearance when sharing links on Twitter. By naming it `twitter-image.tsx`, it creates a dedicated OGP image. I had long thought that only the Twitter OG image had a slightly off border width, but after learning that I could prepare separate OG images for Twitter, I made the improvement.
+
+<br />
+
+Reference
+
+[https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image)
+
+<br />
+
+### Adding Blur Functionality to Images
+
+I added blur effects to images.
+
+However, adding blur functionality to all images dramatically worsened performance and increased data usage, so I limited it to necessary places only.
+
+<br />
+
+[https://ryotablog.jp/about](/about)
+
+<br />
+
+<br />
+
+### Smooth Display of Article List
+
+I modified the article list to float up smoothly.
+
+For details, please see [this commit](https://github.com/ryota-09/ryota-blog/commit/311bcb18b85d6f48446469c7d5e362f1c3fcec80). It's applied when switching tabs on the top page.
+
+<br />
+
+[https://ryotablog.jp/blogs](/blogs)
+
+<br />
+
+<br />
+
+### Fix for Fonts Being Applied to Storybook Components
+
+I fixed it so fonts are properly applied to components in Storybook as well.
+
+<br />
+
+```tsx title=".storybook/preview.ts"
+import React from "react";
+import { Kosugi_Maru } from "next/font/google";
+import type { Preview } from "@storybook/react";
+
+import "../src/styles/globals.css"
+
+const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"], display: "swap" });
+
+const preview: Preview = {
+  parameters: {
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /Date$/i,
+      },
+    },
+  },
+  decorators: [
+    (Story) => (
+      
+```
+
+`) ], }; export default preview;`
+
+<br />
+
+<br />
+
+### Applying GIF Images to next/image
+
+I made GIF images supported by next/image. It seems you can support it by turning unoptimized off.
+
+```tsx
+const isGif = src.endsWith(".gif");
+```
+
+<br />
+
+<br />
+
+## Infrastructure Updates
+
+<br />
+
+### Using AWS RUM
+
+I introduced [AWS Real User Monitoring (RUM)](https://aws.amazon.com/jp/blogs/news/cloudwatch-rum/). This allows monitoring of Web Vitals progress.
+
+<br />
+
+### Adding Storybook to Subdomain
+
+I added Storybook to a subdomain.
+
+[https://story.ryotablog.jp/?path=/docs/document--docs](https://story.ryotablog.jp/?path=/docs/document--docs)
+
+<br />
+
+## Next Month's Roadmap
+
+<br />
+
+### Sidebar Improvements
+
+I plan to make it clearer that the sidebar can be scrolled.
+
+Design-wise, I think the blur from Twitter's settings area would be good.
+
+<br />
+
+![](./images/IMG_1090.jpg)
+
+<br />
+
+### Storybook Accessibility Testing
+
+I'm considering introducing accessibility testing to Storybook.
+
+Currently, I'm getting color contrast warnings from Lighthouse, so I want to do something about that...
+
+<br />
+
+### Automating Web Vitals Collection
+
+I plan to automate the collection of Web Vitals (important performance metrics for websites).
+
+<br />
+
+## Summary
+
+- Image popup functionality
+- Navigation to previous/next articles
+- Using requestIdleCallback for RUM loading
+- Implementing button for issue reporting
+- Adding "New" labels
+- Adding labels to articles over one year old
+- Separate OG image for Twitter
+- Adding blur functionality to images
+- Smooth display of article list
+- Fix for fonts being applied to Storybook components
+- Applying GIF images to next/image
+
+<br />
+
+These are the release notes for June 2024. Thank you for reading to the end. I'd like to write next month too. No, I will write. (Probably)
+
+<br />
+
+Thank you for reading to the end!
+
+I tweet casually, so please feel free to follow me! 🥺
+
+> MFAにパスキーを利用するようになって、macbookの指紋認証から離れられず、サードパーティのキーボードに移れない😮‍💨指紋認証付きmagic keyboardを買うか悩む。。
+>
+> — りょた@dev (@Ryo54388667) [June 21, 2024](https://twitter.com/Ryo54388667/status/1804299189662486824?ref_src=twsrc%5Etfw)
+
+<br />
+
+<br />

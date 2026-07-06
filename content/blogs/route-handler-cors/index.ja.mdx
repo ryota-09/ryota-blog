@@ -1,0 +1,135 @@
+---
+title: Route Handlerを利用したエンドポイントを別ドメインのクライアントサイドからAPIコールしてCORSのエラーが生じた時に確認すること
+description: CORSエラーの原因と解決方法を解説します。Next.jsのRoute Handlerを使用したAPIエンドポイントにおいて、外部ドメインからのリクエストがCORSポリシーにブロックされる問題を、レスポンスヘッダーの設定やOPTIONSメソッドの許可によって解決する具体的な方法を紹介します。
+publishedAt: "2024-09-23T05:36:02.120Z"
+updatedAt: "2024-09-23T05:36:02.120Z"
+categories:
+  - next_js
+thumbnail: ./images/スクリーンショット-2024-09-23-9.56.27.png
+headingIds:
+  - he461608f35
+  - h73201b43a0
+  - hf53cb25707
+  - hb6764074ac
+  - h3bcda3e6b0
+---
+
+こんにちは！[@Ryo54388667](https://x.com/Ryo54388667)です！☺️
+
+普段は都内でエンジニアとして働いています。主にTypeScriptやNext.jsを使った開発をしています。今回は、特にAPIの開発中に直面することが多い「CORSエラー」について、その原因と解決方法を解説していきます！
+
+<br />
+
+## CORSエラーとは？
+
+CORS（Cross-Origin Resource Sharing）は、異なるドメイン間でリソースをやり取りする際にセキュリティ上の問題を回避するための仕組みです。APIを作成して外部のクライアントからリクエストを受け取る場合、CORSが適切に設定されていないと、ブラウザでエラーが発生します。
+
+例えば、`http://localhost:5173`で動作するフロントエンドアプリが、`https://xxxxxx.xxx/api/xxxxx`というAPIにリクエストを送る場合、CORSの設定が不適切だと以下のようなエラーが発生することがあります。
+
+<br />
+
+![](./images/スクリーンショット-2024-09-23-9.56.27.png)
+
+<br />
+
+<br />
+
+> register:1 Access to fetch at 'https\://xxxxxx.xxx/api/xxxxx' from origin 'http\://localhost:5173' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+
+<br />
+
+いまだにAPIの連携時にCORSエラーにぶち当たるんですよねー。。😇
+
+<br />
+
+## 確認するポイント
+
+### 1. レスポンスヘッダーにCORS設定を追加
+
+まず最初に確認すべきなのは、APIサーバーが正しいCORSヘッダーを返しているかどうかです。これを設定することで、特定のドメインやリクエストメソッドを許可することができます。
+
+Next.jsのRoute HandlerでCORSヘッダーを設定する方法は以下の通りです
+
+[https://nextjs.org/docs/app/building-your-application/routing/route-handlers#cors](https://nextjs.org/docs/app/building-your-application/routing/route-handlers#cors)
+
+<br />
+
+<br />
+
+```typescript title="app/api/route.ts"
+export const corsHeaders = {
+  "Access-Control-Allow-Origin": "*", // すべてのオリジンを許可
+  "Access-Control-Allow-Methods": "*", // すべてのHTTPメソッドを許可
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-API-KEY, Accept", // 必要なヘッダーを許可
+};
+
+// app/api/route.ts
+return NextResponse.json({ status: 200, message: "Success" }, {
+    status: 200,
+    headers: corsHeaders
+});
+```
+
+上記のコードでは、`Access-Control-Allow-Origin`ヘッダーに`*`を設定することで、どのドメインからでもリクエストを受け付けるようにしています。必要に応じて、特定のオリジンだけを許可することもできます。
+
+<br />
+
+### 2. OPTIONSエンドポイントの許可
+
+CORSエラーのもう一つの原因は、OPTIONSメソッドによる「プレフライトリクエスト」です。ブラウザは、安全性を確認するために、実際のリクエストを送る前にこのリクエストをサーバーに送信します。このプレフライトリクエストに適切なレスポンスを返さないと、エラーが発生します。
+
+下記の画像のように、OPTIONSのアクセスがあります。
+
+![](./images/スクリーンショット-2024-09-23-14.15.39.png)
+
+<br />
+
+これに気づくのに時間がかかりました。。
+
+<br />
+
+preflightリクエストについては下記の記事がわかりやすかったです！👏
+
+[https://ja.javascript.info/fetch-crossorigin#ref-232](https://ja.javascript.info/fetch-crossorigin#ref-232)
+
+<br />
+
+プレフライトリクエストに対応するために、OPTIONSメソッドを許可する必要があります。Next.jsでの実装例は以下の通りです！
+
+<br />
+
+```typescript title="api/route.ts"
+export async function OPTIONS() {
+  return NextResponse.json(null, {
+    status: 200,
+    headers: corsHeaders
+  });
+}
+```
+
+<br />
+
+これにより、サーバーはOPTIONSリクエストに対してCORSヘッダーを正しく返すようになります。
+
+<br />
+
+## 最後に
+
+**解決策**
+
+- レスポンスヘッダーにCORS設定を追加
+- OPTIONSエンドポイントの許可
+
+もし他により良い方法があれば、ぜひ教えてください〜🙇‍♂️
+
+<br />
+
+最後まで読んでいただきありがとうございます！
+
+気ままにつぶやいているので、気軽にフォローをお願いします！🥺
+
+<br />
+
+<Tweet id="1830174390618935405" url="https://twitter.com/Ryo54388667/status/1830174390618935405" />
+
+<br />

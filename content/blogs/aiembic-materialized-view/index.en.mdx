@@ -1,0 +1,151 @@
+---
+title: "[For Beginners] Implementing Materialized Views with Alembic (Python)"
+description: A beginner-friendly guide to creating materialized views with Alembic using Python and PostgreSQL. Includes SQL implementation examples and troubleshooting tips.
+publishedAt: "2025-05-27T11:34:44.000Z"
+updatedAt: "2025-06-14T22:30:37.996Z"
+categories:
+  - python
+thumbnail: ./images/aiembic-materialized-view.png
+headingIds:
+  - h8efa3b742d
+  - hd5fc4b16b8
+  - hf1909498e3
+---
+
+Hello! I'm [@Ryo54388667](https://x.com/Ryo54388667)!☺️
+
+I work as an engineer in Tokyo! I mainly work with technologies like TypeScript and Next.js.
+
+Today, I'll be introducing **how to implement materialized views with alembic**!
+
+<br />
+
+## What is a Materialized View?
+
+A Materialized View is a mechanism that stores query results in advance on the database, similar to a "cache table."
+
+While regular views (VIEW) execute queries against base tables every time they're accessed, materialized views can return results quickly once the aggregated results are created.
+
+**Advantages**
+
+- Speeds up aggregation processing and complex join queries
+- Can control regeneration (REFRESH) timing
+
+**Disadvantages**
+
+- Data update timing is delayed (requires REFRESH)
+- Consumes storage space
+
+They're particularly powerful for cases where you only need to read data frequently, such as log aggregation or dashboard aggregation results.
+
+## Implementation Method with Alembic
+
+Let me introduce the workflow for managing materialized views using **alembic**, a Python-based migration tool.
+
+The key point is to issue SQL directly within the `upgrade()` function of the generated version file.
+
+1\. **Creating the Version File**
+
+```bash title="terminal"
+alembic revision -m "create materialized view for daily_usage"
+```
+
+This will generate alembic/versions/xxxxx\_create\_materialized\_view\_for\_daily\_usage.py.
+
+<br />
+
+2\. **Creating the View in the upgrade Function**
+
+Open the generated file and edit the contents of `upgrade()` as follows:
+
+```python title="aiembic/xxxx.py"
+from alembic import op
+# revision identifiers, used by Alembic.
+revision = 'xxxxx'
+down_revision = 'yyyyy'
+branch_labels = None
+depends_on = None
+
+def upgrade() -> None:
+
+    # Drop existing view before creating (CASCADE also removes dependencies)
+    op.execute("""
+    DROP MATERIALIZED VIEW IF EXISTS daily_usage_matview CASCADE;
+    CREATE MATERIALIZED VIEW daily_usage_matview AS
+    SELECT
+        user_id,
+        date_trunc('day', created_at AT TIME ZONE 'Asia/Tokyo')::date AS target_date,
+        COUNT(*) AS usage_count
+    FROM message_usages
+    GROUP BY user_id, target_date;
+    """)
+
+def downgrade() -> None:
+    # Remove the view during downgrade
+    op.execute("DROP MATERIALIZED VIEW IF EXISTS daily_usage_matview;")
+```
+
+•Use `op.execute("""…""")` to execute multi-line SQL directly
+
+•`DROP MATERIALIZED VIEW IF EXISTS … CASCADE` removes existing views and dependent objects all at once
+
+•`CREATE MATERIALIZED VIEW … AS SELECT …` registers the aggregation query
+
+<br />
+
+3\. **Executing the Migration**
+
+```bash title="terminal"
+alembic upgrade head
+```
+
+This creates the materialized view in the database.
+
+<br />
+
+## Important Notes
+
+Here are some key points and troubleshooting tips for operating materialized views.
+
+- **REFRESH Timing**
+
+Materialized views don't automatically reflect data updates after creation. To update them, you need to execute the following SQL:
+
+REFRESH MATERIALIZED VIEW CONCURRENTLY daily\_usage\_matview;
+
+└ Specifying CONCURRENTLY allows updates without blocking reads, but you may need to increase max\_locks\_per\_transaction in your PostgreSQL settings.
+
+<br />
+
+- **Creating Indexes**
+
+Adding indexes on the view improves search performance. Add the following to your migration:
+
+op.execute("CREATE INDEX idx\_daily\_usage\_user\_date ON daily\_usage\_matview (user\_id, target\_date);");
+
+<br />
+
+- **Transaction Constraints**
+
+In some PostgreSQL versions, creating materialized views within transactions may be restricted. Refer to troubleshooting documentation and use op.get\_bind().execution\_options(isolation\_level="AUTOCOMMIT") if necessary.
+
+<br />
+
+- **Dependencies During Downgrade**
+
+If other views or foreign keys depend on the materialized view, DROP will fail without the CASCADE option.
+
+<br />
+
+<br />
+
+Thank you for reading to the end!
+
+I tweet casually, so please feel free to follow me!🥺\
+
+
+> 自分がアサインしているチームで自分の記事が引用される、っていう実績を解除した🥳
+>
+> — りょた@dev (@Ryo54388667) [May 12, 2025](https://twitter.com/Ryo54388667/status/1921873332732825894?ref_src=twsrc%5Etfw)
+
+<br />
