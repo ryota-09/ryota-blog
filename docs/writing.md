@@ -205,7 +205,10 @@ npm run dev
    - `quality` ジョブ: lint・ビルド
    - `content` ジョブ: `npm run lint:content`(下記「8. lint:content」参照)
 5. レビュー後、`develop` にマージ
-6. `develop`/`main` へのpushでCloudflare Workersへ自動デプロイされる
+6. 本番公開するタイミングで `develop` → `main` のPRを作成してマージする
+   (`deploy-cloudflare.yml` は **`main` へのpushで本番(ryota-blog-prd)**、**`staging` へのpushでstg(ryota-blog-stg)** にデプロイする。`develop` へのpushではデプロイされない)
+
+補足: 公開前に本番相当の環境で共有プレビューしたい場合は、対象ブランチを `staging` へpushするとstg環境(`https://ryota-blog-stg.ryota09dev.workers.dev`)で確認できる
 
 ## 8. lint:content
 
