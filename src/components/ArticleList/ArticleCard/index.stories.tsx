@@ -35,6 +35,7 @@ const data: BlogPost = {
   },
   "categories": ["aws", "terraform"],
   "related": [],
+  "draft": false,
   "headingIds": [],
   "moshimoWidgets": [],
   "body": "",

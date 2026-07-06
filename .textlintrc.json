@@ -1,0 +1,26 @@
+{
+  "plugins": ["mdx"],
+  "rules": {
+    "preset-ja-technical-writing": {
+      "no-exclamation-question-mark": false,
+      "ja-no-weak-phrase": false,
+      "ja-no-successive-word": false,
+      "no-mix-dearu-desumasu": false,
+      "no-doubled-joshi": false,
+      "sentence-length": false,
+      "max-ten": false,
+      "max-comma": false,
+      "ja-no-redundant-expression": false,
+      "max-kanji-continuous-len": false,
+      "no-unmatched-pair": false,
+      "arabic-kanji-numbers": false,
+      "no-dropping-the-ra": false,
+      "ja-no-abusage": false,
+      "no-nfd": false,
+      "no-double-negative-ja": false,
+      "no-doubled-conjunctive-particle-ga": false,
+      "ja-unnatural-alphabet": false,
+      "ja-no-mixed-period": false
+    }
+  }
+}

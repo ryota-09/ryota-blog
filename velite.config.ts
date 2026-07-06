@@ -83,6 +83,9 @@ const blogs = defineCollection({
       related: s.array(s.string()).default([]),
       // microCMS由来の見出しid(出現順)。rehype-slug相当の後方互換用
       headingIds: s.array(s.string()).default([]),
+      // 下書きフラグ。true の記事は本番ビルドの出力から除外される(prepareフック参照)。
+      // 開発環境(NODE_ENV=development、package.jsonのpredev/dev/pretest参照)では除外しない
+      draft: s.boolean().default(false),
       moshimoWidgets: s.array(moshimoWidgetSchema).default([]),
       body: s.mdx(),
       // 検索(plainText/toc計算)用の生MDX文字列
@@ -124,6 +127,20 @@ export default defineConfig({
     // rehypeImageSizeは画像パスが/static/...へ書き換わった後の状態で実ファイルを解決する
     // (詳細はvelite/rehype-image-size.tsのコメント参照)。
     rehypePlugins: [rehypeRestoreHeadingIds, rehypeImageSize, rehypeCodeMeta],
+  },
+  // ビルド結果をファイル書き出し前に加工するフック(#240 draft運用)。
+  // 本番ビルド(NODE_ENV=production。package.jsonのprebuildが明示的にセットする)でのみ、
+  // draft: true の記事をコレクションから除外する。開発(NODE_ENV=development、predev/dev/pretest)では
+  // 除外しないため、`npm run dev` 上ではdraft記事も通常どおりプレビューできる。
+  // ここで data.blogs 自体を書き換えることで、.velite/ への出力(型付きJSON)と
+  // 後続の complete フック(category-map.json生成)の両方に一箇所の変更で反映される。
+  // (content.ts側にも将来のフィルタポイントのコメントがあったが、Veliteの出力自体から
+  //  除外したほうが「データ層の起点」としてより上流であり、category-map.json含む全経路を
+  //  一律にカバーできるためこちらを正とする)
+  prepare: (data) => {
+    if (process.env.NODE_ENV === "production") {
+      data.blogs = data.blogs.filter((blog) => !blog.draft);
+    }
   },
   complete: (data, { config }) => {
     // middleware.ts の旧URL(/blogs/{slug})リダイレクト用に、

@@ -1,0 +1,7 @@
+# textlint-plugin-mdx + textlintのASTポジション計算がクラッシュする既知の問題を回避するための除外リスト(#240)。
+#
+# route-handler-cors: エスケープされたコロン(`\://`)を含む長い英文blockquote(CORSエラーメッセージの引用)で
+# TextlintSourceCodeImpl.getSource が "Cannot read properties of undefined (reading '0')" で例外を投げる。
+# 原因はtextlint-plugin-mdx側のノード位置計算とみられるが、記事本文はコンテンツフリーズ対象のため
+# 書き換えでの回避はせず、lintから除外する。
+content/blogs/route-handler-cors/index.ja.mdx

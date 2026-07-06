@@ -23,9 +23,12 @@ const sortByPublishedAtDesc = (a: BlogPost, b: BlogPost): number =>
 const blogsByLocale = (locale: ContentLocale): BlogPost[] =>
   ALL_BLOGS.filter((blog) => blog.locale === locale);
 
-// NOTE: 現状frontmatterにdraftフィールドは存在しないため下書き除外は行わない。
-// 将来draftフィールドを追加する場合は、ここ(かつ ALL_BLOGS を参照する全関数の起点)で
-// `.filter((blog) => !blog.draft)` を挟むと一箇所の変更で全関数に反映できる。
+// NOTE: draft記事の除外は velite.config.ts の prepare フックで行っている(#240)。
+// 本番ビルド(NODE_ENV=production)時点で ALL_BLOGS(#content/index)自体から
+// draft: true の記事が取り除かれるため、ここでの追加フィルタは不要。
+// (開発環境ではフィルタされないため、`npm run dev` でdraft記事もプレビューできる)
+// この関数はロケール絞り込みのみを行うが、全消費関数(getBlogList/getAllBlogListByLocale等)の
+// 唯一の起点であるという構造は維持しておく(将来別の絞り込みが必要になった場合の一箇所ポイント)。
 const getPublishedBlogsByLocale = (locale: ContentLocale): BlogPost[] =>
   blogsByLocale(locale);
 
