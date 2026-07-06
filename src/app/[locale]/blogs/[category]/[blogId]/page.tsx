@@ -107,9 +107,12 @@ const Page = async ({ params }: PageProps) => {
   const relatedBlogs = resolveRelatedBlogs(contentLocale, data.related);
 
   return (
-    <div className="max-w-[1028px] mx-auto px-2 md:px-0">
+    // NOTE: 祖先の<main>がflexコンテナのため、min-w-0を明示しないとこのdivがflexアイテムの
+    // デフォルト(min-width:auto)により内部コンテンツ(長いコードブロック等)の幅に押し広げられ、
+    // ページ全体に横スクロールが生じることがある(#242パリティ検証で発見)。
+    <div className="max-w-[1028px] mx-auto px-2 md:px-0 min-w-0">
       <BreadcrumbList items={breadcrumbAssets} />
-      <article className=" bg-white dark:bg-black border-2 dark:border-gray-600 px-4">
+      <article className="w-full min-w-0 bg-white dark:bg-black border-2 dark:border-gray-600 px-4">
         <ArticleBody data={data} locale={contentLocale} />
       </article>
       {relatedBlogs.length >= 1 && (
