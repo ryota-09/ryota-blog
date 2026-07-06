@@ -3,18 +3,18 @@
 import { Link } from "next-view-transitions";
 import { useLocale, useTranslations } from "next-intl";
 
-import { BlogsContentType } from "@/types/microcms";
+import type { BlogPost } from "@/types/content";
 import NewLabel from "@/components/UiParts/NewLabel";
 import ImageWithSkeleton from "@/components/UiParts/ImageWithSkeleton";
 import { isWithinTwoWeeks } from "@/util";
-import { getPrimaryCategoryId } from "@/lib";
+import { getPrimaryCategoryIdFromBlogPost } from "@/lib/content";
 import { getBlogPath } from "@/lib/i18n-utils";
 
 type ArticleCardProps = {
   /**
    * ブログ記事のデータ
    */
-  data: BlogsContentType;
+  data: BlogPost;
   /**
    * インデックス
    */
@@ -24,8 +24,8 @@ type ArticleCardProps = {
 const ArticleCard = ({ data, index }: ArticleCardProps) => {
   const locale = useLocale();
   const t = useTranslations("blog");
-  const categoryId = getPrimaryCategoryId(data);
-  const blogPath = getBlogPath(locale, categoryId, data.id);
+  const categoryId = getPrimaryCategoryIdFromBlogPost(data);
+  const blogPath = getBlogPath(locale, categoryId, data.slug);
 
   // LCP最適化: モバイル（1列）は最初の1枚、デスクトップ（2列）は最初の2枚がLCP候補
   // SSR時に正しい値を出力する必要があるため、両方をカバーするindex <= 1を使用
@@ -72,7 +72,7 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
             >
               <figure className="relative w-full transition-opacity hover:opacity-80">
                 <ImageWithSkeleton
-                  src={data.thumbnail.url}
+                  src={data.thumbnail.src}
                   alt={data.title}
                   width={data.thumbnail.width}
                   height={data.thumbnail.height}
@@ -81,7 +81,7 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
                     width: "100%",
                     height: "auto",
                     // 記事詳細のアイキャッチ画像と同じ名前を付け、遷移時にサムネイルがそのままモーフするようにする
-                    viewTransitionName: `thumb-${data.id}`,
+                    viewTransitionName: `thumb-${data.slug}`,
                   }}
                   {...lcpImageProps}
                 />

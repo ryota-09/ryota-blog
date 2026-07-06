@@ -38,7 +38,10 @@ const Pagination = ({ currentPage, totalCount, basePath }: PaginationProps) => {
 
   return (
     totalCount !== 0 && (
-      <ul className="flex items-center gap-2">
+      // NOTE: ページネーション全体をnavランドマークでラップする(a11y改善: Issue #230系統の対応方針に合わせる)。
+      // 個々のページ番号リンクにrole="navigation"を付けるのはARIA的に誤用のため、外側のnavのみに集約する。
+      <nav aria-label="ページネーション">
+        <ul className="flex items-center gap-2">
         {/* NOTE: 1ページ目以外、前のページを表示するボタン */}
         {currentPage !== 1 && (
           <li>
@@ -130,8 +133,8 @@ const Pagination = ({ currentPage, totalCount, basePath }: PaginationProps) => {
             </PaginationItem>
           </li>
         )}
-      </ul>
-
+        </ul>
+      </nav>
     )
   )
 }

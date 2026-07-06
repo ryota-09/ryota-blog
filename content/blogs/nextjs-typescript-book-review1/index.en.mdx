@@ -1,0 +1,207 @@
+---
+title: "[Review Part 1] TypeScript and React/Next.js Practical Web Application Development"
+description: This time I finished reading the Next.js book "TypeScript and React/Next.js Practical Web Application Development" and will write a review.
+publishedAt: "2022-09-11T11:41:25.000Z"
+updatedAt: "2025-06-14T12:16:48.043Z"
+categories:
+  - review
+  - typescript
+  - next_js
+  - react
+thumbnail: ./images/typescript-react-nextjs.jpeg
+isAdvertisement: true
+related:
+  - nextjs-typescript-book-review2
+headingIds:
+  - hef725b6a43
+  - ha7b3690944
+  - h98400048ab
+  - hc3796d742b
+  - h6b866d0eb6
+  - hc281e9539d
+---
+
+Hello! I'm Ryota ([@Ryo54388667](https://x.com/Ryo54388667)) (^o^)
+
+<br />
+
+This time I finished reading the Next.js book "TypeScript and React/Next.js Practical Web Application Development" and will write a review.
+
+- I was curious about this Next.js book and want to know the review.
+- I've been writing Next.js somewhat casually and want to know the detailed mechanisms.
+
+I hope this will be helpful for such people!
+
+<br />
+
+## Introduction
+
+This review is just from the perspective of me, a junior of juniors with less than a year of practical experience (I deliberately made this bold...). Please don't expect too much when reading...
+
+Having set up tight defensive lines, I'll write about parts that personally caught my attention!
+
+<br />
+
+## About Next.js Structure
+
+This is about the basic mechanisms of Next.js.
+
+Initially, when I heard "server-side rendering," I only understood it as "the server does something for us." Please look at this figure quoted from this book.
+
+![](./images/IMG_61C209CE481C-1-300x229.jpeg)
+
+You can see that it can't be simplified as just "server."
+
+In addition to the API server, there's a server provided by Next.js. I understood that the server in server-side rendering refers to the server provided by Next.js. I had mistakenly thought it was adding some functionality to existing API servers. That was a big misunderstanding! I'm glad I caught this here!
+
+<br />
+
+## About History API
+
+This was the first time I heard this term. The book states:
+
+> While developers usually don't need to be conscious of the History API, it's worth knowing about the existence of functions like pushState and replaceState as features that record history in the browser. Also, there's an event called popstate that occurs when the browser's back/forward buttons are pressed, which can be incorporated into implementations. There's also a property called scrollRestoration that can control scroll position when there's navigation between history due to pressing the browser's back/forward buttons.
+>
+> (TypeScript and React/Next.js Practical Web Application Development)
+
+I was completely unconscious of this (^^;
+
+Since I use the Router provided by Next.js, this never crossed my mind. When I researched it, it seems to be a feature introduced in HTML5! I'm very grateful when the mechanisms behind things I do blindly are explained like this.
+
+<br />
+
+Also, as is often the case with technical books, I personally feel that the "columns" in technical books usually contain useful information! It's similar to when senior engineers say "By the way..." - it's usually something beneficial.
+
+<br />
+
+## About Component Design
+
+I'm personally interested in this topic recently!
+
+The reason for my interest is that a few months ago I was like "Component design means Atomic Design!" and was studying that, but when actually managing components in practice, several problems arose, making me reconsider.
+
+Problems included too many organisms, too many files, etc... I think it's time to step back and think.
+
+<br />
+
+I digressed a bit, so let me return to the book.
+
+First, about the significance of componentization:
+
+> When components are appropriately extracted, UI design and implementation become efficient. Since components with the same functionality can be reused, there's no need for re-implementation, and when there are design or specification changes, you can easily handle them by just modifying the relevant component.
+>
+> (TypeScript and React/Next.js Practical Web Application Development)
+
+As the author writes, **the significance of componentization is, simply put, reusability.**
+
+<br />
+
+When you get into the mindset of "I must follow Atomic Design!" the means and purpose get reversed, so you need to be careful! We must always return to the significance of componentization, which is reusability.
+
+However, there are parts that make me think "hmm..." The part about extracting "appropriately."
+
+The "appropriate" part is difficult...
+
+I feel this way. This is completely based on experience and following workplace rules.
+
+<br />
+
+That's why the hands-on section in later chapters is important! It's just one example, but knowing one example allows you to compare with other examples, so I personally find it valuable!
+
+<br />
+
+Next, about the concepts of Presentational Component and Container Component. I was very glad to be able to re-learn about this concept. Previously, I wrote [an article like this as output about the architecture I use at work](/en/blogs/next_js/nextjs-container-presenter).
+
+While I understood it as a methodology, I felt my understanding of the fundamental parts was still shallow, so I was helped by the explanation of this concept here\~
+
+<br />
+
+This concept, simply put, is **"Let's separate appearance and logic, and clearly divide responsibilities!"**
+
+Let's look at Presentational Component in detail first!
+
+<br />
+
+> Basically, it only displays appropriate UI parts based on data passed via props. Style application is also done in this component. Presentational Components don't have internal state and don't execute side effects like API calls. By depending only on props, the same props always display the same thing, making design debugging easier. Also, when you want to modify only design, you don't need to consider behavior or external influences.
+>
+> (TypeScript and React/Next.js Practical Web Application Development)
+
+So no logic is written internally! A component that only defines the framework and completely imports display content from outside to create UI. As mentioned later, by not writing logic, UI testing with Storybook becomes easier. Being able to check if design is broken by checking only this component is extremely appreciated.
+
+<br />
+
+Next, about Container Component:
+
+> Container Components implement no design at all and only handle business logic. Container Components have Hooks to switch display content using state, execute side effects like API calls, etc. They also reference Context and pass necessary data for display to Presentational Components.
+>
+> (TypeScript and React/Next.js Practical Web Application Development)
+
+**The major characteristic of this component is that it takes no design responsibility at all, only logic responsibility!**
+
+However, there are parts I question. If Container Components have Hooks, wouldn't it be better to concentrate logic responsibility in Hooks?
+
+In actual work, I write custom hooks in the Container layer much more often than writing logic directly in the Container layer. Since I often write only custom hooks in the Container layer, I can't shake the feeling that "this isn't it."
+
+The concept of Presentational Component and Container Component isn't a perfect design either, so it seems we need to devise improvements based on this. I want to customize while constantly questioning rather than blindly following.
+
+<br />
+
+## About Storybook
+
+It's no exaggeration to say that 70% of my reason for picking up this book was because of this section. I don't see many Japanese books written about Storybook. Probably because demand is limited... (^^;
+
+<br />
+
+However, looking at various companies' GitHub repositories, Storybook is introduced. When managing components, it seems to be often introduced! I was struggling to learn because there wasn't much information, so when I saw this section in this book, I picked it up.
+
+<br />
+
+I want to study so that in the future I can experience a development experience where I think "I'm glad I managed components with Storybook!" I've been talking about personal matters for too long, so let me get to the main point.
+
+<br />
+
+> Using Storybook allows you to check the appearance and behavior of UI components in an independent environment, making component management easier.
+>
+> (TypeScript and React/Next.js Practical Web Application Development)
+
+This is the main purpose of component management.
+
+Except for development with ample time, most development situations involve creating design data as needed rather than developing after all screen design data is ready. In such situations, when new screen design data becomes available, the ability to quickly distinguish between existing components and page-specific components greatly affects development speed. When you can manage components appropriately with Storybook in such times, you should be able to make that distinction smoothly.
+
+<br />
+
+This chapter described basic writing methods.
+
+If I could be greedy, I would have wanted descriptions of specific operational methods. **A major problem with Storybook is "becoming obsolete".** Even if you create story files, during development, component props increase, types change, etc., requiring story file modifications each time. If you neglect this, story files get left behind, making component management sloppy. Being mindful to modify story files is also important operationally.
+
+<br />
+
+I wanted to learn about this aspect of know-how. Easy-to-modify operations, management that doesn't try too hard, etc.
+
+<br />
+
+## End of Review Part 1
+
+I roughly wrote about the impressive parts of this book. This was part 1, covering non-hands-on parts. Next time, in part 2, I'll try to summarize the impressive and educational parts of the hands-on section.
+
+Finally, I thought about what kind of person/situation I would recommend this book for!
+
+**People who have completed an app with Next.js using other materials and want to know the entire flow from environment setup to deployment!**
+
+I think choosing this book when first learning Next.js or React would be a bad move (^^;
+
+<br />
+
+The overview parts seem fine, but the hands-on section, which is the book's highlight, would be quite tough.
+
+The author is serious! lol
+
+<br />
+
+I said negative things, but I think it's a perfect book for people with some Next.js foundation. Personally, I learned a lot. Just realizing parts I had misunderstood has great value! If you want to learn more about Next.js, please definitely purchase it!
+
+Thank you for reading to the end!
+
+<br />
+
+<AmazonLink href="//af.moshimo.com/af/c/click?a_id=2351007&p_id=170&pc_id=185&pl_id=4062&url=https%3A%2F%2Fwww.amazon.co.jp%2Fdp%2FB0B74C3TNQ" image="https://images-fe.ssl-images-amazon.com/images/I/51XvdoWeGFL._SL160_.jpg" title="TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発" trackingImage="//i.moshimo.com/af/i/impression?a_id=2351007&p_id=170&pc_id=185&pl_id=4062" />

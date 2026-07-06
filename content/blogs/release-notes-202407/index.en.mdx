@@ -1,0 +1,224 @@
+---
+title: July 2024 Release Notes - Ryota Blog
+description: Introducing this month's media updates! Including sidebar bottom blur adjustments, Instagram error fixes, underline component additions, and custom font integration for OG images.
+publishedAt: "2024-08-04T11:47:26.000Z"
+updatedAt: "2025-06-14T12:07:50.136Z"
+categories:
+  - release_notes
+  - next_js
+  - ui_parts
+thumbnail: ./images/notebook.webp
+related:
+  - release-notes-202406
+headingIds:
+  - h37df8db74b
+  - h10670a0d4f
+  - h6a119ee430
+  - he92cf93114
+  - h2dc9d5b6fa
+  - h2df3c93770
+  - h868e2595c4
+  - h62ce7e30e3
+  - he26af36bce
+---
+
+Hello! I'm [@Ryo54388667](https://x.com/Ryo54388667)!☺️
+
+I work as an engineer in Tokyo! I mainly work with technologies like TypeScript and Next.js.
+
+I'll be introducing this month's updates to this media!
+
+<br />
+
+## Application Updates
+
+<br />
+
+### Adjusted Sidebar Bottom to Add Blur Effect
+
+I added a blur effect as shown in the image!
+
+<br />
+
+![](./images/blur-row.png)
+
+<br />
+
+This time I used [TailwindCSS's backdrop-blur](https://tailwindcss.com/docs/backdrop-blur).
+
+<br />
+
+```html
+<div className="hidden md:block w-full h-4 absolute bottom-0 left-0 backdrop-blur-[1px]" />
+```
+
+<br />
+
+After implementing it, I realized that the following approach might be simpler and better. 😇
+
+[https://tailwindcss.com/docs/blur](https://tailwindcss.com/docs/blur)
+
+<br />
+
+### Added Conditional Logic to Fix Instagram Errors
+
+<br />
+
+There's a link setting within Instagram.
+
+<br />
+
+![](./images/insta-link.jpeg)
+
+<br />
+
+When you press that link, Instagram's built-in browser opens, but for some reason it was crashing and not even redirecting to an error page. I really hate in-app browsers... 😇
+
+<br />
+
+I thought there might be something in the initial rendering code that wasn't working properly and tried to fix it.
+
+In conclusion, [**requestIdleCallback**](https://developer.mozilla.org/ja/docs/Web/API/Window/requestIdleCallback)**&#x20;was not available in Instagram's built-in browser.**
+
+<br />
+
+I knew it wasn't available in Safari, so I had only been avoiding it for Safari, but it turned out Instagram's browser was also problematic.
+
+So I added conditional logic:
+
+```typescript
+// NOTE: Safari and Instagram built-in browsers don't support RequestIdleCallback, so we don't delay initialization
+
+    if (navigator.userAgent.toLocaleLowerCase().includes("safari") || navigator.userAgent.toLocaleLowerCase().includes("instagram")) {
+```
+
+<br />
+
+I confirmed that Instagram's browser includes the string `instagram` in the userAgent, so I added that as a condition.
+
+Other in-app browsers, like LINE, also have their own specifications, and dealing with them is really difficult. It's painful...
+
+<br />
+
+<br />
+
+### Added Underline Component
+
+<br />
+
+Due to microCMS specifications, the HTML tag for underlines is the u tag. I styled this u tag accordingly.
+
+<u>The design looks like this.</u>
+
+<br />
+
+<br />
+
+### Applied Custom Font to OG Images
+
+Initially, I was using the `next/font/google` method shown below, but it didn't work properly.
+
+```tsx title="opengraph-image.tsx"
+import { Kosugi_Maru } from 'next/font/google'
+const KosugiMaru = Kosugi_Maru({ weight: "400", subsets: ["latin"] });
+```
+
+<br />
+
+In the end, <u>I implemented it by saving font data locally and loading it directly to apply the font.</u>
+
+<br />
+
+```tsx title="opengraph-image.tsx"
+// opengraph-image.tsx
+import { ImageResponse } from 'next/og'
+import fs from 'fs'
+import path from 'path'
+
+export const size = {
+  width: 1200,
+  height: 630,
+}
+
+export const contentType = 'image/png'
+
+export default async function Image() {
+  // ✅ Load file directly
+  const fontData = await fs.readFileSync(path.join(process.cwd(), 'public/KosugiMaru-Regular.ttf'))
+  return new ImageResponse(
+    (
+      <div style={{ fontFamily: 'Kosugi Maru' }}>
+        <div>
+          日本語: テスト てすと
+        </div>
+      </div>
+    ),
+    {
+      ...size,
+      // ✅ Set font data here
+      fonts: [
+        {
+          name: 'Kosugi Maru',
+          data: fontData,
+        }
+      ]
+    }
+  )
+}
+```
+
+<br />
+
+I also wrote about it in detail on Zenn, so please check it out!
+
+<br />
+
+## Next Month's Plans
+
+<br />
+
+### Display Site Name in Search Results
+
+Currently, only the domain is displayed. I think showing the site name would be better.
+
+**Zenn's case**
+
+![](./images/zenn-result.png)
+
+<br />
+
+**Current status**
+
+![](./images/blog-result.png)
+
+<br />
+
+### Automate Web Vitals Collection
+
+I plan to automate the collection of Web Vitals (important website performance metrics).
+
+<br />
+
+## Summary
+
+- Adjusted sidebar bottom to add blur effect
+- Added conditional logic to fix Instagram errors
+- Added underline component
+- Applied custom font to OG images
+
+These are the July 2024 release notes. Thank you for reading to the end. I hope to write again next month. No, I will write. (Probably)
+
+<br />
+
+Thank you for reading to the end!
+
+I tweet casually, so please feel free to follow me! 🥺
+
+> 【ゆる募】\
+> 個人事業主として開業届を出すことになったのですが、「これはやっておけ！」的なことはありますか？補助金の申請とか、まとまっているWebページとかあれば教えて欲しいです🙏
+>
+> — りょた@dev (@Ryo54388667) [July 19, 2024](https://twitter.com/Ryo54388667/status/1814249014893928905?ref_src=twsrc%5Etfw)
+
+<br />
+
+<br />

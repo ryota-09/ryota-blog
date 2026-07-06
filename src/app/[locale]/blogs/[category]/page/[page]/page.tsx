@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from 'next-intl/server';
@@ -10,33 +9,21 @@ import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
 import { generateQuery, buildPageUrl, buildLanguageAlternates } from "@/lib";
 import { getLocalizedCategoryName } from "@/lib/i18n-utils";
-import { getBlogListByLocale } from "@/lib/microcms";
+import { getBlogList } from "@/lib/content";
+import type { BlogListQuery, ContentLocale } from "@/types/content";
 import { PER_PAGE } from "@/static/blogs";
 import { CATEGORIES, findCategoryBySlug } from "@/static/categories";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import { locales } from '@/i18n/config';
 
 export async function generateStaticParams() {
-  // ロケール×カテゴリの組み合わせを並列フェッチする（sitemap.tsのcategoryTotalsと同じ方針。
-  // 直列await(for-of内)だとカテゴリ数×ロケール数分のリクエストがビルド時間に積み上がるため）
+  // ロケール×カテゴリの組み合わせごとに件数を集計する
   const combinations = locales.flatMap((locale) => CATEGORIES.map((category) => ({ locale, category })));
 
-  const totalPagesByCombination = await Promise.all(
-    combinations.map(async ({ locale, category }) => {
-      try {
-        const query: MicroCMSQueries = {
-          limit: 1,
-          filters: `category[contains]${category.id}`
-        };
-
-        const data = await getBlogListByLocale(locale, query);
-        return { locale, category, totalPages: Math.ceil(data.totalCount / PER_PAGE) };
-      } catch (error) {
-        console.warn(`カテゴリの静的パラメータ生成に失敗しました: ${category.name}`, error);
-        return { locale, category, totalPages: 0 };
-      }
-    })
-  );
+  const totalPagesByCombination = combinations.map(({ locale, category }) => {
+    const data = getBlogList(locale as ContentLocale, { limit: 1, category: category.id });
+    return { locale, category, totalPages: Math.ceil(data.totalCount / PER_PAGE) };
+  });
 
   return totalPagesByCombination.flatMap(({ locale, category, totalPages }) =>
     // ページ2以降のパラメータを生成（ページ1は /blogs/[category] にある）
@@ -100,12 +87,8 @@ const Page = async ({ params }: PageProps) => {
     notFound();
   }
 
-  // このカテゴリでページが存在するかチェック（microCMSへのフィルタは必ずcontent idを使う）
-  const checkQuery: MicroCMSQueries = {
-    limit: 1,
-    filters: `category[contains]${categoryEntry.id}`
-  };
-  const data = await getBlogListByLocale(locale, checkQuery);
+  // このカテゴリでページが存在するかチェック（フィルタは必ずcontent idを使う）
+  const data = getBlogList(locale as ContentLocale, { limit: 1, category: categoryEntry.id });
   const totalPages = Math.ceil(data.totalCount / PER_PAGE);
 
   if (pageNum > totalPages) {
@@ -113,7 +96,7 @@ const Page = async ({ params }: PageProps) => {
   }
 
   const blogType = "blogs";
-  const query: MicroCMSQueries = generateQuery({
+  const query: BlogListQuery = generateQuery({
     page,
     category: categoryEntry.id,
     keyword: ""

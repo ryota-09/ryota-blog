@@ -1,0 +1,211 @@
+---
+title: My SEO Optimization TODO List for Next.js App Router
+description: This time I'll introduce the SEO optimizations I always implement when using App Router!
+publishedAt: "2024-07-14T11:39:39.000Z"
+updatedAt: "2025-06-14T22:25:40.936Z"
+categories:
+  - next_js
+thumbnail: ./images/seo-todo-list.webp
+headingIds:
+  - h9aee3cfc22
+  - hbf4b51eae1
+  - hdd7c9dcee4
+  - h9a512f922a
+  - hbf4b51eae1
+  - hdd7c9dcee4
+---
+
+Hello! I'm [@Ryo54388667](https://x.com/Ryo54388667)! ☺️
+
+I usually work as an engineer in Tokyo!
+
+I mainly work with technologies like TypeScript and Next.js.
+
+This time I'll introduce the SEO optimizations I always implement when using App Router!
+
+<br />
+
+<br />
+
+<br />
+
+## Setting up TDH (title, description, h1)
+
+<br />
+
+### Overview
+
+Title refers to the HTML title tag. It's not only reflected in the browser tab name but also an important element for properly communicating with crawlers. Best practices are described in the link below.
+
+[https://developers.google.com/search/docs/appearance/title-link?hl=ja](https://developers.google.com/search/docs/appearance/title-link?hl=ja)
+
+<br />
+
+Next, description refers to `<meta name="description" content="{content here}">`. It's mainly used to write a page summary.
+
+It's recommended to include target keywords here. For best practices, please see the link below.
+
+[https://developers.google.com/search/docs/appearance/snippet?hl=ja](https://developers.google.com/search/docs/appearance/snippet?hl=ja)
+
+<br />
+
+For h1, please set what corresponds to the page title.
+
+<br />
+
+### Implementation
+
+<br />
+
+Set up the template in the root layout. Using `%s` allows the title set in nested layouts to be replaced.
+
+```tsx title="layout.tsx"
+export const metadata: Metadata = {
+  title: {
+    template: `%s | ${SITE_TITLE}`,
+    default: "Home",
+  },
+  description: SITE_DESCRIPTION,
+  metadataBase: new URL(baseURL)
+};
+
+export default function RootLayout({
+  children,
+}: Readonly) {
+  return (
+    ...
+  );
+}To set metadata dynamically, use generateMetadata.export async function generateMetadata(
+  { params }: { params: { blogId: string } },
+): Promise {
+  const blogId = params.blogId
+  const data = await getBlogById(blogId)
+
+  return {
+    title: data.title,
+    description: data.description
+  }
+}I've written more details on Zenn, so please check it out!
+```
+
+For h1, just write it normally within the body tag!
+
+<br />
+
+## Creating a Sitemap
+
+<br />
+
+### Overview
+
+Used to help crawlers efficiently crawl your site. For best practices, please see the link below.
+
+[https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview?hl=ja](https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview?hl=ja)
+
+<br />
+
+### Implementation
+
+I'll introduce the implementation method for Next.js App Router.
+
+**※ v13.3.0 or higher**
+
+<br />
+
+```typescript title="sitemap.ts"
+import { MetadataRoute } from "next";
+import { baseURL } from "@/config";
+
+export default async function sitemap(): Promise {
+  const staticPaths = [
+    {
+      url: `${baseURL}/blogs`,
+      lastModified: new Date()
+    },
+    {
+      url: `${baseURL}/about`,
+      lastModified: new Date()
+    }
+  ]
+
+  const blogList = await getAllBlogList()
+
+  const dynamicPaths = blogList.map((content) => {
+    return {
+      url: `${baseURL}/blogs/${content.id}`,
+      lastModified: content.publishedAt || content.updatedAt
+    }
+  })
+
+  return [...staticPaths, ...dynamicPaths]
+}Setting up Structured Data JSON-LDOverviewBy writing specific snippets, you can enhance how your content appears in Google search results. For example, restaurant review sites display ratings alongside store names in Google search results. Using specific snippets can enhance search results and potentially improve CTR. For best practices, please see the link below.https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data?hl=jaThe following page also has a clear list!https://www.kabanoki.net/2151/#google_vignetteImplementationimport type { BreadcrumbList, BlogPosting ,WithContext } from "schema-dts"
+import { baseURL } from "@/config"
+
+type JsonLDProps = {
+  data: any
+}
+
+const JsonLD = ({ data }: JsonLDProps) => {
+  const breadcrumbJsonLD: WithContext = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: `${baseURL}/blogs`
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: data.title,
+        item: `${baseURL}/blogs/${data.id}`
+      }
+    ]
+  }
+
+  const blogPostingJsonLD: WithContext = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${baseURL}/blogs/${data.id}`
+    },
+    headline: data.title,
+    datePublished: data.publishedAt || data.updatedAt,
+    dateModified: data.updatedAt,
+    keywords: [...data.category.map(({ name }) => name), data.title].join(","),
+    description: data.description,
+    image: data.thumbnail?.url,
+    author: {
+      "@type": "Person",
+      name: "xxxxxx",
+      jobTitle: "Software Engineer",
+      url: `${baseURL}/about`
+    },
+  }
+  
+  return (
+    
+  )
+}
+export default JsonLDGoogle AnalyticsImplementationNext.js provides a library for third-party services. It's best to use this!import { GoogleAnalytics } from "@next/third-parties/google";
+import { baseURL, gaId } from "@/config";
+
+export default function Layout({
+  children,
+}: Readonly) {
+  return (
+      
+          
+            {children}
+          
+        
+      
+  );
+}
+ConclusionFinally, here's the TODO list!Setting up TDH (title, description, h1)Creating a SitemapSetting up Structured Data JSON-LDGoogle AnalyticsIf you know better methods, please let me know!Thank you for reading to the end!I tweet casually, so please feel free to follow me! 🥺MFAにパスキーを利用するようになって、macbookの指紋認証から離れられず、サードパーティのキーボードに移れない😮‍💨指紋認証付きmagic keyboardを買うか悩む。。— りょた@dev (@Ryo54388667) June 21, 2024
+
+
+```

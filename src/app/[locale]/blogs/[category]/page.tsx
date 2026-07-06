@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import type { MicroCMSQueries } from "microcms-js-sdk";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from 'next-intl/server';
@@ -11,6 +10,7 @@ import SideNav from "@/components/SideNav";
 import ZennArticleList from "@/components/ZennArticleList";
 import { generateQuery, buildPageUrl, buildLanguageAlternates } from "@/lib";
 import { getLocalizedCategoryName } from "@/lib/i18n-utils";
+import type { BlogListQuery } from "@/types/content";
 import { BLOG_TYPE_QUERY, CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY } from "@/static/blogs";
 import { CATEGORIES, findCategoryBySlug } from "@/static/categories";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
@@ -124,7 +124,7 @@ const Page = async ({ params, searchParams }: PageProps) => {
     [CATEGORY_QUERY]: categoryEntry.id
   };
 
-  const query: MicroCMSQueries = generateQuery(modifiedSearchParams);
+  const query: BlogListQuery = generateQuery(modifiedSearchParams);
 
   return (
     <>

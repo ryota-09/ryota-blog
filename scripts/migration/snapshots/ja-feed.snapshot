@@ -1,0 +1,251 @@
+# URL: https://ryotablog.jp/ja/feed
+# Status: 200
+# Headers:
+alt-svc: h3=":443"; ma=86400
+cf-ray: a16ba3992aece3a1-NRT
+connection: keep-alive
+content-encoding: br
+content-type: application/xml
+link: <https://ryotablog.jp/ja/feed>; rel="alternate"; hreflang="ja", <https://ryotablog.jp/en/feed>; rel="alternate"; hreflang="en", <https://ryotablog.jp/feed>; rel="alternate"; hreflang="x-default"
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+permissions-policy: camera=(), microphone=(), geolocation=()
+referrer-policy: strict-origin-when-cross-origin
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=vFO89CeqJv2RBoEw08p3Jsty9lsfTDrvtkNUz4eS%2F%2BEwzwqMS4ptND3KPj2E0rE3cQTfZXYv3jhhdFRMGSfFlFIcC4YMyljGA48PaCIl0dsPpsaa0Xl7yurrb4y7G8fAQohxW%2BmPF%2FrXJM8%3D"}]}
+server: cloudflare
+set-cookie: NEXT_LOCALE=ja; Path=/; SameSite=lax
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+transfer-encoding: chunked
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-opennext: 1
+# Body:
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Ryota-Blog</title>
+        <link>https://ryotablog.jp</link>
+        <description>Webエンジニアが技術、キャリア、日常について発信するブログ</description>
+        <lastBuildDate>Mon, 06 Jul 2026 03:49:21 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>ja</language>
+        <image>
+            <title>Ryota-Blog</title>
+            <url>https://ryotablog.jp/author.png</url>
+            <link>https://ryotablog.jp</link>
+        </image>
+        <copyright>&amp;copy; 2026 りょた</copyright>
+        <atom:link href="https://ryotablog.jp/ja/feed" rel="self" type="application/rss+xml"/>
+        <item>
+            <title><![CDATA[ベストバイ 2026年上半期 新婚夫婦が買ってよかったものトップ10｜家具・家電・収納]]></title>
+            <link>https://ryotablog.jp/ja/blogs/zakki/best-buy-2026-first-half</link>
+            <guid>best-buy-2026-first-half</guid>
+            <pubDate>Sun, 05 Jul 2026 21:55:12 GMT</pubDate>
+            <description><![CDATA[2026年上半期に買ってよかったものをランキング形式で紹介します！結婚を機に始まった新婚二人暮らし。新居の家具・家電・収納をゼロから揃えた中から、QOLを上げてくれたトップ10を厳選しました。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[JSTQB Foundation Levelの勉強法。生成AIで模試を自作して1ヶ月半で合格した話]]></title>
+            <link>https://ryotablog.jp/ja/blogs/test/jstqb-foundation-study-method</link>
+            <guid>jstqb-foundation-study-method</guid>
+            <pubDate>Sat, 04 Jul 2026 04:40:13 GMT</pubDate>
+            <description><![CDATA[JSTQB Foundation Level（CTFL）に1ヶ月半の勉強で合格した体験記です。対策本・テス友に加えて、Claude Codeで作問エンジンを自作して535問を演習した生成AI活用の勉強法や、合否をネットで確認する方法まで紹介します。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[ヒトオシの料金はいくら？高い？入会金・月会費の総額と5,000円安くする方法]]></title>
+            <link>https://ryotablog.jp/ja/blogs/zakki/hitooshi-price</link>
+            <guid>hitooshi-price</guid>
+            <pubDate>Sun, 20 Apr 2025 05:55:00 GMT</pubDate>
+            <description><![CDATA[婚活サービス「ヒトオシ」の料金を実体験ベースで解説。入会金17,800円＋月会費17,800円・成婚料0円の内訳、3・6・12ヶ月の総額シミュレーション、マッチングアプリ・結婚相談所との比較、紹介コードで5,000円安くする方法までまとめました。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[【評判が気になる！】婚活サービスのヒトオシの体験談（紹介コードあり）]]></title>
+            <link>https://ryotablog.jp/ja/blogs/zakki/hitooshi-review</link>
+            <guid>hitooshi-review</guid>
+            <pubDate>Tue, 11 Feb 2025 01:33:11 GMT</pubDate>
+            <description><![CDATA[婚活サービス「ヒトオシ」体験レビューです。都内エンジニアが語るリアルな婚活体験談！2時間カウンセリングからオンライン顔合わせまでの流れや評判、口コミ、メリット・デメリットを詳しく解説。最後に紹介コードもあります。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[ヒトオシの婚活とは？出会える仕組みとアプリ・相談所との違いを利用者が解説]]></title>
+            <link>https://ryotablog.jp/ja/blogs/zakki/hitooshi-konkatsu</link>
+            <guid>hitooshi-konkatsu</guid>
+            <pubDate>Wed, 02 Apr 2025 06:48:00 GMT</pubDate>
+            <description><![CDATA[ヒトオシの婚活とは何かを、実際に紹介を受け顔合わせも経験した僕が中立的に解説。マッチングプランナーが毎月2人紹介する仕組み、マッチングアプリ・結婚相談所との違い、対応エリア、向いている人・向いていない人まで、登録前に押さえたい全体像をまとめました。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[ヒトオシの会員はどんな人？美人・イケメンは多い？年齢層・年収を実情公開]]></title>
+            <link>https://ryotablog.jp/ja/blogs/zakki/hitooshi-members</link>
+            <guid>hitooshi-members</guid>
+            <pubDate>Thu, 17 Apr 2025 07:20:00 GMT</pubDate>
+            <description><![CDATA[婚活サービス『ヒトオシ』の会員はどんな人？年齢層・年収・学歴・大卒比率・容姿（美人/イケメン）まで、実際に紹介を受けた利用者が公式データ＋一次体験で公開。『自分と釣り合うか』をたった5分で判断できる材料としてどうぞ。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[ヒトオシの初回面談は何を聞かれる？利用者が明かす初回面談の質問・流れ・準備]]></title>
+            <link>https://ryotablog.jp/ja/blogs/zakki/hitooshi-interview</link>
+            <guid>hitooshi-interview</guid>
+            <pubDate>Thu, 24 Apr 2025 05:03:00 GMT</pubDate>
+            <description><![CDATA[婚活サービス「ヒトオシ」の初回面談を、実際の利用者が解説。Zoomで約45分、何を聞かれるか（質問内容）・当日までの流れ・事前準備・服装のコツまで実体験ベースでまとめました。紹介コードで入会金5,000円割引あり。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[僕の考えた最強の家計システムのすべて(夫婦2人、共働き、子なし)]]></title>
+            <link>https://ryotablog.jp/ja/blogs/zakki/saikyo-kakei-system</link>
+            <guid>saikyo-kakei-system</guid>
+            <pubDate>Sat, 20 Jun 2026 23:22:35 GMT</pubDate>
+            <description><![CDATA[今年結婚した共働き夫婦（子なし）が、3ヶ月かけて作った家計管理の仕組みをインタビュー形式で全公開。住信SBIの目的別口座と自動送金、楽天明細の自動取得、現金はLINEに一言で記録。エンジニアが「最小運用コスト」で組んだ家計システムの全体像です。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[AWS Amplify Hostingに自前のSSL証明書を持ち込む完全ガイド（CSR作成からACMインポート・Terraform適用・動作確認まで）]]></title>
+            <link>https://ryotablog.jp/ja/blogs/aws/amplify-custom-ssl-acm-import</link>
+            <guid>amplify-custom-ssl-acm-import</guid>
+            <pubDate>Wed, 06 May 2026 08:29:15 GMT</pubDate>
+            <description><![CDATA[AWS Amplify Hostingのカスタムドメインに、CA(認証局)から発行された独自のSSL証明書をACM経由で適用する手順を、CSR作成・チェーン構築・整合性検証・Terraform設定・動作確認・有効期限監視まで、丁寧に解説します。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[CloudFrontにするとApp Runner(& Next.js)で動いているアプリの画像が表示されない問題を解決した話]]></title>
+            <link>https://ryotablog.jp/ja/blogs/terraform/apprunner-and-cloudfront-image-bugfix</link>
+            <guid>apprunner-and-cloudfront-image-bugfix</guid>
+            <pubDate>Sat, 21 Jun 2025 02:47:14 GMT</pubDate>
+            <description><![CDATA[CloudFrontとNext.jsの組み合わせで発生する画像最適化エラー「url parameter is not allowed」の完全解決ガイド。AllViewerExceptHostHeaderポリシーを使った根本的解決策、段階的なデバッグ手順、実装例を詳しく解説します。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[May 2025 Release Notes (2025年5月 リリースノート - Ryota-Blog)]]></title>
+            <link>https://ryotablog.jp/ja/blogs/release_notes/release-notes-202505</link>
+            <guid>release-notes-202505</guid>
+            <pubDate>Wed, 18 Jun 2025 06:19:29 GMT</pubDate>
+            <description><![CDATA[2025年5月のRyota-Blogリリースノート。国際化対応（i18n）の実装、コードブロック機能強化、LLMs連携ボタン追加、SEO最適化など、今月の主要アップデートを詳しく解説します。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[【初学者向け】Alembicでマテリアライズドビューを実装する (Python)]]></title>
+            <link>https://ryotablog.jp/ja/blogs/python/aiembic-materialized-view</link>
+            <guid>aiembic-materialized-view</guid>
+            <pubDate>Tue, 27 May 2025 06:20:59 GMT</pubDate>
+            <description><![CDATA[Alembicによるマテリアライズドビュー(マテビュー)の作成手順をPythonとPostgreSQLを用いて初心者向けに解説。SQLの実装例やトラブル時の対処法も掲載。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[省略メニュー付きページネーションの実装]]></title>
+            <link>https://ryotablog.jp/ja/blogs/react/react-ellipsismenu-pagination</link>
+            <guid>react-ellipsismenu-pagination</guid>
+            <pubDate>Wed, 19 Jun 2024 09:54:53 GMT</pubDate>
+            <description><![CDATA[今回は省略メニュー付きページネーションの実装方法を紹介していきます！]]></description>
+        </item>
+        <item>
+            <title><![CDATA[TerraformとRoute53でApp Runnerのカスタムドメインを設定する方法]]></title>
+            <link>https://ryotablog.jp/ja/blogs/aws/customdomain-apprunner-with-terraform-route53</link>
+            <guid>customdomain-apprunner-with-terraform-route53</guid>
+            <pubDate>Sat, 15 Jun 2024 02:00:17 GMT</pubDate>
+            <description><![CDATA[今回はTerraformでApp RunnerのDNSターゲットをRoute53のAレコードに設定する方法を紹介していきます！]]></description>
+        </item>
+        <item>
+            <title><![CDATA[【Next.js / App Router】自分がいつも行っているSEO対策TODOリスト]]></title>
+            <link>https://ryotablog.jp/ja/blogs/next_js/my-seo-todo-list</link>
+            <guid>my-seo-todo-list</guid>
+            <pubDate>Sun, 14 Jul 2024 07:25:05 GMT</pubDate>
+            <description><![CDATA[今回はApp Routerを利用した時、自分がいつも行っているSEO対策を紹介していきます！]]></description>
+        </item>
+        <item>
+            <title><![CDATA[July 2024 Release Notes (2024年7月 リリースノート - Ryota-Blog)]]></title>
+            <link>https://ryotablog.jp/ja/blogs/release_notes/release-notes-202407</link>
+            <guid>release-notes-202407</guid>
+            <pubDate>Sun, 04 Aug 2024 09:00:05 GMT</pubDate>
+            <description><![CDATA[今月のこのメディアのアップデートを紹介していきます！sidebarのボトムをぼかすように調整、instagramでのエラーの回避、アンダーライン用のコンポーネントを追加 、OG画像にカスタムフォントを反映など。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[Route Handlerを利用したエンドポイントを別ドメインのクライアントサイドからAPIコールしてCORSのエラーが生じた時に確認すること]]></title>
+            <link>https://ryotablog.jp/ja/blogs/next_js/route-handler-cors</link>
+            <guid>route-handler-cors</guid>
+            <pubDate>Mon, 23 Sep 2024 05:36:02 GMT</pubDate>
+            <description><![CDATA[CORSエラーの原因と解決方法を解説します。Next.jsのRoute Handlerを使用したAPIエンドポイントにおいて、外部ドメインからのリクエストがCORSポリシーにブロックされる問題を、レスポンスヘッダーの設定やOPTIONSメソッドの許可によって解決する具体的な方法を紹介します。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[【感想】巨大恐竜展2024に行ってきた]]></title>
+            <link>https://ryotablog.jp/ja/blogs/news/giant-dinos-2024-review</link>
+            <guid>giant-dinos-2024-review</guid>
+            <pubDate>Mon, 15 Jul 2024 04:41:32 GMT</pubDate>
+            <description><![CDATA[パシフィコ横浜で展示されている巨大恐竜展に行ってきました！個人的にテンションが上がった箇所、印象的な箇所を紹介します〜個人の感想です笑]]></description>
+        </item>
+        <item>
+            <title><![CDATA[【体験談】実際にペイキャリア(Paycareer)を使ってみて感じたこと]]></title>
+            <link>https://ryotablog.jp/ja/blogs/review/paycareer-review</link>
+            <guid>paycareer-review</guid>
+            <pubDate>Sat, 20 Jul 2024 09:36:09 GMT</pubDate>
+            <description><![CDATA[今回の転職活動でペイキャリアを利用しました! 何件か面談をして、そのうちの一つの企業から内定をいただきました。そのプロセスで感じたことを紹介していきます。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[【レビュー part②】TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発　〜toPropValueの解説〜]]></title>
+            <link>https://ryotablog.jp/ja/blogs/typescript/nextjs-typescript-book-review2</link>
+            <guid>nextjs-typescript-book-review2</guid>
+            <pubDate>Sun, 09 Oct 2022 15:00:00 GMT</pubDate>
+            <description><![CDATA[今回はNext.jsについての書籍「TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発」を読了したので、そのレビューを書いていきます。part①は概要部分についてレビューを書いたので、今回はハンズオン部分についてレビューを書いてみます。 ]]></description>
+        </item>
+        <item>
+            <title><![CDATA[【不合格体験記】AWS SAA-C03に落ちました。。。]]></title>
+            <link>https://ryotablog.jp/ja/blogs/aws/saa-c03-failed</link>
+            <guid>saa-c03-failed</guid>
+            <pubDate>Sun, 18 Dec 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[今回はAWS SAA-C03の不合格体験について書いていきます。  1.AWS SAAの勉強方法が知りたい。 2.どのくらい勉強すれば合格するの？ 3.受験した人の体験を知り、当日のトラブルを避けたい。 こんな人に読んでいただけると幸いです！]]></description>
+        </item>
+        <item>
+            <title><![CDATA[【レビュー】作って学ぶ HTML&CSSモダンコーディングを読んでみた]]></title>
+            <link>https://ryotablog.jp/ja/blogs/css/modern-coding-review</link>
+            <guid>modern-coding-review</guid>
+            <pubDate>Sat, 13 May 2023 15:00:00 GMT</pubDate>
+            <description><![CDATA[今回は「作って学ぶ HTML&CSSモダンコーディング」の書籍のレビューについて書いていきます。 ・ HTML/CSSを勉強中の人 基礎の学習を一通り終えた人 ・ポートフォリオ作成中の人 こんな人に読んでいただけると幸いです！]]></description>
+        </item>
+        <item>
+            <title><![CDATA[【レビュー part①】TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発]]></title>
+            <link>https://ryotablog.jp/ja/blogs/review/nextjs-typescript-book-review1</link>
+            <guid>nextjs-typescript-book-review1</guid>
+            <pubDate>Sun, 11 Sep 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[今回はNext.jsについての書籍「TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発」を読了したので、そのレビューを書いていきます。  ]]></description>
+        </item>
+        <item>
+            <title><![CDATA[オブジェクト指向UI とは?]]></title>
+            <link>https://ryotablog.jp/ja/blogs/review/what-object-ui</link>
+            <guid>what-object-ui</guid>
+            <pubDate>Sun, 22 May 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[今回は、オブジェクト指向UIについて紹介します。オブジェクト指向UIってなに？ UIのデザインパターンについて学びたい。 そのような人の参考になれば幸いです(^^)]]></description>
+        </item>
+        <item>
+            <title><![CDATA[【リーダブルコード】無関係な下位問題を抽出するってどういう意味？]]></title>
+            <link>https://ryotablog.jp/ja/blogs/programming/readablecode-underproblem-solution</link>
+            <guid>readablecode-underproblem-solution</guid>
+            <pubDate>Sun, 23 Jan 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[無関係な下位問題の抽出について直感的に理解できるように説明していきます。  ・下位問題の意味がわからない。・無関係な下位問題の抽出をイメージでとらえたい。 書籍リーダブルコードの理解の助けになれば嬉しいです。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[【都知事選2024】ADRならぬVDR(Voting Decision Record) - 安野たかひろさんに投票した -]]></title>
+            <link>https://ryotablog.jp/ja/blogs/zakki/tochijisen-vdr-2024</link>
+            <guid>tochijisen-vdr-2024</guid>
+            <pubDate>Fri, 05 Jul 2024 10:55:18 GMT</pubDate>
+            <description><![CDATA[自分の周囲ではどこに顔を出しても都知事選の話題が出るほどです。まさに猫も杓子も「都知事選」。  そんな都知事選ですが、自分はさまざま考えたなかで「安野たかひろ」さんに投票してきました。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[June 2024 Release Notes (2024年6月 リリースノート | Ryota-Blog)]]></title>
+            <link>https://ryotablog.jp/ja/blogs/release_notes/release-notes-202406</link>
+            <guid>release-notes-202406</guid>
+            <pubDate>Sat, 22 Jun 2024 04:03:13 GMT</pubDate>
+            <description><![CDATA[今月のこのメディアのアップデートを紹介していきます！画像のポップアップ機能、前後記事へのナビゲーション、RUMの読み込みにrequestIdlecallbackを利用 、issueの起票のためのボタンを実装 、「New」ラベルを追加 、 １年以上前の記事にはラベルを追加など。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[体操服、運動着の名札の是非について]]></title>
+            <link>https://ryotablog.jp/ja/blogs/zakki/display-sports-wear</link>
+            <guid>display-sports-wear</guid>
+            <pubDate>Sun, 09 Jun 2024 03:17:54 GMT</pubDate>
+            <description><![CDATA[昨今では名札をつけるかどうかが各所で議論を呼んでいます。体操服、運動着の名札の是非について調べました。]]></description>
+        </item>
+        <item>
+            <title><![CDATA[Next.jsで利用するContainer とPresenter構成について]]></title>
+            <link>https://ryotablog.jp/ja/blogs/next_js/nextjs-container-presenter</link>
+            <guid>nextjs-container-presenter</guid>
+            <pubDate>Sat, 30 Jul 2022 15:00:00 GMT</pubDate>
+            <description><![CDATA[今回はContainer と Presenter構成について書いていきます。 ・AtomicDesign以外のコンポーネント設計を知りたい。 ・Container と Presenter構成について知りたい。  こんな人に読んでいただけると幸いです！]]></description>
+        </item>
+        <item>
+            <title><![CDATA[タイのひとり旅所感]]></title>
+            <link>https://ryotablog.jp/ja/blogs/zakki/thailand-travel-alone</link>
+            <guid>thailand-travel-alone</guid>
+            <pubDate>Sat, 20 Jan 2024 15:00:00 GMT</pubDate>
+            <description><![CDATA[こんにちは！  タイ！初めての海外ひとり旅！非常に良い経験でした！  感じたことをつらつら書いていきます。基本的には有益なことはありません笑]]></description>
+        </item>
+    </channel>
+</rss>

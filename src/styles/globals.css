@@ -1,5 +1,7 @@
 /* NOTE: ファイルのトップに記述 */
 @import './custom.css';
+/* react-tweet(#236): .dark祖先クラス(既存のdarkMode: "class"機構)に自動追従するテーマCSS */
+@import 'react-tweet/theme.css';
 
 @tailwind base;
 @tailwind components;

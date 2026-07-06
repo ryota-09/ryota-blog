@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
-import { getAllBlogListByLocale, getAllCategoryList } from "@/lib/microcms";
+import { getAllBlogListByLocale } from "@/lib/content";
+import { CATEGORIES, resolveCategoryOrDefault } from "@/static/categories";
 import { baseURL } from "@/config";
-import type { BlogsContentType, CategoriesContentType } from "@/types/microcms";
+import type { BlogPost, ContentLocale } from "@/types/content";
+import type { CategoryEntry } from "@/static/categories";
 import {
   AUTHOR_E_MAIL,
   SITE_DESCRIPTION_EN,
@@ -9,7 +11,6 @@ import {
   SITE_DOMAIN,
   SITE_TITLE,
 } from "@/static/blogs";
-import { getPrimaryCategoryId } from "@/lib";
 import { getLocalizedCategoryName } from "@/lib/i18n-utils";
 import { getTranslations } from 'next-intl/server';
 
@@ -30,13 +31,13 @@ const LLMS_TXT_CONFIG = {
   license: "Creative Commons Attribution 4.0 International License (CC BY 4.0)",
 } as const;
 
-interface LlmsTxtData {
-  posts: BlogsContentType[];
-  categories: CategoriesContentType[];
+type LlmsTxtData = {
+  posts: BlogPost[];
+  categories: CategoryEntry[];
 }
 
 // Next.js 16では、Route Handlerのparamsは非同期になった
-interface RouteContext {
+type RouteContext = {
   params: Promise<{
     locale: string;
   }>;
@@ -45,7 +46,7 @@ interface RouteContext {
 /**
  * 公開可能な投稿をフィルタリング・ソートする
  */
-function filterAndSortPosts(posts: BlogsContentType[]): BlogsContentType[] {
+function filterAndSortPosts(posts: BlogPost[]): BlogPost[] {
   return posts
     .filter(({ publishedAt, noIndex }) => publishedAt && !noIndex)
     .sort(({ publishedAt: aDate }, { publishedAt: bDate }) => {
@@ -99,7 +100,7 @@ ${contactText}
  * カテゴリ一覧部分を生成
  */
 async function generateCategoriesSection(
-  categories: CategoriesContentType[],
+  categories: CategoryEntry[],
   locale: string
 ): Promise<string> {
   const headerText = locale === 'en' ? '## Categories' : '## カテゴリ';
@@ -109,7 +110,7 @@ async function generateCategoriesSection(
     return `${headerText}\n\n${noDataText}`;
   }
 
-  // カテゴリ名はmicroCMSの name / name_en を正として使う
+  // カテゴリ名は content/categories.json 由来の name / name_en を正として使う
   const categoryList = categories
     .map((category) => `- ${getLocalizedCategoryName(category, locale)}`)
     .join("\n");
@@ -120,10 +121,10 @@ async function generateCategoriesSection(
 /**
  * コンテンツ一覧部分を生成
  */
-function generateContentSection(posts: BlogsContentType[], locale: string): string {
+function generateContentSection(posts: BlogPost[], locale: string): string {
   const headerText = locale === 'en' ? '## Content' : '## コンテンツ';
   const noDataText = locale === 'en' ? 'No content available.' : '利用可能なコンテンツがありません。';
-  
+
   if (posts.length === 0) {
     return `${headerText}\n\n${noDataText}`;
   }
@@ -131,9 +132,9 @@ function generateContentSection(posts: BlogsContentType[], locale: string): stri
   const contentList = posts
     .map((post) => {
       if (!post.publishedAt) return null;
-      
-      const categoryId = getPrimaryCategoryId(post);
-      const url = `${baseURL}/${locale}/blogs/${categoryId}/${post.id}`;
+
+      const categoryId = resolveCategoryOrDefault(post.categories[0]).slug;
+      const url = `${baseURL}/${locale}/blogs/${categoryId}/${post.slug}`;
       const linkDetails = post.description ? `: ${post.description}` : "";
       return `- [${post.title}](${url})${linkDetails}`;
     })
@@ -159,19 +160,11 @@ async function buildLlmsTxt({ posts, categories }: LlmsTxtData, locale: string):
 }
 
 /**
- * microCMSからデータを取得
+ * ファイルベースのコンテンツ層からデータを取得
  */
-async function fetchLlmsTxtData(locale: string): Promise<LlmsTxtData> {
-  const [posts, categories] = await Promise.all([
-    getAllBlogListByLocale(locale, {
-      fields: "id,title,publishedAt,noIndex,description,category",
-      orders: "-publishedAt",
-    }),
-    getAllCategoryList({
-      fields: "id,name,name_en",
-      orders: "createdAt",
-    }),
-  ]);
+function fetchLlmsTxtData(locale: string): LlmsTxtData {
+  const posts = getAllBlogListByLocale(locale as ContentLocale);
+  const categories = CATEGORIES;
 
   return { posts, categories };
 }
@@ -224,7 +217,7 @@ export async function GET(request: Request, { params }: RouteContext): Promise<N
   try {
     console.log(`Starting llms.txt generation for locale: ${locale}...`);
 
-    const data = await fetchLlmsTxtData(locale);
+    const data = fetchLlmsTxtData(locale);
     const content = await buildLlmsTxt(data, locale);
 
     console.log(

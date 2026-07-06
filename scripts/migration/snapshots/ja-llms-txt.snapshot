@@ -1,0 +1,84 @@
+# URL: https://ryotablog.jp/ja/docs/llms.txt
+# Status: 200
+# Headers:
+alt-svc: h3=":443"; ma=86400
+cache-control: public, max-age=3600, stale-while-revalidate=86400
+cf-ray: a16ba3aecccf260d-NRT
+connection: keep-alive
+content-encoding: br
+content-type: text/plain; charset=utf-8
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+permissions-policy: camera=(), microphone=(), geolocation=()
+referrer-policy: strict-origin-when-cross-origin
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=dlvrhe7FpIwHNODx9b9yyHpUeT09hjZns0ayjH9EWYaLdK4BZWqttB8W1J1vzmSlwfoyZloxAYMVGFmU2XxHmiML7GYtf6fu%2F3lV9W9Hd5n9%2F7UN5Gbsx8It8Joq99diUIK2aouILQE71iI%3D"}]}
+server: cloudflare
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+transfer-encoding: chunked
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-opennext: 1
+# Body:
+# Ryota-Blog (ryotablog.jp)
+> 技術ブログです！ React.js, Next.js, AWSなどの技術について書いています！
+
+# License
+このコンテンツはCreative Commons Attribution 4.0 International License (CC BY 4.0)の下で提供されています。
+適切な帰属表示を行う限り、商用利用を含むあらゆる目的でこの素材を自由に共有・改変できます。
+
+# Contact
+コンテンツの利用、修正、コラボレーションに関するお問い合わせ:
+- Email: ryotadevelop@webclouddev.com
+- Website: https://ryotablog.jp
+
+## カテゴリ
+
+- TypeScript
+- Next.js
+- LifeHack
+- Career
+- プログラミング
+- TailwindCSS
+- AWS
+- 雑記
+- ガジェット
+- React
+- OpenAI API
+- CSS
+- レビュー
+- 時事
+- Terraform
+- UI
+- Release Notes
+- Python
+- テスト
+
+## コンテンツ
+
+- [ベストバイ 2026年上半期 新婚夫婦が買ってよかったものトップ10｜家具・家電・収納](https://ryotablog.jp/ja/blogs/zakki/best-buy-2026-first-half): 2026年上半期に買ってよかったものをランキング形式で紹介します！結婚を機に始まった新婚二人暮らし。新居の家具・家電・収納をゼロから揃えた中から、QOLを上げてくれたトップ10を厳選しました。
+- [JSTQB Foundation Levelの勉強法。生成AIで模試を自作して1ヶ月半で合格した話](https://ryotablog.jp/ja/blogs/test/jstqb-foundation-study-method): JSTQB Foundation Level（CTFL）に1ヶ月半の勉強で合格した体験記です。対策本・テス友に加えて、Claude Codeで作問エンジンを自作して535問を演習した生成AI活用の勉強法や、合否をネットで確認する方法まで紹介します。
+- [僕の考えた最強の家計システムのすべて(夫婦2人、共働き、子なし)](https://ryotablog.jp/ja/blogs/zakki/saikyo-kakei-system): 今年結婚した共働き夫婦（子なし）が、3ヶ月かけて作った家計管理の仕組みをインタビュー形式で全公開。住信SBIの目的別口座と自動送金、楽天明細の自動取得、現金はLINEに一言で記録。エンジニアが「最小運用コスト」で組んだ家計システムの全体像です。
+- [AWS Amplify Hostingに自前のSSL証明書を持ち込む完全ガイド（CSR作成からACMインポート・Terraform適用・動作確認まで）](https://ryotablog.jp/ja/blogs/aws/amplify-custom-ssl-acm-import): AWS Amplify Hostingのカスタムドメインに、CA(認証局)から発行された独自のSSL証明書をACM経由で適用する手順を、CSR作成・チェーン構築・整合性検証・Terraform設定・動作確認・有効期限監視まで、丁寧に解説します。
+- [CloudFrontにするとApp Runner(& Next.js)で動いているアプリの画像が表示されない問題を解決した話](https://ryotablog.jp/ja/blogs/terraform/apprunner-and-cloudfront-image-bugfix): CloudFrontとNext.jsの組み合わせで発生する画像最適化エラー「url parameter is not allowed」の完全解決ガイド。AllViewerExceptHostHeaderポリシーを使った根本的解決策、段階的なデバッグ手順、実装例を詳しく解説します。
+- [May 2025 Release Notes (2025年5月 リリースノート - Ryota-Blog)](https://ryotablog.jp/ja/blogs/release_notes/release-notes-202505): 2025年5月のRyota-Blogリリースノート。国際化対応（i18n）の実装、コードブロック機能強化、LLMs連携ボタン追加、SEO最適化など、今月の主要アップデートを詳しく解説します。
+- [【初学者向け】Alembicでマテリアライズドビューを実装する (Python)](https://ryotablog.jp/ja/blogs/python/aiembic-materialized-view): Alembicによるマテリアライズドビュー(マテビュー)の作成手順をPythonとPostgreSQLを用いて初心者向けに解説。SQLの実装例やトラブル時の対処法も掲載。
+- [ヒトオシの初回面談は何を聞かれる？利用者が明かす初回面談の質問・流れ・準備](https://ryotablog.jp/ja/blogs/zakki/hitooshi-interview): 婚活サービス「ヒトオシ」の初回面談を、実際の利用者が解説。Zoomで約45分、何を聞かれるか（質問内容）・当日までの流れ・事前準備・服装のコツまで実体験ベースでまとめました。紹介コードで入会金5,000円割引あり。
+- [ヒトオシの料金はいくら？高い？入会金・月会費の総額と5,000円安くする方法](https://ryotablog.jp/ja/blogs/zakki/hitooshi-price): 婚活サービス「ヒトオシ」の料金を実体験ベースで解説。入会金17,800円＋月会費17,800円・成婚料0円の内訳、3・6・12ヶ月の総額シミュレーション、マッチングアプリ・結婚相談所との比較、紹介コードで5,000円安くする方法までまとめました。
+- [ヒトオシの会員はどんな人？美人・イケメンは多い？年齢層・年収を実情公開](https://ryotablog.jp/ja/blogs/zakki/hitooshi-members): 婚活サービス『ヒトオシ』の会員はどんな人？年齢層・年収・学歴・大卒比率・容姿（美人/イケメン）まで、実際に紹介を受けた利用者が公式データ＋一次体験で公開。『自分と釣り合うか』をたった5分で判断できる材料としてどうぞ。
+- [ヒトオシの婚活とは？出会える仕組みとアプリ・相談所との違いを利用者が解説](https://ryotablog.jp/ja/blogs/zakki/hitooshi-konkatsu): ヒトオシの婚活とは何かを、実際に紹介を受け顔合わせも経験した僕が中立的に解説。マッチングプランナーが毎月2人紹介する仕組み、マッチングアプリ・結婚相談所との違い、対応エリア、向いている人・向いていない人まで、登録前に押さえたい全体像をまとめました。
+- [【評判が気になる！】婚活サービスのヒトオシの体験談（紹介コードあり）](https://ryotablog.jp/ja/blogs/zakki/hitooshi-review): 婚活サービス「ヒトオシ」体験レビューです。都内エンジニアが語るリアルな婚活体験談！2時間カウンセリングからオンライン顔合わせまでの流れや評判、口コミ、メリット・デメリットを詳しく解説。最後に紹介コードもあります。
+- [Route Handlerを利用したエンドポイントを別ドメインのクライアントサイドからAPIコールしてCORSのエラーが生じた時に確認すること](https://ryotablog.jp/ja/blogs/next_js/route-handler-cors): CORSエラーの原因と解決方法を解説します。Next.jsのRoute Handlerを使用したAPIエンドポイントにおいて、外部ドメインからのリクエストがCORSポリシーにブロックされる問題を、レスポンスヘッダーの設定やOPTIONSメソッドの許可によって解決する具体的な方法を紹介します。
+- [July 2024 Release Notes (2024年7月 リリースノート - Ryota-Blog)](https://ryotablog.jp/ja/blogs/release_notes/release-notes-202407): 今月のこのメディアのアップデートを紹介していきます！sidebarのボトムをぼかすように調整、instagramでのエラーの回避、アンダーライン用のコンポーネントを追加 、OG画像にカスタムフォントを反映など。
+- [【体験談】実際にペイキャリア(Paycareer)を使ってみて感じたこと](https://ryotablog.jp/ja/blogs/review/paycareer-review): 今回の転職活動でペイキャリアを利用しました! 何件か面談をして、そのうちの一つの企業から内定をいただきました。そのプロセスで感じたことを紹介していきます。
+- [【感想】巨大恐竜展2024に行ってきた](https://ryotablog.jp/ja/blogs/news/giant-dinos-2024-review): パシフィコ横浜で展示されている巨大恐竜展に行ってきました！個人的にテンションが上がった箇所、印象的な箇所を紹介します〜個人の感想です笑
+- [【Next.js / App Router】自分がいつも行っているSEO対策TODOリスト](https://ryotablog.jp/ja/blogs/next_js/my-seo-todo-list): 今回はApp Routerを利用した時、自分がいつも行っているSEO対策を紹介していきます！
+- [June 2024 Release Notes (2024年6月 リリースノート | Ryota-Blog)](https://ryotablog.jp/ja/blogs/release_notes/release-notes-202406): 今月のこのメディアのアップデートを紹介していきます！画像のポップアップ機能、前後記事へのナビゲーション、RUMの読み込みにrequestIdlecallbackを利用 、issueの起票のためのボタンを実装 、「New」ラベルを追加 、 １年以上前の記事にはラベルを追加など。
+- [省略メニュー付きページネーションの実装](https://ryotablog.jp/ja/blogs/react/react-ellipsismenu-pagination): 今回は省略メニュー付きページネーションの実装方法を紹介していきます！
+- [TerraformとRoute53でApp Runnerのカスタムドメインを設定する方法](https://ryotablog.jp/ja/blogs/aws/customdomain-apprunner-with-terraform-route53): 今回はTerraformでApp RunnerのDNSターゲットをRoute53のAレコードに設定する方法を紹介していきます！
+- [【レビュー】作って学ぶ HTML&CSSモダンコーディングを読んでみた](https://ryotablog.jp/ja/blogs/css/modern-coding-review): 今回は「作って学ぶ HTML&CSSモダンコーディング」の書籍のレビューについて書いていきます。 ・ HTML/CSSを勉強中の人 基礎の学習を一通り終えた人 ・ポートフォリオ作成中の人 こんな人に読んでいただけると幸いです！
+- [【不合格体験記】AWS SAA-C03に落ちました。。。](https://ryotablog.jp/ja/blogs/aws/saa-c03-failed): 今回はAWS SAA-C03の不合格体験について書いていきます。  1.AWS SAAの勉強方法が知りたい。 2.どのくらい勉強すれば合格するの？ 3.受験した人の体験を知り、当日のトラブルを避けたい。 こんな人に読んでいただけると幸いです！
+- [【レビュー part②】TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発　〜toPropValueの解説〜](https://ryotablog.jp/ja/blogs/typescript/nextjs-typescript-book-review2): 今回はNext.jsについての書籍「TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発」を読了したので、そのレビューを書いていきます。part①は概要部分についてレビューを書いたので、今回はハンズオン部分についてレビューを書いてみます。 
+- [【レビュー part①】TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発](https://ryotablog.jp/ja/blogs/review/nextjs-typescript-book-review1): 今回はNext.jsについての書籍「TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発」を読了したので、そのレビューを書いていきます。  
+- [Next.jsで利用するContainer とPresenter構成について](https://ryotablog.jp/ja/blogs/next_js/nextjs-container-presenter): 今回はContainer と Presenter構成について書いていきます。 ・AtomicDesign以外のコンポーネント設計を知りたい。 ・Container と Presenter構成について知りたい。  こんな人に読んでいただけると幸いです！
+- [オブジェクト指向UI とは?](https://ryotablog.jp/ja/blogs/review/what-object-ui): 今回は、オブジェクト指向UIについて紹介します。オブジェクト指向UIってなに？ UIのデザインパターンについて学びたい。 そのような人の参考になれば幸いです(^^)
+- [【リーダブルコード】無関係な下位問題を抽出するってどういう意味？](https://ryotablog.jp/ja/blogs/programming/readablecode-underproblem-solution): 無関係な下位問題の抽出について直感的に理解できるように説明していきます。  ・下位問題の意味がわからない。・無関係な下位問題の抽出をイメージでとらえたい。 書籍リーダブルコードの理解の助けになれば嬉しいです。

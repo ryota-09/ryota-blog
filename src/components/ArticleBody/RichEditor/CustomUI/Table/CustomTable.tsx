@@ -7,8 +7,10 @@ const CustomTable = ({ children, ...restProps }: CustomTableProps) => {
   // 祖先のmx-auto flexアイテムがshrink-to-fitして横スクロールが発生していた。
   // コードブロック(MultiCodeBlock)と同じく viewport基準の確定max-width で
   // スクロールコンテナの幅を固定し、広いテーブルはこのボックス内でのみ横スクロールさせる。
+  // さらにmin-w-0を明示し、flexアイテムのデフォルト(min-width:auto)による
+  // 内容幅の押し上げ(#242パリティ検証で発見)も防ぐ。
   return (
-    <div className="my-4 w-full max-w-[83vw] sm:max-w-[600px] md:max-w-[730px] lg:max-w-[1028px] overflow-x-auto">
+    <div className="my-4 w-full min-w-0 max-w-[83vw] sm:max-w-[600px] md:max-w-[730px] lg:max-w-[1028px] overflow-x-auto">
       <table {...restProps} className="table-auto w-full indent-0 border-collapse border-inherit">
         {children}
       </table>

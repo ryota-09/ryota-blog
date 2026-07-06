@@ -1,0 +1,180 @@
+---
+title: Setting Up App Runner Custom Domain with Terraform and Route53
+description: This article explains how to configure App Runner DNS targets as A records in Route53 using Terraform!
+publishedAt: "2024-06-15T11:36:00.000Z"
+updatedAt: "2025-06-14T22:29:31.651Z"
+categories:
+  - aws
+  - terraform
+thumbnail: ./images/customdomain-apprunner-terraform-route53.jpeg
+headingIds:
+  - hb8ccb197e6
+  - hdd7c9dcee4
+---
+
+Hello! I'm [@Ryo54388667](https://x.com/Ryo54388667)!
+
+<br />
+
+I work as an engineer in Tokyo!
+
+I mainly work with technologies like TypeScript and Next.js.
+
+Today I'll show you how to configure App Runner DNS targets as A records in Route53 using Terraform!
+
+<br />
+
+## What We Want to Achieve
+
+App Runner provides a default domain, so you can automatically publish your application on the web once deployment is complete! It's incredibly convenient! However, in most cases, you'll want to use a custom domain instead of the default one. Of course, App Runner also supports custom domain functionality.
+
+[https://aws.amazon.com/jp/apprunner/](https://aws.amazon.com/jp/apprunner/)
+
+<br />
+
+<br />
+
+You can set up a custom domain by configuring the values shown in the image to the target records.
+
+![](./images/スクリーンショット-2024-06-14-14.23.24.png)
+
+<br />
+
+While you can certainly configure these records through the AWS Management Console, I feel that Infrastructure as Code (IaC) usage is increasing, so today I'll configure them using Terraform, which is one of the IaC tools.
+
+<br />
+
+**Prerequisites**
+
+- AWS CLI configured
+- Terraform environment set up
+- Route53 hosted zone configured
+
+<br />
+
+## Implementation
+
+First, we'll set up CNAME records for "Certificate Validation" (section 1 in the previous image).
+
+```hcl title="route53.tf"
+resource "aws_route53_record" "cname_validation_a" {
+  name    = var.cert_validation_record_name_a
+  zone_id = aws_route53_zone.main_prd.zone_id
+  type    = "CNAME"
+  ttl     = 300
+  records = [var.cert_validation_record_value_a]
+
+  depends_on = [aws_apprunner_service.apprunner]
+}
+resource "aws_route53_record" "cname_validation_b" {
+  name    = var.cert_validation_record_name_b
+  zone_id = aws_route53_zone.main_prd.zone_id
+  type    = "CNAME"
+  ttl     = 300
+  records = [var.cert_validation_record_value_b]
+
+  depends_on = [aws_apprunner_service.apprunner]
+}
+resource "aws_route53_record" "cname_validation_c" {
+  name    = var.cert_validation_record_name_c
+  zone_id = aws_route53_zone.main_prd.zone_id
+  type    = "CNAME"
+  ttl     = 300
+  records = [var.cert_validation_record_value_c]
+
+  depends_on = [aws_apprunner_service.apprunner]
+}
+```
+
+Setting up CNAME records should be straightforward without any particular issues.
+
+The tricky part is "Setting up the DNS target" (section 2 in the image).
+
+<br />
+
+I got stuck on this DNS target part. At first, I thought "I should just register this with a CNAME record too," but I got the following error...
+
+```plaintext
+ Error: creating Route 53 Record: InvalidChangeBatch: [RRSet of type CNAME with DNS name <domain-name> is not permitted at apex in zone <domain-name>]
+```
+
+This error occurs because, due to CNAME specifications, when an NS record with the same domain name exists, they cannot coexist in the same zone.
+
+<br />
+
+[https://blog.serverworks.co.jp/dns-cname-record-error](https://blog.serverworks.co.jp/dns-cname-record-error)
+
+<br />
+
+I had set up an NS record with the same name to use an external domain service, which caused this error.
+
+Since DNS targets can also be configured with A records, I'll use that method instead of CNAME. Many articles show examples like this:
+
+```hcl
+//Example
+resource "aws_route53_record" "www" {
+  zone_id = aws_route53_zone.primary.zone_id
+  name    = "example.com"
+  type    = "A"
+
+  alias {
+    name                   = aws_elb.main.dns_name
+    zone_id                = aws_elb.main.zone_id
+    evaluate_target_health = true
+  }
+}
+```
+
+<br />
+
+Here you can see there are two zone\_ids. The second zone\_id represents the ID of the zone where the DNS exists. For App Runner, we need to set the ID of the hosted zone where App Runner's default domain exists. I thought "How would I know that...?" but thankfully, it's publicly available! See the URL below for details.
+
+[https://docs.aws.amazon.com/general/latest/gr/apprunner.html](https://docs.aws.amazon.com/general/latest/gr/apprunner.html)
+
+> As of 2024/06/15
+>
+> For ap-northeast-1: Z08491812XW6IPYLR6CCA
+
+<br />
+
+Based on this, I configured the A record as follows:
+
+```hcl title="route53.tf"
+resource "aws_route53_record" "dns_a_record" {
+  name    = var.dns_record_name
+  zone_id = aws_route53_zone.main_prd.zone_id
+  type    = "A"
+
+  alias {
+    name = var.dns_record_value
+    # NOTE: Reference https://docs.aws.amazon.com/general/latest/gr/apprunner.html
+    zone_id                = "Z08491812XW6IPYLR6CCA"
+    evaluate_target_health = false
+  }
+
+  depends_on = [aws_apprunner_service.apprunner]
+}
+```
+
+<br />
+
+<br />
+
+If you know of a better approach, please let me know!
+
+Thank you for reading to the end!
+
+I tweet casually, so feel free to follow me!
+
+<br />
+
+> cloudwatch alarm → SNS → AWS Chatbot\
+> \
+> イベント通知されない。。😇\
+> Chatbotのテスト送信ができてるのでそこは問題なさそう。Terraformで何か書き忘れているのか。。
+>
+> — りょた@dev (@Ryo54388667) [May 24, 2024](https://twitter.com/Ryo54388667/status/1793968643367387568?ref_src=twsrc%5Etfw)
+
+<br />
+
+<br />

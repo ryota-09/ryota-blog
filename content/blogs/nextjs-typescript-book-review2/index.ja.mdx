@@ -1,0 +1,604 @@
+---
+title: 【レビュー part②】TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発　〜toPropValueの解説〜
+description: "今回はNext.jsについての書籍「TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発」を読了したので、そのレビューを書いていきます。part①は概要部分についてレビューを書いたので、今回はハンズオン部分についてレビューを書いてみます。 "
+publishedAt: "2022-10-09T15:00:00.000Z"
+updatedAt: "2024-07-16T00:56:00.414Z"
+categories:
+  - typescript
+  - next_js
+  - review
+  - react
+thumbnail: ./images/typescript-react-nextjs.jpeg
+isAdvertisement: true
+related:
+  - nextjs-typescript-book-review1
+headingIds:
+  - h089f862ab5
+  - h8ffc9268c9
+  - h96cc08cb10
+  - h3a40e454f0
+  - h3bcda3e6b0
+---
+
+こんにちは！
+
+今回はNext.jsについての書籍「TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発」を読了したので、そのレビューを書いていきます。part①は概要部分についてレビューを書いたので、今回はハンズオン部分についてレビューを書いてみます。
+
+- このNext本が気になっていたのでレビューを知りたい。
+- なんとなくNext.jsを書いていたので、細かな仕組みを知りたい。
+
+こんな人に読んでいただけると幸いです！
+
+<br />
+
+## なぜハンズオンだけ別のレビューにしたのか？
+
+[前回までのレビュー](/ja/blogs/review/nextjs-typescript-book-review1)では、ハンズオン以外の各技術の説明のセクションについてのレビューを書きました。今回は残りのハンズオン部分のレビューについて書いていきます。
+
+<br />
+
+「なぜハンズオン部分だけ別のレビューにしたの？」
+
+そう思われた人もいると思います。
+
+<br />
+
+**ズバリ、ハンズオン部分だけレベチだからです笑**
+
+<br />
+
+「Next.jsとよく聞くけど、触ってみようかな」
+
+という温度感の人がこのハンズオンをやってみると、正直、面食らうと思います(^^;著者は海外ベンチャー経験の実績のある方だけあって、現場に即したコードになっています。
+
+TypeScriptの型システム、基本的なJavaScriptの知識、Next.jsの知識、React.jsの知識などなど。技術がモリモリに詰め込まれています。
+
+<br />
+
+いわば、コース料理に例えると、前菜は割烹風の小鉢が並んでいたのに、メインはドカ盛りメニューのような全部盛りのオードブルが来たようなイメージかもしれません。このように書くと、ネガティブな印象が強いかもしれませんが、これが悪いことだとは思っていません。著者のあれこれ伝えたいという思いが伝わって、個人的には好印象です！
+
+<br />
+
+<br />
+
+<AmazonLink href="//af.moshimo.com/af/c/click?a_id=2351007&p_id=170&pc_id=185&pl_id=4062&url=https%3A%2F%2Fwww.amazon.co.jp%2Fdp%2FB0B74C3TNQ" image="https://images-fe.ssl-images-amazon.com/images/I/51XvdoWeGFL._SL160_.jpg" title="TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発" trackingImage="//i.moshimo.com/af/i/impression?a_id=2351007&p_id=170&pc_id=185&pl_id=4062" />
+
+## レビューと解説について
+
+ハンズオン部分だけのレビューと書きましたが、書籍の大部分をハンズオンが占めているので、全てをレビューするのは困難です。そこで、一部分にフォーカスします。僕がこのハンズオン部分の最も重要な部分は何かと考えて、至った結論は「**toPropValueメソッド**」です。
+
+どのコンポーネントでも利用されているメソッドです。このメソッドを理解すると、あとはすんなり理解できるのではないかと思います。
+
+<br />
+
+### ◯ 基本機能
+
+まず、利用する部分から説明していきます。
+
+例えば、
+
+```typescript
+toPropValue("margin", “30px”, theme)
+//出力
+margin: 30px;
+```
+
+第一引数には、CSSプロパティを入れ、第二引数には、プロパティの値が入っています。第三引数には書籍で指定された特定のデータが入ります。このメソッドの基本機能としては、CSSの形に直してくれるものです。
+
+<br />
+
+ただし、複雑なのは、次の場合です。
+
+```typescript
+toPropValue("margin", { base: 1, sm: 2 }, theme)
+//出力
+margin: 8px;
+@media screen and (min-width: 1280px) {margin: 64px;}
+```
+
+というように、第二引数には特殊なオブジェクトが引数になっており、スクリーンサイズに応じたCSSを作成してくれます。この部分がなかなか理解に苦しむ部分かと思います。
+
+<br />
+
+### ◯ メソッド内の説明
+
+まず、全体像はこのコードです。
+
+```typescript
+export function toPropValue<T>(
+  propKey: string,
+  prop?: Responsive<T>,
+  theme?: AppTheme,
+) {
+  if (prop === undefined) return undefined
+  if (isResponsivePropType(prop)) {
+    const result = []
+    for (const responsiveKey in prop) {
+      if (responsiveKey === 'base') {
+        result.push(
+          `${propKey}: ${toThemeValueIfNeeded(
+            propKey,
+            prop[responsiveKey],
+            theme,
+          )};`,
+        )
+      } else if (
+        responsiveKey === 'sm' ||
+        responsiveKey === 'md' ||
+        responsiveKey === 'lg' ||
+        responsiveKey === 'xl'
+      ) {
+
+        const breakpoint = BREAKPOINTS[responsiveKey]
+        const style = `${propKey}: ${toThemeValueIfNeeded(
+          propKey,
+          prop[responsiveKey],
+          theme,
+        )};`
+        result.push(`@media screen and (min-width: ${breakpoint}) {${style}}`)
+      }
+    }
+    console.log(result.join("\n"))
+    return result.join('\n')
+  }
+  return `${propKey}: ${toThemeValueIfNeeded(propKey, prop, theme)};`
+}
+```
+
+結構、ボリューム多いですよね！
+
+少しずつ、分解して見ていきましょう！何やら、「if」文がいくつかあるので、そこを目印に分岐しながら考えていきます。
+
+<br />
+
+まず、第一の分岐はこんな感じですね。
+
+```typescript
+if (prop === undefined) return undefined
+```
+
+これは大丈夫だと思います。第二引数のプロパティの値を指定しない場合、undefindeを返却します。
+
+<br />
+
+次のif文を見てみます。
+
+```typescript
+if (isResponsivePropType(prop)) {}
+```
+
+これが、第二引数が先ほど機能確認で見たオブジェクトかどうかを判断し、trueの場合、if文の処理に入ります。しかし、これは非常にややこしいので、先に、このif文がfalseになり、メソッドの最下部に飛んだ場合を見てみます。
+
+<br />
+
+```typescript
+return `${propKey}: ${toThemeValueIfNeeded(propKey, prop, theme)};`
+```
+
+これが先ほどの機能確認した時の最初のパターンです。toPropValue(“margin”, “30px”, theme)このパターンです。
+
+上記には新しいメソッドがありますね！
+
+toThemeValueIfNeededの中をみていきます。
+
+```typescript
+function toThemeValueIfNeeded<T>(propKey: string, value: T, theme?: AppTheme) {
+  if (
+    theme &&
+    theme.space &&
+    SPACE_KEYS.has(propKey) &&
+    isSpaceThemeKeys(value, theme)
+  ) {
+    return theme.space[value]
+  } else if (
+    theme &&
+    theme.colors &&
+    COLOR_KEYS.has(propKey) &&
+    isColorThemeKeys(value, theme)
+  ) {
+    return theme.colors[value]
+  } else if (
+    theme &&
+    theme.fontSizes &&
+    FONT_SIZE_KEYS.has(propKey) &&
+    isFontSizeThemeKeys(value, theme)
+  ) {
+    return theme.fontSizes[value]
+  } else if (
+    theme &&
+    theme.letterSpacings &&
+    LINE_SPACING_KEYS.has(propKey) &&
+    isLetterSpacingThemeKeys(value, theme)
+  ) {
+    return theme.letterSpacings[value]
+  } else if (
+    theme &&
+    theme.lineHeights &&
+    LINE_HEIGHT_KEYS.has(propKey) &&
+    isLineHeightThemeKeys(value, theme)
+  ) {
+    return theme.lineHeights[value]
+  }
+
+  return value
+}
+```
+
+もとのメソッドはelse ifで特定のCSSプロパティを探しているものです。
+
+今回はtoPropValue(“margin”, “30px”, theme)を踏まえて、marginだけの例で考えます。その他を一度削除すると、
+
+```typescript
+function toThemeValueIfNeeded<T>(propKey: string, value: T, theme?: AppTheme) {
+  if (
+    theme &&
+    theme.space &&
+    SPACE_KEYS.has(propKey) &&
+    isSpaceThemeKeys(value, theme)
+  ) {
+    return theme.space[value]
+  } 
+  return value
+}
+```
+
+スッキリしました。
+
+<br />
+
+<br />
+
+続いて、この中の SPACE\_KEYS.has(propKey)の部分について説明していきます。SPACE\_KEYSについてさらに見ていくと、
+
+```typescript
+const SPACE_KEYS = new Set([
+'margin',
+   'margin-top',
+   'margin-left',
+   'margin-bottom',
+   'margin-right',
+   'padding',
+   'padding-top',
+   'padding-left',
+   'padding-bottom',
+   'padding-right',
+ ])
+```
+
+このように書かれています。
+
+SPACE\_KEYSはSetオブジェクトがインスタンス化されたものです。
+
+「Setオブジェクトって？？何か良いことある？」
+
+こう思われた人もいるかと思います。
+
+<br />
+
+JavaScriptが組み込みで用意してくれているオブジェクトで、キーの検索や特定のキーのCRUD操作ができるような便利なメソッドを利用できるものです。詳しくはMDNを見てみると良いかと思います。
+
+それを踏まえて、改めてSPACE\_KEYS.has(propKey)を見てみます。
+
+この部分は何をしているかというと、
+
+propkey(例えば、”margin”など)がSPACE\_KEYSの中に存在していれば「true」、無ければ「false」を返却してくれます。If文の条件文の中に入っているということは、SPACEに関する正しいキーが入ったかどうかを確認している、ということです。
+
+<br />
+
+<br />
+
+続いて、isLetterSpacingThemeKeys(value, theme)の部分です。
+
+まず、なぜこのメソッドが必要か説明します。
+
+このメソッド無しだと、if文の処理のreturn [theme.space](http://theme.space)\[value]にエラーが表示されます。
+
+そのエラーの原因は「spaceの中に該当するvalueがあるかは保証されていません」というものです。コンパイラはvalueがSpaceThemeKeysかどうか判断しかねている状況です。ですので、行うべきことはコンパイラに対して、「valueはSpaceThemeKeysです」と伝えることです。
+
+詳しく中身を見ていきましょう！
+
+```typescript
+function isSpaceThemeKeys(prop: any, theme: AppTheme): prop is SpaceThemeKeys {
+   return Object.keys(theme.space).filter((key) => key == prop).length > 0
+ }
+```
+
+この部分はTypeScriptの知識が必要です。
+
+「is」がありますね！これはTypeScriptのひとつの機能である、タイプガードというものです。
+
+例えば、ブランドもののバッグが偽物かどうか判定する方法があるとします。これをコードで表現すると、
+
+```typescript
+function isBrand (とあるバッグ: any):とあるバッグ is ブランドバッグ  {   
+if( ブランドのロゴがある ){
+ return true
+} else {
+ return false 
+}
+} 
+```
+
+このうようなイメージです。
+
+このメソッドをくぐったあと、「とあるバッグ」は全て「ブランドバッグ」として認識されます。
+
+このように、エディター（コンパイラ）に対象の値の型を伝えたい時に利用するのがタイプガードです。
+
+<br />
+
+これを踏まえて、isSpaceThemeKeysをみてみると、
+
+propは始めは「any型」ですが、functionの中の処理でSpaceThemeKeysかどうかをチェックしており、
+
+「is」の右側はSpaceThemeKeysとなっているので、最終的には「propはSpaceThemeKeys型」とコンパイラに伝えるものとなっています。
+
+<br />
+
+このメソッドがあることで、
+
+`return theme.space[value]`にエラーが表示されなくなります！
+
+いやー、なかなか大変ですよね。こういう所がTypeScriptが嫌われる原因かもしれません。
+
+ただ、個人的にはこれをJavaScriptで型無しでエラーを出さずに書き切ることは難しいと感じます。始めは面倒ですが、コード量が増えてくると恩恵が得られると思います！
+
+<br />
+
+`theme.space[value]`について補足します。
+
+これは「ブラケット記法」と言います。連想配列はよく見るアクセス方法はドットによるアクセスだと思いますが、「\[ キー名 ]」でもアクセスすることができます。これも覚えておくと役に立つかもしれません。
+
+<br />
+
+ここまででようやく、メインメソッドの`return ${propKey}: ${toThemeValueIfNeeded(propKey, prop, theme)};`の説明が終わりました。
+
+大変すぎぃー。。。
+
+<br />
+
+ここからようやく、メインメソッドのif文の中身に移っていきます。
+
+`if (isResponsivePropType(prop)) {}`
+
+この部分について、さらに isResponsivePropType(prop)について詳しく見ます。
+
+```typescript
+function isResponsivePropType<T>(prop: any): prop is ResponsiveProp<T> {
+   return (
+     prop &&
+     (prop.base !== undefined ||
+       prop.sm !== undefined ||
+
+prop.md !== undefined ||
+       prop.lg !== undefined ||
+       prop.xl !== undefined)
+   )
+ }
+```
+
+メソッドの中身はこのような形をしています。これは何をしているかというと、端的にいうと、
+
+`{ base: hoge, sm: hoge }`
+
+上記のような形のオブジェクトかどうかをチェックするものです。
+
+<br />
+
+baseやsm、mdのいずれかがundefindeではなかったらtrueなので、存在することを保証することになります。これ以降のif文の中の処理では、propは\{ base: hoge, sm: hoge }という形が前提で処理されます。
+
+<br />
+
+続いてif文の中を見ていきます。
+
+`for (const responsiveKey in prop) {}`
+
+<br />
+
+ここまできたら、とことん説明していきます！！
+
+「in」について、どのような挙動になるかというと、例えば
+
+```typescript
+Const prop = { foo: hoge, bar: hoge  }
+for(const key in prop ){console.log(key) }
+```
+
+この処理で、consoleに表示されるのは「foo bar」と表示されます。「in」はinの右側のオブジェクトのキーをforで回していく処理です。
+
+以上より、for (const responsiveKey in prop) の部分は\{ base: hoge, sm: hoge }のオブジェクトのキー(baseやsmなど)をforで回している、という意味になります。
+
+<br />
+
+続きを解説していきます。
+
+```typescript
+ if (responsiveKey === 'base') {
+        result.push(
+          `${propKey}: ${toThemeValueIfNeeded(
+            propKey,
+            prop[responsiveKey],
+            theme,
+          )};`,
+```
+
+for文の中にさらにif文がありますね！この分岐はキーがbaseかそれ以外のsmやmdと区別するためです。
+
+最終的に作成したいのはCSSを文字列にしたものです。例えば、margin: 8px;で、メディアクエリを考慮する時は、`@media screen and (min-width: 1280px) {margin: 64px;}`です。
+
+そこで、baseとsmやmdで区別する必要性が出てきます。
+
+<br />
+
+それを踏まえて、if文の中の処理を見ると、
+
+```typescript
+result.push(
+          `${propKey}: ${toThemeValueIfNeeded(
+            propKey,
+            prop[responsiveKey],
+            theme,
+          )};`,
+```
+
+先ほど説明した` ${propKey}: ${toThemeValueIfNeeded(propKey, prop, theme)};`が配列にプッシュされているのがわかります。具体的には、「margin: 8px;」のような文字列がプッシュされています。キー名がbaseの場合はメディアのスクリーンサイズに関わらず、CSSを当てるので、この文字列で問題ないのですね！
+
+<br />
+
+続いて、for文の中のelse if部分の説明に移ります。
+
+```typescript
+else if (
+        responsiveKey === 'sm' ||
+        responsiveKey === 'md' ||
+        responsiveKey === 'lg' ||
+        responsiveKey === 'xl'
+      ) {
+        const breakpoint = BREAKPOINTS[responsiveKey]
+        const style = `${propKey}: ${toThemeValueIfNeeded(
+          propKey,
+          prop[responsiveKey],
+          theme,
+        )};`
+        result.push(`@media screen and (min-width: ${breakpoint}) {${style}}`)
+      }
+```
+
+先ほどはresponsiveKeyの「base」を抜き出していましたが、smやmdなどのキーに対しては別の処理が必要になっていきます。CSSのメディアクエリの処理を追加していきます。
+
+<br />
+
+<br />
+
+<br />
+
+`const breakpoint = BREAKPOINTS[responsiveKey]`
+
+新しいものが出てきました。
+
+と言っても、それほど難しいものではありません。
+
+```typescript
+// ブレークポイント
+ const BREAKPOINTS: { [key: string]: string } = {
+   sm: '640px', // 640px以上
+   md: '768px', // 768px以上
+　lg: '1024px', // 1024px以上
+   xl: '1280px', // 1280px以上
+ }
+```
+
+このような形になっており、端的に言えば、smやmdのようなpropKeyとスクリーンサイズの対応付を行なっています。例えば、BREAKPOINTS\[“md”]の場合、”768px”という値が入っています。BREAKPOINTS.mdと同じです。
+
+その下にある、
+
+```typescript
+const style = `${propKey}: ${toThemeValueIfNeeded(
+          propKey,
+          prop[responsiveKey],
+          theme,
+        )};`
+```
+
+は、もうおなじみの形になってきましたね！
+
+Styleには、margin: 8px;のような具体的なCSSの文字列が値として格納されています。
+
+<br />
+
+for文の中のif文の処理の最後は、これです。
+
+```typescript
+   result.push(`@media screen and (min-width: ${breakpoint}) {${style}}`)
+```
+
+ここはCSSの知識が多少ある人だと問題ない部分ではないかと思います。
+
+メディアクエリではスクリーンサイズに応じて、当てるCSSプロパティを変更することができます。
+
+ここでは、先ほど、BREAKPOINTS\[responsiveKey]でキーとスクリーンサイズを対応づけたので、breakpointには具体的なスクリーンサイズが当てはまります。styleにはそのスクリーンサイズの時に当てるCSSプロパティと値が入ります。このようにして、@media screen and (min-width: 1080px) \{margin: 64px;}の文字列を作成していきます。
+
+<br />
+
+こうして、result配列の中に`[ “margin: 8px;”, “@media screen and (min-width: 1080px) {margin: 64px;}”, ]`のような要素が入ります。
+
+<br />
+
+お待たせしました！！ようやく最後の処理になります！
+
+ふぅ〜。。。ここまで長かったですね(^^;
+
+<br />
+
+最後はこの処理です。
+
+```typescript
+ return result.join('\n')
+```
+
+これはそれほど難しい処理ではありません。
+
+配列のままでは、CSSに適応することができませんので、１つの文字列として結合させる必要があります。その時に利用するメソッドがjoinです。配列の要素を特定の文字列で結合させることができます。
+
+さらに、バックスラッシュn(‘\n’)は何を表しているかというと、改行を表しています。CSSの記法上、改行して次のプロパティを記述する約束なので、これが必要になります。
+
+<br />
+
+これを経て、ようやく、
+
+```css
+margin: 8px;
+@media screen and (min-width: 1080px) {margin: 64px;}
+```
+
+のような文字列を作成することができます。
+
+非常に長かったですね！これがtoPropValueメソッドの概要です。
+
+<br />
+
+あー、、いい忘れたことがありました。
+
+注意深い方は気づかれたと思いますが、toPropValue(“margin”, “30px”, theme)を見ると、themeが第三引数に存在しています。
+
+<br />
+
+<br />
+
+「毎回、themeを渡す必要があるの？？」
+
+そう思われたかもしれません。
+
+ここは問題ありません！
+
+なぜなら、styled-componentsが解決してくれるからです。
+
+```typescript
+<ThemeProvider theme={theme}>
+```
+
+<br />
+
+これをルートコンポーネントで利用すると、特別、指定しない限り自動的にThemeProviderでpropsで渡したthemeが各toPropValueに適用されます。
+
+お疲れ様でした！これで本当に終了です。
+
+<br />
+
+## 最後に
+
+この書籍のハンズオン部分はすんなり理解するのは至難の技のような気がします。
+
+ただ、このtoPropValueを理解できれば、ほとんどの部分を理解できるのではないかと思っています。
+
+Next.jsというより、TypeScriptの説明が主になってしまいました(^^;
+
+最後に、著者には大変な賛辞を送りたいと思っています。
+
+Next.jsはアップデートスピードと多機能性も相まって書籍にするのは大変苦労されたのだと思います。
+
+[ここに著者の思いの丈を綴ったnoteの記事](https://note.com/tamanyan/n/n6230ba1873f5#0fc35584-7c1d-43e1-8a7a-ba8ec193168f)を貼っておきます。SNSにはネガティブな意見も散見されますが、本当に尊敬の念しかありません。
+
+最後まで読んでいただき、ありがとうございます！
+
+<AmazonLink href="//af.moshimo.com/af/c/click?a_id=2351007&p_id=170&pc_id=185&pl_id=4062&url=https%3A%2F%2Fwww.amazon.co.jp%2Fdp%2FB0B74C3TNQ" image="https://images-fe.ssl-images-amazon.com/images/I/51XvdoWeGFL._SL160_.jpg" title="TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発" trackingImage="//i.moshimo.com/af/i/impression?a_id=2351007&p_id=170&pc_id=185&pl_id=4062" />

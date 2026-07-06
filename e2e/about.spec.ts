@@ -7,10 +7,13 @@ test.describe('Aboutページのテスト', () => {
     const profileName = await page.locator('h1').first();
     await expect(profileName).toBeVisible();
 
-    const profileDescription = await page.locator('p').first();
+    // NOTE: HeroSectionはモバイル用(md:hidden)/PC用(hidden md:grid)のレイアウトを
+    // 両方DOMに描画し、CSSで出し分けている。そのため`p`の先頭は現在のビューポートによっては
+    // 非表示側にヒットしうるため、表示されている要素のみを対象にする(:visible)
+    const profileDescription = await page.locator('p:visible').first();
     await expect(profileDescription).toBeVisible();
 
-    const profileImage = await page.locator('img').first();
+    const profileImage = await page.locator('img:visible').first();
     await expect(profileImage).toBeVisible();
   });
 

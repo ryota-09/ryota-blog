@@ -1,5 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+// NOTE: vitestのglobals設定に依存せず型チェック(tsc --noEmit)を通すため明示importする
+import { describe, it, expect, vi } from 'vitest';
 import ImageWithSkeleton from './index';
 
 describe('ImageWithSkeleton', () => {

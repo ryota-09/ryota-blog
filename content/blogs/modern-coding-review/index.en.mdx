@@ -1,0 +1,191 @@
+---
+title: "[Review] I Read \"Learn by Building HTML & CSS Modern Coding\""
+description: This time I'll write a review of the book "Learn by Building HTML & CSS Modern Coding". This review is intended for people who are studying HTML/CSS, those who have completed basic learning, and people creating portfolios!
+publishedAt: "2023-05-14T11:51:00.000Z"
+updatedAt: "2025-06-14T11:58:09.325Z"
+categories:
+  - css
+  - review
+thumbnail: ./images/moden-html-css.jpeg
+isAdvertisement: true
+headingIds:
+  - h0d16a67c28
+  - h3899d8f081
+  - ha52528d577
+  - h8a5eeabb17
+  - h3d58524ea1
+---
+
+Hello! I'm Ryota ([@Ryo54388667](https://x.com/Ryo54388667)) (^o^)
+
+This time I'll write a review of the book "Learn by Building HTML & CSS Modern Coding".
+
+- People studying HTML/CSS
+- Those who have completed basic learning
+- People creating portfolios
+
+I hope this will be helpful for such people!
+
+<br />
+
+## What Motivated Me
+
+I work as a frontend engineer at an IT company in Tokyo.
+
+I mainly develop using TypeScript and Next.js.
+
+<br />
+
+I might get flamed for saying this, but,
+
+"HTML and CSS don't cause critical bugs, so it's okay to write them casually"
+
+I had a tendency to underestimate HTML and CSS like this.
+
+<br />
+
+However, what changed my perspective was joining a maintenance project for a while.
+
+When my supervisor said, "Please develop this additional feature," and I looked at the target repository,
+
+"Uh, where should I fix the CSS???"
+
+<br />
+
+Honestly, I had no idea. It was an experience that made me painfully aware that my knowledge of markup languages was extremely lacking. After digesting and thinking about it in my own time, I realized that I had been doing HTML and CSS through copy-paste and my own methods, so I thought I needed to learn systematically once, which brings me to now.
+
+<br />
+
+<br />
+
+AMAZON
+
+[\
+【特典付き】作って学ぶ HTML\&CSSモダンコーディング (Compass Web Development)](//af.moshimo.com/af/c/click?a_id=2351007\&p_id=170\&pc_id=185\&pl_id=4062\&url=https%3A%2F%2Fwww.amazon.co.jp%2Fdp%2F4839977119)
+
+## Personally Impressive Sections
+
+First, let me tell you why I picked this book from among the many HTML and CSS books available!
+
+If you've ever visited this kind of section in a large bookstore, you'll understand - there are seriously so many types of books. (And they have such colorful covers... it's dizzying...)
+
+The major deciding factor for this book was that it had a structure where you actually create layouts! While there are many books that explain techniques and properties, there are few books that create layouts suited to actual workplace situations.
+
+I'm getting off track. Let me write about the impressive sections.
+
+<br />
+
+### ① CSS for Card Layouts
+
+In my observation, unless it's a project for a design-focused company, you rarely develop websites with unconventional layout structures. Most are horizontal card layouts or media card layouts.
+
+<br />
+
+This book teaches you the "best practices" for those card layouts. Of course, I don't think everything written in this book is the standard. However, for people who have been writing HTML and CSS in their own way, knowing an example of best practices is important.
+
+<br />
+
+It's like the difference between "breaking the mold" and "having no mold" that's often referenced in rakugo (traditional Japanese comedy). I think it's good to know the orthodox best practices, experience them, and then customize them in your own way. From that perspective, learning the best practices was very valuable.
+
+<br />
+
+A characteristic of this book is that it describes multiple patterns of writing methods to achieve the same layout. This is appreciated! For example, in addition to layouts using flexbox, grid layout patterns are also written.
+
+<br />
+
+> "In this book, we will review 'Responsive Web Design' in accordance with new HTML & CSS, and compare various options while creating pages. We hope you will not only create sample pages but also increase variations for realizing pages and utilize them in future web production."
+
+I thought this would definitely increase variations and expand my toolkit!
+
+<br />
+
+### ② About the clamp Function
+
+To tell you the truth, I didn't know about this CSS function until I read this book!
+
+"There's such a convenient function!"
+
+I was so impressed that I'll briefly introduce it.
+
+<br />
+
+This is a convenient function for responsive design.
+
+<br />
+
+For example, when you want to display text on a web page, you can specify the text size with the font-size property. However, when the screen size changes, the text can become too large or too small and difficult to read, which is a challenge.
+
+That's where the clamp function comes in! Simply put, it allows you to set the text size to automatically change within an appropriate range. The basic syntax is as follows:
+
+<br />
+
+```css
+font-size: clamp(minimum value, adaptive value, maximum value);
+```
+
+<br />
+
+In the minimum value, adaptive value, and maximum value sections, you specify the desired font sizes respectively. For example, if you want the minimum value to be 12px and the maximum value to be 24px, you write it like this:
+
+<br />
+
+```css
+font-size: clamp(12px, adaptive value, 24px);
+```
+
+Let me speak for what everyone is thinking.
+
+"What the heck is the adaptive value!"
+
+That's right.
+
+<br />
+
+For example, let's say you want the font size to be 24px when the PC screen size is 1024px.
+
+At this time, since the value 24px is defined as a value for 1024px, following this logic:
+
+24px ÷ 1024px = 0.0234....
+
+This means that font size 24px, in other words, can be said to specify 2% of the screen size 1024px. Therefore, theoretically, if the font size is 2% of the screen size even when the screen is smaller than 1024px, the appearance should be the same.
+
+<br />
+
+This is how you determine the "adaptive value". Here, there's a unit that can easily express "2% of screen size": "vw". In this case, it would be "2vw".
+
+<br />
+
+```css
+font-size: clamp(12px, 2vw, 24px);
+```
+
+You can write it like this. This way, according to the screen size, it becomes minimum 12px and maximum 24px. This is how to use the clamp function.
+
+<br />
+
+You can prevent text from becoming too small or too large.
+
+Super convenient!! I was very glad to learn about this function in this book.
+
+<br />
+
+## Finally
+
+<br />
+
+In addition to these, many techniques that can be used immediately in the workplace are described. In fact, after reading this book, I thought "I can fix this part of the product!" and submitted several pull requests. If you're someone who writes HTML and CSS somewhat casually, please definitely read this!
+
+<br />
+
+Thank you for reading to the end!
+
+I also write technical articles about frontend and on Zenn, so if you're interested, please check those out too\~
+
+<br />
+
+AMAZON
+
+[\
+【特典付き】作って学ぶ HTML\&CSSモダンコーディング (Compass Web Development)](//af.moshimo.com/af/c/click?a_id=2351007\&p_id=170\&pc_id=185\&pl_id=4062\&url=https%3A%2F%2Fwww.amazon.co.jp%2Fdp%2F4839977119)
+
+<AmazonLink href="//af.moshimo.com/af/c/click?a_id=2351007&p_id=170&pc_id=185&pl_id=4062&url=https%3A%2F%2Fwww.amazon.co.jp%2Fdp%2F4839977119" image="https://images-fe.ssl-images-amazon.com/images/I/51p8DSDWO6L._SL160_.jpg" title="【特典付き】作って学ぶ HTML&CSSモダンコーディング (Compass Web Development)" trackingImage="//i.moshimo.com/af/i/impression?a_id=2351007&p_id=170&pc_id=185&pl_id=4062" />

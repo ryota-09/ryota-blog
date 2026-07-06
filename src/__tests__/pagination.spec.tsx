@@ -22,14 +22,28 @@ describe("Pagination", () => {
     return Math.ceil(totalCount / PER_PAGE) + calcArrowNavCount(currentPage, totalCount)
   }
 
+  // NOTE: ページネーション全体は単一のnavランドマーク(aria-label="ページネーション")としてラップされている。
+  // 個々のページ番号/矢印リンクは通常のlinkロールとして数える(role="navigation"を個別リンクに付けるのはARIA誤用のため)。
+  const getPaginationNav = () => screen.getByRole("navigation", { name: "ページネーション" });
+
+  // 表示中のページ番号/矢印リンクと、省略メニュー(EllipsisMenu)内に折りたたまれたページ番号
+  // リンクの合計数を数える。全ページ番号は表示中かメニュー内かのいずれかに必ず存在するため、
+  // この合計は総ページ数+矢印数(calcExpected)と一致する。
+  // NOTE: 現在ページを示すリンクはhref=""になる仕様上、getAllByRole("link")のaccessible-name
+  // 判定では検出されないため(空hrefのaはリンクとしてアクセシブルツリーに現れない)、
+  // 実装依存にならないよう素のDOMクエリ(a要素)で数える。
+  const countAllPaginationLinks = (nav: HTMLElement) => {
+    return nav.querySelectorAll("a").length;
+  }
+
   test("should render the Pagination component", () => {
     const totalCount = 10;
     const currentPage = 1;
     const expected = calcExpected(currentPage, totalCount);
 
     renderPagination(currentPage, totalCount);
-    const navItems = screen.getAllByRole("navigation");
-    expect(navItems.length).toBe(expected);
+    const nav = getPaginationNav();
+    expect(countAllPaginationLinks(nav)).toBe(expected);
   });
   test("should render the Pagination component with currentPage 2", () => {
     const totalCount = 10;
@@ -37,8 +51,8 @@ describe("Pagination", () => {
     const expected = calcExpected(currentPage, totalCount);
 
     renderPagination(currentPage, totalCount);
-    const navItems = screen.getAllByRole("navigation");
-    expect(navItems.length).toBe(expected);
+    const nav = getPaginationNav();
+    expect(countAllPaginationLinks(nav)).toBe(expected);
   })
   test("should render the Pagination component with currentPage 3", () => {
     const totalCount = 10;
@@ -46,8 +60,8 @@ describe("Pagination", () => {
     const expected = calcExpected(currentPage, totalCount);
 
     renderPagination(currentPage, totalCount);
-    const navItems = screen.getAllByRole("navigation");
-    expect(navItems.length).toBe(expected);
+    const nav = getPaginationNav();
+    expect(countAllPaginationLinks(nav)).toBe(expected);
   })
   test("should render the Pagination component with totalCount less than 4", () => {
     const totalCount = 3;
@@ -55,8 +69,8 @@ describe("Pagination", () => {
     const expected = calcExpected(currentPage, totalCount);
 
     renderPagination(currentPage, totalCount);
-    const navItems = screen.getAllByRole("navigation");
-    expect(navItems.length).toBe(expected);
+    const nav = getPaginationNav();
+    expect(countAllPaginationLinks(nav)).toBe(expected);
   })
   test('should render the Pagination component with totalCount 1あ', async () => {
     const totalCount = 16;
@@ -64,9 +78,9 @@ describe("Pagination", () => {
     const expected = calcExpected(currentPage, totalCount);
 
     renderPagination(currentPage, totalCount);
-    const navItems = screen.getAllByRole("navigation");
+    const nav = getPaginationNav();
     const readerText = await screen.queryByText("...");
-    expect(navItems.length).toBe(expected);
+    expect(countAllPaginationLinks(nav)).toBe(expected);
     expect(readerText).toBeTruthy()
   });
   test('should render the Pagination component with totalCount 18', async () => {
@@ -75,9 +89,9 @@ describe("Pagination", () => {
     const expected = calcExpected(currentPage, totalCount);
 
     renderPagination(currentPage, totalCount);
-    const navItems = screen.getAllByRole("navigation");
+    const nav = getPaginationNav();
     const readerText = await screen.queryByText("...");
-    expect(navItems.length).toBe(expected);
+    expect(countAllPaginationLinks(nav)).toBe(expected);
     expect(readerText).toBeTruthy()
   });
   test('should render the Pagination component with totalCount 18 and currentPage 3', async () => {
@@ -86,9 +100,9 @@ describe("Pagination", () => {
     const expected = calcExpected(currentPage, totalCount);
 
     renderPagination(currentPage, totalCount);
-    const navItems = screen.getAllByRole("navigation");
+    const nav = getPaginationNav();
     const readerText = await screen.queryByText("...");
-    expect(navItems.length).toBe(expected);
+    expect(countAllPaginationLinks(nav)).toBe(expected);
     expect(readerText).toBeFalsy();
   });
   test('should render the Pagination component with totalCount 18 and currentPage 4', async () => {
@@ -97,20 +111,20 @@ describe("Pagination", () => {
     const expected = calcExpected(currentPage, totalCount);
 
     renderPagination(currentPage, totalCount);
-    const navItems = screen.getAllByRole("navigation");
+    const nav = getPaginationNav();
     const readerText = await screen.queryByText("...");
-    expect(navItems.length).toBe(expected);
+    expect(countAllPaginationLinks(nav)).toBe(expected);
     expect(readerText).toBeTruthy()
   });
-  test('should render the Pagination component with totalCount 18', async () => {
+  test('should render the Pagination component with totalCount 18 (currentPage 1,再検証)', async () => {
     const totalCount = 18;
     const currentPage = 1;
     const expected = calcExpected(currentPage, totalCount);
 
     renderPagination(currentPage, totalCount);
-    const navItems = screen.getAllByRole("navigation");
+    const nav = getPaginationNav();
     const readerText = await screen.queryByText("...");
-    expect(navItems.length).toBe(expected);
+    expect(countAllPaginationLinks(nav)).toBe(expected);
     expect(readerText).toBeTruthy()
   });
   test('should render the Pagination component with totalCount 25 and currentPage 4', async () => {
@@ -119,9 +133,9 @@ describe("Pagination", () => {
     const expected = calcExpected(currentPage, totalCount);
 
     renderPagination(currentPage, totalCount);
-    const navItems = screen.getAllByRole("navigation");
+    const nav = getPaginationNav();
     const readerText = await screen.queryAllByText("...");
-    expect(navItems.length).toBe(expected);
+    expect(countAllPaginationLinks(nav)).toBe(expected);
     expect(readerText.length).toBe(2);
   });
   test('should render the Pagination component with totalCount 25 and currentPage 5', async () => {
@@ -130,9 +144,9 @@ describe("Pagination", () => {
     const expected = calcExpected(currentPage, totalCount);
 
     renderPagination(currentPage, totalCount);
-    const navItems = screen.getAllByRole("navigation");
+    const nav = getPaginationNav();
     const readerText = await screen.queryAllByText("...");
-    expect(navItems.length).toBe(expected);
+    expect(countAllPaginationLinks(nav)).toBe(expected);
     expect(readerText.length).toBe(1);
   });
   test('check the numbers in menu', async () => {
@@ -141,14 +155,15 @@ describe("Pagination", () => {
     const expected = calcExpected(currentPage, totalCount);
 
     renderPagination(currentPage, totalCount);
-    const navItems = screen.getAllByRole("navigation");
+    const nav = getPaginationNav();
     const readerText = await screen.queryAllByText("...");
-    expect(navItems.length).toBe(expected);
+    expect(countAllPaginationLinks(nav)).toBe(expected);
     expect(readerText.length).toBe(2);
 
     const menus = screen.getAllByRole('menu');
-    const menu1Buttons = within(menus[0]).getAllByRole('navigation');
-    const menu2Buttons = within(menus[1]).getAllByRole('navigation');
+    // NOTE: 省略メニュー内の各ページ番号は role="menuitem" (menuの子として正しいARIAロール)
+    const menu1Buttons = within(menus[0]).getAllByRole('menuitem');
+    const menu2Buttons = within(menus[1]).getAllByRole('menuitem');
 
     const menu1StartNumber = 2;
     const menu1EndNumber = currentPage - 2
