@@ -1,0 +1,84 @@
+# URL: https://ryotablog.jp/en/docs/llms.txt
+# Status: 200
+# Headers:
+alt-svc: h3=":443"; ma=86400
+cache-control: public, max-age=3600, stale-while-revalidate=86400
+cf-ray: a16ba3b08a2c260d-NRT
+connection: keep-alive
+content-encoding: br
+content-type: text/plain; charset=utf-8
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+permissions-policy: camera=(), microphone=(), geolocation=()
+referrer-policy: strict-origin-when-cross-origin
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=BYB4t9TdBpLuWhuK1kRy2aEluhMxLnAVg%2B5x3ouFJYacCbLEzmr3gsf%2B9Sr2upVPsFXV7hIL572%2BU8xy1%2FAjJFM7qhoB4NNOtuKhb7lhRcZ4DgIkQmYv5%2F5bC7fyUGJXQa8f0%2FhTsr3%2BVdY%3D"}]}
+server: cloudflare
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+transfer-encoding: chunked
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-opennext: 1
+# Body:
+# Ryota-Blog (ryotablog.jp)
+> This is a technical blog! I write about technologies such as React.js, Next.js, and AWS!
+
+# License
+This content is made available under the Creative Commons Attribution 4.0 International License (CC BY 4.0).
+You are free to share and adapt this material for any purpose, including commercial use, as long as you provide appropriate attribution.
+
+# Contact
+For inquiries regarding content usage, corrections, or collaborations:
+- Email: ryotadevelop@webclouddev.com
+- Website: https://ryotablog.jp
+
+## Categories
+
+- TypeScript
+- Next.js
+- LifeHack
+- Career
+- Programming
+- TailwindCSS
+- AWS
+- daily
+- Gadget
+- React
+- OpenAI API
+- CSS
+- Review
+- News
+- Terraform
+- UI
+- Release Notes
+- Python
+- test
+
+## Content
+
+- [The 10 Best Things We Bought in the First Half of 2026 | Furniture & Appliances for a Newlywed Home](https://ryotablog.jp/en/blogs/zakki/best-buy-2026-first-half): A ranked countdown of our best buys from the first half of 2026! After getting married, we furnished our new home from scratch — furniture, appliances, and storage. Here are the top 10 purchases that genuinely raised our quality of life.
+- [How I Passed the JSTQB Foundation Level in 1.5 Months by Generating 535 Mock Exam Questions with AI](https://ryotablog.jp/en/blogs/test/jstqb-foundation-study-method): A pass report for the JSTQB Foundation Level (CTFL) after 1.5 months of studying. Covers the textbook and free app I used, my generative-AI study method — building a question-authoring engine with Claude Code and drilling 535 questions — and how to check your pass/fail result online.
+- [Who Are Hitooshi's Members? Age, Income, Education, and Looks Based on a User's Real Experience](https://ryotablog.jp/en/blogs/zakki/hitooshi-members): What are Hitooshi's members really like? A user who actually got introduced to people lays out the age range, income, education ratio, and looks ("are there beauties / handsome men?") backed by official data and first-hand impressions. Material to judge in about 5 minutes whether someone who fits you is on the service.
+- [My Ultimate Household Finance System, Fully Explained (Married Couple, No Kids)](https://ryotablog.jp/en/blogs/zakki/saikyo-kakei-system): A dual-income married couple (no kids) shares the household money system they built over three months, in interview format. SBI Sumishin Net Bank's purpose-specific accounts and auto-transfers, automatic Rakuten Card statement collection, and logging cash with a single LINE message. An engineer's 'minimum running cost' approach to household finances.
+- [What Is Hitooshi Marriage-Hunting? How It Differs from Apps and Agencies, and Who It Suits](https://ryotablog.jp/en/blogs/zakki/hitooshi-konkatsu): What is Hitooshi's marriage-hunting service? A former user neutrally explains how it works, the cost, how it differs from matching apps and marriage agencies, the member age range, and who it suits. With links to detailed review and interview articles.
+- [A Complete Guide to Bringing Your Own SSL Certificate to AWS Amplify Hosting (CSR, ACM Import, Terraform, and Verification)](https://ryotablog.jp/en/blogs/aws/amplify-custom-ssl-acm-import): A step-by-step guide to applying a custom SSL/TLS certificate (issued by a CA of your choice) to an AWS Amplify Hosting custom domain. Covers CSR creation, chain construction, integrity verification, Terraform configuration, post-deployment verification, and expiry monitoring — written so junior engineers can follow along.
+- [Fix CloudFront + Next.js Image Optimization Error: Complete Solution Guide for App Runner](https://ryotablog.jp/en/blogs/terraform/apprunner-and-cloudfront-image-bugfix): Complete solution guide for CloudFront + Next.js image optimization error. Solve "url parameter is not allowed" error with AllViewerExceptHostHeader policy, detailed debugging steps, and implementation examples for AWS App Runner integration.
+- [May 2025 Release Notes - Ryota-Blog: Major Updates & New Features](https://ryotablog.jp/en/blogs/release_notes/release-notes-202505): May 2025 Ryota-Blog release notes covering internationalization (i18n) implementation, code block enhancements, LLMs integration, SEO optimization, and major infrastructure updates for improved performance and user experience.
+- [[For Beginners] Implementing Materialized Views with Alembic (Python)](https://ryotablog.jp/en/blogs/python/aiembic-materialized-view): A beginner-friendly guide to creating materialized views with Alembic using Python and PostgreSQL. Includes SQL implementation examples and troubleshooting tips.
+- [What Does Hitooshi's First Interview Ask? A User Explains the Questions, Flow, and Preparation](https://ryotablog.jp/en/blogs/zakki/hitooshi-interview): A real user explains Hitooshi's first interview: the roughly 45-minute Zoom session, what you are asked (the questions), the flow up to the day, how to prepare, and dress-code tips. Includes a referral code for 5,000 yen off the enrollment fee.
+- [Is Hitooshi Expensive? Total Cost of the Enrollment & Monthly Fees, and How to Save 5,000 Yen](https://ryotablog.jp/en/blogs/zakki/hitooshi-price): A real, numbers-based breakdown of the marriage-hunting service "Hitooshi." Covers the 17,800 yen enrollment fee + 17,800 yen monthly fee with zero success fee, a 3/6/12-month total-cost simulation, a comparison against matching apps and traditional marriage agencies, and how to save 5,000 yen with a referral code.
+- [[Curious About Reviews?] My Experience with Hitooshi Matchmaking Service (Referral Code Included)](https://ryotablog.jp/en/blogs/zakki/hitooshi-review): A review of the matchmaking service "Hitooshi". A Tokyo engineer shares his real matchmaking experience! Detailed explanation of the flow from 2-hour counseling to online meetings, reviews, reputation, advantages and disadvantages. Includes a referral code at the end.
+- [What to Check When You Get CORS Errors When Calling Route Handler Endpoints from a Different Domain Client-Side](https://ryotablog.jp/en/blogs/next_js/route-handler-cors): Explains the causes and solutions for CORS errors. Introduces specific methods to solve the problem of external domain requests being blocked by CORS policy in Next.js Route Handler API endpoints, through response header configuration and OPTIONS method permission.
+- [July 2024 Release Notes - Ryota Blog](https://ryotablog.jp/en/blogs/release_notes/release-notes-202407): Introducing this month's media updates! Including sidebar bottom blur adjustments, Instagram error fixes, underline component additions, and custom font integration for OG images.
+- [My Experience Using PayCareer: What I Actually Felt](https://ryotablog.jp/en/blogs/review/paycareer-review): I used PayCareer during my recent job search! I had several interviews and received a job offer from one of the companies. Here's what I experienced during that process.
+- [My Thoughts on Visiting the Giant Dinosaur Exhibition 2024](https://ryotablog.jp/en/blogs/news/giant-dinos-2024-review): I visited the Giant Dinosaur Exhibition at Pacifico Yokohama! Here I'll share the parts that got me excited and left an impression on me - just my personal thoughts lol
+- [My SEO Optimization TODO List for Next.js App Router](https://ryotablog.jp/en/blogs/next_js/my-seo-todo-list): This time I'll introduce the SEO optimizations I always implement when using App Router!
+- [June 2024 Release Notes (Ryota-Blog)](https://ryotablog.jp/en/blogs/release_notes/release-notes-202406): This month I'll introduce the updates to this media platform! Image popup functionality, navigation to previous/next articles, using requestIdleCallback for RUM loading, implementing buttons for issue reporting, adding "New" labels, adding labels to articles older than one year, and more.
+- [Implementing Pagination with Ellipsis Menu](https://ryotablog.jp/en/blogs/react/react-ellipsismenu-pagination): This time I'll introduce how to implement pagination with an ellipsis menu!
+- [Setting Up App Runner Custom Domain with Terraform and Route53](https://ryotablog.jp/en/blogs/aws/customdomain-apprunner-with-terraform-route53): This article explains how to configure App Runner DNS targets as A records in Route53 using Terraform!
+- [[Review] I Read "Learn by Building HTML & CSS Modern Coding"](https://ryotablog.jp/en/blogs/css/modern-coding-review): This time I'll write a review of the book "Learn by Building HTML & CSS Modern Coding". This review is intended for people who are studying HTML/CSS, those who have completed basic learning, and people creating portfolios!
+- [[Failure Experience] I Failed the AWS SAA-C03 Exam...](https://ryotablog.jp/en/blogs/aws/saa-c03-failed): This time I'll write about my failure experience with the AWS SAA-C03 exam. This is for people who want to know: 1. How to study for AWS SAA, 2. How much study is needed to pass?, 3. Experience from someone who took the exam to avoid troubles on test day!
+- [[Review Part 2] TypeScript and React/Next.js Practical Web Application Development - Explaining toPropValue](https://ryotablog.jp/en/blogs/review/nextjs-typescript-book-review2): This time I finished reading the Next.js book "TypeScript and React/Next.js Practical Web Application Development" and will write a review. Part 1 reviewed the overview sections, so this time I'll review the hands-on sections.
+- [[Review Part 1] TypeScript and React/Next.js Practical Web Application Development](https://ryotablog.jp/en/blogs/review/nextjs-typescript-book-review1): This time I finished reading the Next.js book "TypeScript and React/Next.js Practical Web Application Development" and will write a review.
+- [Container and Presenter Structure in Next.js](https://ryotablog.jp/en/blogs/next_js/nextjs-container-presenter): This time I'll write about Container and Presenter structure. For people who want to know component design other than Atomic Design and want to understand Container and Presenter structure!
+- [What is Object-Oriented UI?](https://ryotablog.jp/en/blogs/review/what-object-ui): This time I'll introduce Object-Oriented UI. What is Object-Oriented UI? For people who want to learn about UI design patterns, I hope this can be helpful (^^)
+- [[Readable Code] What Does "Extracting Unrelated Subproblems" Mean?](https://ryotablog.jp/en/blogs/programming/readablecode-underproblem-solution): I'll explain "extracting unrelated subproblems" in an intuitive way. For people who don't understand what subproblems mean and want to grasp the concept of extracting unrelated subproblems through imagery. I hope this helps with understanding the book Readable Code.

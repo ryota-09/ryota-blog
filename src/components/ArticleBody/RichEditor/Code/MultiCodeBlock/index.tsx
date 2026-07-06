@@ -46,7 +46,10 @@ const MultiCodeBlock = ({
   }), [filename]);
 
   return (
-    <div className={`my-4 w-full max-w-[83vw] sm:max-w-[600px] md:max-w-[730px] lg:max-w-[1028px] ${className || ''}`}>
+    // NOTE: 祖先にflexコンテナ(記事ページの<main>)があり、flexアイテムはデフォルトでmin-width:autoのため、
+    // 内側のoverflow-x-autoでキャップしたつもりでもコード内容の実幅がflexアイテム自体を押し広げ、
+    // ページ全体に横スクロールが生じることがある(#242パリティ検証で発見)。min-w-0でその押し広げを止める。
+    <div className={`my-4 w-full min-w-0 max-w-[83vw] sm:max-w-[600px] md:max-w-[730px] lg:max-w-[1028px] ${className || ''}`}>
       {filename && (
         <div 
           className={`inline-block text-sm bg-[${CODE_BLOCK_STYLES.background}] text-[#9ca4b5] py-2 px-3 rounded-t-md tracking-wider`}

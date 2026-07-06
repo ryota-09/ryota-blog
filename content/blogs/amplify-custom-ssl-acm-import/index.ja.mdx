@@ -1,0 +1,829 @@
+---
+title: AWS Amplify Hostingに自前のSSL証明書を持ち込む完全ガイド（CSR作成からACMインポート・Terraform適用・動作確認まで）
+description: AWS Amplify Hostingのカスタムドメインに、CA(認証局)から発行された独自のSSL証明書をACM経由で適用する手順を、CSR作成・チェーン構築・整合性検証・Terraform設定・動作確認・有効期限監視まで、丁寧に解説します。
+publishedAt: "2026-05-06T08:29:15.417Z"
+updatedAt: "2026-05-06T08:29:15.417Z"
+categories:
+  - aws
+  - terraform
+thumbnail: ./images/acm-amplify-hostiong.png
+headingIds:
+  - h31b8f9509d
+  - h61283ae198
+  - h4f3cd7f603
+  - h8c57f64ba4
+  - h5fd7cdd847
+  - hbf9a283754
+  - hcb28a5e848
+  - h2f481ffc96
+  - hc953739b3f
+  - h4250a84ea3
+  - he80abe8e41
+  - h51474ac813
+  - h4bf73a321b
+  - h7502151c4a
+  - h411ad5c152
+  - h4fb8ae63c4
+  - h75ba7911db
+  - h449371c648
+  - h068d55f25c
+  - h3ee7fd4582
+  - h568df01615
+  - hefb2210507
+  - h7d3b6717da
+  - h4db4dc8ac4
+  - h670bb1af2b
+  - h9bb24e1391
+  - hacfd0e55fb
+  - he89abb5e37
+  - h44cc61f181
+  - h9bb24e1391
+  - hcc0e1c5c4b
+  - h3b4385b6b2
+  - hdb39f7bf33
+  - h5bd593fef4
+  - hcf44081bb8
+  - h935b75d9eb
+  - ha0f921fe99
+  - h4422aa388b
+  - ha64b2df1fd
+  - h42c9745e40
+  - h2425b7daf3
+  - h32e838e1bc
+  - h49d09a9516
+  - h669bb9fa9f
+  - h7b2f9988cc
+  - h4651d4dbfb
+  - h642680fdce
+  - hc085657994
+  - h3254a37c56
+  - hc50c36dffb
+  - h7ce359df3f
+  - h04f6218a2c
+  - hbb085af221
+  - h3bcda3e6b0
+  - h44e51f96ce
+---
+
+こんにちは！[@Ryo54388667](https://x.com/Ryo54388667)です!☺️
+
+普段は都内でエンジニアとして業務をしてます！最近はプロジェクトをインフラからバックエンド、フロントエンドまで一通り任せてもらっています。
+
+今回は **AWS Amplify Hostingのカスタムドメインに、自前で取得したSSL/TLS証明書を持ち込んで適用する方法** を丁寧に紹介していきます！
+
+業務の中で、AWS Amplify Hostingで動いているWebアプリに対して「指定された認証局から発行されたサーバ証明書を使う必要がある」という要件にぶち当たりました。Amplifyは標準だとACM(AWS Certificate Manager)が証明書を自動発行・自動更新してくれるので、つい忘れがちなんですが、エンタープライズ案件や官公庁案件では **「証明書はうちが指定したものを使ってください」** というケースがちょこちょこあります。
+
+この記事は、
+
+- Amplify Hostingに **インポート証明書(自前で発行されたSSL/TLS証明書)** を適用したい方
+- CSR作成からACMインポート、Terraformでの設定変更、動作確認まで一気通貫で知りたい方
+- `certificate_settings` ブロックを使ったAmplifyのドメイン関連付けで詰まっている方
+- 「そもそも証明書ってサーバ用と中間用と何が違うんや…」と曖昧なまま実装している方
+
+に特に参考になると思います。
+
+少し長めの記事になってしまったので、目次代わりにまず全体像を眺めてから、必要なセクションから読んでいただいてもOKです 🙏。
+
+## 前提：SSL/TLS証明書の超ざっくりおさらい 📋
+
+「証明書」と一口に言っても、実は **3種類の証明書がチェーンになって信頼を作っている** んですよね。ここを曖昧にしたままACMインポートに進むと、エラーが出たときに何がどう壊れているか掴めなくなるので、最初に整理しておきます。
+
+### 信頼チェーンの構造
+
+ブラウザがHTTPSサイトを開くとき、サーバーから渡されるのは **「サーバー証明書 + 中間CA証明書」** のセットです。ブラウザはこれを **OS/ブラウザに最初から入っているルートCA** までさかのぼって検証することで「このドメインは本物だな」と判定します。
+
+```plaintext
+[ルートCA証明書]   ← ブラウザ/OSに最初から入ってる（自己署名）
+        ↑ 署名している
+[中間CA証明書]     ← ルートCAから発行された中継ぎ
+        ↑ 署名している
+[サーバー証明書]   ← 我々のドメインに紐づく実体（CSRで申請したやつ）
+```
+
+この **「下から上にたどって、知ってるルートに着けば本物」** という仕組みが、いわゆる **信頼チェーン(Chain of Trust)** です。
+
+### ACMインポート時に渡す3点セット
+
+ACMにインポートするときは、この信頼チェーンを以下の3つに分解して渡します。
+
+| ファイル        | 中身                           | ACMの引数                |
+| ----------- | ---------------------------- | --------------------- |
+| **サーバ証明書**  | 自分のドメイン用に発行された証明書 (1枚)       | `--certificate`       |
+| **チェーン証明書** | 中間CA + ルートCA を順番に連結したもの      | `--certificate-chain` |
+| **秘密鍵**     | CSR作成時に自前で生成したもの (絶対に外に出さない) | `--private-key`       |
+
+ここで超重要な約束事:
+
+- ✅ **サーバー証明書はチェーンに含めない** (含めると `--certificate` と二重になる)
+- ✅ **チェーンの順序は&#x20;**`中間CA → ルートCA` (子から親への順)
+- ✅ **秘密鍵は暗号化されていないPEM形式**
+
+このルールを破るとACMが容赦なく弾くので、頭の片隅に置いておいてください ☺️。
+
+### インポート証明書 vs ACM自動発行（どっちを選ぶべき？）
+
+| 項目      | ACM自動発行               | インポート証明書     |
+| ------- | --------------------- | ------------ |
+| 発行元     | Amazon Trust Services | 任意のCA(指定可能)  |
+| 自動更新    | ✅ あり                  | ❌ **なし(手動)** |
+| 有効期限の監視 | 不要                    | 自前で必要        |
+| ドメイン検証  | DNS or Email          | 不要(発行済み)     |
+| CA指定要件  | 対応不可                  | 対応可能         |
+
+要件に「CA指定」「特定の証明書プロファイル」が無いなら、 **基本はACM自動発行が圧倒的にラク** です。インポートを選ぶのは「指定された証明書じゃないと運用ルール上ダメ」という場合に限るのがおすすめです 🙏。
+
+## 事前準備（必要なツールと権限）
+
+手を動かす前に、ローカル環境と権限を揃えておきます。
+
+### ローカルに入れておくもの
+
+```bash title="terminal"
+openssl version
+# 例: OpenSSL 3.x.x （1.1.1以降を推奨）
+
+aws --version
+# 例: aws-cli/2.x.x
+
+terraform version
+# 例: Terraform v1.6.x
+```
+
+### 必要なAWS権限（IAMポリシー的なもの）
+
+最低限、以下のアクションが叩けるユーザー or ロールでログインしておきます。
+
+- `acm:ImportCertificate`
+- `acm:DescribeCertificate`
+- `acm:ListCertificates`
+- `amplify:UpdateDomainAssociation` / `amplify:GetDomainAssociation`
+- `cloudwatch:PutMetricAlarm` (期限監視を作るなら)
+
+### Terraformのプロバイダ要件
+
+`certificate_settings` ブロックを使うために **AWS Provider v5.57.0 以降** が必要です。`required_providers` を確認しておきましょう。
+
+```hcl title="versions.tf"
+terraform {
+  required_version = ">= 1.6.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.57"
+    }
+  }
+}
+```
+
+## 全体の流れ
+
+今回は8ステップ＋運用パートに分けて進めます。
+
+```plaintext
+Step 0: CSRと秘密鍵を生成し、CAに証明書を発行してもらう
+Step 1: 証明書ファイルのPEM形式確認・変換
+Step 2: 証明書チェーンファイルの作成
+Step 3: 証明書と秘密鍵の整合性検証
+Step 4: ACM (us-east-1) へインポート
+Step 5: Terraform設定の更新
+Step 6: terraform plan & apply
+Step 7: DNS設定（CNAMEレコードの追加）
++ 動作確認・有効期限の監視
+```
+
+それでは順番に見ていきましょう！
+
+## Step 0: CSRと秘密鍵の生成
+
+CA(認証局)に証明書を発行してもらうには、まず **CSR(Certificate Signing Request)** と **秘密鍵** を自前で作る必要があります。
+
+CSRは「私はこのドメイン用にこういう内容で証明書を発行してほしいです」という申請書みたいなもので、 **公開鍵と申請者情報(国・組織・FQDN等)** が含まれています。秘密鍵はその対になる相棒で、こちらが厳重に保管する側になります。
+
+### CSR作成コマンド
+
+```bash title="terminal"
+openssl req -new -newkey rsa:2048 -nodes -sha256 \
+  -keyout private.key \
+  -out request.csr \
+  -subj "/C=JP/ST=Tokyo/L=Minato-ku/O=Your Organization Name/CN=your-app.example.com"
+```
+
+オプションの意味を順に整理しておきます。
+
+- `req -new`: 新しいCSRを作るモード
+- `-newkey rsa:2048`: 鍵ペアもこの場で同時に生成 (RSA 2048ビット。CAによっては4096ビット指定もあり)
+- `-sha256`: 署名アルゴリズムはSHA-256
+- `-nodes`: 秘密鍵にパスワードをかけない (※ACMは **暗号化された秘密鍵を受け付けない** ので、Amplify用途ではこの指定がほぼ必須)
+- `-keyout`: 秘密鍵の出力先
+- `-out`: CSRの出力先
+- `-subj`: サブジェクト情報を一行で渡す
+
+### サブジェクト(subj)の各項目
+
+| 項目   | 意味              | 例                        |
+| ---- | --------------- | ------------------------ |
+| `C`  | 国コード(2文字)       | `JP`                     |
+| `ST` | 都道府県(英語)        | `Tokyo`                  |
+| `L`  | 市区町村(英語)        | `Minato-ku`              |
+| `O`  | 組織名(英語)         | `Your Organization Name` |
+| `CN` | 完全修飾ドメイン名(FQDN) | `your-app.example.com`   |
+| `OU` | 部署名(任意)         | (CAによっては禁止)              |
+
+CAの規約によっては `OU`**&#x20;を使うとリジェクトされる** ことや、組織名の文字数制限(64文字以内など)があるので、申請書類を必ず読んでから流しましょう。
+
+### 生成されたファイルの中身を確認
+
+```bash title="terminal"
+# CSRの中身を可読形式で確認
+openssl req -in request.csr -text -noout
+
+# 秘密鍵の先頭1行を確認
+head -1 private.key
+# → -----BEGIN PRIVATE KEY-----
+```
+
+`-text -noout` は **「中身を人間が読める形式で表示し、エンコード済みデータ(BASE64)は出力しない」** というオプションです。「Subject:」の行に、入力したサブジェクトが正しく入っているかをここでチェックしておきます。
+
+> ⚠️ 秘密鍵 (`private.key`) は **絶対にGit管理しない** こと。`.gitignore` に `*.key` `*.pem` `infra/certs/` などを入れておきましょう。万一漏れたら、その時点で証明書は失効申請＋再発行になります 😱。
+
+CSRをCAに提出すると、後日 **サーバー証明書 (**`server.cer`**)、中間CA証明書 (**`intermediate.cer`**)、ルート証明書 (**`root.cer`**)** の3つが払い出されます。次のステップからはこの3つを使っていきます。
+
+## Step 1: 証明書ファイルのPEM形式確認
+
+ACMは **PEM形式のみ** を受け付けます。`.cer` という拡張子のファイルでも、中身は **PEM(テキスト)** か **DER(バイナリ)** の2種類があるので、まず確認が必要です。
+
+### PEMかDERかをチェック
+
+```bash title="terminal"
+head -1 server.cer
+```
+
+- `-----BEGIN CERTIFICATE-----` と表示される → **PEM形式 (そのまま使えます)**
+- 文字化けやバイナリ表示 → **DER形式 (変換が必要)**
+
+PEMは `-----BEGIN ...-----` `-----END ...-----` で囲まれたBASE64のテキスト、DERはそのバイナリ版、というシンプルな違いです。
+
+### DER → PEM への変換
+
+DER形式だった場合は、OpenSSLでPEMに変換します。
+
+```bash title="terminal"
+# サーバー証明書
+openssl x509 -inform DER -in server.cer -out server.pem -outform PEM
+
+# 中間CA証明書
+openssl x509 -inform DER -in intermediate.cer -out intermediate.pem -outform PEM
+
+# ルート証明書
+openssl x509 -inform DER -in root.cer -out root.pem -outform PEM
+```
+
+変換後、念のためもう一度 `head -1 server.pem` で `-----BEGIN CERTIFICATE-----` を確認しておくと安心です。
+
+### 秘密鍵の暗号化チェック
+
+秘密鍵も同様にチェックします。
+
+```bash title="terminal"
+head -1 private.key
+# -----BEGIN PRIVATE KEY-----            ← OK (PKCS#8、未暗号化)
+# -----BEGIN RSA PRIVATE KEY-----        ← OK (PKCS#1、未暗号化)
+# -----BEGIN ENCRYPTED PRIVATE KEY-----  ← NG (暗号化されている)
+```
+
+`ENCRYPTED` という単語が見えたら暗号化されている状態です。ACMにそのまま渡すと弾かれるので、復号しておきましょう。
+
+```bash title="terminal"
+# 入力ファイルと同じ場所に上書きするのは事故の元なので、別名で出力
+openssl rsa -in private.key -out private.unencrypted.key
+# パスフレーズを聞かれるので入力
+```
+
+> 💡 「`ENCRYPTED PRIVATE KEY` でもACM側で復号してくれないの？」と思いがちですが、AWSの仕様で **暗号化された鍵は明示的に拒否** されます。これはセキュリティ上の理由なので諦めて事前に復号しましょう。
+
+## Step 2: 証明書チェーンファイルの作成
+
+ACMにインポートするときは、
+
+- **サーバー証明書** (チェーンに含めない、別パラメータで渡す)
+- **チェーン証明書** (中間CA → ルートCA の順に結合)
+- **秘密鍵**
+
+の3点セットが必要です。
+
+### なぜサーバー証明書をチェーンに含めない？
+
+ACMの仕様上、サーバー証明書は `--certificate` で、その上位の中間CA・ルートは `--certificate-chain` で **別パラメータとして渡す** 設計になっています。チェーンにサーバー証明書を含めてしまうと「このサーバー証明書を、その上位のサーバー証明書(？)で検証しよう」という意味不明な処理になり、エラーになります。
+
+### チェーンの順序ルール
+
+ハマりやすいのが「チェーンの順序」です。**直前の証明書を認証する側を後ろに置く** のが原則なので、`中間CA → ルート` の順で連結します。
+
+```bash title="terminal"
+mkdir -p infra/certs/stg
+
+# チェーンファイル作成（中間CA → ルート の順）
+cat intermediate.pem root.pem > infra/certs/stg/chain.pem
+
+# 証明書と秘密鍵もコピー（命名を整える）
+cp server.pem  infra/certs/stg/certificate.pem
+cp private.key infra/certs/stg/private-key.pem
+```
+
+### ⚠️ 改行コードに要注意（ハマりポイント）
+
+ここで地味にやらかしやすいのが **改行問題** です。次の2パターンでチェーンが壊れます。
+
+1. **末尾改行(LF)が無いPEM**: `cat` で連結したときに `-----END CERTIFICATE----------BEGIN CERTIFICATE-----` のように **2つの証明書が同じ行にくっついて** しまい、PEMとしてパースできなくなります。CAから払い出されたファイルは末尾の改行が抜けていることが地味によくあります
+2. **CRLF混入**: Windows経由で受け取ったファイルだと改行が `\r\n` になっていて、 OpenSSL や ACM が予期せぬ挙動をすることがあります
+
+どちらも症状はだいたい同じで、ACMインポート時に `Could not parse certificate` というエラーで弾かれます。
+
+`cat` する **前** に、各PEMファイルを以下のコマンドで整形しておきましょう。
+
+```bash title="terminal"
+# 1. 末尾が改行(LF=0a)で終わっているかチェック
+tail -c 1 intermediate.pem | xxd
+tail -c 1 root.pem         | xxd
+# → "00000000: 0a"   ならLFあり ✅
+# → なにも出ない/別バイト → 改行なし ❌
+
+# 2. CRLF → LF へ統一（dos2unix が入っていれば dos2unix で代用可）
+sed -i.bak 's/\r$//' intermediate.pem root.pem
+
+# 3. 末尾に改行を必ず1つ確保する（既にあっても多重にはならない安全な書き方）
+for f in intermediate.pem root.pem; do
+  [ -n "$(tail -c 1 \"$f\")" ] && printf '\n' >> "$f"
+done
+```
+
+整形が済んだら、改めて `cat intermediate.pem root.pem > infra/certs/stg/chain.pem` を流し直してください。念のため、結合後のチェーンファイルも目で確認しておくと安心です。
+
+```bash title="terminal"
+# 各証明書の境界が独立した行になっているか目視チェック
+grep -n "BEGIN CERTIFICATE\|END CERTIFICATE" infra/certs/stg/chain.pem
+# 期待される出力（各タグが別々の行に出ていればOK）:
+# 1:-----BEGIN CERTIFICATE-----
+# 23:-----END CERTIFICATE-----
+# 24:-----BEGIN CERTIFICATE-----
+# 47:-----END CERTIFICATE-----
+```
+
+`-----END CERTIFICATE----------BEGIN CERTIFICATE-----` のように同じ行に並んでいたらアウトなので、ファイルを整形し直して `cat` をやり直しましょう 🙏。
+
+### チェーンの中身を確認
+
+```bash title="terminal"
+# チェーンに含まれる証明書の数を確認（中間CA + ルート の 2つであること）
+grep -c "BEGIN CERTIFICATE" infra/certs/stg/chain.pem
+# → 2
+```
+
+`2` と返ってくればOKです。`1` だったらルートが抜けていたり、`3` だったらサーバー証明書が混ざっていたりするので見直しましょう。
+
+> 💡 CAによっては **クロスルート用の中間証明書が複数枚** 払い出されることがあります。その場合は `2` 以上になることもあるので、CAから提供されたインストールマニュアルに従ってください。
+
+## Step 3: 証明書と秘密鍵の整合性検証 🔍
+
+ここが地味に大事なステップです。発行された証明書と、自分が生成した秘密鍵が **本当にペアになっているか** を確認します。
+
+### なぜチェックが必要？
+
+「CSRを送るときに使った秘密鍵」と「ACMにインポートするときに渡す秘密鍵」が **別物だと、インポートは成功してもブラウザでHTTPS接続が確立できません**。CSRから派生した公開鍵と秘密鍵がペアじゃないと、TLSハンドシェイクで「お前の出してきた証明書と署名鍵、合ってないやん」となるためです。
+
+### modulus(モジュラス)で確認する
+
+RSA鍵ペアは、 `modulus`**&#x20;(係数 n)** という数値が公開鍵と秘密鍵で完全に一致します。これをMD5ハッシュで比較すれば、ペアかどうか判定できます。
+
+```bash title="terminal"
+# サーバー証明書の内容確認（ドメイン名・有効期限）
+openssl x509 -in infra/certs/stg/certificate.pem -text -noout | grep -E "Subject:|Not After"
+
+# 秘密鍵との整合性確認（MD5ハッシュが一致すること）
+openssl x509 -in infra/certs/stg/certificate.pem -modulus -noout | openssl md5
+openssl rsa  -in infra/certs/stg/private-key.pem -modulus -noout | openssl md5
+
+# 証明書チェーンの検証
+openssl verify -CAfile infra/certs/stg/chain.pem infra/certs/stg/certificate.pem
+```
+
+### 期待される出力
+
+```plaintext
+# 証明書とプライベート鍵のMD5（一致していること！）
+MD5(stdin)= 0123456789abcdef0123456789abcdef
+MD5(stdin)= 0123456789abcdef0123456789abcdef
+
+# verify
+infra/certs/stg/certificate.pem: OK
+```
+
+2つの `openssl md5` の結果が **完全に同じハッシュ値** になればペア成立です。一致しないと、Step 4のACMインポートで `Certificate and private key do not match` というエラーで弾かれます。
+
+僕も最初、CSR生成時の秘密鍵と別ディレクトリで作業していて、別の鍵をインポートしてしまい「えっ？？同じやろ？」と30分くらい溶かしました 😅。秘密鍵のファイル管理は **CSR生成のディレクトリから動かさない** くらい慎重にやった方がいいです。
+
+> 💡 ECC(楕円曲線暗号)の証明書を使う場合は `modulus` ではなく `pub` を比較する必要があります。`openssl ec -in key.pem -pubout` などで公開鍵を抽出してハッシュ比較してください。今回はRSA前提で進めます。
+
+## Step 4: ACM (us-east-1) へインポート
+
+ここがこの記事のキモです。
+
+### なぜ `us-east-1` なのか？
+
+Amplify Hostingは内部的にCloudFrontを使っていて、 **CloudFrontから参照できるACM証明書は&#x20;**`us-east-1`**&#x20;(バージニア北部) リージョンに置かれているもののみ** という仕様があります。
+
+東京リージョンに入れても、Amplifyからは **「そんな証明書知らないよ」** という扱いになるので、ここは固定で `us-east-1` です。これ、知らないとけっこう罠です。
+
+### インポートコマンド
+
+```bash title="terminal"
+export AWS_PROFILE=your-profile
+
+aws acm import-certificate \
+  --region us-east-1 \
+  --certificate fileb://infra/certs/stg/certificate.pem \
+  --private-key fileb://infra/certs/stg/private-key.pem \
+  --certificate-chain fileb://infra/certs/stg/chain.pem \
+  --tags \
+    Key=Environment,Value=stg \
+    Key=Project,Value=your-project \
+    Key=Domain,Value=your-app.example.com
+```
+
+ポイント:
+
+- ✅ `fileb://`**&#x20;を使う**: `file://` だとAWS CLIがUTF-8でパースしようとして壊れることがあります。`fileb://` はバイナリとしてそのまま読み込んでくれる安全側
+- ✅ `--region us-east-1`**&#x20;必須**: デフォルトプロファイルが東京でも明示すること
+- ✅ **タグを付ける**: 後から「どの環境のどのドメイン用？」が分からなくなりがちなので、Environment・Project・Domainの3点は最低でも付けておくのがおすすめ
+
+### 期待される出力
+
+```json
+{
+    "CertificateArn": "arn:aws:acm:us-east-1:xxxxxxxxxxxx:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+}
+```
+
+この `CertificateArn`**&#x20;は必ず控えてください**。Step 5でTerraformの変数に渡します。
+
+### インポート後の確認
+
+```bash title="terminal"
+aws acm describe-certificate \
+  --region us-east-1 \
+  --certificate-arn "arn:aws:acm:us-east-1:xxxxxxxxxxxx:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+  --query 'Certificate.{Domain:DomainName,Status:Status,Type:Type,NotAfter:NotAfter,InUseBy:InUseBy}'
+```
+
+期待される出力:
+
+```json
+{
+    "Domain": "your-app.example.com",
+    "Status": "ISSUED",
+    "Type": "IMPORTED",
+    "NotAfter": "2027-05-06T23:59:59+00:00",
+    "InUseBy": []
+}
+```
+
+`Status` が `ISSUED`、`Type` が `IMPORTED` になっていれば成功です。`InUseBy` はまだ空配列で大丈夫(Step 6でAmplifyと紐付くと埋まります)。
+
+## Step 5: Terraform設定の更新 💡
+
+ACMにインポートできたら、あとはTerraform側でAmplifyにこの証明書を紐付けるだけです。
+
+ポイントは2つ。
+
+1. ACM参照用に `us-east-1`**&#x20;のプロバイダ別名(alias)** を用意する
+2. `aws_amplify_domain_association` の `certificate_settings` ブロックで `type = "CUSTOM"` を指定する
+
+### 5-1. us-east-1 プロバイダの追加
+
+Terraformでは、デフォルトプロバイダは1リージョンに固定されます。証明書だけ別リージョン(us-east-1)を見たいので、 `alias`**&#x20;付きのプロバイダ** を追加します。
+
+```hcl title="provider.tf"
+# メインのプロバイダー（東京リージョンなど）
+provider "aws" {
+  region = "ap-northeast-1"
+}
+
+# ACM参照用プロバイダー（us-east-1）
+provider "aws" {
+  alias  = "us_east_1"
+  region = "us-east-1"
+
+  default_tags {
+    tags = {
+      Environment = "stg"
+      Project     = "your-project"
+      ManagedBy   = "terraform"
+    }
+  }
+}
+```
+
+### 5-2. ACMモジュール（証明書参照）
+
+ACMには既にCLIでインポート済みなので、Terraform側は **データソース or ARN参照** で十分です。今回はARNを変数で受け取るシンプル構成にします。
+
+```hcl title="acm.tf"
+module "acm" {
+  source = "../../modules/acm"
+  providers = {
+    aws = aws.us_east_1   # ← us-east-1 のプロバイダを渡す
+  }
+
+  domain_name     = "your-app.example.com"
+  certificate_arn = var.certificate_arn
+}
+```
+
+`providers = { aws = aws.us_east_1 }` を渡すのを忘れると、デフォルトプロバイダ(東京)で証明書を探そうとして「そんなARNねえよ」エラーになります。地味に詰まりやすいので注意 ⚠️。
+
+### 5-3. Amplifyのドメイン関連付け
+
+ここが一番重要なブロックです。
+
+```hcl title="amplify.tf"
+resource "aws_amplify_domain_association" "custom" {
+  app_id      = module.amplify.app_id
+  domain_name = "your-app.example.com"
+
+  # カスタム証明書を使用（us-east-1のACMにインポート済みの証明書）
+  certificate_settings {
+    type                   = "CUSTOM"
+    custom_certificate_arn = module.acm.certificate_arn
+  }
+
+  sub_domain {
+    branch_name = module.amplify.branch_name
+    prefix      = "" # apex 側 / 指定ホスト名そのまま
+  }
+
+  # サブドメインも複数紐付ける場合は sub_domain ブロックを追加
+  # sub_domain {
+  #   branch_name = module.amplify.branch_name
+  #   prefix      = "www"  # → www.your-app.example.com
+  # }
+}
+```
+
+`certificate_settings` ブロックの挙動:
+
+| `type`                    | 動作                                         |
+| ------------------------- | ------------------------------------------ |
+| `AMPLIFY_MANAGED` (デフォルト) | Amplifyが内部でACM証明書を自動発行・自動更新                |
+| `CUSTOM`                  | 指定した `custom_certificate_arn` のインポート証明書を使用 |
+
+`type = "CUSTOM"` を指定するときは `custom_certificate_arn` の指定が必須です。
+
+> ⚠️ `certificate_settings` ブロックは `terraform-provider-aws v5.57.0`**&#x20;以降** で導入されました。古いバージョンだと `An argument named "certificate_settings" is not expected here.` というエラーで落ちます。詰まったらまずプロバイダ版数を疑ってください。
+
+### 5-4. terraform.tfvars
+
+Step 4で控えたARNをここに入れます。
+
+```hcl title="terraform.tfvars"
+certificate_arn = "arn:aws:acm:us-east-1:xxxxxxxxxxxx:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+```
+
+> 💡 `terraform.tfvars` は環境ごとに変わる値を入れる場所です。STGとprodで別ファイルにする(`stg.tfvars` / `prod.tfvars`)か、 環境ごとのディレクトリ(`infra/environments/stg/`)で分けるのが一般的です。
+
+## Step 6: terraform plan & apply
+
+あとは流すだけです。
+
+```bash title="terminal"
+cd infra/environments/stg
+terraform plan
+terraform apply
+```
+
+planで以下のような変更が出るはずです。
+
+- `module.acm` — ACM証明書のデータソース参照
+- `aws_amplify_domain_association.custom` — Amplifyへのカスタムドメイン紐付け(create)
+
+apply完了後、Amplify側のドメイン紐付けは `PENDING_VERIFICATION` ステータスでスタートします。次のStep 7でDNSレコードを設定すると、これが `AVAILABLE` に変わります。
+
+## Step 7: DNS設定（CNAMEレコード）
+
+`terraform apply` が完了すると、Amplifyから **DNS検証用のCNAME値** が返ってきます。マネジメントコンソールでも確認できますが、CLIでも取れます。
+
+```bash title="terminal"
+aws amplify get-domain-association \
+  --app-id <APP_ID> \
+  --domain-name your-app.example.com \
+  --query 'domainAssociation.subDomains[].dnsRecord'
+```
+
+返ってきたCNAMEレコードをDNSプロバイダ(Route 53、お名前.com、社内DNSなど)で設定します。
+
+```plaintext
+your-app.example.com  CNAME  <Amplifyが返す値>.amplifyapp.com
+```
+
+### Route 53で管理している場合のサンプル
+
+DNSもTerraformで管理しているなら、こんな感じでサクッと書けます。
+
+```hcl title="route53.tf"
+resource "aws_route53_record" "amplify_custom" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = "your-app.example.com"
+  type    = "CNAME"
+  ttl     = 300
+  records = [aws_amplify_domain_association.custom.sub_domain[0].dns_record]
+}
+```
+
+### Apexドメイン(zone apex)を使うときの注意
+
+「`your-app.example.com` じゃなくて、 `example.com` をそのままAmplifyに当てたい」という場合、 **Apexドメインに直接CNAMEは設定できない** というDNSの仕様があります(RFC違反)。
+
+その場合は、
+
+- ✅ Route 53の **ALIAS** レコード(Amazon独自拡張)を使う
+- ✅ DNSプロバイダのANAME / CNAMEフラットニングを使う
+- ✅ 1階層下の `www.example.com` 側に設定して、apexからリダイレクト
+
+のいずれかで回避します。Amplifyは内部的にCloudFrontなのでALIASターゲット指定もできますが、ホストゾーンIDが特殊なので公式ドキュメントを見て設定してください。
+
+ドメイン検証が通るまでは **24〜48時間** くらいかかることもあります。気長に待ちましょう ☺️。
+
+## 動作確認：証明書が正しく適用されたかチェックする ✅
+
+Status が `AVAILABLE` になったら、 **本当に自前の証明書がブラウザに見えているか** を確認します。ここを省くとリリース後に「あれ？？AmplifyのデフォルトでHTTPSになってるけど…」みたいな取り違えが発生します(やりがち)。
+
+### 1. ブラウザで鍵マークから確認
+
+`https://your-app.example.com` をブラウザで開いて、 **アドレスバーの鍵マーク → 証明書を表示** から発行者(Issuer)を確認します。CSR申請したCAの名前が出ていればOKです。
+
+### 2. `openssl s_client` で確認
+
+CLIで突き合わせるなら、これが一番早いです。
+
+```bash title="terminal"
+openssl s_client -connect your-app.example.com:443 -servername your-app.example.com < /dev/null 2>/dev/null \
+  | openssl x509 -noout -issuer -subject -dates
+```
+
+期待される出力:
+
+```plaintext
+issuer=C = JP, O = Your Specified CA, CN = Your Specified CA Issuing G1
+subject=C = JP, ST = Tokyo, L = Minato-ku, O = Your Organization Name, CN = your-app.example.com
+notBefore=May  6 00:00:00 2026 GMT
+notAfter=May  6 23:59:59 2027 GMT
+```
+
+`issuer` が指定したCAになっていることと、 `subject` のCNが自分のドメインになっていればバッチリ ✅。
+
+### 3. `curl -v` で挙動確認
+
+```bash title="terminal"
+curl -vI https://your-app.example.com 2>&1 | grep -E "subject:|issuer:|TLS|HTTP/"
+```
+
+`HTTP/2 200` (or 301/302) が返ってきて、 `subject:` `issuer:` の値が想定通りなら通信成立です。
+
+## 自動更新されない問題への対処：有効期限の監視を仕込む
+
+冒頭でも触れましたが、 **インポート証明書はACMが自動更新してくれません** 😇。期限切れに気付かないとサービス停止につながるので、必ず監視を入れておきましょう。
+
+幸い、ACMは `DaysToExpiry` というCloudWatchメトリクスを自動で出してくれます。これにアラームを仕込むだけで、最低限の備えになります。
+
+### Terraformでアラームを入れる最小サンプル
+
+```hcl title="monitoring.tf"
+# 30日前にWARNING通知
+resource "aws_cloudwatch_metric_alarm" "cert_expiry_warning" {
+  provider            = aws.us_east_1
+  alarm_name          = "your-project-stg-cert-expiry-warning"
+  alarm_description   = "ACMインポート証明書の有効期限が30日を切りました"
+  comparison_operator = "LessThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = "DaysToExpiry"
+  namespace           = "AWS/CertificateManager"
+  period              = 86400 # 1日
+  statistic           = "Minimum"
+  threshold           = 30
+  treat_missing_data  = "breaching"
+  dimensions = {
+    CertificateArn = module.acm.certificate_arn
+  }
+  alarm_actions = [aws_sns_topic.cert_alerts.arn]
+}
+
+# 14日前にCRITICAL通知
+resource "aws_cloudwatch_metric_alarm" "cert_expiry_critical" {
+  provider            = aws.us_east_1
+  alarm_name          = "your-project-stg-cert-expiry-critical"
+  alarm_description   = "ACMインポート証明書の有効期限が14日を切りました。至急再発行を！"
+  comparison_operator = "LessThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = "DaysToExpiry"
+  namespace           = "AWS/CertificateManager"
+  period              = 86400
+  statistic           = "Minimum"
+  threshold           = 14
+  treat_missing_data  = "breaching"
+  dimensions = {
+    CertificateArn = module.acm.certificate_arn
+  }
+  alarm_actions = [aws_sns_topic.cert_alerts.arn]
+}
+
+# 通知先SNSトピック
+resource "aws_sns_topic" "cert_alerts" {
+  provider = aws.us_east_1
+  name     = "your-project-stg-cert-alerts"
+}
+
+resource "aws_sns_topic_subscription" "cert_alerts_email" {
+  provider  = aws.us_east_1
+  topic_arn = aws_sns_topic.cert_alerts.arn
+  protocol  = "email"
+  endpoint  = "admin@example.com" # ← 実運用のメールアドレス
+}
+```
+
+> 💡 SNSのEmailサブスクリプションは **登録後に確認メールが届いて、リンクをクリックして承認するまで通知が飛びません**。`apply` 後にメールチェックを忘れずに 🙏。Slackに飛ばしたいなら ChatBot or Lambda 経由で。
+
+## よくあるエラーと対処法 🔧
+
+最後に、僕が実際にぶつかったエラーと、その原因・対処をまとめておきます。
+
+### `Certificate and private key do not match`
+
+ACMインポート時に出る一番多いやつです。
+
+- **原因**: 渡している秘密鍵が、サーバー証明書のCSR時に生成した鍵と別物
+- **対処**: Step 3のmodulus比較に戻って、ペアの整合性を確認。CSR生成時のディレクトリの秘密鍵をそのまま使う
+
+### `Could not parse certificate`
+
+証明書のフォーマット系エラー。
+
+- **原因**: DER形式のまま渡した / 改行コードがCRLF混入 / BEGIN/ENDタグ抜け
+- **対処**: `head -1 server.cer` でPEMかDERか確認、`dos2unix` でLFに統一、`openssl x509 -in server.pem -text -noout` でパース可能か確認
+
+### `An argument named "certificate_settings" is not expected here.`
+
+Terraform applyで出るやつ。
+
+- **原因**: AWS Providerのバージョンが古い(\< v5.57.0)
+- **対処**: `versions.tf` で `version = "~> 5.57"` 以上に上げて `terraform init -upgrade`
+
+### Amplify の `domainAssociation` が `PENDING_VERIFICATION` から進まない
+
+DNS検証が通らないやつ。
+
+- **原因**: CNAMEが間違っている / TTL長すぎ / 中間DNSキャッシュ
+- **対処**: `dig` や `nslookup` で実際にCNAMEが返ってくるか確認、TTLを短く(60〜300)、`aws amplify get-domain-association` で期待値との差分確認
+
+### ブラウザでHTTPSアクセスすると `NET::ERR_CERT_AUTHORITY_INVALID`
+
+接続時の証明書チェーン不備。
+
+- **原因**: チェーンファイルから中間CAが抜けている / 順序が逆
+- **対処**: `openssl s_client -connect ... -showcerts` で実際にサーバから返るチェーンを確認、`chain.pem` を作り直してACMを再インポート
+
+### `Provider produced inconsistent final plan`
+
+`certificate_settings` ブロック関連で稀に出ます。
+
+- **原因**: 既存のドメイン関連付けに対して `type` の変更を試みた
+- **対処**: 一度 `terraform destroy` ではなく、AmplifyコンソールからDomainを外し、Terraform側でも一度 `terraform state rm aws_amplify_domain_association.custom` してから再apply
+
+## 最後に
+
+今回は AWS Amplify Hosting に自前のSSL/TLS証明書を持ち込む方法を、CSR作成から動作確認・有効期限監視まで一気通貫で紹介しました。
+
+ポイントを振り返ると：
+
+- **証明書は「サーバ + 中間CA + ルートCA」のチェーン構造**: ACMインポート時はこれを正しく分解して渡す
+- **インポート証明書はus-east-1のACMに置く** (Amplify/CloudFrontから参照されるリージョン)
+- **チェーンの順序と秘密鍵の整合性を事前にOpenSSLで検証する** (modulus比較)
+- **Amplify側は&#x20;**`certificate_settings { type = "CUSTOM" }`**&#x20;でACMのARNを参照する**
+- **自動更新されないので、CloudWatchの&#x20;**`DaysToExpiry`**&#x20;メトリクスで期限監視を仕込む**
+- **適用後は&#x20;**`openssl s_client`**&#x20;や&#x20;**`curl -v`**&#x20;でブラウザ視点の挙動を確認する**
+
+「Amplifyのカスタム証明書」って情報がけっこう散らかっていて、ACMドキュメント・Amplifyドキュメント・Terraformドキュメントを行き来する必要があったので、自分の整理も兼ねて記事にしました。同じような構成で困っている方の参考になれば幸いです。
+
+より良い方法・もっとシンプルな構成があれば、ぜひ教えてください〜🙇‍♂️
+
+最後まで読んでいただきありがとうございます！
+
+気ままにつぶやいているので、気軽にフォローをお願いします！🥺
+
+## 参考資料
+
+- [Using SSL/TLS certificates - AWS Amplify Hosting](https://docs.aws.amazon.com/amplify/latest/userguide/using-certificates.html)
+- [Certificate and key format for importing - ACM](https://docs.aws.amazon.com/acm/latest/userguide/import-certificate-format.html)
+- [Import a certificate - ACM](https://docs.aws.amazon.com/acm/latest/userguide/import-certificate-api-cli.html)
+- [aws\_amplify\_domain\_association - Terraform Registry](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/amplify_domain_association)
+- [Bring your own SSL certificate to AWS Amplify Hosting](https://aws.amazon.com/blogs/mobile/custom-ssl-amplify-hosting/)
+- [Supported CloudWatch metrics for AWS Certificate Manager](https://docs.aws.amazon.com/acm/latest/userguide/cloudwatch-metrics.html)
+- [RFC 5246 - The Transport Layer Security (TLS) Protocol](https://datatracker.ietf.org/doc/html/rfc5246)

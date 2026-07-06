@@ -1,0 +1,267 @@
+---
+title: "[Review Part 2] TypeScript and React/Next.js Practical Web Application Development - Explaining toPropValue"
+description: This time I finished reading the Next.js book "TypeScript and React/Next.js Practical Web Application Development" and will write a review. Part 1 reviewed the overview sections, so this time I'll review the hands-on sections.
+publishedAt: "2022-10-10T11:43:19.000Z"
+updatedAt: "2025-06-14T12:17:05.453Z"
+categories:
+  - review
+  - typescript
+  - next_js
+  - react
+thumbnail: ./images/typescript-react-nextjs.jpeg
+isAdvertisement: true
+related:
+  - nextjs-typescript-book-review1
+headingIds:
+  - h8aa7845e38
+  - h39f3ff2613
+  - he485eebc54
+  - h0d28952a45
+---
+
+Hello!
+
+This time I finished reading the Next.js book "TypeScript and React/Next.js Practical Web Application Development" and will write a review. Part 1 reviewed the overview sections, so this time I'll review the hands-on sections.
+
+- I was curious about this Next.js book and want to know the review.
+- I've been writing Next.js somewhat casually and want to know the detailed mechanisms.
+
+I hope this will be helpful for such people!
+
+<br />
+
+## Why Did I Make the Hands-on Section a Separate Review?
+
+[In the previous review](/en/blogs/review/nextjs-typescript-book-review1), I wrote about the sections explaining each technology other than hands-on. This time I'll write about the remaining hands-on sections.
+
+<br />
+
+"Why did you make just the hands-on section a separate review?"
+
+Some people might have thought this.
+
+<br />
+
+**Simply put, because only the hands-on section is on another level! lol**
+
+<br />
+
+"I often hear about Next.js, maybe I should try it out"
+
+If someone with this level of interest tries this hands-on, honestly, I think they'll be overwhelmed (^^; The author has experience at overseas ventures, so the code is very practical and workplace-oriented.
+
+TypeScript's type system, basic JavaScript knowledge, Next.js knowledge, React.js knowledge, and so on. Technologies are packed in densely.
+
+<br />
+
+It's like if you order a course meal, the appetizers were elegant small dishes in Japanese style, but then the main dish comes as an all-you-can-eat platter. Writing it this way might give a negative impression, but I don't think this is bad. I can feel the author's desire to convey various things, and personally I have a good impression!
+
+<br />
+
+<br />
+
+AMAZON
+
+[\
+TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発](//af.moshimo.com/af/c/click?a_id=2351007\&p_id=170\&pc_id=185\&pl_id=4062\&url=https%3A%2F%2Fwww.amazon.co.jp%2Fdp%2FB0B74C3TNQ)
+
+## About the Review and Explanation
+
+I said this is a review of just the hands-on section, but since the hands-on occupies most of the book, it's difficult to review everything. So I'll focus on one part. What I considered the most important part of this hands-on section was the "**toPropValue method**".
+
+This method is used in every component. I think if you understand this method, you can understand most other parts smoothly.
+
+<br />
+
+### ◯ Basic Functionality
+
+First, I'll explain from the usage part.
+
+For example,
+
+```typescript
+toPropValue("margin", "30px", theme)
+//Output
+margin: 30px;
+```
+
+The first argument takes a CSS property, the second argument contains the property value. The third argument contains specific data specified by the book. The basic functionality of this method is to convert it to CSS format.
+
+<br />
+
+However, the complex case is next:
+
+```typescript
+toPropValue("margin", { base: 1, sm: 2 }, theme)
+//Output
+margin: 8px;
+@media screen and (min-width: 1280px) {margin: 64px;}
+```
+
+As you can see, the second argument is a special object, and it creates CSS according to screen size. I think this part is quite difficult to understand.
+
+<br />
+
+### ◯ Explanation Inside the Method
+
+First, here's the overall picture of this code.
+
+```typescript
+export function toPropValue(
+  propKey: string,
+  prop?: Responsive,
+  theme?: AppTheme,
+) {
+  if (prop === undefined) return undefined
+  if (isResponsivePropType(prop)) {
+    const result = []
+    for (const responsiveKey in prop) {
+      if (responsiveKey === 'base') {
+        result.push(
+          `${propKey}: ${toThemeValueIfNeeded(
+            propKey,
+            prop[responsiveKey],
+            theme,
+          )};`,
+        )
+      } else if (
+        responsiveKey === 'sm' ||
+        responsiveKey === 'md' ||
+        responsiveKey === 'lg' ||
+        responsiveKey === 'xl'
+      ) {
+
+        const breakpoint = BREAKPOINTS[responsiveKey]
+        const style = `${propKey}: ${toThemeValueIfNeeded(
+          propKey,
+          prop[responsiveKey],
+          theme,
+        )};`
+        result.push(`@media screen and (min-width: ${breakpoint}) {${style}}`)
+      }
+    }
+    console.log(result.join("\n"))
+    return result.join('\n')
+  }
+  return `${propKey}: ${toThemeValueIfNeeded(propKey, prop, theme)};`
+}Quite a lot of volume, right!Let's break it down little by little! There seem to be several "if" statements, so let's use those as markers to think through the branching.First, the first branch is like this:if (prop === undefined) return undefinedThis should be fine. If no property value is specified in the second argument, it returns undefined.Let's look at the next if statement:if (isResponsivePropType(prop)) {}This determines whether the second argument is the object we saw in the functionality check, and if true, enters the if statement processing. However, this is quite complex, so let's first look at what happens when this if statement is false and jumps to the bottom of the method.return `${propKey}: ${toThemeValueIfNeeded(propKey, prop, theme)};`This is the first pattern we checked in functionality. The toPropValue("margin", "30px", theme) pattern.There's a new method here!Let's look inside toThemeValueIfNeeded.function toThemeValueIfNeeded(propKey: string, value: T, theme?: AppTheme) {
+  if (
+    theme &&
+    theme.space &&
+    SPACE_KEYS.has(propKey) &&
+    isSpaceThemeKeys(value, theme)
+  ) {
+    return theme.space[value]
+  } else if (
+    theme &&
+    theme.colors &&
+    COLOR_KEYS.has(propKey) &&
+    isColorThemeKeys(value, theme)
+  ) {
+    return theme.colors[value]
+  } else if (
+    theme &&
+    theme.fontSizes &&
+    FONT_SIZE_KEYS.has(propKey) &&
+    isFontSizeThemeKeys(value, theme)
+  ) {
+    return theme.fontSizes[value]
+  } else if (
+    theme &&
+    theme.letterSpacings &&
+    LINE_SPACING_KEYS.has(propKey) &&
+    isLetterSpacingThemeKeys(value, theme)
+  ) {
+    return theme.letterSpacings[value]
+  } else if (
+    theme &&
+    theme.lineHeights &&
+    LINE_HEIGHT_KEYS.has(propKey) &&
+    isLineHeightThemeKeys(value, theme)
+  ) {
+    return theme.lineHeights[value]
+  }
+
+  return value
+}The original method is searching for specific CSS properties with else if.Considering toPropValue("margin", "30px", theme), let's think about just the margin example. If we remove the others:function toThemeValueIfNeeded(propKey: string, value: T, theme?: AppTheme) {
+  if (
+    theme &&
+    theme.space &&
+    SPACE_KEYS.has(propKey) &&
+    isSpaceThemeKeys(value, theme)
+  ) {
+    return theme.space[value]
+  } 
+  return value
+}Much cleaner!Next, let me explain the SPACE_KEYS.has(propKey) part. Looking further into SPACE_KEYS:const SPACE_KEYS = new Set([
+'margin',
+   'margin-top',
+   'margin-left',
+   'margin-bottom',
+   'margin-right',
+   'padding',
+   'padding-top',
+   'padding-left',
+   'padding-bottom',
+   'padding-right',
+ ])It's written like this.SPACE_KEYS is an instantiated Set object."Set object?? What's the benefit?"Some people might think this.It's a built-in object provided by JavaScript that allows you to use convenient methods for key search and CRUD operations on specific keys. For details, I think it's good to check MDN.With that in mind, let's look at SPACE_KEYS.has(propKey) again.What this part does is:If propkey (like "margin") exists in SPACE_KEYS, it returns "true", if not, it returns "false". Since it's in the condition of an if statement, it's checking whether the correct key related to SPACE was entered.Next is the isLetterSpacingThemeKeys(value, theme) part.First, let me explain why this method is needed.Without this method, the return theme.space[value] in the if statement processing would show an error.The cause of that error is "there's no guarantee that the corresponding value exists in space". The compiler is unsure whether value is SpaceThemeKeys. So what we need to do is tell the compiler "value is SpaceThemeKeys".Let's look at the details!function isSpaceThemeKeys(prop: any, theme: AppTheme): prop is SpaceThemeKeys {
+   return Object.keys(theme.space).filter((key) => key == prop).length > 0
+ }This part requires TypeScript knowledge.There's "is"! This is one of TypeScript's features called type guards.For example, suppose there's a method to determine whether a brand bag is fake or real. In code, this would be:function isBrand (someBag: any):someBag is BrandBag  {   
+if( has brand logo ){
+ return true
+} else {
+ return false 
+}
+} It's like this image.After going through this method, all "someBag" items are recognized as "BrandBag".This is how type guards are used when you want to tell the editor (compiler) the type of a target value.With this in mind, looking at isSpaceThemeKeys:prop starts as "any type", but the function processing checks whether it's SpaceThemeKeys,and since the right side of "is" is SpaceThemeKeys, it ultimately tells the compiler "prop is SpaceThemeKeys type".Having this method eliminates the error in:return theme.space[value]!Yeah, this is quite difficult. This might be why TypeScript is disliked.However, personally, I feel it would be difficult to write this in JavaScript without types and without errors. While it's cumbersome at first, I think you get benefits as the code volume increases!Let me add about theme.space[value].This is called "bracket notation". While the common access method for associative arrays is dot access, you can also access with "[ key name ]". It might be useful to remember this.This finally completes the explanation of return ${propKey}: ${toThemeValueIfNeeded(propKey, prop, theme)}; in the main method.So difficult...Now we finally move to the contents of the if statement in the main method.if (isResponsivePropType(prop)) {}For this part, let's look at isResponsivePropType(prop) in more detail.function isResponsivePropType(prop: any): prop is ResponsiveProp {
+   return (
+     prop &&
+     (prop.base !== undefined ||
+       prop.sm !== undefined ||
+
+prop.md !== undefined ||
+       prop.lg !== undefined ||
+       prop.xl !== undefined)
+   )
+ }The method content is like this. What this does, simply put, is:{ base: hoge, sm: hoge }It checks whether it's an object in the form above.If any of base, sm, md is not undefined, it returns true, so it guarantees their existence. From the if statement processing onwards, prop is premised to be in the form { base: hoge, sm: hoge }.Next, let's look inside the if statement.for (const responsiveKey in prop) {}Let me explain this thoroughly!!About "in", what behavior it has is, for example:Const prop = { foo: hoge, bar: hoge  }
+for(const key in prop ){console.log(key) }In this processing, what's displayed in console is "foo bar". "in" is processing that loops through the keys of the object on the right side of in with for.Therefore, for (const responsiveKey in prop) means looping through the keys (like base and sm) of the object { base: hoge, sm: hoge } with for.Let's continue the explanation. if (responsiveKey === 'base') {
+        result.push(
+          `${propKey}: ${toThemeValueIfNeeded(
+            propKey,
+            prop[responsiveKey],
+            theme,
+          )};`,There's another if statement inside the for statement! This branch is to distinguish whether the key is base or other sm/md.What we ultimately want to create is CSS as a string. For example, margin: 8px; and when considering media queries, @media screen and (min-width: 1280px) {margin: 64px;}.So there's a need to distinguish between base and sm/md.With that in mind, looking at the processing inside the if statement:result.push(
+          `${propKey}: ${toThemeValueIfNeeded(
+            propKey,
+            prop[responsiveKey],
+            theme,
+          )};`,You can see that  ${propKey}: ${toThemeValueIfNeeded(propKey, prop, theme)}; that I explained earlier is being pushed to an array. Specifically, a string like "margin: 8px;" is being pushed. When the key name is base, CSS is applied regardless of media screen size, so this string is fine!Next, let's move to the explanation of the else if part inside the for statement.else if (
+        responsiveKey === 'sm' ||
+        responsiveKey === 'md' ||
+        responsiveKey === 'lg' ||
+        responsiveKey === 'xl'
+      ) {
+        const breakpoint = BREAKPOINTS[responsiveKey]
+        const style = `${propKey}: ${toThemeValueIfNeeded(
+          propKey,
+          prop[responsiveKey],
+          theme,
+        )};`
+        result.push(`@media screen and (min-width: ${breakpoint}) {${style}}`)
+      }Earlier I extracted the "base" of responsiveKey, but for keys like sm and md, different processing is needed. CSS media query processing is added.const breakpoint = BREAKPOINTS[responsiveKey]Something new appeared.But it's not that difficult.// Break points
+ const BREAKPOINTS: { [key: string]: string } = {
+   sm: '640px', // 640px and above
+   md: '768px', // 768px and above
+　lg: '1024px', // 1024px and above
+   xl: '1280px', // 1280px and above
+ }It's like this, and simply put, it maps propKeys like sm and md to screen sizes. For example, BREAKPOINTS["md"] contains the value "768px". Same as BREAKPOINTS.md.Below that:const style = `${propKey}: ${toThemeValueIfNeeded(
+          propKey,
+          prop[responsiveKey],
+          theme,
+        )};`This is becoming a familiar pattern!Style stores a specific CSS string like margin: 8px; as a value.The last part of the if statement processing inside the for statement is this:   result.push(`@media screen and (min-width: ${breakpoint}) {${style}}`)This is a part that people with some CSS knowledge should have no problem with.Media queries allow you to change the CSS properties applied according to screen size.Here, since we mapped keys to screen sizes with BREAKPOINTS[responsiveKey] earlier, breakpoint contains a specific screen size. style contains the CSS properties and values to apply for that screen size. This way, we create strings like @media screen and (min-width: 1080px) {margin: 64px;}.This way, elements like [ "margin: 8px;", "@media screen and (min-width: 1080px) {margin: 64px;}", ] are stored in the result array.You've waited long enough!! Finally, the last processing!Phew... It's been a long journey (^^;The last is this processing: return result.join('\n')This isn't very difficult processing.Since arrays can't be applied to CSS as they are, we need to combine them into one string. The method used for that is join. You can combine array elements with a specific string.Furthermore, what backslash n ('\n') represents is a line break. Due to CSS notation conventions, we need to write the next property on a new line, so this is necessary.Through this, we can finally create a string like:margin: 8px;
+@media screen and (min-width: 1080px) {margin: 64px;}It was very long! This is the overview of the toPropValue method.Ah, I forgot to mention something.Careful people might have noticed, but looking at toPropValue("margin", "30px", theme), theme exists as the third argument."Do I need to pass theme every time??"You might have thought this.There's no problem here!Because styled-components will solve it.When you use this in the root component, unless specifically specified, the theme passed as props in ThemeProvider is automatically applied to each toPropValue.Good work! This is really the end.FinallyI think understanding the hands-on part of this book smoothly is extremely difficult.However, I think if you can understand this toPropValue, you can understand most other parts.It became more of a TypeScript explanation than Next.js (^^;Finally, I want to send great praise to the author.I think it was very difficult to make Next.js into a book, given its update speed and multifunctionality.Here's a link to the author's note article expressing their thoughts. While there are negative opinions on social media, I truly have nothing but respect.Thank you for reading to the end!AMAZON
+```
+
+`
+TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発`
+
+<AmazonLink href="//af.moshimo.com/af/c/click?a_id=2351007&p_id=170&pc_id=185&pl_id=4062&url=https%3A%2F%2Fwww.amazon.co.jp%2Fdp%2FB0B74C3TNQ" image="https://images-fe.ssl-images-amazon.com/images/I/51XvdoWeGFL._SL160_.jpg" title="TypeScriptとReact/Next.jsでつくる実践Webアプリケーション開発" trackingImage="//i.moshimo.com/af/i/impression?a_id=2351007&p_id=170&pc_id=185&pl_id=4062" />

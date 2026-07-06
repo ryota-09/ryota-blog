@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { vi } from 'vitest';
+// NOTE: vitestのglobals設定に依存せず型チェック(tsc --noEmit)を通すため明示importする
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import CopyableText from './index';
 
 // Mock navigator.clipboard

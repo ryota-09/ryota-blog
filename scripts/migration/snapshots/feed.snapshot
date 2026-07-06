@@ -1,0 +1,12 @@
+# URL: https://ryotablog.jp/feed
+# Status: 301
+# Headers:
+alt-svc: h3=":443"; ma=86400
+cf-ray: a16ba398bbbf260d-NRT
+connection: keep-alive
+location: /ja/feed
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=httgKRGIM4spBG1di93yfpg2qCq9exAJGcWnPHLT6ismdnpj0wFX%2BkIpxyplpoHrvumfzhWVziWnhPg0X%2FNpSAANJxIhUTnOAxMivBiluCwRDDwfUbJAHWEYT%2FI%2B0KkrqJDFUvF%2FMehO%2FwM%3D"}]}
+server: cloudflare
+transfer-encoding: chunked
+# Body:

@@ -24,6 +24,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "#content/*": [
+        "./.velite/*"
       ]
     },
     "target": "ES2017"

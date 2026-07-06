@@ -25,3 +25,22 @@ jobs:
           MICROCMS_SERVICE_DOMAIN: ${{ secrets.MICROCMS_SERVICE_DOMAIN }}
           MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY }}
           NEXT_PUBLIC_BASE_URL: https://ryotablog.jp
+
+  # 記事ファイル(content/blogs/**)向けの品質ゲート(#240)。
+  # frontmatterのZodバリデーション(velite build)・内部リンク/画像パスの実在チェック・
+  # textlint(日本語表記ゆれ)・markdownlintをまとめて実行する(npm run lint:content)。
+  # qualityジョブとは独立した観点のため並列ジョブとして分離している。
+  content:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      # lint:content 内で `npx velite build` を実行し、frontmatterのZodスキーマ検証
+      # (velite.config.tsのblogsスキーマ)を含めて記事ファイルの整合性を確認する。
+      - name: Lint content (textlint / markdownlint / internal links / frontmatter schema)
+        run: npm run lint:content

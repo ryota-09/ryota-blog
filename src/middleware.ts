@@ -3,15 +3,24 @@ import type { NextFetchEvent, NextRequest } from 'next/server'
 import createMiddleware from 'next-intl/middleware';
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { routing } from './i18n/routing';
-import { getBlogByIdByLocale } from './lib/microcms'
-import { getPrimaryCategoryId } from './lib/index'
 import { LOCALE_COOKIE_NAME } from './types/locale'
 import { CATEGORIES } from './static/categories'
 import { classifyAiAccess } from './lib/ai-access/classify'
 import { recordAiAccessHit } from './lib/ai-access/repository'
 import type { AiBotDefinition } from './lib/ai-access/types'
+// NOTE: 旧URL(/blogs/{slug})のカテゴリ解決用の軽量静的マップ(slug×locale→プライマリカテゴリid)。
+// Veliteのcomplete フック(velite.config.ts)がビルド時に生成する。記事本文は含まないため、
+// これをmiddlewareがimportしてもバンドルサイズへの影響は軽微(数KB)。
+import categoryMap from '../.velite/category-map.json'
 
 const CATEGORY_SLUGS = CATEGORIES.map((category) => category.slug)
+
+// slugからプライマリカテゴリidを解決する。該当記事がマップに存在しない場合はundefinedを返す
+// (呼び出し元は「記事が存在しない」ケースとして扱い、旧microCMS版のtry/catchと同じ分岐を再現する)
+const resolvePrimaryCategoryIdBySlug = (locale: string, blogId: string): string | undefined => {
+  const localeMap = (categoryMap as Record<string, Record<string, string>>)[locale] ?? categoryMap.ja
+  return localeMap[blogId]
+}
 
 // 旧URL（/[locale]/blogs/[blogId]）リダイレクト判定でフェッチ対象外にする既知セグメント
 const NON_BLOG_ID_SEGMENTS = new Set<string>([...CATEGORY_SLUGS, 'zenn', 'page'])
@@ -60,15 +69,13 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
     const blogMatch = pathname.match(/^\/blogs\/([^\/]+)$/)
     if (blogMatch && !NON_BLOG_ID_SEGMENTS.has(blogMatch[1])) {
       const blogId = blogMatch[1]
+      const categoryId = resolvePrimaryCategoryIdBySlug(routing.defaultLocale, blogId)
 
-      try {
-        const blog = await getBlogByIdByLocale(routing.defaultLocale, blogId, { fields: 'category' })
-        const categoryId = getPrimaryCategoryId(blog)
-
+      if (categoryId) {
         // 新しいURL構造にデフォルトlocaleでリダイレクト
         const newUrl = new URL(`/${routing.defaultLocale}/blogs/${categoryId}/${blogId}`, request.url)
         return NextResponse.redirect(newUrl, 301)
-      } catch {
+      } else {
         // ブログが見つからない場合はデフォルトlocaleのブログページにリダイレクト
         const newUrl = new URL(`/${routing.defaultLocale}/blogs`, request.url)
         return NextResponse.redirect(newUrl, 301)
@@ -79,6 +86,9 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
     const segments = pathname.split('/').filter(Boolean);
     if (segments.length > 0) {
       const newUrl = new URL(`/${routing.defaultLocale}/${segments.join('/')}`, request.url);
+      // NOTE: new URL(path, base)はbase側のクエリ文字列を引き継がないため、明示的に引き継ぐ。
+      // 旧URL(/blogs?keyword=xxx等)の検索条件がリダイレクトで失われるバグの修正(#241)
+      newUrl.search = request.nextUrl.search;
       return NextResponse.redirect(newUrl, 301);
     }
   }
@@ -94,15 +104,13 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   ) {
     const locale = localeMatch[1]
     const blogId = localeMatch[2]
+    const categoryId = resolvePrimaryCategoryIdBySlug(locale, blogId)
 
-    try {
-      const blog = await getBlogByIdByLocale(locale, blogId, { fields: 'category' })
-      const categoryId = getPrimaryCategoryId(blog)
-
+    if (categoryId) {
       // localeありの新しいURL構造にリダイレクト
       const newUrl = new URL(`/${locale}/blogs/${categoryId}/${blogId}`, request.url)
       return NextResponse.redirect(newUrl, 301)
-    } catch {
+    } else {
       return intlMiddleware(request);
     }
   }

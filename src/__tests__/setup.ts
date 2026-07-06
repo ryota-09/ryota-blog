@@ -16,14 +16,17 @@ vi.mock('next/navigation', async () => {
     useSearchParams: vi.fn(() => ({
       get: vi.fn(),
     })),
-    usePathname: vi.fn(),
+    // NOTE: 実装側(PaginationItem/EllipsisMenuItem等)はpathnameが文字列であることを前提に
+    // 正規表現マッチングを行うため、undefinedではなくデフォルトのパスを返すようにする
+    usePathname: vi.fn(() => "/ja/blogs"),
   };
 });
 vi.mock("next/link")
 
 // next-intl はテストでは NextIntlClientProvider が無いため、実際の ja メッセージを参照する軽量モックに差し替える
 vi.mock("next-intl", async () => {
-  const ja = (await import("../../locales/ja.json")).default as Record<string, Record<string, string>>;
+  // NOTE: ja.jsonは一部さらにネストしたオブジェクトを含むため、型の重なり検査を回避するunknown経由でキャストする
+  const ja = (await import("../../locales/ja.json")).default as unknown as Record<string, Record<string, string>>;
   return {
     useTranslations: (namespace?: string) => (key: string) => {
       const ns = namespace ? ja[namespace] : (ja as unknown as Record<string, string>);

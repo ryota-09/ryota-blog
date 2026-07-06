@@ -1,10 +1,10 @@
 'use client';
 import { useTranslations } from 'next-intl';
 import RelatedContentItem from "@/components/RelatedContentList/RelatedContentItem";
-import { BlogsContentType } from "@/types/microcms";
+import type { BlogPost } from "@/types/content";
 
 type RelatedContentProps = {
-  data: BlogsContentType[]
+  data: Pick<BlogPost, "slug" | "publishedAt" | "updatedAt" | "title" | "categories">[]
 }
 
 const RelatedContentList = ({ data }: RelatedContentProps) => {
@@ -14,8 +14,8 @@ const RelatedContentList = ({ data }: RelatedContentProps) => {
     <>
       <div className="text-2xl dark:text-gray-300 font-bold mb-4">{t('relatedPosts')}</div>
       <ul className="divide-y">
-        {data.map(({ id, publishedAt, updatedAt, title, category }) => (
-          <RelatedContentItem key={id} id={id} publishedAt={publishedAt} updatedAt={updatedAt} title={title} category={category} />
+        {data.map(({ slug, publishedAt, updatedAt, title, categories }) => (
+          <RelatedContentItem key={slug} id={slug} publishedAt={publishedAt} updatedAt={updatedAt} title={title} categories={categories} />
         ))}
       </ul>
     </>

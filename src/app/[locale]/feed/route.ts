@@ -1,15 +1,16 @@
 import { Feed } from "feed";
 import { baseURL } from "@/config";
-import { getAllBlogListByLocale } from "@/lib/microcms";
+import { getAllBlogListByLocale } from "@/lib/content";
+import { resolveCategoryOrDefault } from "@/static/categories";
 import { AUTHOR_NAME, AUTHOR_NAME_EN, SITE_DESCRIPTION, SITE_DESCRIPTION_EN, SITE_TITLE } from "@/static/blogs";
-import { getPrimaryCategoryId } from "@/lib";
 import { getTranslations } from 'next-intl/server';
+import type { ContentLocale } from "@/types/content";
 
 // export const revalidate = 60 * 60 * 24
 export const revalidate = 86400;
 
 // Next.js 16では、Route Handlerのparamsは非同期になった
-interface RouteContext {
+type RouteContext = {
   params: Promise<{
     locale: string;
   }>;
@@ -48,16 +49,17 @@ export async function GET(request: Request, { params }: RouteContext) {
     author: author,
   });
 
-  const blogList = await getAllBlogListByLocale(locale, {
-    fields: "id,title,description,publishedAt,updatedAt,thumbnail,category",
-    orders: "-updatedAt",
-  });
+  // NOTE: content.tsのgetAllBlogListByLocaleはpublishedAt降順固定のため、
+  //       現行実装(orders: "-updatedAt")と同じ並び順にするためここでupdatedAt降順に並べ替える
+  const blogList = [...getAllBlogListByLocale(locale as ContentLocale)].sort(
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+  );
   for (const blog of blogList) {
-    const categoryId = getPrimaryCategoryId(blog);
+    const categoryId = resolveCategoryOrDefault(blog.categories[0]).slug;
     feed.addItem({
-      id: blog.id,
+      id: blog.slug,
       title: blog.title,
-      link: `${baseURL}/${locale}/blogs/${categoryId}/${blog.id}`,
+      link: `${baseURL}/${locale}/blogs/${categoryId}/${blog.slug}`,
       description: blog.description,
       date: new Date(blog.publishedAt || blog.updatedAt),
     });

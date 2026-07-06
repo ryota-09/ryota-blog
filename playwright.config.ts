@@ -73,8 +73,10 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    // baseURL(3001)に合わせて起動ポートを明示する（next start は既定で3000のため不整合だった）
-    command: 'npm run start -- -p 3001',
+    // next.config.mjs の output: "standalone" と `next start` は非互換(standalone用のserver.jsが
+    // 生成されるため next start では正しく起動しない)。standalone配下にpublic/.next/staticを
+    // コピーした上で server.js を直接起動する(npm run e2e:serve、package.json参照)。
+    command: 'npm run e2e:serve',
     url: 'http://localhost:3001',
     reuseExistingServer: !process.env.CI,
   },

@@ -1,11 +1,12 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
-import { getAllBlogListByLocale } from "@/lib/microcms";
+import { getAllBlogListByLocale } from "@/lib/content";
 import {
   getAiAccessDailyTrend,
   getAiAccessSummaryByBlog,
   getAiAccessSummaryByVendor,
 } from "@/lib/ai-access/repository";
+import type { ContentLocale } from "@/types/content";
 
 // D1を毎リクエストでクエリするため静的化しない
 export const dynamic = "force-dynamic";
@@ -61,14 +62,17 @@ const Page = async ({ params }: AiAccessPageProps) => {
   }
 
   const since = sinceDate(SUMMARY_WINDOW_DAYS);
-  const [byBlog, byVendor, dailyTrend, blogs] = await Promise.all([
+  const [byBlog, byVendor, dailyTrend] = await Promise.all([
     getAiAccessSummaryByBlog(env.AI_ACCESS_DB, locale, since),
     getAiAccessSummaryByVendor(env.AI_ACCESS_DB, locale, since),
     getAiAccessDailyTrend(env.AI_ACCESS_DB, locale, since),
-    getAllBlogListByLocale(locale, { fields: "id,title" }),
   ]);
+  const blogs = getAllBlogListByLocale(locale as ContentLocale);
 
-  const titleById = new Map(blogs.map((blog) => [blog.id, blog.title]));
+  // NOTE: ファイルベース層(Velite)にはmicroCMSの content id 相当が無く、slugがそれに代わるキーとなる。
+  // D1(ai_access)側のblogIdはmicroCMS時代のcontent id(=URLスラッグ)をそのまま記録しているため、
+  // slugとの突き合わせで一致する(#242パリティ検証時に確認)。
+  const titleById = new Map(blogs.map((blog) => [blog.slug, blog.title]));
   const totalHitCount = byVendor.reduce((sum, row) => sum + row.hitCount, 0);
   const topVendor = byVendor[0];
   const maxDailyHitCount = Math.max(1, ...dailyTrend.map((row) => row.hitCount));

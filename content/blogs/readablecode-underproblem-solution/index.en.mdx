@@ -1,0 +1,163 @@
+---
+title: "[Readable Code] What Does \"Extracting Unrelated Subproblems\" Mean?"
+description: I'll explain "extracting unrelated subproblems" in an intuitive way. For people who don't understand what subproblems mean and want to grasp the concept of extracting unrelated subproblems through imagery. I hope this helps with understanding the book Readable Code.
+publishedAt: "2022-01-22T15:00:00.000Z"
+updatedAt: "2025-06-14T12:10:07.829Z"
+categories:
+  - programming
+  - review
+isAdvertisement: true
+headingIds:
+  - h5e8e681a4b
+  - h39213c4065
+---
+
+Hello! I'm Ryota ([@Ryo54388667](https://twitter.com/Ryo54388667)) (^o^)
+
+I'll explain "extracting unrelated subproblems" in an intuitive way.
+
+- I don't understand what subproblems mean.
+- I want to grasp the concept of extracting unrelated subproblems through imagery.
+
+I hope this helps with understanding the book Readable Code.
+
+<br />
+
+## Let's Understand Extracting Unrelated Subproblems Through Imagery
+
+When I saw this chapter title, I had absolutely no idea what it was talking about.
+
+<br />
+
+Unrelated? Unrelated to what?
+
+Subproblems? I can't even distinguish between higher-level and lower-level problems...
+
+Extracting? Sigh... (deep breath)
+
+<br />
+
+I was in this state. As I read on and grasped the image, understanding suddenly progressed. Getting the image first makes understanding speed dramatically different. So I'll explain starting from intuitive imagery.
+
+<br />
+
+【Situation】
+
+My daughter said, "Mom, I want to make a Christmas cake on the 24th." However, I have work on the 24th. So I need to make it in a short time at night. I researched how to make Christmas cake in this situation.
+
+<br />
+
+Imagine this situation:
+
+![](./images/スクリーンショット-2024-06-08-15.13.51.png)
+
+When I look at this instruction manual, I think:
+
+"There are several sugar measuring tasks. Do I mix it into the chiffon cake? Or into the whipped cream?"
+
+"Actually, I don't want to make chiffon cake. I want to prepare the chiffon cake beforehand..."
+
+<br />
+
+I apologize to people who say "Making chiffon cake is the essence of Christmas cake making! Don't neglect it!" but at least in this situation, preparing chiffon cake beforehand would be realistic.
+
+<br />
+
+What part of the instruction manual should be improved? How about improving the manual like this?
+
+![](./images/スクリーンショット-2024-06-08-15.16.31.png)![](./images/スクリーンショット-2024-06-08-15.16.45.png)
+
+This way, even someone seeing the instruction manual for the first time can easily understand what to do! The overall image is like this.
+
+For the purpose of making a cake, making chiffon cake is an independent task that can be prepared at a different time.
+
+In that sense, it can be called an "unrelated subproblem" to the purpose. Also, in the sense that it can be prepared at a different time, it can be said to be "extractable."
+
+<br />
+
+Applying this back to code problems:
+
+"Parts that aren't heavily involved should be extracted to separate places and functionalized."
+
+After grasping this overall picture, try reading the "Extracting Unrelated Subproblems" chapter of Readable Code. I think the degree of understanding will be completely different!
+
+<br />
+
+## Let's Actually Think About It with Code
+
+When you actually read the book, even though you've grasped the image, there are difficult codes lined up.
+
+So I'll apply it to simpler code and explain.
+
+<br />
+
+【Problem】
+
+Create a function that calculates the area of this shape.
+
+![](./images/スクリーンショット-2024-06-08-15.19.57.png)
+
+The purpose of this problem is to create a function that finds the area of this house-shaped figure.
+
+```typescript
+function calcHouseArea () {
+let verticalLength = 5;
+let horizontalLength = 7;
+let bottom = 8;
+let height = 4;
+
+let answer1 = verticalLength * horizontalLength;
+let answer2 = bottom * height /2;
+
+return answer1 + answer2;
+}
+```
+
+Let's extract the unrelated subproblems from this code. Finding the area of a rectangle and finding the area of a triangle are just preparations for the higher-level purpose, so it would be better to extract them outside the function.
+
+<br />
+
+Actually writing the code:
+
+```typescript
+function calcSquareArea (verticalLength, horizontalLength) {
+
+let answer = verticalLength * horizontalLength;
+
+return answer;
+}
+
+function calcTriangleArea (bottom, height) {
+
+let answer = bottom * height /2;
+
+return answer;
+}
+
+function calcHouseArea () {
+let answer1 = calcSquareArea(5, 7);
+
+let answer2 = calcTriangleArea(8, 4);
+
+return answer1 + answer2;
+}
+```
+
+I think it became relatively easier to read. How about it - did you understand what "extracting unrelated subproblems" means?
+
+<br />
+
+I hope this connects to understanding even a little. The "Extracting Unrelated Subproblems" chapter in the book Readable Code also contains other examples.
+
+If you understood through imagery, please definitely look at other parts of this chapter too (^^)
+
+Thank you for reading to the end!
+
+<br />
+
+AMAZON
+
+[\
+リーダブルコード ―より良いコードを書くためのシンプルで実践的なテクニック (Theory in practice)](//af.moshimo.com/af/c/click?a_id=2351007\&p_id=170\&pc_id=185\&pl_id=4062\&url=https%3A%2F%2Fwww.amazon.co.jp%2Fdp%2F4873115655)
+
+<AmazonLink href="//af.moshimo.com/af/c/click?a_id=2351007&p_id=170&pc_id=185&pl_id=4062&url=https%3A%2F%2Fwww.amazon.co.jp%2Fdp%2F4873115655" image="https://images-fe.ssl-images-amazon.com/images/I/51xHT9ZnmNL._SL160_.jpg" title="リーダブルコード ―より良いコードを書くためのシンプルで実践的なテクニック (Theory in practice)" trackingImage="//i.moshimo.com/af/i/impression?a_id=2351007&p_id=170&pc_id=185&pl_id=4062" />
