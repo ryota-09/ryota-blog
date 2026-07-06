@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 
+import { AUTHOR_ICON_DATA_URL } from "@/static/author-icon";
 import { AUTHOR_NAME, AUTHOR_NAME_EN } from "@/static/blogs";
 import { findCategoryBySlug } from "@/static/categories";
 import { getLocalizedCategoryName } from "@/lib/i18n-utils";
@@ -97,7 +98,7 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.microcms-assets.io/assets/4626924a681346e9a0fcabe5478eb9fa/652ac7c701f14f858ad1cbb1ece163c6/author.png"
+            src={AUTHOR_ICON_DATA_URL}
             width="100"
             height="100"
             style={{

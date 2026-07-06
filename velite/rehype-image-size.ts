@@ -11,50 +11,51 @@
 // を必ずこの順で積む。つまり velite.config.ts の mdx.remarkPlugins で追加するプラグインは
 // 必ず remarkCopyLinkedFiles より「後」に実行される。そのため mdast(remark)段階で画像パスを見ても、
 // 既に `/static/xxxxxxxx-hash.ext` へ書き換わった後の値しか見えない(コピー前のcontent/blogs/.../images/相対パスは失われる)。
-// この制約により、本プラグインはrehype(hast)段階で動作し、書き換え後の `/static/...` パスから
-// public/static配下の実ファイルを直接読んでサイズを取得する方式を採る。
 //
-// velite標準の output 設定(output.assets 既定値 "public/static", output.base 既定値 "/static/")
-// に依存するため、projectRoot(process.cwd())を基点に解決する。
-import { readFile } from "node:fs/promises";
+// 重要な訂正(#237で判明): 当初は「rehype段階でpublic/static配下の実ファイルを読む」方式だったが、
+// veliteは各コレクションのMDXコンパイル中(rehypeプラグイン実行中)にはまだアセットファイルを
+// public/static/へコピーしていない(コピーは全コレクションのビルド完了後に一括outputAssetsで行われる)。
+// そのため実行タイミングによっては ENOENT で読み込みに失敗し、width/heightが注入されないことがあった。
+// この問題を避けるため、velite本体がexportする `assets`(出力ファイル名 → 元ファイル絶対パスのMap)を
+// 直接参照し、public/static へのコピー完了を待たずに「変換前の元ファイル」からサイズを取得する方式に変更した。
 import path from "node:path";
 
 import { visit } from "unist-util-visit";
 import sharp from "sharp";
+import { assets as veliteAssets } from "velite";
 import type { Root, Element } from "hast";
 
 // veliteのoutput既定値(velite.config.tsでoutputを明示指定していないため既定値のまま)
 const OUTPUT_BASE = "/static/";
-const OUTPUT_ASSETS_DIR = "public/static";
 
 // 画像サイズのキャッシュ(同一画像が複数記事から参照されるケースの重複読み込みを防ぐ)
 const sizeCache = new Map<string, { width: number; height: number } | null>();
 
-const resolvePublicAssetPath = (src: string): string | null => {
+// `/static/xxxx-hash.ext` 形式のsrcから、velite管理下の出力ファイル名(`xxxx-hash.ext`)を取り出す
+const resolveOutputName = (src: string): string | null => {
   if (!src.startsWith(OUTPUT_BASE)) return null;
-  const relative = src.slice(OUTPUT_BASE.length);
-  return path.join(process.cwd(), OUTPUT_ASSETS_DIR, relative);
+  // URLエンコードされている可能性がある(日本語ファイル名等)ためデコードする
+  return decodeURIComponent(src.slice(OUTPUT_BASE.length));
 };
 
 const readImageSize = async (
-  assetPath: string,
+  sourcePath: string,
 ): Promise<{ width: number; height: number } | null> => {
-  const cached = sizeCache.get(assetPath);
+  const cached = sizeCache.get(sourcePath);
   if (cached !== undefined) return cached;
 
   try {
-    const buffer = await readFile(assetPath);
-    const metadata = await sharp(buffer).metadata();
+    const metadata = await sharp(sourcePath).metadata();
     if (!metadata.width || !metadata.height) {
-      sizeCache.set(assetPath, null);
+      sizeCache.set(sourcePath, null);
       return null;
     }
     const size = { width: metadata.width, height: metadata.height };
-    sizeCache.set(assetPath, size);
+    sizeCache.set(sourcePath, size);
     return size;
   } catch {
     // 画像が見つからない・破損している等の場合はwidth/height無しでフォールバックさせる
-    sizeCache.set(assetPath, null);
+    sizeCache.set(sourcePath, null);
     return null;
   }
 };
@@ -70,10 +71,15 @@ export const rehypeImageSize = () => async (tree: Root) => {
       const src = node.properties?.src;
       if (typeof src !== "string") return;
 
-      const assetPath = resolvePublicAssetPath(src);
-      if (!assetPath) return;
+      const outputName = resolveOutputName(src);
+      if (!outputName) return;
 
-      const size = await readImageSize(assetPath);
+      // velite管理下の`assets` Mapから元ファイルの絶対パスを解決する
+      // (rehypeCopyLinkedFilesが同期的にMapへ登録済みのため、この時点で必ず参照可能)
+      const sourcePath = veliteAssets.get(outputName);
+      if (!sourcePath) return;
+
+      const size = await readImageSize(path.resolve(sourcePath));
       if (!size) return;
 
       node.properties ??= {};
