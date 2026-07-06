@@ -1,0 +1,280 @@
+---
+title: 省略メニュー付きページネーションの実装
+description: 今回は省略メニュー付きページネーションの実装方法を紹介していきます！
+publishedAt: "2024-06-19T09:54:53.018Z"
+updatedAt: "2025-05-14T06:34:02.762Z"
+categories:
+  - react
+  - css
+  - tailwindcss
+  - ui_parts
+thumbnail: ./images/スクリーンショット-2024-06-19-17.48.44.png
+headingIds:
+  - h0b4a671091
+  - hcc690ded8a
+  - h8b153f28b7
+  - hf7478d53de
+  - h5c94d5c940
+  - had08c143c1
+  - h5c94d5c940
+  - h9c584ccd32
+  - h51fac70295
+  - h20d782f464
+  - hc955f415ad
+  - h51fac70295
+---
+
+こんにちは！[@Ryo54388667](https://twitter.com/Ryo54388667)です!☺️
+
+普段は都内でエンジニアとして業務をしてます！
+
+主にTypeScriptやNext.jsといった技術を触っています。今回は省略メニュー付きページネーションの実装方法を紹介していきます！
+
+<br />
+
+## 実装するもの
+
+まずは実装するものを見ていただくのが良いのかなと思います。
+
+![](./images/pagination.gif)
+
+これは本ブログの[トップページで実装済み](/blogs)です。[こちらのStorybookのほう](https://story.ryotablog.jp/?path=/docs/components-pagination--docs#page%207%20and%20total%2045)が見やすいかもしれません。
+
+様々なブログでも実装されているUIですので、Webを探せば実装方法はたくさん紹介されています。ただ、このような省略メニュー付きのページネーションは珍しいのかなと思い、本記事を書き起こしました。
+
+<br />
+
+<br />
+
+## 実装の詳細
+
+<br />
+
+コードだけ教えてくれ！というかたは、下記のファイルをご覧ください！
+
+<LinkCard url="https://github.com/ryota-09/ryota-blog/blob/main/src/components/Pagination/index.tsx" />
+
+<br />
+
+詳細を説明していきます。
+
+<br />
+
+```typescript
+const rate = totalCount / PER_PAGE;
+const totalPages = rate < MINIMUM_PAGE_COUNT ? MINIMUM_PAGE_COUNT : Math.ceil(rate);
+```
+
+ここで、`rate`は総アイテム数を1ページあたりのアイテム数で割った値です。`totalPages`は、rateが1未満の場合は1、そうでなければrateを切り上げた値です。ここでは**総ページ数**を計算しています。例えば 20(記事数) ÷ 4 (記事数 / page) = 5 (page) となります。
+
+<br />
+
+<br />
+
+次に、前後のページ範囲を計算します。`smallNumRange`は現在のページより前のページ番号のリスト、`largeNumRange`は現在のページより後のページ番号のリストです。
+
+```typescript
+const previousPageRange = useMemo(() => Array.from({ length: totalPages + INDEX_OFFSET })
+    .map((_, index) => index + INDEX_OFFSET)
+    .slice(SMALL_RANGE_START_OFFSET, currentPage - SMALL_RANGE_END_OFFSET), [currentPage, totalPages])
+const nextPageRange = useMemo(() => Array.from({ length: totalPages + INDEX_OFFSET })
+    .map((_, index) => index + INDEX_OFFSET)
+    .slice(currentPage + LARGE_RANGE_START_OFFSET, totalPages - LARGE_RANGE_END_OFFSET), [currentPage, totalPages])
+```
+
+### なぜ SMALL\_RANGE\_END\_OFFSET, LARGE\_RANGE\_END\_OFFSET が必要なのか？
+
+previousPageRange とnextPageRangeの計算において、sliceメソッドで -1 (SMALL\_RANGE\_END\_OFFSET)を使用しています。これには以下の理由があります。
+
+slice(SMALL\_RANGE\_START\_OFFSET, currentPage - SMALL\_RANGE\_END\_OFFSET) の `currentPage - SMALL_RANGE_END_OFFSET` は、現在のページの1つ前までのページを取得するためです。例えば、現在のページが5の場合、previousPageRangeは 2, 3 になります。[(Storybookでいうとココです！)](https://story.ryotablog.jp/?path=/docs/components-pagination--docs#page%204%20and%20total%2020)
+
+<br />
+
+slice(currentPage + LARGE\_RANGE\_START\_OFFSET, totalPages - LARGE\_RANGE\_END\_OFFSET) は、現在のページの次のページから最後のページの1つ前までのページを取得するためです。例えば、現在のページが5で、総ページ数が10の場合、nextPageRangeは 7, 8, 9 になります。
+
+<br />
+
+### 最初のページボタン
+
+最初のページ（ページ番号1）
+
+```tsx
+<li>
+  <PaginationItem pageNumber={1} currentPage={currentPage}>1</PaginationItem>
+</li>
+```
+
+<br />
+
+### 前のページボタン
+
+現在のページが1でない場合、前のページに移動するボタン
+
+```tsx
+<li>
+          <PaginationItem pageNumber={currentPage - 1} currentPage={currentPage}>
+            <svg
+              className="-scale-x-90"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </PaginationItem>
+        </li>
+```
+
+<br />
+
+### 省略記号と小さいページ範囲のMenu
+
+現在のページが4以上の場合、省略記号と小さいページ範囲のMenuを表示します。
+
+```tsx
+{currentPage >= 4 && (
+  <li className="relative group mx-6">
+    <button type="button">
+      <span>...</span>
+    </button>
+    <EllipsisMenu range={smallNumRange} />
+  </li>
+)}
+```
+
+`EllipsisMenu`については下記のファイルを参照してください。
+
+<LinkCard url="https://github.com/ryota-09/ryota-blog/blob/main/src/components/Pagination/EllipsisMenu/index.tsx" />
+
+<br />
+
+### 前のページボタン
+
+現在のページが3以上の場合、前のページを表示。
+
+```tsx
+{currentPage >= 3 && (
+  <li>
+    <PaginationItem pageNumber={currentPage - 1} currentPage={currentPage}>
+      {currentPage - 1}
+    </PaginationItem>
+  </li>
+)}
+```
+
+### 現在のページボタン
+
+現在のページが最初と最後のページでない場合、現在のページを表示。
+
+```tsx
+{currentPage !== 1 && currentPage !== totalPages && (
+  <li>
+    <PaginationItem pageNumber={currentPage} currentPage={currentPage}>
+      {currentPage}
+    </PaginationItem>
+  </li>
+)}
+```
+
+<br />
+
+### 次のページボタン
+
+現在のページが最後のページでない場合、次のページを表示。
+
+```tsx
+{currentPage < totalPages && currentPage + 1 !== totalPages && (
+  <li>
+    <PaginationItem pageNumber={currentPage + 1} currentPage={currentPage}>
+      {currentPage + 1}
+    </PaginationItem>
+  </li>
+)}
+```
+
+<br />
+
+### 省略記号と大きなページ範囲のMenu
+
+<br />
+
+現在のページが最後のページの3ページ前以下の場合、省略記号とその後のページ範囲を表示。
+
+```tsx
+{currentPage <= totalPages - 3 && (
+  <li className="relative group mx-6">
+    <button type="button">
+      <span>...</span>
+    </button>
+    <EllipsisMenu range={largeNumRange} />
+  </li>
+)}
+```
+
+<br />
+
+### 最後のページボタン
+
+総ページ数が1でない場合、最後のページを表示します。
+
+```tsx
+{totalPages !== 1 && (
+  <li>
+    <PaginationItem pageNumber={totalPages} currentPage={currentPage}>
+      {totalPages}
+    </PaginationItem>
+  </li>
+)}
+```
+
+<br />
+
+### 次のページボタン
+
+現在のページが最後のページでない場合、次のページに移動するボタンを表示。
+
+```tsx
+{currentPage !== totalPages && (
+  <li>
+    <PaginationItem pageNumber={currentPage + 1} currentPage={currentPage}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="m9 18 6-6-6-6" />
+      </svg>
+    </PaginationItem>
+  </li>
+)}
+```
+
+<br />
+
+以上です！より良い方法があれば教えてください〜
+
+最後まで読んでいただきありがとうございます！
+
+気ままにつぶやいているので、気軽にフォローをお願いします！🥺
+
+<br />
+
+<Tweet id="1733434994016862256" url="https://twitter.com/Ryo54388667/status/1733434994016862256" />
+
+<br />
+
+<br />
+
+<br />

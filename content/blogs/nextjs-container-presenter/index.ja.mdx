@@ -1,0 +1,240 @@
+---
+title: Next.jsで利用するContainer とPresenter構成について
+description: 今回はContainer と Presenter構成について書いていきます。 ・AtomicDesign以外のコンポーネント設計を知りたい。 ・Container と Presenter構成について知りたい。  こんな人に読んでいただけると幸いです！
+publishedAt: "2022-07-30T15:00:00.000Z"
+updatedAt: "2024-05-31T06:10:36.428Z"
+categories:
+  - next_js
+  - typescript
+  - react
+thumbnail: ./images/memo-1024x724.jpg
+headingIds:
+  - h7828088842
+  - h8d0f852b9e
+---
+
+## ディレクトリの責務について
+
+本業の方で、このディレクトリ構造でコードを書き始めたので、備忘録がてらアウトプットをしていきます。
+
+[参考にした記事はこちら](https://www.nochitoku-it.com/containr-1)です。図もあって非常にわかりやすかったです！
+
+<br />
+
+まず、全体像から説明していきます。
+
+アプリケーションはシンプルな数字のカウントアプリをイメージしてください。
+
+![](./images/スクリーンショット-2022-07-31-15.01.14-300x179.jpg)
+
+それぞれのファイルの責務の概要はこんな感じです。
+
+![](./images/memo-1024x724.jpg)
+
+**src/pages/index.tsx**
+
+ここはルーティングの責務です。
+
+<br />
+
+**src/components/Counter.page.tsx**
+
+ここはレイアウトコンポーネントでラップし、ブラウザ情報などmeta要素を付与するためのコンポーネントです。HTMLタグのmainタグ以外の部分の描画の責務を担っています。
+
+<br />
+
+**src/components/Counter.container.tsx**
+
+ここはロジック部分の責務を担うコンポーネントです。
+
+<br />
+
+**src/components/Counter.hooks.tsx**
+
+ここはhooksロジックのみを記述する部分です。「 containerも同じ責務では？」と思われるかもしれません。containerにはhooks以外のロジックも多々書く場合があり、カスタムフックだけでもまとめると可読性がよくなるので、containerに差し込んでいます。
+
+<br />
+
+**src/components/Counter.presenter.tsx**
+
+ここはUIの描画のみを記述する部分です。
+
+全体の責務としてはこのような感じです。
+
+端的にいえば、page → container → presenterとひたすらprops downしていくイメージです。
+
+<br />
+
+## 各コンポーネントのコードについて
+
+全体像がわかったところで、各コンポーネントのコードを見ていくとより一層、理解が深まり、イメージもしやすくなるのではないかと思います。
+
+```typescript title="pages/index.tsx"
+import CounterPage from "../components/Counter.page";
+
+//SSGまたはSSRでデータを取得する場合のprops
+type StaticProps = {
+  tabTitle: string
+}
+
+export default function Home ({ tabTitle }: StaticProps)  {
+  return (
+    <CounterPage tabTitle={tabTitle} />
+  )
+}
+```
+
+NextPageTypeとあるように、このコンポーネントはNext.jsの基本機能であるルーティングのみを担っています。もし、SSGやSSRでデータフェッチングするならここに記述し、components配下のpage.tsxにデータをpropsで渡します。
+
+<br />
+
+```typescript title="components/Counter.page.tsx"
+import { FC } from "react"
+import CounterContainer from "./Counter.container"
+import Layout from "./Layout"
+
+type ProsType = {
+  tabTitle: string
+}
+
+const CounterPage: FC<ProsType> = ({ tabTitle }) => {
+  // NOTE: headerやfooterでコンテナをラップしたりするコンポーネント.
+  return (
+    <Layout tabTitle={tabTitle}>
+      <CounterContainer tabTitle={tabTitle} />
+    </Layout>
+  )
+}
+export default CounterPage
+```
+
+Counter.page.tsxはHTMLタグのmainタグ以外の部分の描画を担っています。
+
+ここではCounter.container.tsxをLayout.tsxコンポーネントでラップしています。
+
+Layout.tsxは単に、HeadコンポーネントにSSRで取得したブラウザのタブの変数をセットしているだけの責務です。
+
+<br />
+
+Layout.tsxも載せておきます。
+
+```typescript title="layout.tsx"
+import { FC, ReactNode } from "react"
+import Head from "../node_modules/next/head"
+
+import styles from "../styles/Home.module.css"
+
+type PropsType = {
+  tabTitle: string
+  children: ReactNode
+}
+
+const Layout: FC<PropsType> = ({ tabTitle, children }) => {
+  // NOTE: main以外の描画に関わるものを記述するコンポーネント.
+  return (
+    <div>
+      <Head>
+        <title>{tabTitle}</title>
+      </Head>
+      <main className={styles.main}>
+        {children}
+      </main>
+    </div>
+  )
+}
+export default Layout
+```
+
+Counter.page.tsxには、そのほかに、例えば、このコンポーネントの中で、Counter.container.tsxをheaderコンポーネントでラップしたり、footerコンポーネントでラップしたりなどをしたりするとよいと思います。
+
+```typescript title="components/Counter.container.tsx"
+import { useCounter } from "./Counter.hooks"
+import CounterPresenter from "./Counter.presenter"
+
+type ProsType = {
+  tabTitle: string
+}
+
+const CounterContainer = ({ tabTitle }) => {
+  // NOTE: ロジックを渡すコンポーネント.
+  const { count, increment, decrement } = useCounter();
+  return (
+    <CounterPresenter count={count} increment={increment} decrement={decrement} />
+  )
+}
+export default CounterContainer
+```
+
+いよいよタイトルにもある通り、containerの登場です。長い道のりでしたね(^^;
+
+ここはロジックの責務を主に担当しています。もう少し詳しくいうと、ロジックをpresenter.tsxにpropsで渡す役割です。
+
+<br />
+
+しかし、コードを見てみると、そこまでゴリゴリとロジック書いていないことがわかります。今回のアプリケーションではほとんどのロジックはカスタムフックで記述できるので、後述するhooks.tsxに任せています。本来なら、containerには、例えば、page.tsxからpropsで渡されたデータを整形したり、加工したりするロジックが書かれていたりします。
+
+<br />
+
+```typescript title="components/Counter.hooks.tsx"
+import { useState } from "react"
+
+// NOTE: ロジックの本体を記述。
+export const useCounter = () => {
+  const [count, setCount] = useState(0);
+
+  const increment = () => {
+    setCount(prev => prev + 1);
+  }
+
+  const decrement = () => {
+    setCount(prev => prev - 1);
+  }
+
+  return { count, increment, decrement }
+}
+```
+
+<br />
+
+今回のアプリケーションではロジックの本体がこのファイルに記述されています。
+
+いわゆるカスタムフックと同じです。コードの中をみると、useStateの更新関数やincrement, decrementの関数がここに記述されています。今回のサンプルコードでは説明の都合上、書かれていませんが、本来なら、useCallbackを用いて、パフォーマンス改善措置をした方がよいですね。
+
+<br />
+
+```typescript title="components/Counter.presenter.tsx"
+import { FC } from "react";
+
+type PropsType = {
+  count: number;
+  increment: () => void;
+  decrement: () => void;
+}
+
+const CounterPresenter: FC<PropsType> = ({ count, increment, decrement }) => {
+  // NOTE: 表示に関わるものを記述する。ロジックは記述しない。
+  return (
+    <div>
+      <h1>シンプルカウンター</h1>
+      <br />
+      <button type="button" onClick={decrement}>-</button>
+      <span>count: {count}</span>
+      <button type="button" onClick={increment}>+</button>
+    </div>
+    
+  )
+}
+export default CounterPresenter
+```
+
+いよいよ最後です。ここがHTMLのmainタグの中のUIを担当する部分になります。
+
+ここではロジックは全くかかず、親コンポーネントからpropsで渡された関数や変数を用いて表示をしていくのみの責務です。CSSを当てたりして、スタイリングする部分はこのファイルになります。
+
+<br />
+
+お疲れ様でした。これが、container / presenterのディレクトリ構造の一例です。本業のディレクトリ構造について、備忘録がてら書いてみました〜最後まで読んでくださり、ありがとうございました！
+
+<br />
+
+<br />
