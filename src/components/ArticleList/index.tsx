@@ -28,13 +28,13 @@ const ArticleList = async ({ query, blogType, page, basePath, locale }: ArticleL
     <div className="flex flex-col justify-between h-full">
       {data.totalCount !== 0
         ?
-        <ul className="flex-imtem grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <ul className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          {/* NOTE: フェードイン演出(animate-fadeIn)はView Transitionのスナップショットが
+              opacity:0のコンテンツで撮られ、遷移のたびに画面がちらつく原因になるため付けない */}
           {data.contents.map((item: BlogPost, index: number) => (
             <li
               key={item.slug}
               data-testid={`pw-article-card-${index}`}
-              className="animate-fadeIn"
-              style={{ animationDelay: `${Math.min(index, 6) * 50}ms` }}
             >
               <ArticleCard data={item} index={index} />
             </li>

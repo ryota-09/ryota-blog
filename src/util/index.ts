@@ -17,3 +17,14 @@ export const calcDiffYears = (date: string) => {
   const diffMs = new Date().getTime() - new Date(date).getTime();
   return Math.floor(diffMs / (365.25 * 24 * 60 * 60 * 1000));
 }
+
+// Veliteがビルド時に生成したblurDataURLをnext/imageのプレースホルダーに変換する。
+// blurプレースホルダーはハイドレーション不要でペイント直後から表示されるため、
+// 遷移時にグレーのスケルトンが明滅するちらつきが発生しない。
+// blurDataURLはVeliteのスキーマ上必須だが、万一空だった場合にplaceholder="blur"のまま
+// blurDataURL無しでnext/imageに渡すとエラーになるため"empty"へフォールバックする
+export const thumbnailPlaceholderProps = (blurDataURL: string | undefined) => {
+  return blurDataURL
+    ? { placeholder: "blur" as const, blurDataURL }
+    : { placeholder: "empty" as const };
+}

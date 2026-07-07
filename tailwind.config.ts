@@ -10,10 +10,9 @@ const config: Config = {
   theme: {
     extend: {
       keyframes: {
-        fadeInAnime: {
-          '0%': { opacity: '0', transform: 'translateY(-4px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
+        // NOTE: かつて記事一覧等で使っていた fadeInAnime(animate-fadeIn)は削除済み。
+        // ルート遷移で再マウントされる要素に入場フェードを付けると、View Transitionの
+        // スナップショットがopacity:0で撮られ遷移のたびにちらつくため再導入しないこと
         fadeIn: {
           '0%': {
             opacity: '0',
@@ -26,7 +25,6 @@ const config: Config = {
         },
       },
       animation: {
-        'fadeIn': 'fadeInAnime 0.45s ease-out forwards',
         'fade-in': 'fadeIn 0.2s ease-out',
       },
       textUnderlineOffset: {

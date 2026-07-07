@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import type { BlogPost } from "@/types/content";
 import NewLabel from "@/components/UiParts/NewLabel";
 import ImageWithSkeleton from "@/components/UiParts/ImageWithSkeleton";
-import { isWithinTwoWeeks } from "@/util";
+import { isWithinTwoWeeks, thumbnailPlaceholderProps } from "@/util";
 import { getPrimaryCategoryIdFromBlogPost } from "@/lib/content";
 import { getBlogPath } from "@/lib/i18n-utils";
 
@@ -76,6 +76,7 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
                   alt={data.title}
                   width={data.thumbnail.width}
                   height={data.thumbnail.height}
+                  {...thumbnailPlaceholderProps(data.thumbnail.blurDataURL)}
                   sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 45vw, (max-width: 1280px) 28vw, 496px"
                   style={{
                     width: "100%",
