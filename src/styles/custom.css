@@ -39,9 +39,7 @@ summary:focus-visible,
   outline-color: #2F8F9D; /* primary */
 }
 
-/* View Transitions API のクロスフェード/モーフの質感調整。
-   (*) はrootを含む全ての名前付きグループに一致するため、
-   ページ全体のデフォルト遷移にも一貫して適用される */
+/* View Transitions API のモーフ(サムネイル等の名前付きグループ)の質感調整 */
 ::view-transition-group(*) {
   animation-duration: 450ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
@@ -49,6 +47,26 @@ summary:focus-visible,
 ::view-transition-old(*),
 ::view-transition-new(*) {
   animation-duration: 300ms;
+}
+
+/* ルート(ページ全体)はクロスフェードさせず即時切替にする。
+   デフォルトの全画面フェードは遷移のたびにヘッダー含む画面全体が明滅して
+   「ちらつき」に見えるため無効化し、名前付きグループのモーフだけを残す。
+   mix-blend-mode: normal はChromiumではアニメーション経由で配信されるplus-lighterが
+   animation: none で一緒に消えるため冗長だが、他エンジンでスナップショットが
+   加算合成(白飛び)されないことを保証するための明示 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* rootのグループアニメーション(-ua-view-transition-group-anim-root)も止める。
+   放置すると上の group(*) ルールにより450ms走り続け、スクロールバー有無等で
+   新旧rootのキャプチャサイズが異なる環境ではフェードに隠されない歪みが見える上、
+   モーフの無い遷移でもView Transitionの寿命を450msに引き延ばしてしまう */
+::view-transition-group(root) {
+  animation: none;
 }
 
 /* reduced-motion ユーザーには全アニメ・トランジションを止める */

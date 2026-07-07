@@ -127,6 +127,43 @@ describe('ImageWithSkeleton', () => {
     expect(skeleton).toHaveClass('rounded-full');
   });
 
+  it('placeholder="blur" の場合はスケルトンを描画しない（blur画像自体がプレースホルダーとして機能）', () => {
+    // NOTE: ArticleCard / ArticleBody が実際に使う本番経路。
+    // blurの上にスケルトンを重ねると明滅してちらつくため、スケルトンspan自体を出さない
+    const { container } = render(
+      <div className="relative">
+        <ImageWithSkeleton
+          src="/author.png"
+          alt="テスト画像"
+          width={100}
+          height={100}
+          placeholder="blur"
+          blurDataURL="data:image/webp;base64,UklGRiIAAABXRUJQVlA4TBUAAAAvY8AYAAfQ/4j+B/Cg2f8zLNL/VAA="
+        />
+      </div>
+    );
+
+    // スケルトンspanが無いので、直下の子は img のみ
+    expect(container.firstChild?.childNodes).toHaveLength(1);
+    expect((container.firstChild?.firstChild as HTMLElement).tagName).toBe('IMG');
+  });
+
+  it('placeholder="empty" を明示的に渡した場合は従来どおりスケルトンが表示される（ImageWithBlur経由の経路）', () => {
+    render(
+      <ImageWithSkeleton
+        src="/author.png"
+        alt="テスト画像"
+        width={100}
+        height={100}
+        placeholder="empty"
+      />
+    );
+
+    const skeleton = screen.getByRole('img', { hidden: true }).nextSibling as HTMLElement;
+    expect(skeleton).toHaveClass('opacity-100');
+    expect(skeleton).toHaveClass('animate-pulse');
+  });
+
   it('src が変化すると isLoaded がリセットされ、スケルトンが再表示される', async () => {
     const { rerender } = render(
       <ImageWithSkeleton src="/author.png" alt="テスト画像" width={100} height={100} />
