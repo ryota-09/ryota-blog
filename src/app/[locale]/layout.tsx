@@ -5,8 +5,8 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import Script from 'next/script';
 
-import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
-import { baseURL, gaId, gtmId } from "@/config";
+import { GoogleTagManager } from "@next/third-parties/google";
+import { baseURL, gtmId } from "@/config";
 
 // Next.js 16では、Layout/Pageコンポーネントのparamsは非同期になった
 type LocaleLayoutProps = {
@@ -65,8 +65,8 @@ export default async function LocaleLayout({
       />
       <NextIntlClientProvider messages={messages}>
         {children}
+        {/* GA4(gtag.js)はGTMコンテナ内のGA4設定タグ経由でのみ計測する（二重ロード防止: Issue #222） */}
         <GoogleTagManager gtmId={gtmId} />
-        <GoogleAnalytics gaId={gaId} />
       </NextIntlClientProvider>
     </>
   );
