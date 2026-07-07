@@ -69,6 +69,48 @@ const nextConfig = {
         destination: '/blogs/page/:page',
         permanent: true,
       },
+      // --- 旧クエリ形式の一覧URL互換リダイレクト (Issue #225) ---
+      // /blogs・カテゴリページはsearchParamsを読まない静的(ISR)ページになったため、
+      // 検索系クエリ付きの旧URLは動的レンダリング専用の /blogs/search へ誘導する。
+      // NOTE: マッチしなかったクエリはNext.jsが自動でdestinationへ引き継ぐ
+      {
+        source: '/:locale/blogs',
+        has: [{ type: 'query', key: 'blogType', value: 'zenn' }],
+        destination: '/:locale/blogs/zenn',
+        permanent: false,
+      },
+      {
+        source: '/:locale/blogs',
+        has: [{ type: 'query', key: 'keyword' }],
+        destination: '/:locale/blogs/search',
+        permanent: false,
+      },
+      {
+        source: '/:locale/blogs',
+        has: [{ type: 'query', key: 'category' }],
+        destination: '/:locale/blogs/search',
+        permanent: false,
+      },
+      // ?page=N (N>=2) はパス形式のページネーションへ（page=1は素の/blogsで正しく表示される）
+      {
+        source: '/:locale/blogs',
+        has: [{ type: 'query', key: 'page', value: '(?<page>[2-9]|[1-9]\\d+)' }],
+        destination: '/:locale/blogs/page/:page',
+        permanent: true,
+      },
+      // カテゴリページの旧検索URL（search/zenn/pageは予約セグメントのため除外）
+      {
+        source: '/:locale/blogs/:category((?!search$|zenn$|page$)[^/]+)',
+        has: [{ type: 'query', key: 'keyword' }],
+        destination: '/:locale/blogs/search?category=:category',
+        permanent: false,
+      },
+      {
+        source: '/:locale/blogs/:category((?!search$|zenn$|page$)[^/]+)',
+        has: [{ type: 'query', key: 'page', value: '(?<page>[2-9]|[1-9]\\d+)' }],
+        destination: '/:locale/blogs/:category/page/:page',
+        permanent: true,
+      },
     ];
   },
 };

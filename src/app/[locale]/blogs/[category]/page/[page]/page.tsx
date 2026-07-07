@@ -16,6 +16,11 @@ import { CATEGORIES, findCategoryBySlug } from "@/static/categories";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import { locales } from '@/i18n/config';
 
+// NOTE: next-intlのリクエストスコープlocale解決により[locale]配下はデフォルトで
+// 動的レンダリングになるため、記事詳細ページと同様にforce-staticを明示する(Issue #225)
+export const revalidate = false;
+export const dynamic = 'force-static';
+
 export async function generateStaticParams() {
   // ロケール×カテゴリの組み合わせごとに件数を集計する
   const combinations = locales.flatMap((locale) => CATEGORIES.map((category) => ({ locale, category })));

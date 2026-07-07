@@ -35,25 +35,24 @@ const SearchBar = () => {
     }
 
     // Check if we're on a category page (locale対応)
+    // NOTE: search/zenn/page は一覧系の予約セグメントのためカテゴリとして扱わない
     const categoryPathMatch = pathname.match(/^\/[^\/]+\/blogs\/([^\/]+)$/)
-    const categoryId = categoryPathMatch ? categoryPathMatch[1] : null
+    const matchedSegment = categoryPathMatch ? categoryPathMatch[1] : null
+    const categoryId = matchedSegment && !["search", "zenn", "page"].includes(matchedSegment) ? matchedSegment : null
 
     if (!keyword) {
       router.replace(categoryId ? `/${locale}/blogs/${categoryId}` : `/${locale}/blogs`)
       return
     }
 
-    // NOTE: URLクエリにはHTMLエスケープではなくURLエンコードを使う（"C&A" 等が別パラメータに化けるのを防ぐ）
+    // NOTE: 検索結果は動的レンダリング専用の /blogs/search に集約する
+    // （/blogs・カテゴリページを静的(ISR)に保ちbfcacheを有効にするため: Issue #225）。
+    // URLクエリにはHTMLエスケープではなくURLエンコードを使う（"C&A" 等が別パラメータに化けるのを防ぐ）
     const escapedKeyword = encodeURIComponent(keyword.toString().trim())
-
-    if (categoryId) {
-      formRef.current?.reset()
-      router.replace(`/${locale}/blogs/${categoryId}?keyword=${escapedKeyword}`)
-      return
-    }
+    const categoryQuery = categoryId ? `&category=${encodeURIComponent(categoryId)}` : ""
 
     formRef.current?.reset()
-    router.replace(`/${locale}/blogs?keyword=${escapedKeyword}`)
+    router.replace(`/${locale}/blogs/search?keyword=${escapedKeyword}${categoryQuery}`)
   }
 
   // Zennモード時の色設定

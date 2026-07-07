@@ -18,7 +18,19 @@ const EllipsisMenuItem = ({ pageNumber, children }: EllipsisMenuItemProps) => {
     const categoryPathMatch = pathname.match(/^\/([^\/]+)\/blogs\/([^\/]+)$/)
     const locale = categoryPathMatch ? categoryPathMatch[1] : pathname.match(/^\/([^\/]+)/)?.[1] || 'ja'
     const categoryId = categoryPathMatch ? categoryPathMatch[2] : null
-    
+
+    // 検索結果ページ(/blogs/search)ではkeyword/categoryクエリを保持したままpageクエリで遷移する
+    if (categoryId === "search") {
+      const params = new URLSearchParams()
+      const keywordParam = searchParams?.get('keyword')
+      const categoryParam = searchParams?.get('category')
+      if (keywordParam) params.set('keyword', keywordParam)
+      if (categoryParam) params.set('category', categoryParam)
+      if (pageNumber !== 1) params.set('page', String(pageNumber))
+      const queryString = params.toString()
+      return `/${locale}/blogs/search${queryString ? `?${queryString}` : ''}`
+    }
+
     let baseHref = categoryId ? `/${locale}/blogs/${categoryId}` : `/${locale}/blogs`
     const keyword = searchParams?.get('keyword') ?? ""
 

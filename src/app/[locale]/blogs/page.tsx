@@ -4,127 +4,56 @@ import { getTranslations } from "next-intl/server";
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
-import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
-import ZennArticleList from "@/components/ZennArticleList";
 import { generateQuery, buildPageUrl, buildLanguageAlternates } from "@/lib";
-import { getLocalizedCategoryName } from "@/lib/i18n-utils";
 import type { BlogListQuery } from "@/types/content";
-import {
-  BLOG_TYPE_QUERY,
-  CATEGORY_QUERY,
-  KEYWORD_QUERY,
-  PAGE_QUERY,
-} from "@/static/blogs";
-import { resolveCategoryEntry } from "@/static/categories";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
-import type { BlogTypeKeyLIteralType } from "@/types";
 
-// キャッシュ設定: 1時間のISR
-export const revalidate = 3600; // 1時間
+// NOTE: searchParamsを読むと全リクエストが動的レンダリングになり静的生成が無効化される
+// (no-store配信でbfcacheも不可)ため、このページではsearchParamsを一切参照しない。
+// 検索(?keyword=)・カテゴリ絞り込みは /blogs/search に分離した(Issue #225)。
+// また、next-intlのリクエストスコープlocale解決により[locale]配下はデフォルトで
+// 動的レンダリングになるため、記事詳細ページと同様にforce-staticを明示する。
+// 記事はビルド時に確定する(Velite)ため、再検証はデプロイ時の再ビルドに任せる
+export const revalidate = false;
+export const dynamic = 'force-static';
 
-interface PageProps {
+type PageProps = {
   params: Promise<{
     locale: string;
   }>;
-  searchParams: Promise<{
-    [BLOG_TYPE_QUERY]: BlogTypeKeyLIteralType;
-    [PAGE_QUERY]: string;
-    [CATEGORY_QUERY]: string;
-    [KEYWORD_QUERY]: string;
-  }>;
-}
+};
 
 export async function generateMetadata({
   params,
-  searchParams,
 }: PageProps): Promise<Metadata> {
-  // Next.js 16では、paramsとsearchParamsを非同期で取得する必要がある
+  // Next.js 16では、paramsを非同期で取得する必要がある
   const { locale } = await params;
-  const resolvedSearchParams = await searchParams;
-  const t = await getTranslations({ locale, namespace: "blog" });
   const tMeta = await getTranslations({ locale, namespace: "metadata" });
-  const blogType = resolvedSearchParams.blogType || "blogs";
-  const page = resolvedSearchParams.page || null;
-  const category = resolvedSearchParams.category || null;
-  const keyword = resolvedSearchParams.keyword || null;
 
-  // canonical / og:url は検索・カテゴリ・ページのクエリを含めず素の /blogs に正規化して集約する
+  // canonical / og:url は素の /blogs に正規化して集約する
   const blogsUrl = buildPageUrl(locale, "blogs");
   const blogsLanguages = buildLanguageAlternates("blogs");
-
-  // NOTE: ?blogType=zenn にアクセスした場合
-  if (blogType === "zenn") {
-    return {
-      title: t("zennArticles"),
-      description: t("zennArticles"),
-      alternates: { canonical: blogsUrl, languages: blogsLanguages },
-      openGraph: { url: blogsUrl, title: t("zennArticles"), description: t("zennArticles"), siteName: "Ryota-Blog", type: "website" },
-      twitter: { card: "summary_large_image" },
-    };
-  }
-  // NOTE: /blogs にアクセスした場合
-  if (blogType === "blogs" && !category && !keyword) {
-    const title = page ? `${t("recentPosts")} - ${t("page")} ${page}` : "HOME";
-    const description = tMeta("siteDescription");
-    return {
-      title,
-      description,
-      robots: page ? "noindex" : "index",
-      alternates: { canonical: blogsUrl, languages: blogsLanguages },
-      openGraph: { url: blogsUrl, title, description, siteName: "Ryota-Blog", type: "website" },
-      twitter: { card: "summary_large_image" },
-    };
-  }
-
-  let title = page ? ` - ${t("page")} ${page}` : "";
-  let description = "";
-
-  // カテゴリ名を翻訳（id・スラッグ・表示名(ja/en)のいずれで渡されても解決する）
-  let translatedCategory = category;
-  if (category) {
-    const categoryEntry = resolveCategoryEntry(category);
-    translatedCategory = categoryEntry ? getLocalizedCategoryName(categoryEntry, locale) : category;
-  }
-
-  // NOTE: ?category=hoge&keyword=fuga にアクセスした場合
-  if (category && keyword) {
-    title = `${translatedCategory} & ${keyword}` + title;
-    description = `${translatedCategory} & ${keyword}`;
-  }
-  // NOTE: ?keyword=fuga にアクセスした場合
-  if (keyword && !category) {
-    title = `${keyword}` + title;
-    description = `${keyword}`;
-  }
-  // NOTE: ?category=hoge にアクセスした場合
-  if (category && !keyword) {
-    title = `${translatedCategory}` + title;
-    description = `${translatedCategory}`;
-  }
+  const description = tMeta("siteDescription");
 
   return {
-    title: title,
-    description: description,
-    robots: page ? "noindex" : "index",
+    title: "HOME",
+    description,
     alternates: { canonical: blogsUrl, languages: blogsLanguages },
-    openGraph: { url: blogsUrl, title, description, siteName: "Ryota-Blog", type: "website" },
+    openGraph: { url: blogsUrl, title: "HOME", description, siteName: "Ryota-Blog", type: "website" },
     twitter: { card: "summary_large_image" },
   };
 }
 
-const Page = async ({ params, searchParams }: PageProps) => {
-  // Next.js 16では、paramsとsearchParamsを非同期で取得する必要がある
+const Page = async ({ params }: PageProps) => {
+  // Next.js 16では、paramsを非同期で取得する必要がある
   const { locale } = await params;
-  const resolvedSearchParams = await searchParams;
-  const category = resolvedSearchParams[CATEGORY_QUERY];
-  const keyword = resolvedSearchParams[KEYWORD_QUERY];
-  const blogType = resolvedSearchParams[BLOG_TYPE_QUERY] || "blogs";
-  const page = resolvedSearchParams[PAGE_QUERY] || "1";
 
-  const query: BlogListQuery = generateQuery(resolvedSearchParams);
-  const categoryEntry = category ? resolveCategoryEntry(category) : undefined;
-  const categoryLabel = categoryEntry ? getLocalizedCategoryName(categoryEntry, locale) : category;
+  const query: BlogListQuery = generateQuery({
+    page: "",
+    category: "",
+    keyword: "",
+  });
 
   return (
     <>
@@ -132,24 +61,18 @@ const Page = async ({ params, searchParams }: PageProps) => {
         <div className="flex flex-grow flex-col gap-4">
           <div className="flex flex-col gap-4 lg:flex-row">
             <div className="flex items-center justify-center border-2 border-gray-200 bg-white p-3 dark:border-gray-600 dark:bg-black">
-              <BlogTypeTabs blogType={blogType} />
+              <BlogTypeTabs blogType="blogs" />
             </div>
-            {(category || keyword) && (
-              <SearchStateCard category={categoryLabel} keyword={keyword} />
-            )}
           </div>
-          {blogType === "zenn" ? (
-            <ZennArticleList locale={locale} />
-          ) : (
-            <Suspense fallback={<Skelton />}>
-              <ArticleList
-                query={query}
-                blogType={blogType}
-                page={page}
-                locale={locale}
-              />
-            </Suspense>
-          )}
+          <Suspense fallback={<Skelton />}>
+            <ArticleList
+              query={query}
+              blogType="blogs"
+              page="1"
+              basePath={`/${locale}/blogs`}
+              locale={locale}
+            />
+          </Suspense>
         </div>
       </div>
       <SideNav locale={locale} />

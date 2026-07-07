@@ -13,6 +13,11 @@ import type { BlogListQuery, ContentLocale } from "@/types/content";
 import { PER_PAGE } from "@/static/blogs";
 import { locales } from '@/i18n/config';
 
+// NOTE: next-intlのリクエストスコープlocale解決により[locale]配下はデフォルトで
+// 動的レンダリングになるため、記事詳細ページと同様にforce-staticを明示する(Issue #225)
+export const revalidate = false;
+export const dynamic = 'force-static';
+
 export async function generateStaticParams() {
   const params = [];
 
