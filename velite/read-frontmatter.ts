@@ -23,7 +23,7 @@ const bodyCache = new Map<string, string>();
 
 // 指定したMDXファイルパスから「frontmatterを除いた本文」を返す。
 // veliteが s.raw() でtransformに渡す本文と同じ見出し列になるため、
-// computeHeadingSlugs(velite/mdast-utils.ts)の入力として両者を同一視できる。
+// computeHeadingIds(velite/mdast-utils.ts)の入力として両者を同一視できる。
 export const readMdxBody = (filePath: string): string => {
   const cached = bodyCache.get(filePath);
   if (cached !== undefined) return cached;
