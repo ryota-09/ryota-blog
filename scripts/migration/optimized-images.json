@@ -270,5 +270,9 @@
   "content/blogs/what-object-ui/images/スクリーンショット-2022-05-22-8.48.57-1024x553.jpg": {
     "hash": "6d3ed3a979d8dc1412d830320f509b1b01baec5c4ce983d9e0ca63274c0bf33b",
     "size": 16127
+  },
+  "content/blogs/microcms-to-mdx-migration/images/cms-migrate-thumbnail.png": {
+    "hash": "b8439710082bd860ed63c32e0070f8734dc3a27cd52bc9e31928b7ce868c25e5",
+    "size": 321066
   }
 }
