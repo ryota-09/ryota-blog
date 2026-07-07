@@ -51,6 +51,9 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
                 }}
                 loading="eager"
                 preload
+                // Next.js 16のpreloadはpreloadリンク出力のみでfetchpriorityを自動付与しないため、
+                // LCP画像はfetchPriorityを明示してLowプライオリティ開始によるLoad delayを防ぐ
+                fetchPriority="high"
               />
             </figure>
           </div>
