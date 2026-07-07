@@ -29,7 +29,8 @@ const ZennArticleList = async ({ locale, keyword }: ZennArticleListProps) => {
   }
   return (
     // NOTE: フッターの位置を調整するため、mb-[101px]を追加
-    <nav className="opacity-0 animate-fadeIn mb-[101px]">
+    // (フェードイン演出は遷移のたびに再生されちらつくため付けない)
+    <nav className="mb-[101px]">
       <ul className="m-0 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         {filteredData.slice(0, 6).map(({ link, title, isoDate }, index) => (
           <ZennArticleItem key={index} link={link} title={title} date={isoDate} keyword={keyword} />

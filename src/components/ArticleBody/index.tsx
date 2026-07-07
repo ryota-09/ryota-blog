@@ -10,7 +10,7 @@ import TOCList from "@/components/ArticleBody/TOCList";
 import AdRevenueLabel from "@/components/AdRevenueLabel";
 import PrevAndNextBlogNav from "@/components/ArticleBody/PrevAndNextBlogNav";
 import IssueButton from "@/components/UiParts/IssueButton";
-import { calcDiffYears } from "@/util";
+import { calcDiffYears, thumbnailPlaceholderProps } from "@/util";
 import InfoYearsCard from "@/components/UiParts/InfoYearsCard";
 import CategoryTag from "./CategoryTag";
 import LocaleAwareShare from "./LocaleAwareShare";
@@ -39,6 +39,9 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
                 alt={data.title}
                 width={data.thumbnail.width}
                 height={data.thumbnail.height}
+                // 一覧カードと同じblurプレースホルダーを使うことで、共有要素モーフ中に
+                // グレーのスケルトンへ一瞬切り替わるちらつきを避ける
+                {...thumbnailPlaceholderProps(data.thumbnail.blurDataURL)}
                 sizes="100vw"
                 style={{
                   height: "auto",

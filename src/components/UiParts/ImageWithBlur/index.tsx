@@ -19,8 +19,11 @@ type ImageWithBlurProps = {
   skeletonClassName?: string
 } & Omit<ImageProps, 'placeholder' | 'blurDataURL' | "src">
 
-// Cloudflare Workersランタイムではfs/sharpが使用不可のため、blurプレースホルダーを省略
-// 読み込み完了までは ImageWithSkeleton によるスケルトン表示に委譲する
+// Cloudflare Workersランタイムではfs/sharpが使用不可のため、ランタイム生成のblurプレースホルダーは使えない。
+// 読み込み完了までは ImageWithSkeleton によるスケルトン表示に委譲する。
+// NOTE: 名前に反して現状blurは表示しない。Velite管理の画像(記事サムネイル等)には
+// ビルド時生成のblurDataURLが存在するため、このコンポーネントではなく
+// ImageWithSkeleton + thumbnailPlaceholderProps(@/util) を直接使うこと(ArticleCard/ArticleBody参照)
 const ImageWithBlur = ({ className = "", src, alt, wrapperClassName = "", skeletonClassName, ...restProps }: ImageWithBlurProps) => {
   return (
     <ImageWithSkeleton

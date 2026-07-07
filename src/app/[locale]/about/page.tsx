@@ -17,7 +17,7 @@ const Page = async ({ params }: AboutPageProps) => {
   const { locale } = await params;
 
   return (
-    <article className="mx-auto w-full max-w-4xl animate-fadeIn flex-grow space-y-16 bg-white px-4 py-12 sm:px-6 md:space-y-24 md:py-16 lg:px-8 dark:bg-black">
+    <article className="mx-auto w-full max-w-4xl flex-grow space-y-16 bg-white px-4 py-12 sm:px-6 md:space-y-24 md:py-16 lg:px-8 dark:bg-black">
       <HeroSection locale={locale} />
       <AboutMeSection locale={locale} />
       <MissionSection locale={locale} />
