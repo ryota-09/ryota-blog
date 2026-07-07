@@ -81,7 +81,9 @@ const blogs = defineCollection({
       isAdvertisement: s.boolean().default(false),
       // 関連記事slug配列
       related: s.array(s.string()).default([]),
-      // microCMS由来の見出しid(出現順)。rehype-slug相当の後方互換用
+      // microCMS由来の見出しid(出現順)。移行記事の後方互換用。
+      // 空(=新規記事)の場合はTOC・HTMLとも見出しテキストからidを自動生成する
+      // (velite/mdast-utils.ts の computeHeadingSlugs を参照)
       headingIds: s.array(s.string()).default([]),
       // 下書きフラグ。true の記事は本番ビルドの出力から除外される(prepareフック参照)。
       // 開発環境(NODE_ENV=development、package.jsonのpredev/dev/pretest参照)では除外しない

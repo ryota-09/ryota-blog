@@ -1,3 +1,7 @@
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import path from "node:path";
+
+import yaml from "js-yaml";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -8,13 +12,38 @@ import {
 } from "../content";
 import { PER_PAGE } from "@/static/blogs";
 
-// 実データ(.velite出力の日英各30記事、計60記事)を使って検証する。
+// 実データ(.velite出力)を使って検証する。
 // vitest実行前に `pretest` フック(package.json)で `velite build` が走り、.velite/ が生成される前提。
+//
+// 期待値は記事数のハードコードではなく、content/blogs/ のファイルシステムを
+// 「独立したオラクル」として算出する(記事を追加するたびにテストが壊れるのを防ぐ。
+// 2026-07-07、31本目の記事追加で件数固定の旧テストが赤くなったことへの対処)。
+// NOTE: pretest は NODE_ENV=development で velite build するため、draft記事も
+// .velite に含まれる。ファイル数ベースのオラクルはこれと常に一致する。
+const BLOGS_DIR = path.join(__dirname, "..", "..", "..", "content", "blogs");
+
+type BlogFrontmatter = { categories?: string[] };
+
+const listFrontmattersByLocale = (locale: "ja" | "en"): BlogFrontmatter[] =>
+  readdirSync(BLOGS_DIR, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .flatMap((entry) => {
+      const file = path.join(BLOGS_DIR, entry.name, `index.${locale}.mdx`);
+      if (!existsSync(file)) return [];
+      const match = readFileSync(file, "utf-8").match(/^---\r?\n([\s\S]*?)\r?\n---/);
+      return match ? [yaml.load(match[1]) as BlogFrontmatter] : [];
+    });
+
+const jaFrontmatters = listFrontmattersByLocale("ja");
+const jaTotal = jaFrontmatters.length;
+const countJaByCategory = (category: string) =>
+  jaFrontmatters.filter((fm) => fm.categories?.includes(category)).length;
+
 describe("content.ts", () => {
   describe("getAllBlogListByLocale", () => {
-    it("ja/enそれぞれ30件ずつ返す", () => {
-      expect(getAllBlogListByLocale("ja")).toHaveLength(30);
-      expect(getAllBlogListByLocale("en")).toHaveLength(30);
+    it("content/blogs/のファイル数と同じ件数をja/enそれぞれ返す", () => {
+      expect(getAllBlogListByLocale("ja")).toHaveLength(jaTotal);
+      expect(getAllBlogListByLocale("en")).toHaveLength(listFrontmattersByLocale("en").length);
     });
 
     it("publishedAt降順(新しい順)にソートされている", () => {
@@ -26,9 +55,10 @@ describe("content.ts", () => {
       }
     });
 
-    it("最新記事が先頭に来る", () => {
+    it("最新記事(publishedAt最大)が先頭に来る", () => {
       const list = getAllBlogListByLocale("ja");
-      expect(list[0].slug).toBe("best-buy-2026-first-half");
+      const newest = Math.max(...list.map((blog) => new Date(blog.publishedAt).getTime()));
+      expect(new Date(list[0].publishedAt).getTime()).toBe(newest);
     });
   });
 
@@ -39,7 +69,7 @@ describe("content.ts", () => {
 
       expect(page1.contents).toHaveLength(PER_PAGE);
       expect(page2.contents).toHaveLength(PER_PAGE);
-      expect(page1.totalCount).toBe(30);
+      expect(page1.totalCount).toBe(jaTotal);
       expect(page1.offset).toBe(0);
       expect(page1.limit).toBe(PER_PAGE);
 
@@ -50,21 +80,24 @@ describe("content.ts", () => {
     });
 
     it("最終ページは端数件数のみ返す", () => {
-      // 30件をPER_PAGE=4で割ると7ページ+2件
-      const lastPage = getBlogList("ja", { offset: 28, limit: PER_PAGE });
-      expect(lastPage.contents).toHaveLength(2);
-      expect(lastPage.totalCount).toBe(30);
+      // 最終ページのoffsetと端数件数を全記事数から算出する(端数0の場合はPER_PAGE件になる)
+      const lastPageOffset = Math.floor((jaTotal - 1) / PER_PAGE) * PER_PAGE;
+      const expectedCount = jaTotal - lastPageOffset;
+      const lastPage = getBlogList("ja", { offset: lastPageOffset, limit: PER_PAGE });
+      expect(lastPage.contents).toHaveLength(expectedCount);
+      expect(lastPage.totalCount).toBe(jaTotal);
     });
 
     it("範囲外のoffsetは空配列を返すがtotalCountは全体件数を維持する", () => {
-      const result = getBlogList("ja", { offset: 1000, limit: PER_PAGE });
+      const result = getBlogList("ja", { offset: jaTotal + 1000, limit: PER_PAGE });
       expect(result.contents).toHaveLength(0);
-      expect(result.totalCount).toBe(30);
+      expect(result.totalCount).toBe(jaTotal);
     });
 
     it("カテゴリで絞り込める(categories配列のいずれかに一致)", () => {
       const result = getBlogList("ja", { offset: 0, limit: 100, category: "zakki" });
-      expect(result.totalCount).toBe(11);
+      expect(result.totalCount).toBe(countJaByCategory("zakki"));
+      expect(result.totalCount).toBeGreaterThan(0);
       result.contents.forEach((content) => {
         expect(content.categories).toContain("zakki");
       });
@@ -116,7 +149,8 @@ describe("content.ts", () => {
 
     it("カテゴリとキーワードを同時に指定するとAND条件になる", () => {
       const categoryOnly = getBlogList("ja", { offset: 0, limit: 100, category: "aws" });
-      expect(categoryOnly.totalCount).toBe(4);
+      expect(categoryOnly.totalCount).toBe(countJaByCategory("aws"));
+      expect(categoryOnly.totalCount).toBeGreaterThan(0);
 
       const combined = getBlogList("ja", {
         offset: 0,
