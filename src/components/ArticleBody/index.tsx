@@ -42,7 +42,9 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
                 // 一覧カードと同じblurプレースホルダーを使うことで、共有要素モーフ中に
                 // グレーのスケルトンへ一瞬切り替わるちらつきを避ける
                 {...thumbnailPlaceholderProps(data.thumbnail.blurDataURL)}
-                sizes="100vw"
+                // 実表示幅はコンテナmax-w-[1028px]×md:w-[80%]≈822pxが上限のため、
+                // 100vw指定による過大バリアント(w=1280/1536)の取得を防ぐ
+                sizes="(min-width: 1028px) 822px, (min-width: 768px) 80vw, 100vw"
                 style={{
                   height: "auto",
                   width: "100%",

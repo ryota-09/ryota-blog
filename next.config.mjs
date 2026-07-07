@@ -23,7 +23,7 @@ const nextConfig = {
     // 一覧ページのサムネイル表示サイズに最適化（496px前後）
     deviceSizes: [640, 768, 1024, 1280, 1536],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 512],
-    formats: ['image/webp'], // WebP優先で配信
+    formats: ['image/avif', 'image/webp'], // AVIF優先・WebPフォールバックで配信(webp比で概ね20〜30%削減)
     // minimumCacheTTL は Cloudflare Workers 非対応のため削除
   },
   // NOTE: RSCリクエストのContent-TypeはNext.jsが自動設定するため上書きしない。
