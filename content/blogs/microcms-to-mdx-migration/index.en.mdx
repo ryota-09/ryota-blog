@@ -1,0 +1,234 @@
+---
+title: "How I Moved My Next.js Blog Off the CMS (microCMS → Velite + MDX in One Day)"
+description: "A record of migrating my Next.js + Cloudflare Workers blog from microCMS to in-repo MDX with Velite. I moved 60 articles with zero conversion loss while keeping every URL intact — and fixed 7 bugs in the old implementation along the way!"
+publishedAt: "2026-07-06T23:31:28.317Z"
+updatedAt: "2026-07-06T23:31:28.317Z"
+categories:
+  - next_js
+thumbnail: ./images/cms-migrate-thumbnail.png
+related:
+  - release-notes-202505
+  - my-seo-todo-list
+draft: false
+---
+
+Hello! I'm [@Ryo54388667](https://x.com/Ryo54388667)!☺️
+
+I work as an engineer in Tokyo! I mainly work with TypeScript and Next.js.
+
+Today I'll share **how I moved my personal blog off its CMS**!
+
+This blog had been managed with microCMS (a headless CMS) for a long time, but I recently moved all the articles into the repository as MDX files.
+
+If you're thinking about migrating away from a headless CMS, or struggling with content management for a Next.js blog, I think this will be useful!
+
+## What I Did
+
+I pulled the articles managed in microCMS into the frontend repository as MDX files. In other words, I went CMS-less.
+
+Here's the migration in numbers.
+
+| Item | Details |
+|---|---|
+| Scope | 60 articles (30 ja/en pairs) + 87 images + 19 categories |
+| Method | microCMS → in-repo MDX (Velite) |
+| Duration | 1 day from planning to production switch and full removal |
+| Conversion loss | Zero (all 60 articles compiled as MDX) |
+| Images | 58.79MB → 8.91MB (84.8% reduction) |
+| URLs | Fully preserved (no redirect design needed) |
+| Bonus | Found and fixed 7 bugs in the old implementation |
+
+My personal highlight is the last row.
+
+I only meant to peel off the CMS, but ended up finding 7 bugs that had been lurking there since before the migration. More on that in the second half.
+
+## Why I Left the CMS
+
+There were four main reasons.
+
+- The articles only existed inside the CMS, so I couldn't version-control them with Git
+- Every build hit the microCMS API, so an API outage or a missing key would break the build
+- I wanted to write with my favorite editor and AI tools, and publish through PR reviews
+- I wanted to be free from the free-tier limits
+
+The first and third mattered most to me.
+
+The microCMS content API only returns published articles. There is an update API as well, but I had never wired it into my workflow, so day-to-day editing effectively happened only in the admin panel's rich editor.
+
+I wanted "publishing = git push", you know? Every engineer has wished for that at least once.
+
+## The New Setup
+
+Here's how the content is laid out after the migration.
+
+```text
+content/
+  blogs/
+    {slug}/
+      index.ja.mdx    # the article (Japanese)
+      index.en.mdx    # paired English version
+      images/         # article images colocated here
+  categories.json     # category master data
+  ogp-cache.json      # OGP cache for link cards
+```
+
+For the content layer I chose [Velite](https://velite.js.org/). It validates frontmatter with a Zod schema and even auto-generates TypeScript types.
+
+What struck me during the tech selection was the rise and fall in this space.
+
+Contentlayer, once the go-to choice, is no longer maintained, and [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote) had its repository archived in April 2026. The "standard picks" from just a few years ago have all stalled...
+
+Meanwhile, the underlying ecosystem (unified / remark / rehype) is alive and well.
+
+So I made my choice assuming that wrappers eventually die. Even if Velite stops someday, what remains in my hands is **just plain MDX files**. Knowing I can always fall back to my own unified implementation makes me feel a lot safer.
+
+## Four Principles I Set Before Starting
+
+Before touching anything, I read through a bunch of CMS-exit stories on the web.
+
+The pitfalls people hit are remarkably consistent: weak URL/SEO preservation planning, image management getting messy, cramming in too many shiny technologies, and writing becoming harder after the migration.
+
+I flipped those into four principles before writing any code.
+
+1. Preserve URLs completely: make slugs identical to the microCMS content IDs, so no redirect design is needed at all
+2. Content freeze: no CMS-side article updates between conversion start and the switchover
+3. Parity gate: don't remove the old implementation until sitemap, RSS, and visuals pass a before/after comparison
+4. Cancel last: verify backups → stable production → removal → cancellation, in that order
+
+As for "cramming too much in": I sealed away the mid-migration urge to switch the syntax highlighter to Shiki. Changing the visuals would contaminate the visual-regression verdicts, so it went to a separate post-migration issue.
+
+I also ran an exhaustive jq survey of the exported data before designing the conversion.
+
+An attribute called `colspan="1"` showed up 1,176 times and briefly scared me, but it turned out to be harmless noise that microCMS's editor attaches to every table cell. There were many of these "scary numbers, harmless reality" patterns, and this upfront survey kept protecting the design decisions later on.
+
+## The Hardest Part: Preserving Heading IDs
+
+For the body conversion, I turned microCMS's HTML into MDX using unified's official AST transformations (rehype-parse → hast-util-to-mdast → mdast-util-to-markdown). Embeds like tweets and link cards were replaced with JSX components such as `<Tweet />`.
+
+The conversion itself went smoothly — except for one thing that hurt: heading IDs.
+
+microCMS headings carry auto-generated IDs like `<h2 id="hba7e17d1c0">`, and both the table of contents and shared anchor links depend on them. Convert carelessly, and every "#heading" URL ever shared breaks.
+
+At first I casually assumed the `{#custom-id}` syntax would just work.
+
+I was naive... MDX interprets `{...}` as a JSX expression, so it dies instantly with an acorn parse error. On top of that, [the MDX team has explicitly said they won't support this syntax](https://github.com/mdx-js/mdx/issues/2485).
+
+"Then why not just write `<h2 id="...">` directly?" — you'd think.
+
+That failed too. MDX's components map doesn't apply to JSX literals, so those headings bypass the existing heading component and lose their styling.
+
+What I finally adopted was the third option: write plain Markdown headings, store only the IDs in frontmatter in document order, and inject them with a rehype plugin.
+
+```yaml title="index.ja.mdx"
+headingIds:
+  - hba7e17d1c0
+  - h9036816da0
+  # document order; assigned in sequence to every h1–h6 heading
+```
+
+```typescript title="rehype-restore-heading-ids.ts"
+let i = 0;
+visit(tree, "element", (node) => {
+  if (/^h[1-6]$/.test(node.tagName)) {
+    if (headingIds[i]) node.properties.id = headingIds[i];
+    i++;
+  }
+});
+```
+
+With this, the table of contents and shared links finally behave exactly as they did before the migration.
+
+I had actually started drafting the issue around option 1, and a quick "does this really work in MDX?" PoC wiped it out completely. So glad I caught it before implementation 😅
+
+## Dropping ISR Because of a Cloudflare Workers Constraint
+
+This blog runs on Cloudflare Workers, and I nearly stepped on a time bomb here too.
+
+Velite's `s.mdx()` outputs a function-body string, and rendering it requires evaluating `new Function(code)`.
+
+Meanwhile, the Cloudflare Workers runtime **prohibits dynamic code generation (eval and new Function)**.
+
+Build-time SSG runs on Node, so that part is fine. But the article pages used ISR with `revalidate = 86400`, which meant that the moment a revalidation fired, rendering would happen inside the Worker and die with an EvalError.
+
+Nothing happens locally; it dies for the first time on revalidation in production. Terrifying...😇
+
+The fix was simple: drop ISR and go fully static (`revalidate = false`).
+
+Come to think of it, now that the content is fixed inside the repository, "updating an article = redeploying". There's nothing left for ISR to revalidate. A CMS-era setting had become not just unnecessary but harmful after leaving the CMS — a satisfying realization.
+
+## The Migration Uncovered 7 Bugs in the Old Implementation
+
+The acceptance criterion for the migration was "the output must match before and after".
+
+I snapshotted the production sitemap, RSS, and llms.txt beforehand and committed them, then diffed the new implementation's output against them. For visuals, I ran regression across 63 pages with Playwright + pixelmatch.
+
+Including URL coverage and Lighthouse comparisons, the verification suite came to 8 kinds of checks in total.
+
+"There's no way it all just matches, right?"
+
+Indeed, it didn't. But when I dug into the mismatches, what surfaced were mostly bugs in the old implementation, not the new one.
+
+Across the whole migration, I found 7 bugs in the old implementation.
+
+| # | Bug | Found via |
+|---|---|---|
+| 1 | English sitemap reused the Japanese article's category in URLs | Snapshot diff |
+| 2 | English sitemap's lastmod used the Japanese article's value (56 entries) | Snapshot diff |
+| 3 | Legacy URL redirects dropped query strings | Rewriting e2e tests |
+| 4 | 12 Pagination tests permanently red | Test migration |
+| 5 | Most e2e tests passed silently with selectors that never matched | Test migration |
+| 6 | Long code blocks made the whole page scroll horizontally | Visual regression |
+| 7 | width/height injection for body images completely broken | Image compression check |
+
+Number 5 was shocking.
+
+The selector looking for article cards assumed an `<article>` tag, while the implementation used `<li>`-based markup. It could never match — and the tests were written to "pass without asserting anything if the element isn't found". Green-looking tests that effectively tested nothing.
+
+"The tests pass" and "the code is tested" are two different things...
+
+Number 6 ran deep too: the culprit was the flex-item default `min-width: auto`, a CSS behavior you will absolutely trip on if you don't know it. Even with `overflow-x: auto` inside, the code block's intrinsic width pushes the flex item itself wider. Explicitly setting `min-w-0` fixed it for good.
+
+By the way, the post-switch production check also turned up three issues on the new implementation's side.
+
+The worst one — "a nonexistent article URL returns 500 instead of 404" — was caused by `generateMetadata` being evaluated before the page body and slipping past the error handling. The same problem existed in the OGP image route, so I fixed both and added regression tests.
+
+From a crawler's point of view this one has real SEO impact, so the lesson is: the switchover checklist needs error paths, not just happy paths.
+
+## Rebuilding the Writing Workflow
+
+The most common regret in CMS-exit stories is "writing got harder after the migration". So I designed this part as its own phase.
+
+- `npm run new-post -- <slug>` scaffolds a new article (with a draft flag)
+- Draft articles are excluded from the production build output itself (lists, search, sitemap, RSS — every path covered by a single filter)
+- CI enforces internal link checks + textlint + markdownlint + frontmatter schema validation
+
+The fun part was textlint.
+
+Running a technical-writing preset against the existing 30 articles as-is spat out 1,048 errors lol
+
+Looking closer, almost all of them were false positives against the "personal blog style" — exclamation marks, emoji, soft expressions. Since the content-freeze principle made "fix the articles to satisfy the linter" off-limits, I turned off the style rules and adjusted the linter to reality instead.
+
+Once you start bending your articles to the machine, something has gone backwards.
+
+## Final Thoughts
+
+The lessons that proved most valuable:
+
+- Design for URL preservation first, and redirects and SEO countermeasures become "unnecessary"
+- Parity verification is both the answer key for the migration and an audit of the old implementation
+- Surface platform constraints early. Works locally ≠ works in production
+- Exhaustive surveys of real data protect the design (data that looked like garbage turned out to be part of a live article's URL)
+- Design the writing experience as its own phase
+- Wrapper libraries eventually die. Content being plain MDX is the best insurance
+
+A little homework remains: I'll keep watching Search Console and error rates for a while, and once stable operation is confirmed, I'll cancel microCMS (the content is fully backed up).
+
+By the way, this migration took just one day from planning to full removal. I delegated most of the implementation to Claude Code and focused on design decisions and reviewing the risky parts. I'd like to write about that AI-agent workflow in another article.
+
+I hope this helps if you're considering leaving your CMS!
+
+If you know a better approach, please let me know~
+
+Thank you for reading to the end!
+
+I tweet casually, so feel free to follow me! 🥺
