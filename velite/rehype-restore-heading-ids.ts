@@ -7,8 +7,9 @@
 //
 // idのソースは2系統:
 // - 移行記事: frontmatterの headingIds(microCMS由来のid、出現順の配列)を復元する
-// - 新規記事(headingIds無し): 見出しテキストから自動生成する(rehype-slug相当)。
-//   TOC(velite.config.tsのextractToc)と同じ computeHeadingSlugs を同じ本文に対して
+// - 新規記事(headingIds無し): 見出しテキストのハッシュから自動生成する
+//   (microCMS互換の h+16進10桁 形式。詳細は velite/mdast-utils.ts の computeHeadingIds)。
+//   TOC(velite.config.tsのextractToc)と同じ computeHeadingIds を同じ本文に対して
 //   使うことで、TOCのアンカーと実HTMLのidが必ず一致する
 //
 // frontmatterへのアクセス方式:
@@ -19,7 +20,7 @@ import { visit } from "unist-util-visit";
 import type { Root, Element } from "hast";
 import type { VFile } from "vfile";
 
-import { computeHeadingSlugs } from "./mdast-utils";
+import { computeHeadingIds } from "./mdast-utils";
 import { readFrontmatter, readMdxBody } from "./read-frontmatter";
 
 const HEADING_TAGS = new Set(["h1", "h2", "h3", "h4", "h5", "h6"]);
@@ -30,7 +31,7 @@ export const rehypeRestoreHeadingIds = () => (tree: Root, file: VFile) => {
     ? (frontmatter.headingIds as string[])
     : [];
   const headingIds =
-    restoredIds.length > 0 ? restoredIds : computeHeadingSlugs(readMdxBody(file.path));
+    restoredIds.length > 0 ? restoredIds : computeHeadingIds(readMdxBody(file.path));
 
   if (headingIds.length === 0) return;
 

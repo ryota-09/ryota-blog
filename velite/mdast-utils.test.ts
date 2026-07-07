@@ -1,28 +1,48 @@
-// computeHeadingSlugs / extractToc のユニットテスト。
+// computeHeadingIds / extractToc のユニットテスト。
 // 「新規記事(headingIds無し)のTOC idが全てnullになり目次が空表示になる」バグ(2026-07-07修正)の回帰防止。
+// id形式は移行記事(microCMS自動生成id)互換の h+16進10桁(例: hba7e17d1c0)。
 import { describe, expect, it } from "vitest";
 
-import { computeHeadingSlugs, extractToc } from "./mdast-utils";
+import { computeHeadingIds, extractToc } from "./mdast-utils";
 
-describe("computeHeadingSlugs", () => {
-  it("日本語見出しから文書順にスラッグを生成する", () => {
+const ID_FORMAT = /^h[0-9a-f]{10}$/;
+
+describe("computeHeadingIds", () => {
+  it("見出しごとにmicroCMS互換形式(h+16進10桁)のidを文書順に生成する", () => {
     const raw = "## 何をしたのか\n\n本文\n\n## なぜ脱CMSしたのか\n\n### 補足\n";
-    expect(computeHeadingSlugs(raw)).toEqual(["何をしたのか", "なぜ脱cmsしたのか", "補足"]);
+    const ids = computeHeadingIds(raw);
+    expect(ids).toHaveLength(3);
+    ids.forEach((id) => expect(id).toMatch(ID_FORMAT));
   });
 
-  it("同名見出しの重複は -1, -2 で回避する", () => {
+  it("同じ本文からは常に同じidを生成する(ビルド決定性)", () => {
+    const raw = "## 何をしたのか\n\n## 最後に\n";
+    expect(computeHeadingIds(raw)).toEqual(computeHeadingIds(raw));
+  });
+
+  it("同名見出しにも互いに異なるidを割り当てる", () => {
     const raw = "## まとめ\n\n## まとめ\n\n## まとめ\n";
-    expect(computeHeadingSlugs(raw)).toEqual(["まとめ", "まとめ-1", "まとめ-2"]);
+    const ids = computeHeadingIds(raw);
+    expect(new Set(ids).size).toBe(3);
+    ids.forEach((id) => expect(id).toMatch(ID_FORMAT));
+  });
+
+  it("見出しテキストが同じなら記事内の位置が変わってもidは変わらない", () => {
+    const [summaryIdA] = computeHeadingIds("## まとめ\n");
+    const ids = computeHeadingIds("## はじめに\n\n## まとめ\n");
+    expect(ids[1]).toBe(summaryIdA);
   });
 
   it("コードブロック内の ## は見出しとして数えない", () => {
     const raw = "## 実装\n\n```bash\n## これはコメント\n```\n";
-    expect(computeHeadingSlugs(raw)).toEqual(["実装"]);
+    expect(computeHeadingIds(raw)).toHaveLength(1);
   });
 
-  it("インラインコード混じりの見出しも文書順のテキストでスラッグ化する", () => {
+  it("インラインコード混じりの見出しでもidを生成できる", () => {
     const raw = "## `min-w-0` の明示で根治\n";
-    expect(computeHeadingSlugs(raw)).toEqual(["min-w-0-の明示で根治"]);
+    const ids = computeHeadingIds(raw);
+    expect(ids).toHaveLength(1);
+    expect(ids[0]).toMatch(ID_FORMAT);
   });
 });
 
@@ -31,10 +51,9 @@ describe("extractToc", () => {
 
   it("headingIdsが空の新規記事では自動生成idを割り当てる(nullにしない)", () => {
     const toc = extractToc(raw, []);
-    expect(toc).toEqual([
-      { depth: 2, text: "何をしたのか", id: "何をしたのか" },
-      { depth: 2, text: "最後に", id: "最後に" },
-    ]);
+    expect(toc.map((entry) => entry.text)).toEqual(["何をしたのか", "最後に"]);
+    expect(toc.map((entry) => entry.id)).toEqual(computeHeadingIds(raw));
+    toc.forEach((entry) => expect(entry.id).toMatch(ID_FORMAT));
   });
 
   it("headingIdsがある移行記事ではそれをそのまま使う(従来挙動を維持)", () => {
