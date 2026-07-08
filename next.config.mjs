@@ -83,15 +83,18 @@ const nextConfig = {
         destination: '/:locale/blogs/zenn',
         permanent: false,
       },
+      // NOTE: hasのvalueは必ず指定すること。OpenNext(Cloudflare)のルーティング層は
+      // value未指定を new RegExp("").test("") と評価し、クエリが無くても常にマッチしてしまう
+      // (プレビュー実測で/ja/blogsが全て/blogs/searchへリダイレクトされる事故を確認)
       {
         source: '/:locale/blogs',
-        has: [{ type: 'query', key: 'keyword' }],
+        has: [{ type: 'query', key: 'keyword', value: '.+' }],
         destination: '/:locale/blogs/search',
         permanent: false,
       },
       {
         source: '/:locale/blogs',
-        has: [{ type: 'query', key: 'category' }],
+        has: [{ type: 'query', key: 'category', value: '.+' }],
         destination: '/:locale/blogs/search',
         permanent: false,
       },
@@ -105,7 +108,7 @@ const nextConfig = {
       // カテゴリページの旧検索URL（search/zenn/pageは予約セグメントのため除外）
       {
         source: '/:locale/blogs/:category((?!search$|zenn$|page$)[^/]+)',
-        has: [{ type: 'query', key: 'keyword' }],
+        has: [{ type: 'query', key: 'keyword', value: '.+' }],
         destination: '/:locale/blogs/search?category=:category',
         permanent: false,
       },
