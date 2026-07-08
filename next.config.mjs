@@ -112,6 +112,13 @@ const nextConfig = {
         destination: '/:locale/blogs/search?category=:category',
         permanent: false,
       },
+      // カテゴリページの旧Zennタブ表示URL(?blogType=zenn)はZenn一覧へ誘導する
+      {
+        source: '/:locale/blogs/:category((?!search$|zenn$|page$)[^/]+)',
+        has: [{ type: 'query', key: 'blogType', value: 'zenn' }],
+        destination: '/:locale/blogs/zenn',
+        permanent: false,
+      },
       {
         source: '/:locale/blogs/:category((?!search$|zenn$|page$)[^/]+)',
         has: [{ type: 'query', key: 'page', value: '(?<page>[2-9]|[1-9]\\d+)' }],

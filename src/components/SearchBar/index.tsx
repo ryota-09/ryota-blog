@@ -38,7 +38,15 @@ const SearchBar = () => {
     // NOTE: search/zenn/page は一覧系の予約セグメントのためカテゴリとして扱わない
     const categoryPathMatch = pathname.match(/^\/[^\/]+\/blogs\/([^\/]+)$/)
     const matchedSegment = categoryPathMatch ? categoryPathMatch[1] : null
-    const categoryId = matchedSegment && !["search", "zenn", "page"].includes(matchedSegment) ? matchedSegment : null
+    const pathCategoryId = matchedSegment && !["search", "zenn", "page"].includes(matchedSegment) ? matchedSegment : null
+
+    // 検索結果ページ(/blogs/search)上での再検索・リセット時は、パスからカテゴリが取れないため
+    // URLクエリのcategoryを引き継ぐ(カテゴリ絞り込みが黙って失われる回帰の防止)。
+    // イベントハンドラ内なのでwindow参照でよく、useSearchParamsのSuspense境界要件を避けられる
+    const queryCategoryId = matchedSegment === "search"
+      ? new URLSearchParams(window.location.search).get("category")
+      : null
+    const categoryId = pathCategoryId ?? queryCategoryId
 
     if (!keyword) {
       router.replace(categoryId ? `/${locale}/blogs/${categoryId}` : `/${locale}/blogs`)

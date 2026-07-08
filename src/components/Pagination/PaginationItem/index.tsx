@@ -1,8 +1,9 @@
 "use client"
 import { cltw } from "@/util"
 import { Link } from "next-view-transitions"
-import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import { useSearchParams, usePathname } from "next/navigation"
 import { ReactNode, useCallback } from "react"
+import { generatePaginationHref } from "@/components/Pagination/generatePaginationHref"
 
 type PaginationItemProps = {
   currentPage: number
@@ -17,48 +18,7 @@ const PaginationItem = ({ pageNumber, children, currentPage, basePath }: Paginat
 
   const generateHref = useCallback(() => {
     if (pageNumber === currentPage) return ""
-
-    // サーバーサイドでbasePathが提供されている場合はそれを使用
-    if (basePath) {
-      if (pageNumber === 1) {
-        return basePath
-      }
-      return `${basePath}/page/${pageNumber}`
-    }
-
-    // 国際化対応: カテゴリページかどうかを確認
-    const categoryPathMatch = pathname?.match(/^\/([^\/]+)\/blogs\/([^\/]+)$/)
-    const locale = categoryPathMatch ? categoryPathMatch[1] : pathname?.match(/^\/([^\/]+)/)?.[1] || 'ja'
-    const categoryId = categoryPathMatch ? categoryPathMatch[2] : null
-
-    // 検索結果ページ(/blogs/search)ではkeyword/categoryクエリを保持したままpageクエリで遷移する
-    if (categoryId === "search") {
-      const params = new URLSearchParams()
-      const keywordParam = searchParams?.get('keyword')
-      const categoryParam = searchParams?.get('category')
-      if (keywordParam) params.set('keyword', keywordParam)
-      if (categoryParam) params.set('category', categoryParam)
-      if (pageNumber !== 1) params.set('page', String(pageNumber))
-      const queryString = params.toString()
-      return `/${locale}/blogs/search${queryString ? `?${queryString}` : ''}`
-    }
-
-    const keyword = searchParams?.get('keyword') ?? ""
-
-    let baseHref = categoryId ? `/${locale}/blogs/${categoryId}` : `/${locale}/blogs`
-
-    if (keyword) {
-      // NOTE: keyword はデコード済みの生文字列のため、再エンコードしてからクエリに埋め込む
-      const currentPath = `${baseHref}?keyword=${encodeURIComponent(keyword)}`
-      return `${currentPath}${pageNumber === 1 ? '' : `&page=${pageNumber}`}`
-    }
-
-    if (pageNumber === 1) {
-      return baseHref
-    }
-
-    // 新しいパスベースのページネーション形式を使用
-    return `${baseHref}/page/${pageNumber}`
+    return generatePaginationHref({ pathname, searchParams, pageNumber, basePath })
   }, [searchParams, pathname, pageNumber, currentPage, basePath])
 
   return (
