@@ -20,10 +20,13 @@ export const generatePaginationHref = ({
 }: GeneratePaginationHrefArgs): string => {
   // 国際化対応: /{locale}/blogs/{segment} 形式かどうかを確認
   const categoryPathMatch = pathname?.match(/^\/([^\/]+)\/blogs\/([^\/]+)$/);
-  const locale = categoryPathMatch
-    ? categoryPathMatch[1]
-    : pathname?.match(/^\/([^\/]+)/)?.[1] || "ja";
-  const categoryId = categoryPathMatch ? categoryPathMatch[2] : null;
+  // ページネーション済みのカテゴリパス(/{locale}/blogs/{category}/page/{n})からもカテゴリを復元する。
+  // EllipsisMenuItemはbasePathを受け取らないため、従来はこの形のパスで省略メニューのリンクが
+  // カテゴリ文脈を失い /{locale}/blogs/page/{n} へ誤誘導する潜在バグがあった(共通化に伴い修正)
+  const paginatedCategoryMatch = pathname?.match(/^\/([^\/]+)\/blogs\/([^\/]+)\/page\/\d+$/);
+  const pathMatch = categoryPathMatch ?? paginatedCategoryMatch;
+  const locale = pathMatch ? pathMatch[1] : pathname?.match(/^\/([^\/]+)/)?.[1] || "ja";
+  const categoryId = pathMatch ? pathMatch[2] : null;
 
   // 検索結果ページ(/blogs/search)ではkeyword/categoryクエリを保持したままpageクエリで遷移する。
   // NOTE: basePath分岐より先に評価すること。将来検索ページの呼び出しにbasePathが
