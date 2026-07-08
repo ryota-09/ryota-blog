@@ -27,6 +27,9 @@ const CustomImg = ({ src, alt, width, height, ...restProps }: CustomImgProps) =>
         height={+height}
         unoptimized={isGif}
         loading="lazy"
+        // 実表示幅はmd以上で本文コンテナ(≈994px)の70%≈700pxが上限。
+        // sizes未指定(=100vw扱い)だと表示サイズの1.2〜2.4倍のバリアントを取得してしまうため明示する
+        sizes="(min-width: 768px) 700px, 100vw"
         wrapperClassName="max-w-full md:w-[70%]"
         className="h-auto w-full"
       />

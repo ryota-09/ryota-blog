@@ -93,7 +93,8 @@ test('should search articles', async ({ page }) => {
   await page.fill('[data-testid=pw-search-bar-input]', 'test');
   await page.click('[data-testid=pw-search-bar-button]');
 
-  await expect(page).toHaveURL(/\/ja\/blogs\?keyword=test/);
+  // 検索結果は動的レンダリング専用の /blogs/search に遷移する(Issue #225)
+  await expect(page).toHaveURL(/\/ja\/blogs\/search\?keyword=test/);
 });
 
 test('should render Search State Chip', async ({ page }) => {
@@ -121,12 +122,12 @@ test('should reset search condition', async ({ page }) => {
 });
 
 test('should search articles with category', async ({ page }) => {
-  // カテゴリページ(パスベース)上で検索すると、カテゴリを保持したままkeywordクエリが付く
-  // (SearchBarのhandleSubmit: /{locale}/blogs/{categoryId}?keyword=...)
+  // カテゴリページ(パスベース)上で検索すると、カテゴリを保持したまま/blogs/searchへ遷移する
+  // (SearchBarのhandleSubmit: /{locale}/blogs/search?keyword=...&category={categoryId})
   await page.goto('/blogs/typescript');
   await page.waitForSelector('[data-testid=pw-search-bar-input]');
   await page.fill('[data-testid=pw-search-bar-input]', 'API');
   await page.click('[data-testid=pw-search-bar-button]');
 
-  await expect(page).toHaveURL(/\/ja\/blogs\/typescript\?keyword=API/);
+  await expect(page).toHaveURL(/\/ja\/blogs\/search\?keyword=API&category=typescript/);
 });
