@@ -16,6 +16,10 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  // NOTE: experimental.inlineCss はA/B計測の結果、不採用(Issue #223)。
+  // render-blocking監査は解消するが、日本語フォントの@font-face CSS(生90KB)が
+  // 全ページのHTMLに複製されてFCPが2.4s→4.7s、Perfスコアが72→63に悪化した。
+  // 外部CSSチャンク(エッジキャッシュ+ページ間再利用可能)を維持する方が速い。
   images: {
     // 記事画像・アイコン画像は全てリポジトリ内(public/)にローカルホスティングされているため、
     // 外部画像ドメインの許可(remotePatterns)は不要になった(#243)
