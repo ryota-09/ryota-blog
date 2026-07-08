@@ -1,4 +1,4 @@
-import type { BlogPost } from "@/types/content";
+import type { BlogPost, BlogPostSummary } from "@/types/content";
 import { resolveCategoryOrDefault } from "@/static/categories";
 
 // クライアントコンポーネントからも安全にimportできる、記事データの純粋ヘルパー。
@@ -16,3 +16,19 @@ import { resolveCategoryOrDefault } from "@/static/categories";
 export const getPrimaryCategoryIdFromBlogPost = (blog: Pick<BlogPost, "categories">): string => {
   return resolveCategoryOrDefault(blog.categories[0]).slug;
 };
+
+/**
+ * クライアントコンポーネントへ渡す前にBlogPostを軽量サマリに絞る。
+ * 型がPickでも実体がフルオブジェクトのままだとRSCペイロードに
+ * body/raw等の全文がシリアライズされるため、実体レベルで絞ることが重要
+ * (一覧ページのHTMLが生349KB→大幅削減された実測あり)。
+ */
+export const toBlogPostSummary = (blog: BlogPost): BlogPostSummary => ({
+  slug: blog.slug,
+  title: blog.title,
+  description: blog.description,
+  thumbnail: blog.thumbnail,
+  categories: blog.categories,
+  publishedAt: blog.publishedAt,
+  updatedAt: blog.updatedAt,
+});
