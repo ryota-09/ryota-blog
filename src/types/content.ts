@@ -8,6 +8,16 @@ import type { Blogs, Categories } from "#content/index";
 //  headingIds/moshimoWidgets/body/raw/slug/locale/toc/plainText を含む)
 export type BlogPost = Blogs;
 
+// クライアントコンポーネント(記事カード・前後ナビ・関連記事等)へ渡してよい軽量サマリ型。
+// BlogPostにはbody(コンパイル済みMDX)/raw(生MDX)/plainText等の重量フィールドが含まれ、
+// クライアント境界をフルオブジェクトのまま越えるとRSCペイロード(HTML)に全文が
+// シリアライズされて転送量が激増する(一覧ページで実測349KB)。
+// クライアントへは必ずtoBlogPostSummary(content-utils.ts)で絞ってから渡すこと
+export type BlogPostSummary = Pick<
+  BlogPost,
+  "slug" | "title" | "description" | "thumbnail" | "categories" | "publishedAt" | "updatedAt"
+>;
+
 // もしもアフィリエイトウィジェット1件分の型(MoshimoAffiliateコンポーネントのprops用)。
 // フィールド名の意味はvelite.config.tsのmoshimoWidgetSchemaコメントを参照。
 export type MoshimoWidget = BlogPost["moshimoWidgets"][number];

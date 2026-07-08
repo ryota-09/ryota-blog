@@ -6,3 +6,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /* サイト全体の基本フォント。@font-face定義(/fonts/kosugi-maru-v17.css)は
+     render-blockingを避けるためscript挿入で非同期に読み込まれる(src/app/layout.tsx参照)。
+     読み込み完了までは Kosugi Maru Fallback(size-adjust済みArial)+システムフォントで描画され、
+     font-display:swapで置き換わる。従来のnext/font(KosugiMaru.className)と同じフォントスタックを維持 */
+  body {
+    font-family: "Kosugi Maru", "Kosugi Maru Fallback", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+  }
+}

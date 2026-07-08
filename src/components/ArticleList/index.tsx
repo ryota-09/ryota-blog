@@ -3,6 +3,7 @@ import { Suspense } from "react";
 
 import ArticleCard from "@/components/ArticleList/ArticleCard";
 import { getBlogList } from "@/lib/content";
+import { toBlogPostSummary } from "@/lib/content-utils";
 import { PER_PAGE } from "@/static/blogs";
 import type { BlogTypeKeyLIteralType } from "@/types";
 import type { BlogListQuery, BlogPost, ContentLocale } from "@/types/content";
@@ -36,7 +37,8 @@ const ArticleList = async ({ query, blogType, page, basePath, locale }: ArticleL
               key={item.slug}
               data-testid={`pw-article-card-${index}`}
             >
-              <ArticleCard data={item} index={index} />
+              {/* クライアント境界を越える前にbody/raw等の重量フィールドを落とす(RSCペイロード肥大防止) */}
+              <ArticleCard data={toBlogPostSummary(item)} index={index} />
             </li>
           ))}
           {Array.from({ length: emptyItem }).map((_, index) => (

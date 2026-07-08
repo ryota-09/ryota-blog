@@ -3,18 +3,20 @@
 import { Link } from "next-view-transitions";
 import { useLocale, useTranslations } from "next-intl";
 
-import type { BlogPost } from "@/types/content";
+import type { BlogPostSummary } from "@/types/content";
 import NewLabel from "@/components/UiParts/NewLabel";
 import ImageWithSkeleton from "@/components/UiParts/ImageWithSkeleton";
 import { isWithinTwoWeeks, thumbnailPlaceholderProps } from "@/util";
-import { getPrimaryCategoryIdFromBlogPost } from "@/lib/content";
+// NOTE: @/lib/content からimportすると全記事JSON(生2.4MB)がクライアントバンドルに混入するため、
+// クライアント安全な content-utils からimportすること
+import { getPrimaryCategoryIdFromBlogPost } from "@/lib/content-utils";
 import { getBlogPath } from "@/lib/i18n-utils";
 
 type ArticleCardProps = {
   /**
    * ブログ記事のデータ
    */
-  data: BlogPost;
+  data: BlogPostSummary;
   /**
    * インデックス
    */
