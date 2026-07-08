@@ -22,3 +22,13 @@
 
 /icons/*
   Cache-Control: public, max-age=86400
+
+# favicon.ico(app/favicon.ico規約が静的アセットとして配信)。ブラウザ/検索エンジンが
+# <link>と無関係にデフォルトで叩く定番URLで、Googleのfaviconフェッチャーが最優先で参照する。
+# デフォルトの max-age=0, must-revalidate だと毎回再検証されるため、検索エンジンの
+# favicon再評価を安定させる目的で1日キャッシュを付与する。再デザイン時は1日以内に伝播する。
+# NOTE: /icon.png・/apple-icon.png はNext.jsのメタデータ・ワーカールートで配信され
+# _headersが適用されない(静的アセットではない)ため、ここでは指定しない。favicon.icoが
+# 主経路になるので実害はない
+/favicon.ico
+  Cache-Control: public, max-age=86400
