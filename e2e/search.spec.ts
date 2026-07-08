@@ -31,7 +31,8 @@ test.describe('検索機能のテスト', () => {
     const searchButton = page.locator('[data-testid=pw-search-bar-button]');
     await searchButton.click();
 
-    await expect(page).toHaveURL(/\/blogs\?keyword=%E3%83%86%E3%82%B9%E3%83%88/);
+    // 検索結果は動的レンダリング専用の /blogs/search に遷移する(Issue #225)
+    await expect(page).toHaveURL(/\/blogs\/search\?keyword=%E3%83%86%E3%82%B9%E3%83%88/);
     expect(page.url()).toContain('keyword=');
 
     const searchResults = page.locator('[data-testid^="pw-article-card-"]').first();

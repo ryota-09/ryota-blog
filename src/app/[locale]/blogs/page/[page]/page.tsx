@@ -13,6 +13,12 @@ import type { BlogListQuery, ContentLocale } from "@/types/content";
 import { PER_PAGE } from "@/static/blogs";
 import { locales } from '@/i18n/config';
 
+// NOTE: next-intlのリクエストスコープlocale解決により[locale]配下はデフォルトで
+// 動的レンダリングになるため、記事詳細ページと同様にforce-staticを明示する(Issue #225)。
+// revalidate=1時間はpopulate-cache失敗時のISR自己修復用(/blogs側のNOTE参照)
+export const revalidate = 3600;
+export const dynamic = 'force-static';
+
 export async function generateStaticParams() {
   const params = [];
 

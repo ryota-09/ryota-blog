@@ -16,6 +16,10 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  // NOTE: experimental.inlineCss はA/B計測の結果、不採用(Issue #223)。
+  // render-blocking監査は解消するが、日本語フォントの@font-face CSS(生90KB)が
+  // 全ページのHTMLに複製されてFCPが2.4s→4.7s、Perfスコアが72→63に悪化した。
+  // 外部CSSチャンク(エッジキャッシュ+ページ間再利用可能)を維持する方が速い。
   images: {
     // 記事画像・アイコン画像は全てリポジトリ内(public/)にローカルホスティングされているため、
     // 外部画像ドメインの許可(remotePatterns)は不要になった(#243)
@@ -23,7 +27,7 @@ const nextConfig = {
     // 一覧ページのサムネイル表示サイズに最適化（496px前後）
     deviceSizes: [640, 768, 1024, 1280, 1536],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 512],
-    formats: ['image/webp'], // WebP優先で配信
+    formats: ['image/avif', 'image/webp'], // AVIF優先・WebPフォールバックで配信(webp比で概ね20〜30%削減)
     // minimumCacheTTL は Cloudflare Workers 非対応のため削除
   },
   // NOTE: RSCリクエストのContent-TypeはNext.jsが自動設定するため上書きしない。
@@ -67,6 +71,58 @@ const nextConfig = {
           },
         ],
         destination: '/blogs/page/:page',
+        permanent: true,
+      },
+      // --- 旧クエリ形式の一覧URL互換リダイレクト (Issue #225) ---
+      // /blogs・カテゴリページはsearchParamsを読まない静的(ISR)ページになったため、
+      // 検索系クエリ付きの旧URLは動的レンダリング専用の /blogs/search へ誘導する。
+      // NOTE: マッチしなかったクエリはNext.jsが自動でdestinationへ引き継ぐ
+      {
+        source: '/:locale/blogs',
+        has: [{ type: 'query', key: 'blogType', value: 'zenn' }],
+        destination: '/:locale/blogs/zenn',
+        permanent: false,
+      },
+      // NOTE: hasのvalueは必ず指定すること。OpenNext(Cloudflare)のルーティング層は
+      // value未指定を new RegExp("").test("") と評価し、クエリが無くても常にマッチしてしまう
+      // (プレビュー実測で/ja/blogsが全て/blogs/searchへリダイレクトされる事故を確認)
+      {
+        source: '/:locale/blogs',
+        has: [{ type: 'query', key: 'keyword', value: '.+' }],
+        destination: '/:locale/blogs/search',
+        permanent: false,
+      },
+      {
+        source: '/:locale/blogs',
+        has: [{ type: 'query', key: 'category', value: '.+' }],
+        destination: '/:locale/blogs/search',
+        permanent: false,
+      },
+      // ?page=N (N>=2) はパス形式のページネーションへ（page=1は素の/blogsで正しく表示される）
+      {
+        source: '/:locale/blogs',
+        has: [{ type: 'query', key: 'page', value: '(?<page>[2-9]|[1-9]\\d+)' }],
+        destination: '/:locale/blogs/page/:page',
+        permanent: true,
+      },
+      // カテゴリページの旧検索URL（search/zenn/pageは予約セグメントのため除外）
+      {
+        source: '/:locale/blogs/:category((?!search$|zenn$|page$)[^/]+)',
+        has: [{ type: 'query', key: 'keyword', value: '.+' }],
+        destination: '/:locale/blogs/search?category=:category',
+        permanent: false,
+      },
+      // カテゴリページの旧Zennタブ表示URL(?blogType=zenn)はZenn一覧へ誘導する
+      {
+        source: '/:locale/blogs/:category((?!search$|zenn$|page$)[^/]+)',
+        has: [{ type: 'query', key: 'blogType', value: 'zenn' }],
+        destination: '/:locale/blogs/zenn',
+        permanent: false,
+      },
+      {
+        source: '/:locale/blogs/:category((?!search$|zenn$|page$)[^/]+)',
+        has: [{ type: 'query', key: 'page', value: '(?<page>[2-9]|[1-9]\\d+)' }],
+        destination: '/:locale/blogs/:category/page/:page',
         permanent: true,
       },
     ];

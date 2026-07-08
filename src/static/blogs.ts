@@ -11,4 +11,3 @@ export const PER_PAGE = 4;
 export const KEYWORD_QUERY = "keyword";
 export const PAGE_QUERY = "page";
 export const CATEGORY_QUERY = "category";
-export const BLOG_TYPE_QUERY = "blogType";

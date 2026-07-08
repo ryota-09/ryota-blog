@@ -13,7 +13,8 @@ const BottomCard = () => {
           alt="author"
           width={80}
           height={80}
-          sizes="100vw"
+          // 表示は常に80px固定。sizes="100vw"だとw=1536等の過大バリアントを取得してしまう
+          sizes="80px"
           className="rounded-full"
           wrapperClassName=""
           skeletonClassName="rounded-full"

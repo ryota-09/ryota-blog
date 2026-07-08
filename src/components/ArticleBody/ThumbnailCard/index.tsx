@@ -20,7 +20,8 @@ const ThumbnailCard = ({ title }: ThumbnailCardProps) => {
           alt="author"
           width={80}
           height={80}
-          sizes="100vw"
+          // 表示は最大80px固定。sizes="100vw"だと過大バリアントを取得してしまう
+          sizes="80px"
           className="w-[50px] rounded-full md:w-[80px]"
           wrapperClassName=""
           skeletonClassName="rounded-full"
