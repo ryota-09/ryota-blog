@@ -1,6 +1,18 @@
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Velite出力の記事画像(コンテンツハッシュ付きファイル名のため実質immutable)。
+# OpenNextの画像最適化ハンドラは元画像のCache-Controlにimmutableが含まれる場合のみ
+# /_next/image レスポンスに長期Cache-Controlを付与するため、このルールが
+# ブラウザ/CDNでの画像キャッシュ有効化の前提になる(Issue #220)
+/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# 著者アイコン(全記事ページで/_next/image経由で参照される)。
+# 変更時はファイル名の変更(キャッシュバスト)が必要
+/author.png
+  Cache-Control: public, max-age=31536000, immutable
+
 /*.ttf
   Cache-Control: public, max-age=31536000, immutable
 
