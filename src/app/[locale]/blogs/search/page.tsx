@@ -58,7 +58,8 @@ export async function generateMetadata({
   }
 
   const pageSuffix = page ? ` - ${t("page")} ${page}` : "";
-  let title = "";
+  // クエリなしの直アクセス時もtitleが空にならないよう検索ラベルをフォールバックにする
+  let title = t("search");
   if (category && keyword) {
     title = `${translatedCategory} & ${keyword}`;
   } else if (keyword) {
