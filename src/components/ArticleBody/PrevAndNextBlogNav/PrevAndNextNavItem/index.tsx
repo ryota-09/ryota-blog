@@ -5,7 +5,9 @@ import { useLocale, useTranslations } from 'next-intl';
 
 import type { BlogPost } from "@/types/content";
 import { cltw } from "@/util";
-import { getPrimaryCategoryIdFromBlogPost } from "@/lib/content";
+// NOTE: @/lib/content からimportすると全記事JSON(生2.4MB)がクライアントバンドルに混入するため、
+// クライアント安全な content-utils からimportすること
+import { getPrimaryCategoryIdFromBlogPost } from "@/lib/content-utils";
 
 type PrevAndNextBlogNavItemProps = {
   role: "prev" | "next"

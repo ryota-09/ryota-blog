@@ -137,10 +137,13 @@ export const getPrevAndNextBlogByLocale = (
  * getPrimaryCategoryId(src/lib/index.ts)のBlogPost版。
  * BlogPost.categoriesは文字列配列(slug)なので、BlogsContentType版のように category[0].id を
  * 取り出す必要はなく、先頭要素をそのままresolveCategoryOrDefaultに渡すだけでよい。
+ *
+ * NOTE: 実装はクライアント安全な content-utils.ts に移動した(サーバー側の既存importの互換のため再エクスポート)。
+ * このファイル(content.ts)は#content/index(全記事JSON・生2.4MB)をトップレベルでimportしているため、
+ * クライアントコンポーネントからimportしてはならない(全記事データがクライアントバンドルに混入する)。
+ * クライアントでも使う純粋ヘルパーは content-utils.ts に置くこと。
  */
-export const getPrimaryCategoryIdFromBlogPost = (blog: Pick<BlogPost, "categories">): string => {
-  return resolveCategoryOrDefault(blog.categories[0]).slug;
-};
+export { getPrimaryCategoryIdFromBlogPost } from "@/lib/content-utils";
 
 /**
  * BlogPost.toc(文書順のフラット配列: {depth, text, id}[])を、

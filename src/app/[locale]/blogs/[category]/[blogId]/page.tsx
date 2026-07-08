@@ -11,6 +11,7 @@ import {
   resolveRelatedBlogs,
   generateBreadcrumbAssetsFromBlogPost,
 } from "@/lib/content";
+import { toBlogPostSummary } from "@/lib/content-utils";
 import type { ContentLocale } from "@/types/content";
 import JsonLD from "@/components/Head/JsonLD";
 import RelatedContentList from "@/components/RelatedContentList";
@@ -124,7 +125,8 @@ const Page = async ({ params }: PageProps) => {
       </article>
       {relatedBlogs.length >= 1 && (
         <aside className="my-8">
-          <RelatedContentList data={relatedBlogs} />
+          {/* クライアント境界を越える前にbody/raw等の重量フィールドを落とす(RSCペイロード肥大防止) */}
+          <RelatedContentList data={relatedBlogs.map(toBlogPostSummary)} />
         </aside>
       )}
       <JsonLD data={data} locale={locale} />
