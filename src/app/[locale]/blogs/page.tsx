@@ -14,8 +14,9 @@ import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 // 検索(?keyword=)・カテゴリ絞り込みは /blogs/search に分離した(Issue #225)。
 // また、next-intlのリクエストスコープlocale解決により[locale]配下はデフォルトで
 // 動的レンダリングになるため、記事詳細ページと同様にforce-staticを明示する。
-// 記事はビルド時に確定する(Velite)ため、再検証はデプロイ時の再ビルドに任せる
-export const revalidate = false;
+// revalidateは1時間: デプロイ時のpopulate-cache(R2)が失敗した場合でも、
+// ISRのバックグラウンド再生成で新着記事が一覧に自己修復されるようにする
+export const revalidate = 3600;
 export const dynamic = 'force-static';
 
 type PageProps = {
