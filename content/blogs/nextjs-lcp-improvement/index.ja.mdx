@@ -1,0 +1,225 @@
+---
+title: "Next.js個人ブログのモバイルLCPを17.4秒から改善した話(犯人は画像じゃなかった)"
+description: "モバイルLCPが最悪17.4秒だったNext.js個人ブログ(Cloudflare Workers / OpenNext)。犯人は画像ではなく、render-blockingなCSSやクライアントバンドルへの記事本文の混入でした。実トレースで一つずつ潰し、LCPを本番3.7〜4.3秒まで改善した、Core Web Vitals改善の記録です。"
+publishedAt: "2026-07-09T00:56:30.609Z"
+updatedAt: "2026-07-09T00:56:30.609Z"
+categories:
+  - next_js
+related:
+  - microcms-to-mdx-migration
+  - my-seo-todo-list
+draft: false
+---
+
+こんにちは！[@Ryo54388667](https://x.com/Ryo54388667)です！☺️
+
+普段は都内でエンジニアをやっていて、TypeScriptとNext.jsばかり触っています。
+
+今回は **個人ブログのモバイルLCPを17.4秒から改善した話** を紹介していきます！
+
+先に白状しておくと、直し始めたときの僕は「LCPが遅い＝ヒーロー画像が重いんでしょ」と思い込んでいました。LCPはCore Web Vitalsの中でも画像が主役になりがちな指標ですが、実際に犯人を一つずつ潰していったら、効いたのはほとんど画像以外のところでした。同じような構成(Next.js + Cloudflare Workers)でLCPに悩んでいる方の参考になればうれしいです。
+
+## 何が起きていたか
+
+ある日、記事詳細ページにLighthouse(mobile)をかけたら、スコアが軒並み赤い。一番ひどいページで LCP 17.4秒 / Performance 58 でした。モバイル基準だとほぼ全ての詳細ページが赤字です。
+
+環境はこんな感じです。ありがちな構成だと思います。
+
+- Next.js 16.2.3(App Router / Turbopack)
+- デプロイ先は Cloudflare Workers(`@opennextjs/cloudflare`)
+- 記事は MDX + Velite(ビルド時に全記事を型付きJSONへ変換)
+- 計測基準は Lighthouse mobile(Slow 4G + 4x CPUスロットリング)
+
+このブログ自体、少し前に[microCMSからMDXへ移行したばかり](/ja/blogs/next_js/microcms-to-mdx-migration)で、まだ性能まで手が回っていない状態でした。とはいえ17.4秒はさすがにひどい。「画像を軽くすればいけるやろ」と軽い気持ちで着手したのが、長い回り道の始まりでした。。
+
+## 計測が信じられなかった(simulatedと実トレースが10倍違う)
+
+最初にハマったのがこれです。同じページなのに、計測方法で数字が全然違う。
+
+- Lighthouse(simulated):LCP 8〜17秒
+- Chrome DevToolsの実トレース(Performanceパネル、Slow 4G + 4x CPU):LCP 1.4秒
+
+並べてみると、10倍近く違うんですよね。「どっちを信じればええねん」となりました。
+
+原因を掘っていくと、Cloudflare WorkersのオリジンTTFBが 0.28〜1.05秒の間で振れていて、Lighthouseのsimulatedモデルがこの変動を増幅して見積もっていました。実際、あるページはsimulatedで8.0秒と出ていたのに、実トレースで見ると LCP 1,445ms(TTFB 253ms + レンダー遅延1,192ms)で、何の問題もありませんでした。
+
+ここで方針を切り替えます。**simulatedの絶対値は信じない**。スコアの傾向を見る指標として使い、犯人の特定は実トレースの内訳でやる、と決めました。
+
+ちなみに冒頭の17.4秒も、このsimulatedのスコアです。実際のLCPはもう少し速かったはずですが、僕はモバイルのLighthouseスコアを指標にすると決めているので、スコアが赤いこと自体は直すべき問題でした。
+
+LCPの内訳は TTFB / Load delay / Load duration / Render delay の4フェーズに分かれます。「画像はもう届いているのに描画されない」なら Render delay が大きくなるので、そこを見れば「これは画像じゃなくて描画のブロックだな」と読めます。本番はTTFBが振れるので、1回の外れ値に振り回されないよう複数回計測するのも大事でした。
+
+## まず画像から手をつけた(でも、ここは前座だった)
+
+方針は決まったものの、まずは定石どおり画像から潰していきました。ここで踏んだNext.jsの小さな落とし穴が、それはそれで面白かったので残しておきます。
+
+まず引っかかったのが `fetchPriority` でした。LCP画像のリクエストが、なぜか `initial priority: Low` で始まっている。昔は `priority` を付ければ `fetchpriority="high"` が自動で付いていた記憶があったんですが。。
+
+半信半疑だったので、`node_modules/next/dist/shared/lib/get-img-props.js` を直接grepして確かめてみました。すると確かに `'high'` を設定するコードが無い。調べると `priority` と `fetchpriority="high"` の自動連動は少し前(2024年半ば)に外されていて、Next 16で `priority` の後継として入った `preload` を渡しても、`fetchpriority` は自分で指定しないと付かない状態でした。結局、明示的に渡す必要があったんですね。
+
+```tsx title="ArticleBody/index.tsx"
+<ImageWithSkeleton
+  src={data.thumbnail.src}
+  loading="eager"
+  preload
+  fetchPriority="high"   // 明示しないと付かない
+/>
+```
+
+フレームワークの更新で、今まで自動でやってくれていたことが黙って外れることがあります。「おかしいな」と思ったら `node_modules` の実装を読みにいくのが結局いちばん早い、というのを再確認しました。
+
+次に画像のサイズです。`sizes="100vw"` を機械的に付けていたせいで、実際は80pxでしか表示されない著者アイコンが `w=1536` のバリアントを取得していました(DevToolsのNetworkで発覚)。コンテナの実表示幅に合わせて `sizes` を書き直し、あわせて `next.config.mjs` の `images.formats` にAVIFを足しました(WebP比で1〜3割減)。
+
+そして地雷が一つ。`src/app/icon.png` が 1024×1024 / 1.4MB のまま配信されていて、これ単体で総転送量の半分を占めていました。96×96に縮小して 2.4KB に。
+
+ところがこの「良かれと思った最適化」が、後日ちょっとした事故を生みます。faviconのURLが変わったことでGoogleが再評価に入り、しかも定番の `/favicon.ico` が404だったせいで、検索結果のファビコンが地球儀アイコンに化けました。マルチサイズの `favicon.ico` を用意して事なきを得ましたが、性能改善が別の面に副作用を出す典型例でした(SEO周りの細かい話は[別記事](/ja/blogs/next_js/my-seo-todo-list)にもまとめています)。
+
+で、ここまでやって気づくんです。画像、たいして効いてないぞ、と。
+
+## 本題:LCPを殺していたのは画像じゃなかった 💡
+
+実トレースで詳細ページのLCP内訳をあらためて見ると、Render delayが2.9秒を占めていました。画像はとっくにDL済みなのに描画できていない。つまり犯人はレンダリングをブロックしている何かです。
+
+### render-blockingなフォントCSS(と、インライン化して逆に遅くなった話)
+
+まず見つかったのが `next/font/google`(Kosugi Maru)が生成する `@font-face` 定義CSSでした。生90KB・圧縮33KB、121個のunicode-rangeサブセットに分かれたこのCSSが、Turbopackでは独立したrender-blocking CSSチャンクとして全ページに出力されていました。実トレースでLCP 3,866msのうちRender delayが2,978ms。RenderBlockingインサイトの推定改善は最大2.4秒。犯人はこいつです。
+
+「render-blockingなら、CSSをインライン化すればいいんじゃない?」と考えて、Next.jsの `experimental.inlineCss` を有効にしてA/Bを取ってみました。結果はこうです。
+
+| | FCP | Perf |
+|---|---|---|
+| 外部CSSチャンク(元) | 2.4s | 72 |
+| inlineCss=true | 4.7s | 63 |
+
+見事に悪化しました。日本語フォントの巨大な `@font-face` 定義が全ページのHTMLに複製されて、HTMLの転送とパースが重くなったんですね。エッジキャッシュとページ間の再利用が効く外部チャンクの方が速い。定石が正解とは限らない、という良い教訓でした。この失敗自体がネタになったので、まあ良しとします😅
+
+最終的には、`@font-face` 定義をバージョン固定URLの静的ファイルに切り出し、scriptで動的にstylesheetを挿入する形にしました。挿入されたstylesheetは仕様上render-blockingになりません。さらにloadイベント後まで挿入を遅らせて、フォントのwoff2がLCP画像と帯域を奪い合うのも避けています。
+
+```tsx title="app/layout.tsx"
+const FONT_CSS_PATH = "/fonts/kosugi-maru-v17.css";
+
+// preload自体はrender-blockingしないので、fetchだけ先に始めておく
+<link rel="preload" href={FONT_CSS_PATH} as="style" />
+<Script id="load-font-css" strategy="beforeInteractive"
+  dangerouslySetInnerHTML={{ __html:
+    `(function(){function f(){var l=document.createElement('link');` +
+    `l.rel='stylesheet';l.href='${FONT_CSS_PATH}';document.head.appendChild(l)}` +
+    `document.readyState==='complete'?f():window.addEventListener('load',f)})()`
+  }}
+/>
+```
+
+フォント未ロードの間は `size-adjust` 済みのフォールバック(next/fontが生成していた値を流用)で描画されるので、CLSは0のまま維持できています。ここ、意外と大事なので崩さないように気をつけました。
+
+### クライアントバンドルに全記事の本文が入っていた
+
+これが今回いちばん刺さったやつです。
+
+本番の詳細ページに、圧縮後でも数百KBの巨大JSチャンクが全ページ共通で配信されていました。「どうせ `react-syntax-highlighter` か `react-tweet` か `katex` あたりでしょ」と高を括って該当チャンクをgrepしたら、これらのライブラリ名は0件。代わりに出てきたのが `"body":"..."` `"raw":"..."` `"plainText":"..."` という文字列が、それぞれ62回。掃除機レビュー記事やCMS移行記事の本文テキストそのものでした。
+
+正体はこれです。**全62記事(日英31本ずつ)の本文が、生2.4MBのままクライアントバンドルにまるごと入っていた**。gzipで441KB、brotliでも266KBです。
+
+原因をたどると、記事カード(client component)が、カテゴリslugを求めるためだけの純粋関数を1つ `@/lib/content` からimportしていました。
+
+```tsx title="ArticleCard.tsx"
+"use client";
+// このimport1行で、content.ts丸ごと(= 全記事データ)がクライアントチャンク化される
+import { getPrimaryCategoryIdFromBlogPost } from "@/lib/content";
+```
+
+`@/lib/content` の先頭は `import { blogs } from "#content/index"`、つまり全記事の `body`/`raw` 込みのデータを読み込むモジュールです。Turbopackはこれをexport単位ではtree-shakeしてくれず、モジュール全体をクライアント共有チャンクに含めてしまっていました。
+
+解決は単純で、`#content` に依存しない純粋関数だけを別ファイルに切り出すだけです。
+
+```tsx title="ArticleCard.tsx"
+// 全記事JSONに依存しないヘルパーだけを content-utils.ts に分離
+import { getPrimaryCategoryIdFromBlogPost } from "@/lib/content-utils";
+```
+
+これで詳細ページのJS転送合計が、約900KB → 268KBまで落ちました。App Routerでは、client componentがサーバー専用モジュールを1行importするだけで、そのモジュールが取り込む全データがバンドルに乗ります。JSONのimportはtree-shakingで消えてくれない。純粋関数は `#content` 非依存のファイルに置く、というのを体に刻みました。
+
+### 型で絞ってもRSCペイロードには漏れる
+
+バンドルを直しても、まだ漏れ道が残っていました。レビューで指摘されて気づいたんですが、client componentへ渡すpropsの型は `Pick<BlogPost, ...>` で絞っていたのに、渡している実体はフルの `BlogPost`(body/raw/plainText込み)だったんです。
+
+```tsx title="ArticleList/index.tsx"
+// 型はPickでも、itemはフルのBlogPost。flightにbody/rawが乗る
+<ArticleCard data={item} />
+
+// 境界を越える前に「実体」を絞る
+<ArticleCard data={toBlogPostSummary(item)} />
+```
+
+TypeScriptの型で絞ったつもりでも、実行時のオブジェクトがフルなら、RSCのflightペイロード(HTML)に記事全文がシリアライズされます。**型で絞っても、実体は漏れる**。サーバーからクライアントへ渡すときは、必要フィールドだけの新しいオブジェクトを作って実体レベルで落とす必要がありました。
+
+検査は簡単で、`curl -s <page> | grep '"raw"'` が0件になっていればOKです。これで一覧ページのHTMLが生349KB → 110KB、詳細も141KB → 107KBまで軽くなりました。
+
+### サードパーティのGTMを後回しにする
+
+最後にGoogle Tag Manager。`@next/third-parties` の `GoogleTagManager` は `afterInteractive` 固定で、gtm.js(127KB・High優先度)がrender-blocking CSSやLCP画像とSlow 4Gの帯域を奪い合っていました。strategyを上書きできないコンポーネントなので、公式スニペットを自前で書いて `lazyOnload`(loadイベント後 + requestIdleCallback)に寄せました。
+
+正直に書くと、これはトレードオフです。loadより前に離脱した超速ユーザーのPVは計測から漏れます。性能とのバーターとして許容しました。計測の完全性より、まず描画を優先する判断です。
+
+## Cloudflare Workers(OpenNext)特有のハマりどころ
+
+ここからは環境依存が強いので、Cloudflare Workers / OpenNextを使っている人向けのおまけです。
+
+一覧・カテゴリページが `searchParams` を参照していたせいで全リクエストが動的レンダリングになり、`Cache-Control: no-store` で配信されて、ブラウザの戻る/進む(bfcache)まで無効になっていました。検索を動的専用ルートに分離して一覧側を静的化したのですが、`searchParams` を外すだけでは静的化せず、犯人はnext-intlのリクエストスコープなlocale解決だった、というオチもありました。`force-static` を明示して解決しています。
+
+もう一つ、旧URL互換のために `redirects` を足したら、`next start` では正常なのにOpenNext(workerd)だと全ページが検索ページにリダイレクトされる事故が起きました。原因は、OpenNextのルーティング層が `has` の `value` 未指定を「常にマッチ」と評価することでした。
+
+```js title="next.config.mjs"
+// valueなしだとOpenNextでは常時マッチ(クエリが無くてもリダイレクト)
+has: [{ type: 'query', key: 'keyword' }]
+// 非空を明示する
+has: [{ type: 'query', key: 'keyword', value: '.+' }]
+```
+
+リダイレクトやキャッシュ周りは、`next start` とOpenNext(workerd)で挙動が違います。本番相当の環境で必ず実機検証したほうがいいです。
+
+## 結果(Before / After)
+
+記事詳細ページのLighthouse mobileの推移です。
+
+| フェーズ | Perf | LCP |
+|---|---|---|
+| 改善前(issue発覚時) | 52〜79 | 4.8〜17.4s |
+| 全対応後(ローカル本番ビルド) | 92〜97 | 2.7〜3.6s |
+| 全対応後(本番) | 80〜87 | 3.7〜4.3s |
+
+数字だけ拾うと、こんな感じでした。
+
+- 総転送量:2,915KiB → 約950KiB(約-68%)
+- 一覧ページのHTML:生349KB → 110KB
+- 詳細ページのJS合計:約900KB → 268KB
+- クライアントから消えたもの:全記事の本文(生2.4MB)
+- CLS:0を維持
+
+スコアの分散も、TTFBの振れで±20動いていたのが、ローカル本番ビルドでは±3くらいに収束しました。本番だと相変わらずTTFBが振れるので、1runだけ外れ値が出ることはあります。
+
+## 最後に
+
+長々と書きましたが、今回いちばん伝えたいのは「LCPは画像だけの問題じゃない」ということです。振り返ってみると、効いたのは画像最適化ではなく、その周りにあった帯域とメインスレッドの奪い合いを一つずつ解いたことでした。
+
+やってみて残った学びを並べておきます。
+
+- LCPは総合格闘技。render-blocking CSS・巨大バンドル・RSCペイロード・サードパーティJSまで、クリティカルパスを奪うものは全部効く
+- App Routerのclient境界は「実体」で漏れる。importもpropsも、型で絞っても実体がフルなら乗ってしまう
+- 計測はsimulatedを鵜呑みにせず、実トレースの内訳で犯人を特定する。本番は複数回
+- 定石(インライン化)が正解とは限らない。必ずA/Bで計測する
+- デプロイ環境特有の罠は本番相当で検証する。OpenNextは `next start` と挙動が違う
+
+同じように「LCPが遅い、でも画像は軽くしたはずなのに」で悩んでいる方は、一度実トレースでRender delayを見てみてください。犯人が別のところにいるかもしれません。
+
+より良い方法があれば教えてください〜
+
+最後まで読んでいただきありがとうございます！
+
+気ままにつぶやいているので、気軽にフォローをお願いします！🥺
+
+## 参考資料
+
+- [Optimize Largest Contentful Paint (web.dev)](https://web.dev/articles/optimize-lcp)
+- [next/font - Next.js Docs](https://nextjs.org/docs/app/api-reference/components/font)
+- [Window: requestIdleCallback() - MDN](https://developer.mozilla.org/ja/docs/Web/API/Window/requestIdleCallback)
+- [OpenNext for Cloudflare](https://opennext.js.org/cloudflare)
