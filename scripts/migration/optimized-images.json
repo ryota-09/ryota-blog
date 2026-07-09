@@ -274,5 +274,9 @@
   "content/blogs/microcms-to-mdx-migration/images/cms-migrate-thumbnail.png": {
     "hash": "b8439710082bd860ed63c32e0070f8734dc3a27cd52bc9e31928b7ce868c25e5",
     "size": 321066
+  },
+  "content/blogs/nextjs-lcp-improvement/images/nextjs-lcp-improvement-thumbnail.png": {
+    "hash": "20755573f403c602ce165a5e043cfb4b4d0b718c93a0826a3f936f14fb4e09a4",
+    "size": 381502
   }
 }
