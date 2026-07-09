@@ -1,0 +1,225 @@
+---
+title: "How I Cut My Next.js Blog's Mobile LCP from 17.4 Seconds (the Culprit Wasn't Images)"
+description: "My Next.js personal blog (Cloudflare Workers / OpenNext) had a mobile LCP as bad as 17.4 seconds. The culprit wasn't images — it was render-blocking CSS and every article's body leaking into the client bundle. A record of hunting each cause down with real traces and getting production LCP to 3.7–4.3s. A Core Web Vitals improvement story."
+publishedAt: "2026-07-09T00:56:30.609Z"
+updatedAt: "2026-07-09T00:56:30.609Z"
+categories:
+  - next_js
+related:
+  - microcms-to-mdx-migration
+  - my-seo-todo-list
+draft: false
+---
+
+Hello! I'm [@Ryo54388667](https://x.com/Ryo54388667)!☺️
+
+I work as an engineer in Tokyo, mostly writing TypeScript and Next.js.
+
+Today I'll share **how I cut my personal blog's mobile LCP down from 17.4 seconds**!
+
+I'll confess up front: when I started, I was convinced that "slow LCP = the hero image is heavy." LCP is the Core Web Vital where the image usually plays the lead role, so I get why I assumed that — but as I hunted down the culprits one by one, almost everything that actually moved the needle turned out to be somewhere other than images. If you're wrestling with LCP on a similar stack (Next.js + Cloudflare Workers), I hope this helps.
+
+## What Was Going On
+
+One day I ran Lighthouse (mobile) on the article detail pages, and the scores were red across the board. The worst page came in at LCP 17.4s / Performance 58. On mobile, almost every detail page was in the red.
+
+Here's the stack. Pretty typical, I think.
+
+- Next.js 16.2.3 (App Router / Turbopack)
+- Deployed on Cloudflare Workers (`@opennextjs/cloudflare`)
+- Articles are MDX + Velite (all compiled to typed JSON at build time)
+- Measurement baseline: Lighthouse mobile (Slow 4G + 4x CPU throttling)
+
+This blog itself had [just moved from microCMS to MDX](/en/blogs/next_js/microcms-to-mdx-migration) not long ago, so I hadn't gotten around to performance yet. Still, 17.4 seconds is rough. "I'll just make the images lighter," I thought casually — and that was the start of a long detour...
+
+## When I Couldn't Trust the Numbers (simulated vs. real trace, off by 10x)
+
+This is what tripped me up first. Same page, but the numbers were wildly different depending on how I measured.
+
+- Lighthouse (simulated): LCP 8–17s
+- Chrome DevTools real trace (Performance panel, Slow 4G + 4x CPU): LCP 1.4s
+
+Line them up and they're off by nearly 10x. "Which one am I supposed to believe?"
+
+Digging in, the Cloudflare Workers origin TTFB was swinging between 0.28 and 1.05 seconds, and Lighthouse's simulated model was amplifying that variance in its estimate. One page showed 8.0s in simulated, but in a real trace it was LCP 1,445ms (TTFB 253ms + render delay 1,192ms) — no problem at all.
+
+So I switched my approach. **Don't trust the absolute values from the simulated run.** Use the score as a directional signal, and pin down the culprit from the real-trace breakdown — that's what I decided.
+
+By the way, the 17.4 seconds from the top is a simulated score too. The real-world LCP was probably a bit faster, but I've decided to treat the mobile Lighthouse score as my metric, so a red score is a problem worth fixing in itself.
+
+An LCP breaks down into four phases: TTFB / Load delay / Load duration / Render delay. If "the image has already arrived but nothing paints," Render delay grows — so looking there tells you "this isn't the image, it's the paint being blocked." Production TTFB fluctuates, so measuring several times (instead of getting jerked around by a single outlier) mattered too.
+
+## First I Went After the Images (but this was just the opening act)
+
+With the approach settled, I started with images by the book. The small Next.js gotchas I hit here were fun in their own right, so I'll leave them in.
+
+The first thing that snagged me was `fetchPriority`. The LCP image's request was starting at `initial priority: Low` for some reason. I had a memory that setting `priority` used to auto-apply `fetchpriority="high"`...
+
+Half in disbelief, I grepped `node_modules/next/dist/shared/lib/get-img-props.js` directly to check. Sure enough, there's no code that sets `'high'`. It turns out the auto-coupling between `priority` and `fetchpriority="high"` was removed a while back (mid-2024), and even passing `preload` — the successor to `priority` introduced in Next 16 — won't apply `fetchpriority` unless you set it yourself. In the end I had to pass it explicitly.
+
+```tsx title="ArticleBody/index.tsx"
+<ImageWithSkeleton
+  src={data.thumbnail.src}
+  loading="eager"
+  preload
+  fetchPriority="high"   // won't be applied unless you set it explicitly
+/>
+```
+
+Framework updates sometimes silently drop things they used to do for you. When something feels off, reading the implementation in `node_modules` is honestly the fastest route — that got reconfirmed.
+
+Next, image sizing. Because I'd mechanically slapped `sizes="100vw"` on everything, an author icon that actually renders at 80px was fetching the `w=1536` variant (spotted in DevTools' Network tab). I rewrote `sizes` to match the real render width, and added AVIF to `images.formats` in `next.config.mjs` (10–30% smaller than WebP).
+
+And one landmine. `src/app/icon.png` was being served as 1024×1024 / 1.4MB, and that single file took up half the total transfer size. Shrank it to 96×96, 2.4KB.
+
+But this "well-intentioned optimization" caused a little accident later. Because the favicon URL changed, Google re-evaluated it, and since the classic `/favicon.ico` was a 404, the favicon in search results turned into a globe icon. I sorted it out by providing a multi-size `favicon.ico`, but it was a textbook case of a perf fix having side effects elsewhere (I've also written up the finer SEO details in [another article](/en/blogs/next_js/my-seo-todo-list)).
+
+And after all that, here's what I realized. Images barely moved the needle.
+
+## The Real Story: What Was Killing LCP Wasn't Images 💡
+
+Looking at the detail page's LCP breakdown in a real trace again, Render delay was eating 2.9 seconds. The image was long since downloaded, yet it couldn't paint. So the culprit is something blocking rendering.
+
+### The Render-Blocking Font CSS (and How Inlining It Made Things Slower)
+
+The first thing I found was the `@font-face` CSS that `next/font/google` (Kosugi Maru) generates. At 90KB raw / 33KB compressed, split across 121 unicode-range subsets, this CSS was being emitted by Turbopack as a standalone render-blocking CSS chunk on every page. In a real trace, out of an LCP of 3,866ms, Render delay was 2,978ms. The RenderBlocking insight estimated up to 2.4s of improvement. This was the guy.
+
+"If it's render-blocking, I'll just inline the CSS, right?" — so I enabled Next.js's `experimental.inlineCss` and ran an A/B. Here's the result.
+
+| | FCP | Perf |
+|---|---|---|
+| External CSS chunk (original) | 2.4s | 72 |
+| inlineCss=true | 4.7s | 63 |
+
+It got clearly worse. The huge Japanese-font `@font-face` definitions got duplicated into every page's HTML, making the HTML heavier to transfer and parse. The external chunk, which benefits from edge caching and reuse across pages, is faster. A nice lesson that the textbook move isn't always right. The failure itself became material, so I'll call it a win. 😅
+
+In the end, I split the `@font-face` definitions out into a static file at a version-pinned URL, and insert the stylesheet dynamically via script. A stylesheet inserted this way isn't render-blocking by spec. I also delay the insertion until after the load event, so the font woff2 doesn't fight the LCP image for bandwidth.
+
+```tsx title="app/layout.tsx"
+const FONT_CSS_PATH = "/fonts/kosugi-maru-v17.css";
+
+// preload itself isn't render-blocking, so just kick off the fetch early
+<link rel="preload" href={FONT_CSS_PATH} as="style" />
+<Script id="load-font-css" strategy="beforeInteractive"
+  dangerouslySetInnerHTML={{ __html:
+    `(function(){function f(){var l=document.createElement('link');` +
+    `l.rel='stylesheet';l.href='${FONT_CSS_PATH}';document.head.appendChild(l)}` +
+    `document.readyState==='complete'?f():window.addEventListener('load',f)})()`
+  }}
+/>
+```
+
+While the font isn't loaded, it renders with a `size-adjust`ed fallback (reusing the values next/font had generated), so CLS stays at 0. This part matters more than it looks, so I was careful not to break it.
+
+### Every Article's Body Was in the Client Bundle
+
+This is the one that hit hardest.
+
+The production detail pages were shipping a giant JS chunk — hundreds of KB even after compression — shared across every page. "It's probably `react-syntax-highlighter` or `react-tweet` or `katex`," I assumed, and grepped the chunk — zero hits for any of those library names. What showed up instead were the strings `"body":"..."`, `"raw":"..."`, `"plainText":"..."`, 62 times each. The actual body text of a vacuum-cleaner review and the CMS-migration article.
+
+Here's the truth: **the full text of all 62 articles (31 each in Japanese and English) was sitting in the client bundle, raw, at 2.4MB.** That's 441KB gzipped, 266KB even with brotli.
+
+Tracing the cause, an article card (a client component) was importing a single pure function — just to derive a category slug — from `@/lib/content`.
+
+```tsx title="ArticleCard.tsx"
+"use client";
+// this single import pulls all of content.ts (= every article's data) into the client chunk
+import { getPrimaryCategoryIdFromBlogPost } from "@/lib/content";
+```
+
+The top of `@/lib/content` is `import { blogs } from "#content/index"` — a module that loads every article's data, `body`/`raw` included. Turbopack wasn't tree-shaking this per export; it was pulling the whole module into the shared client chunk.
+
+The fix is simple: split the pure functions that don't depend on `#content` into a separate file.
+
+```tsx title="ArticleCard.tsx"
+// keep only the helpers that don't depend on the all-articles JSON, in content-utils.ts
+import { getPrimaryCategoryIdFromBlogPost } from "@/lib/content-utils";
+```
+
+With that, the detail page's total JS transfer dropped from ~900KB to 268KB. In the App Router, a client component importing a server-only module in a single line puts all the data that module pulls in into the bundle. A JSON import doesn't disappear via tree-shaking. Put pure functions in a file free of `#content` — I burned that into muscle memory.
+
+### Even With a Narrowed Type, the RSC Payload Leaks
+
+Even after fixing the bundle, there was still a leak. I only noticed it when a reviewer pointed it out: the props I passed to the client component were typed as `Pick<BlogPost, ...>`, but the object I was actually passing was the full `BlogPost` (body/raw/plainText included).
+
+```tsx title="ArticleList/index.tsx"
+// the type is a Pick, but item is the full BlogPost. body/raw ride along in the flight payload
+<ArticleCard data={item} />
+
+// narrow the actual object before it crosses the boundary
+<ArticleCard data={toBlogPostSummary(item)} />
+```
+
+Even if you think you've narrowed it with a TypeScript type, if the runtime object is full, the article's entire text gets serialized into the RSC flight payload (the HTML). **Narrowing the type doesn't narrow the object.** When handing data from server to client, I had to build a new object with only the needed fields and drop the rest at the object level.
+
+Checking is easy: `curl -s <page> | grep '"raw"'` should return zero. With this, the list page's HTML shrank from 349KB raw to 110KB, and the detail page from 141KB to 107KB.
+
+### Deprioritizing the Third-Party GTM
+
+Last, Google Tag Manager. `@next/third-parties`' `GoogleTagManager` is fixed to `afterInteractive`, and gtm.js (127KB, High priority) was fighting the render-blocking CSS and LCP image for Slow 4G bandwidth. Since it's a component whose strategy you can't override, I wrote the official snippet myself and moved it to `lazyOnload` (after the load event + requestIdleCallback).
+
+To be honest, this is a trade-off. Page views from ultra-fast users who leave before load slip out of the measurement. I accepted it as the price of performance — prioritizing paint over measurement completeness.
+
+## Cloudflare Workers (OpenNext)-Specific Gotchas
+
+From here on it's heavily environment-dependent, so this is a bonus for people using Cloudflare Workers / OpenNext.
+
+Because the list and category pages referenced `searchParams`, every request became dynamically rendered, was served with `Cache-Control: no-store`, and even the browser's back/forward (bfcache) was disabled. I separated search into a dedicated dynamic route and made the list side static — but removing `searchParams` alone didn't make it static, and the culprit turned out to be next-intl's request-scoped locale resolution. I fixed it by explicitly setting `force-static`.
+
+One more: after I added `redirects` for old-URL compatibility, it worked fine under `next start`, but on OpenNext (workerd) every page got redirected to the search page. The cause was that OpenNext's routing layer evaluates a `has` query with no `value` as "always matches."
+
+```js title="next.config.mjs"
+// without value, OpenNext always matches (redirects even with no query)
+has: [{ type: 'query', key: 'keyword' }]
+// require it to be non-empty
+has: [{ type: 'query', key: 'keyword', value: '.+' }]
+```
+
+Redirects and caching behave differently between `next start` and OpenNext (workerd). It's best to always verify on a production-equivalent environment.
+
+## Results (Before / After)
+
+Lighthouse mobile trend for the article detail pages.
+
+| Phase | Perf | LCP |
+|---|---|---|
+| Before (when the issue surfaced) | 52–79 | 4.8–17.4s |
+| After everything (local production build) | 92–97 | 2.7–3.6s |
+| After everything (production) | 80–87 | 3.7–4.3s |
+
+Just the numbers:
+
+- Total transfer: 2,915KiB → ~950KiB (about -68%)
+- List page HTML: 349KB raw → 110KB
+- Detail page total JS: ~900KB → 268KB
+- Gone from the client: every article's body (2.4MB raw)
+- CLS: held at 0
+
+The score variance, which had been swinging ±20 with TTFB, converged to about ±3 on the local production build. On production the TTFB still fluctuates, so one run occasionally throws an outlier.
+
+## Wrapping Up
+
+That was long, but the one thing I most want to get across is: LCP isn't just an image problem. Looking back, what worked wasn't image optimization but untangling, one at a time, the fights over bandwidth and the main thread happening around it.
+
+Here are the lessons that stuck.
+
+- LCP is a mixed martial art. Render-blocking CSS, giant bundles, RSC payloads, third-party JS — anything that steals the critical path counts.
+- The App Router's client boundary leaks at the "object" level. Both imports and props — even if you narrow the type, a full object rides along.
+- Don't take simulated numbers at face value; pin down the culprit from the real-trace breakdown. Measure several times on production.
+- The textbook move (inlining) isn't always right. Always A/B it.
+- Verify deploy-environment-specific traps on a production-equivalent setup. OpenNext behaves differently from `next start`.
+
+If you're stuck on "LCP is slow, but I already made the images lighter," try looking at Render delay in a real trace once. The culprit might be somewhere else entirely.
+
+If you know a better way, please let me know~
+
+Thank you for reading to the end!
+
+I tweet casually, so please feel free to follow me! 🥺
+
+## References
+
+- [Optimize Largest Contentful Paint (web.dev)](https://web.dev/articles/optimize-lcp)
+- [next/font - Next.js Docs](https://nextjs.org/docs/app/api-reference/components/font)
+- [Window: requestIdleCallback() - MDN](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback)
+- [OpenNext for Cloudflare](https://opennext.js.org/cloudflare)
