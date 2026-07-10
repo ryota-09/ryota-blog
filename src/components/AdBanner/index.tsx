@@ -18,13 +18,16 @@ const AdBanner = async ({ variant }: AdBannerProps) => {
 
   if (variant === "sidebar") {
     // PC版サイドバーウィジェット
+    // NOTE: aria-labelは付けない。可視テキストを含まないaria-labelは
+    // label-content-name-mismatch(WCAG 2.5.3)違反となり音声入力ユーザーが
+    // 見えているテキストで操作できないため、リンク内の可視テキストを
+    // そのままaccessible nameにする
     return (
       <a
         href={CONTACT_URL}
         target="_blank"
         rel="noopener noreferrer"
         className="block group"
-        aria-label={t("ariaLabel")}
         data-gtm-click="ad_banner_cta"
         data-gtm-variant="sidebar"
       >
@@ -49,12 +52,13 @@ const AdBanner = async ({ variant }: AdBannerProps) => {
                 {t("sponsorLabel")}
               </div>
 
-              {/* タイトル */}
-              <h3 className="text-xl font-bold leading-tight mb-2">
+              {/* タイトル。装飾目的でありドキュメントアウトラインに載せる必要がないため、
+                  見出しタグは使わない(一覧ページでh2を飛ばすheading-order違反になる) */}
+              <p className="text-xl font-bold leading-tight mb-2">
                 {t("sidebarTitle1")}
                 <br />
                 {t("sidebarTitle2")}
-              </h3>
+              </p>
 
               {/* 区切り線 */}
               <div className="w-8 h-0.5 bg-white/30 mb-2" />
@@ -81,13 +85,13 @@ const AdBanner = async ({ variant }: AdBannerProps) => {
   }
 
   // Mobile版バナー
+  // NOTE: sidebar variant同様、可視テキストをそのままaccessible nameにするためaria-labelは付けない
   return (
     <a
       href={CONTACT_URL}
       target="_blank"
       rel="noopener noreferrer"
       className="block group"
-      aria-label={t("ariaLabel")}
       data-gtm-click="ad_banner_cta"
       data-gtm-variant="banner"
     >

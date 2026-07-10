@@ -37,6 +37,10 @@ const config: Config = {
       },
       colors: {
         "primary": "#2F8F9D",
+        // primaryの濃色版。白背景の文字色/白文字の背景色として使ってもWCAG AA(4.5:1)を満たす
+        // (白との比 約6.1:1)。primary(3.79:1)・secondary(2.71:1)はAA未達のため、
+        // コントラストが必要な箇所ではこちらを使うこと
+        "primary-deep": "#1F6B76",
         "secondary": "#3BACB6",
         "base-color": "#82DBD8",
         "light": "#B3E8E5",
