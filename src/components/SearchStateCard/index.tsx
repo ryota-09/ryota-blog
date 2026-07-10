@@ -53,7 +53,7 @@ const SearchStateCard = ({ keyword, category, blogType = "blogs" }: SearchStateC
           )}
         </ul>
         <div className="w-full lg:w-auto text-right" data-testid="pw-reset-search-state">
-          <Link href={resetLink} className="text-gray-400 text-xs cursor-pointer transition-colors hover:text-gray-700 dark:hover:text-gray-300">{t('resetSearchConditions')}</Link>
+          <Link href={resetLink} className="text-gray-500 dark:text-gray-400 text-xs cursor-pointer transition-colors hover:text-gray-700 dark:hover:text-gray-300">{t('resetSearchConditions')}</Link>
         </div>
       </div>
     </div>

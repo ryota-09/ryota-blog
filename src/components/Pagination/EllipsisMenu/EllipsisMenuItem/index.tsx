@@ -19,12 +19,11 @@ const EllipsisMenuItem = ({ pageNumber, children }: EllipsisMenuItemProps) => {
   }, [searchParams, pathname, pageNumber])
 
   return (
+    // NOTE: 親がrole="menu"だった時代はrole="menuitem"を付けていたが、
+    // 親を素のリスト構造に是正したため、通常のリンクとしてrole指定なしで描画する
     <Link
       href={generateHref()}
       className={cltw("block w-full text-left px-4 py-2 text-md text-txt-base dark:text-gray-400 hover:bg-light dark:hover:bg-secondary hover:text-white")}
-      // NOTE: 親のmenu(role="menu")と整合するARIAロール。以前はrole="navigation"だったが、
-      // menuの子要素としては誤用のためmenuitemに是正する(a11y改善)。
-      role="menuitem"
     >
       {children}
     </Link>
