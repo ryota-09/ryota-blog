@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint)",
+      "Bash(npm run lint:content)",
+      "Bash(npm run build)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(npx vitest run:*)",
+      "Bash(npx velite build)",
+      "Bash(NODE_ENV=development npx velite build)",
+      "Bash(npm run e2e)",
+      "Bash(npm ci --legacy-peer-deps)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh run list:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "WebSearch"
+    ],
+    "ask": [
+      "Bash(npm run deploy:*)"
+    ]
+  }
+}
