@@ -160,10 +160,11 @@ describe("Pagination", () => {
     expect(countAllPaginationLinks(nav)).toBe(expected);
     expect(readerText.length).toBe(2);
 
-    const menus = screen.getAllByRole('menu');
-    // NOTE: 省略メニュー内の各ページ番号は role="menuitem" (menuの子として正しいARIAロール)
-    const menu1Buttons = within(menus[0]).getAllByRole('menuitem');
-    const menu2Buttons = within(menus[1]).getAllByRole('menuitem');
+    // NOTE: 省略メニューはrole="menu"だとaria-required-children違反になるため
+    // 素のリスト+リンク構造に是正済み。data-testidで特定し、中のリンクを数える。
+    const menus = screen.getAllByTestId('pw-ellipsis-menu');
+    const menu1Buttons = within(menus[0]).getAllByRole('link');
+    const menu2Buttons = within(menus[1]).getAllByRole('link');
 
     const menu1StartNumber = 2;
     const menu1EndNumber = currentPage - 2
