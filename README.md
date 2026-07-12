@@ -39,3 +39,5 @@ This project no longer requires any CMS API keys. See `.dev.vars.example` for th
 https://github.com/ryota-09/ryota-blog-infra
 
 For more details about the frontend part of `Ryota Blog`, refer to the official documentation or comments within the repository. If you have any questions or need support, create an issue or contact the maintainers.
+
+This repository is monitored by slack-claude-responder.
