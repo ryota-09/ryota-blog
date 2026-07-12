@@ -25,13 +25,13 @@ const tagClasses = (level: SkillLevel) =>
 const SkillGroup = ({ level, groups, label, locale }: SkillGroupProps) => {
   return (
     <div>
-      <h3 className="mb-3 font-mono text-sm uppercase tracking-widest text-gray-500">
+      <h3 className="mb-3 font-mono text-sm uppercase tracking-widest text-gray-500 dark:text-gray-400">
         {label}
       </h3>
       <div className="space-y-3">
         {groups.map((g) => (
           <div key={pickLocalized(g.category, locale)}>
-            <p className="mb-1.5 text-xs font-medium text-gray-500">
+            <p className="mb-1.5 text-xs font-medium text-gray-500 dark:text-gray-400">
               {pickLocalized(g.category, locale)}
             </p>
             <div className="flex flex-wrap gap-1.5">

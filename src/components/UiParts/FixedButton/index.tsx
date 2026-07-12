@@ -37,7 +37,7 @@ const FixedButton = ({ topTo = 400 }: FixedButtonProps) => {
       observer.disconnect();
       document.body.removeChild(observedElement);
     };
-  }, []);
+  }, [topTo]);
 
   const scrollToTop = () => {
     window.scrollTo({

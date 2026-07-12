@@ -32,7 +32,7 @@ const NowSection = ({ locale }: NowSectionProps) => {
           </div>
         ))}
       </dl>
-      <p className="mt-6 font-mono text-xs text-gray-500">
+      <p className="mt-6 font-mono text-xs text-gray-500 dark:text-gray-400">
         {lastUpdatedLabel}: <time dateTime={NOW.lastUpdated}>{NOW.lastUpdated}</time>
       </p>
     </section>

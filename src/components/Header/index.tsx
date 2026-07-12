@@ -5,7 +5,7 @@ import SocialMediaNav from "@/components/Header/SocialMediaNav";
 import { SITE_TITLE } from "@/static/blogs";
 import { HEADER_NAV_ITEMS } from "@/static/header";
 
-interface HeaderProps {
+type HeaderProps = {
   locale?: string;
 }
 

@@ -14,7 +14,9 @@ export const Default: Story = {
   args: {
     children: (
       <div className="m-8">
-        <img src="/author.png" className="h-14 w-14" />
+        {/* Storybook表示専用のためnext/imageは使わない */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/author.png" alt="著者アイコン" className="h-14 w-14" />
       </div>
     ),
   },

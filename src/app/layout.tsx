@@ -34,19 +34,6 @@ export default function RootLayout({
   return (
     <ViewTransitions>
       <html suppressHydrationWarning className="overflow-x-hidden">
-        {/* フォントCSSのfetchを早期に開始する(preload自体はrender-blockingにならない) */}
-        <link rel="preload" href={FONT_CSS_PATH} as="style" />
-        {/* script挿入のスタイルシートは仕様上render-blockingにならない。さらに適用をloadイベント後まで
-            遅らせることで、フォントwoff2(VeryHigh優先度・計約350KB)がLCP画像と帯域競合するのを防ぐ。
-            CSS本体は上のpreloadで先読み済みのため、load直後に即座にスワップが始まる(font-display:swap) */}
-        <Script
-          id="load-font-css"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(){function f(){var l=document.createElement('link');l.rel='stylesheet';l.href='${FONT_CSS_PATH}';document.head.appendChild(l)}document.readyState==='complete'?f():window.addEventListener('load',f)})()`,
-          }}
-        />
-        <PreloadResources />
         <ClientLayout>
           {/* NOTE: overflow-x-hiddenはセーフティネット。記事内の長いコードブロック等が
               flexコンテナ配下のブロック要素のshrink-to-fit計算に幅を伝播させ、
@@ -54,9 +41,29 @@ export default function RootLayout({
               (#242パリティ検証で発見、根本のCSS計算までは追い切れなかったため表示側で吸収する)。
               意図的に横スクロールさせている要素は現状ないため、サイト全体への影響はない。 */}
           <body className="bg-[#eee] dark:bg-[#333] flex flex-col min-h-screen overflow-x-hidden">
+            {/* NOTE: 以下のlink/Script/noscriptは<html>直下ではなく<body>内に置くこと。
+                <html>直下はHTMLとして無効で、SSR出力はNextが自動補正する一方、
+                クライアントのJSXツリーと不一致になりハイドレーションエラーの原因になる
+                (エラー時はReactが<html>を再描画しlang属性が消えるA11yリグレッションも既知)。
+                preloadリンクはReact 19のリソースホイスティングで自動的に<head>へ移動される */}
+            {/* フォントCSSのfetchを早期に開始する(preload自体はrender-blockingにならない)。
+                as=styleのpreloadは既定でVeryHigh優先度になり、Slow 4GでLCP画像(High)と
+                帯域競合していたため(実測30KB)、fetchPriority=lowで降格する。
+                このCSSはloadイベント後にしか適用されないので、それまでに取得できていれば足りる */}
+            <link rel="preload" href={FONT_CSS_PATH} as="style" fetchPriority="low" />
+            {/* script挿入のスタイルシートは仕様上render-blockingにならない。さらに適用をloadイベント後まで
+                遅らせることで、フォントwoff2(VeryHigh優先度・計約350KB)がLCP画像と帯域競合するのを防ぐ。
+                CSS本体は上のpreloadで先読み済みのため、load直後に即座にスワップが始まる(font-display:swap) */}
+            <Script
+              id="load-font-css"
+              strategy="beforeInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `(function(){function f(){var l=document.createElement('link');l.rel='stylesheet';l.href='${FONT_CSS_PATH}';document.head.appendChild(l)}document.readyState==='complete'?f():window.addEventListener('load',f)})()`,
+              }}
+            />
+            <PreloadResources />
             {/* JS無効環境向け: script挿入が動かない場合のフォントCSSフォールバック */}
             <noscript>
-              {/* eslint-disable-next-line @next/next/no-css-tags */}
               <link rel="stylesheet" href={FONT_CSS_PATH} />
             </noscript>
             <NextTopLoader

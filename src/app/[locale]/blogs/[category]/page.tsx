@@ -55,11 +55,14 @@ export async function generateMetadata(
   const categoryUrl = buildPageUrl(locale, "blogs", category);
   const categoryLanguages = buildLanguageAlternates("blogs", category);
 
+  // descriptionにタイトルと同一の文字列を入れない(検索結果でのスニペット品質のため)
+  const categoryDescription = t('categoryDescription', { category: translatedCategoryName });
+
   return {
     title: translatedCategoryName,
-    description: translatedCategoryName,
+    description: categoryDescription,
     alternates: { canonical: categoryUrl, languages: categoryLanguages },
-    openGraph: { url: categoryUrl, title: translatedCategoryName, description: translatedCategoryName, siteName: "Ryota-Blog", type: "website" },
+    openGraph: { url: categoryUrl, title: translatedCategoryName, description: categoryDescription, siteName: "Ryota-Blog", type: "website" },
     twitter: { card: "summary_large_image" },
   }
 }

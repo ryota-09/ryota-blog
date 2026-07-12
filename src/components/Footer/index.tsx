@@ -2,7 +2,7 @@ import FooterNav from "@/components/Footer/FooterNav";
 import { SITE_TITLE } from "@/static/blogs";
 import { FOOTER_NAV_ITEMS } from "@/static/footer";
 
-interface FooterProps {
+type FooterProps = {
   locale?: string;
 }
 

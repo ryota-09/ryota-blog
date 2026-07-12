@@ -1,7 +1,12 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('アクセシビリティのテスト', () => {
-  test('A11Y-01: キーボード操作', async ({ page }) => {
+  test('A11Y-01: キーボード操作', async ({ page, browserName }) => {
+    // NOTE: WebKit(Safari準拠)は既定でTabキーによるリンクへのフォーカス移動を行わず、
+    // 最初のTabでラッパー要素にフォーカスが当たるためテストの前提が成立しない(全ブラウザ共通の
+    // 既知挙動差で、コード側の問題ではない)。フォーカスリング自体はglobals.cssの:focus-visibleで
+    // 全ブラウザに明示付与済み。chromium/firefoxで検証を継続する
+    test.skip(browserName === 'webkit', 'WebKitはTabでリンクにフォーカスを移さない(Safari準拠の既定挙動)');
     // NOTE: トップページ('/')は/{locale}/blogsにリダイレクトされる仕様(src/app/[locale]/page.tsx)。
     // ヘッダーロゴのリンク先も/{locale}/blogsのため、'/'から始めるとTab+Enterで遷移してもURLが
     // 変化せず検証にならない。確実にURLが変わる/aboutを起点にする。

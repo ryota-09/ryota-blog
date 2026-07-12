@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 // Next.js 16では、Layout/Pageコンポーネントのparamsは非同期になった
-interface BlogLayoutProps {
+type BlogLayoutProps = {
   children: React.ReactNode;
   params: Promise<{
     locale: string;

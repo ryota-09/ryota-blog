@@ -1,4 +1,6 @@
 import { ImageResponse } from "next/og";
+
+import { loadOgFont } from "@/lib/ogFont";
 import { getTranslations } from "next-intl/server";
 
 import { AUTHOR_ICON_DATA_URL } from "@/static/author-icon";
@@ -19,16 +21,9 @@ export default async function Image({
   // Next.js 16ではparamsがPromiseになるため、awaitで解決
   const { locale } = await params;
 
-  // Kosugi Maru フォントをGoogle Fonts CDNから取得
-  // Cloudflare Workersランタイムでは fs.readFileSync が使用不可のためfetchで代替
-  const fontResponse = await fetch(
-    "https://fonts.gstatic.com/s/kosugimaru/v17/0nksC9PgP_wGh21A2KeqGiTq.ttf",
-    { cf: { cacheTtl: 86400 } } as RequestInit,
-  );
-  if (!fontResponse.ok) {
-    throw new Error(`フォントの取得に失敗しました: ${fontResponse.status}`);
-  }
-  const fontData = await fontResponse.arrayBuffer();
+  // Kosugi Maru フォントの取得はモジュールスコープでメモ化されたloadOgFontに統一
+  // (同一isolate内での再フェッチを避ける。実装は src/lib/ogFont.ts)
+  const fontData = await loadOgFont();
 
   // localeに基づいて作者名・ページタイトルを選択
   const authorName = locale === "en" ? AUTHOR_NAME_EN : AUTHOR_NAME;
@@ -80,7 +75,6 @@ export default async function Image({
             gap: "20px",
           }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={AUTHOR_ICON_DATA_URL}
             width="100"

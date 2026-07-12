@@ -1,4 +1,4 @@
-interface ErrorPageFooterProps {
+type ErrorPageFooterProps = {
   locale: string;
 }
 

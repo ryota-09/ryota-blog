@@ -39,17 +39,19 @@ const LinkCard = ({ url }: LinkCardProps) => {
         <div className="max-w-[66%] flex-1 my-1 md:my-4 px-2 md:px-6 flex flex-col justify-center">
           <p className="dark:text-gray-300 text-md md:text-xl line-clamp-1">{title}</p>
           {description && (
-            <p className="text-gray-500 text-sm md:mt-4 line-clamp-1 h-5">{description}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm md:mt-4 line-clamp-1 h-5">{description}</p>
           )}
           <p className="mt-2 md:mt-6 bg-gray-100 inline-block px-2 rounded-full text-sm md:text-md text-gray-600 line-clamp-1 w-fit">
             {hostname}
           </p>
         </div>
         {image && (
-          <figure className="w-auto max-w-[33%] flex items-center overflow-hidden shrink-0">
+          // CLS対策: w-autoだと画像ロード完了時に幅0→実サイズへ変化しテキスト列が動くため、
+          // 幅を固定してロード前後でレイアウトが変わらないようにする(はみ出しはobject-coverで吸収)
+          <figure className="w-[33%] flex items-center overflow-hidden shrink-0">
             {/* NOTE: next/imageだと許可されたドメインしか表示できないため(EmbeddedCardと同じ理由) */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={image} alt={title} loading="lazy" style={{ objectFit: "cover" }} />
+            <img src={image} alt={title} loading="lazy" className="h-full w-full object-cover" />
           </figure>
         )}
       </aside>
