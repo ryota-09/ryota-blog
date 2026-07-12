@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
-import { routing } from '@/i18n/routing';
+import { isRoutingLocale, routing } from '@/i18n/routing';
 import Script from 'next/script';
 
 import { baseURL, gtmId } from "@/config";
@@ -47,7 +47,7 @@ export default async function LocaleLayout({
 }: LocaleLayoutProps) {
   // Next.js 16では、paramsを非同期で取得する必要がある
   const { locale } = await params;
-  if (!routing.locales.includes(locale as any)) {
+  if (!isRoutingLocale(locale)) {
     notFound();
   }
   

@@ -1,7 +1,7 @@
 import { Link } from 'next-view-transitions';
 import { SITE_TITLE } from "@/static/blogs";
 
-interface ErrorPageHeaderProps {
+type ErrorPageHeaderProps = {
   locale: string;
 }
 

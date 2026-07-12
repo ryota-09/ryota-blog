@@ -47,8 +47,8 @@ const ContactSection = ({ locale }: ContactSectionProps) => {
             </ul>
           </div>
           <div className="mt-4">
-            <p className="mb-2 font-semibold text-gray-500">{labels.declined}</p>
-            <ul className="space-y-1.5 text-sm text-gray-500">
+            <p className="mb-2 font-semibold text-gray-500 dark:text-gray-400">{labels.declined}</p>
+            <ul className="space-y-1.5 text-sm text-gray-500 dark:text-gray-400">
               {declined.map((t) => (
                 <li key={t} className="flex gap-2">
                   <span aria-hidden>×</span>
@@ -77,13 +77,13 @@ const ContactSection = ({ locale }: ContactSectionProps) => {
                   className="h-5 w-5 shrink-0 text-primary dark:text-base-color"
                 />
                 <div className="min-w-0">
-                  <p className="font-mono text-xs uppercase tracking-wider text-gray-500">{c.kind}</p>
+                  <p className="font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">{c.kind}</p>
                   <p className="mt-1 font-medium">{pickLocalized(c.label, locale)}</p>
                 </div>
               </a>
             );
           })}
-          <p className="mt-4 font-mono text-xs text-gray-500">
+          <p className="mt-4 font-mono text-xs text-gray-500 dark:text-gray-400">
             {labels.responseSla}: {pickLocalized(CONTACT.responseSla, locale)}
           </p>
         </aside>

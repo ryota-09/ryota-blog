@@ -127,8 +127,10 @@ test.describe('共通項目（全ページ）のテスト', () => {
 
   test('COM-08: Faviconの表示', async ({ page }) => {
     await page.goto('/');
-    
+
+    // NOTE: Google検索のfavicon認識向けにfavicon.ico(マルチサイズICO)とicon.png の
+    // 2本構成が意図した状態(fdcf5c8)。favicon.icoは削除禁止の運用ルールあり
     const favicon = await page.locator('link[rel="icon"], link[rel="shortcut icon"]');
-    await expect(favicon).toHaveCount(1);
+    await expect(favicon).toHaveCount(2);
   });
 });

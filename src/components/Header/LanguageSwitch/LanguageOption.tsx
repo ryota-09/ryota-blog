@@ -1,6 +1,6 @@
 import type { SupportedLocale, LocaleInfo } from "@/types/locale";
 
-interface LanguageOptionProps {
+type LanguageOptionProps = {
   localeInfo: LocaleInfo;
   isSelected: boolean;
   isFirst: boolean;

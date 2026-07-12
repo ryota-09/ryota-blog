@@ -22,7 +22,7 @@ const ProjectCard = ({ project, locale }: ProjectCardProps) => {
 
   return (
     <article className="flex h-full flex-col rounded border border-gray-200 bg-white p-5 transition-transform duration-200 hover:-translate-y-1 hover:border-base-color hover:shadow-lg dark:border-gray-700 dark:bg-black dark:hover:border-primary">
-      <p className="font-mono text-xs text-gray-500">{period}</p>
+      <p className="font-mono text-xs text-gray-500 dark:text-gray-400">{period}</p>
       <h3 className="mt-2 text-base font-bold leading-snug">{title}</h3>
       <p className="mt-2 text-sm font-medium text-primary dark:text-base-color">{role}</p>
 

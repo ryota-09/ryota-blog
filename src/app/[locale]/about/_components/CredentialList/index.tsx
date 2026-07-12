@@ -21,7 +21,7 @@ const CredentialList = ({ locale }: CredentialListProps) => {
               <span aria-hidden className="text-primary dark:text-base-color">🏅</span>
               <div>
                 <p className="text-sm font-semibold leading-snug">{pickLocalized(c.title, locale)}</p>
-                <p className="mt-1 font-mono text-xs text-gray-500">{c.acquiredAt}</p>
+                <p className="mt-1 font-mono text-xs text-gray-500 dark:text-gray-400">{c.acquiredAt}</p>
               </div>
             </>
           );

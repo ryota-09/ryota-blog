@@ -7,7 +7,7 @@ import ZennArticleList from "@/components/ZennArticleList";
 import SearchStateCard from "@/components/SearchStateCard";
 import { buildPageUrl } from "@/lib";
 
-interface ZennPageProps {
+type ZennPageProps = {
   params: Promise<{
     locale: string;
   }>;

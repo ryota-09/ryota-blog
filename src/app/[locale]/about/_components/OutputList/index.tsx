@@ -33,7 +33,7 @@ const OutputList = ({ locale }: OutputListProps) => {
             <li key={o.id} className="flex items-start gap-3">
               <Chip label={outputKindLabel(o.kind, locale)} noTruncate classes={kindBadgeClasses(o.kind)} />
               <div className="min-w-0 flex-1">
-                <p className="font-mono text-xs text-gray-500">{o.date}</p>
+                <p className="font-mono text-xs text-gray-500 dark:text-gray-400">{o.date}</p>
                 {o.url ? (
                   <a
                     href={o.url}

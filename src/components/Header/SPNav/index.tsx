@@ -7,7 +7,7 @@ import { useState } from "react";
 
 const NavDrower = dynamic(() => import("@/components/Header/SPNav/NavDrower"));
 
-interface SPNavProps {
+type SPNavProps = {
   locale?: string;
 }
 

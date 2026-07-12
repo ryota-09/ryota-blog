@@ -62,11 +62,29 @@ const Page = async ({ params }: AiAccessPageProps) => {
   }
 
   const since = sinceDate(SUMMARY_WINDOW_DAYS);
-  const [byBlog, byVendor, dailyTrend] = await Promise.all([
-    getAiAccessSummaryByBlog(env.AI_ACCESS_DB, locale, since),
-    getAiAccessSummaryByVendor(env.AI_ACCESS_DB, locale, since),
-    getAiAccessDailyTrend(env.AI_ACCESS_DB, locale, since),
-  ]);
+  // D1側の一時障害・スキーマ不整合でページ全体が500にならないよう、
+  // クエリ失敗時はバインディング欠落時と同様のフォールバック表示に倒す
+  let byBlog: Awaited<ReturnType<typeof getAiAccessSummaryByBlog>>;
+  let byVendor: Awaited<ReturnType<typeof getAiAccessSummaryByVendor>>;
+  let dailyTrend: Awaited<ReturnType<typeof getAiAccessDailyTrend>>;
+  try {
+    [byBlog, byVendor, dailyTrend] = await Promise.all([
+      getAiAccessSummaryByBlog(env.AI_ACCESS_DB, locale, since),
+      getAiAccessSummaryByVendor(env.AI_ACCESS_DB, locale, since),
+      getAiAccessDailyTrend(env.AI_ACCESS_DB, locale, since),
+    ]);
+  } catch (error) {
+    console.error("AIアクセス解析のD1クエリに失敗しました:", error);
+    return (
+      <div className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+        <p className="text-gray-700 dark:text-gray-300">
+          {isEn
+            ? "Failed to load AI access analytics. The D1 database may be temporarily unavailable."
+            : "AIアクセス解析データの取得に失敗しました。D1データベースが一時的に利用できない可能性があります。"}
+        </p>
+      </div>
+    );
+  }
   const blogs = getAllBlogListByLocale(locale as ContentLocale);
 
   // NOTE: ファイルベース層(Velite)にはmicroCMSの content id 相当が無く、slugがそれに代わるキーとなる。

@@ -1,12 +1,12 @@
 "use client"
-import { useContext, useRef, type FormEvent } from "react"
+import { useRef, type FormEvent } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
-import { GlobalContext } from "@/providers"
+import { useGlobalContext } from "@/providers"
 import { cltw } from "@/util"
 
 const SearchBar = () => {
-  const { state } = useContext(GlobalContext)
+  const { state } = useGlobalContext()
   const router = useRouter()
   const pathname = usePathname()
   const locale = useLocale()

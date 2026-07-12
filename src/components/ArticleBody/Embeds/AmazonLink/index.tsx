@@ -17,9 +17,11 @@ const AmazonLink = ({ href, image, title, trackingImage }: AmazonLinkProps) => {
         href={href}
         className="relative flex flex-col md:flex-row items-center gap-8 px-4 py-8 md:px-6 md:py-4 border-[#D0AD77] border-[6px] hover:transition hover:opacity-80 hover:text-[#D0AD77] after:content-['Amazon'] after:text-gray-700 after:bg-[#D0AD77] after:absolute after:py-0 lg:after:py-2 md:after:py-0.5 after:px-4 after:w-auto after:top-0 after:right-0"
       >
-        <figure className="overflow-hidden object-center">
+        {/* CLS対策: 商品画像はすべてAmazonの_SL160_サムネイル(長辺160px)のため、
+            図版領域を160pxで固定予約し、画像ロード完了時のレイアウト変化を防ぐ */}
+        <figure className="flex h-40 w-40 shrink-0 items-center justify-center overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={image} alt={title} />
+          <img src={image} alt={title} loading="lazy" className="max-h-full max-w-full object-contain" />
         </figure>
         <br />
         {title}

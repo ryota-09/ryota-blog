@@ -45,7 +45,8 @@
     "wrapText": "折り返し",
     "unwrapText": "折り返しなし",
     "promotionalContent": "こちらの記事にはプロモーションを含みます",
-    "issueTemplate": "対象ページ: {url}\\n\\n■修正箇所\\n\\n■修正の理由\\n\\n■改善提案\\n\\n■その他\\n"
+    "issueTemplate": "対象ページ: {url}\\n\\n■修正箇所\\n\\n■修正の理由\\n\\n■改善提案\\n\\n■その他\\n",
+    "categoryDescription": "「{category}」カテゴリの記事一覧。Webエンジニアが技術、キャリア、日常について発信するブログです。"
   },
   "pagination": {
     "previous": "前へ",

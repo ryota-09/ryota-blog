@@ -29,9 +29,11 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
   const categoryId = getPrimaryCategoryIdFromBlogPost(data);
   const blogPath = getBlogPath(locale, categoryId, data.slug);
 
-  // LCP最適化: モバイル（1列）は最初の1枚、デスクトップ（2列）は最初の2枚がLCP候補
-  // SSR時に正しい値を出力する必要があるため、両方をカバーするindex <= 1を使用
-  const isLcpCandidate = index <= 1;
+  // LCP最適化: グリッドが2列になるのはxl(1280px)以上のみで、Lighthouseの基準である
+  // モバイル(1列)では2枚目は必ず画面外になる。2枚目までpreload+highにすると
+  // Slow 4Gで真のLCP画像(1枚目)と帯域を奪い合うため、LCP候補は1枚目のみとする
+  // (xlの2枚目はlazyでもレイアウト確定後すぐ読み込まれるため実害は軽微)
+  const isLcpCandidate = index === 0;
   // loading/fetchPriority/preload はLCP候補かどうかで常にセットで一致すべき値のため、
   // 個別の三項演算子に分散させず1箇所にまとめて導出する（将来どれか1つだけ変更されるズレを防ぐ）
   const lcpImageProps = isLcpCandidate
@@ -39,7 +41,7 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
     : { loading: "lazy" as const, fetchPriority: "auto" as const, preload: false };
 
   return (
-    <div className="relative flex h-[540px] flex-col border-2 border-gray-200 bg-white p-6 dark:dark:border-gray-600 dark:bg-black md:h-[290px]">
+    <div className="relative flex h-[540px] flex-col border-2 border-gray-200 bg-white p-6 dark:border-gray-600 dark:bg-black md:h-[290px]">
       {isWithinTwoWeeks(data.publishedAt || data.updatedAt) && (
         <NewLabel className="absolute -left-2 -top-2.5 md:-left-4" />
       )}
@@ -52,7 +54,7 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
       </Link>
       <div className="flex h-full flex-col-reverse gap-4 overflow-hidden md:flex-row">
         <div className="flex flex-col justify-between md:w-[70%]">
-          <p className="mt-2 line-clamp-4 h-[6rem] text-gray-500 sm:line-clamp-3 sm:h-auto md:line-clamp-4">
+          <p className="mt-2 line-clamp-4 h-[6rem] text-gray-500 dark:text-gray-400 sm:line-clamp-3 sm:h-auto md:line-clamp-4">
             {data.description}
           </p>
           <div className="flex justify-end">
@@ -97,7 +99,8 @@ const ArticleCard = ({ data, index }: ArticleCardProps) => {
               href={blogPath}
               className="flex h-full w-full flex-grow items-center justify-center bg-gray-300 transition-opacity hover:opacity-80 dark:bg-gray-600"
             >
-              <p className="w-auto text-3xl font-bold text-gray-400">
+              {/* コントラスト対策: bg-gray-300上でAA(大文字3:1)を満たす濃さにする */}
+              <p className="w-auto text-3xl font-bold text-gray-600 dark:text-gray-300">
                 No Image
               </p>
             </Link>

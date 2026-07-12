@@ -28,7 +28,7 @@
     "allCategories": "All",
     "zennArticles": "Zenn Articles",
     "page": "Page",
-    "searchConditions": "Search conditions", 
+    "searchConditions": "Search conditions",
     "search": "Search",
     "resetSearchConditions": "Reset search conditions",
     "showMore": "Show more",
@@ -44,7 +44,8 @@
     "wrapText": "Wrap",
     "unwrapText": "Unwrap",
     "promotionalContent": "This article contains promotional content",
-    "issueTemplate": "Target page: {url}\\n\\n■ Fix location\\n\\n■ Reason for fix\\n\\n■ Improvement suggestions\\n\\n■ Other\\n"
+    "issueTemplate": "Target page: {url}\\n\\n■ Fix location\\n\\n■ Reason for fix\\n\\n■ Improvement suggestions\\n\\n■ Other\\n",
+    "categoryDescription": "Articles in the \"{category}\" category on Ryota-Blog, a blog by a web engineer about technology, career, and daily life."
   },
   "pagination": {
     "previous": "Previous",

@@ -1,10 +1,10 @@
 "use client"
-import { GlobalContext } from '@/providers';
+import { useGlobalContext } from '@/providers';
 import { BLOG_TYPE_ASSETS, BlogTypeKeyLIteralType } from '@/types';
 import { cltw } from '@/util';
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 type BlogTypeTabsProps = {
   /**
@@ -14,7 +14,7 @@ type BlogTypeTabsProps = {
 }
 
 const BlogTypeTabs = ({ blogType }: BlogTypeTabsProps) => {
-  const { dispatch } = useContext(GlobalContext);
+  const { dispatch } = useGlobalContext();
   const [activeTab, setActiveTab] = useState<BlogTypeKeyLIteralType>(blogType || "blogs");
   const locale = useLocale();
 

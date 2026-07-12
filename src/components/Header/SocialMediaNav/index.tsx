@@ -2,7 +2,7 @@ import SocialMediaIcons from "@/components/Header/SocialMediaIcons";
 import DarkModeToggle from "@/components/Header/DarkModeToggle";
 import LanguageSwitch from "@/components/Header/LanguageSwitch";
 
-interface SocialMediaNavProps {
+type SocialMediaNavProps = {
   locale?: string;
 }
 

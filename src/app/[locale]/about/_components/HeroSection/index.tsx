@@ -86,7 +86,7 @@ const HeroSection = ({ locale }: HeroSectionProps) => {
       <p className="max-w-prose text-gray-700 dark:text-gray-300 leading-relaxed">
         {subText}
       </p>
-      <p className="flex items-center gap-1.5 text-sm text-gray-500">
+      <p className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
         <MapPin aria-hidden className="h-4 w-4 shrink-0" />
         {HERO_PROFILE.location}
       </p>

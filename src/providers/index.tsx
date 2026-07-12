@@ -1,6 +1,6 @@
 "use client"
 import type { BlogTypeKeyLIteralType } from "@/types";
-import { ReactNode, createContext, useReducer, type Dispatch } from "react";
+import { ReactNode, createContext, useContext, useReducer, type Dispatch } from "react";
 
 export type GlobalState = {
   blogType: BlogTypeKeyLIteralType
@@ -18,7 +18,19 @@ export type GlobalContextType = {
   dispatch: Dispatch<Action>;
 }
 
-export const GlobalContext = createContext<GlobalContextType>({} as GlobalContextType)
+// Provider外での誤用を実行時に検出できるよう、初期値は型偽装({} as ...)ではなくnullにする
+const GlobalContext = createContext<GlobalContextType | null>(null)
+
+/**
+ * GlobalContextを安全に参照するフック。Provider外で呼ばれた場合は明確なエラーを投げる
+ */
+export const useGlobalContext = (): GlobalContextType => {
+  const context = useContext(GlobalContext)
+  if (!context) {
+    throw new Error("useGlobalContextはGlobalStateProviderの内側で使用してください")
+  }
+  return context
+}
 
 const initialState: GlobalState = {
   blogType: "blogs"

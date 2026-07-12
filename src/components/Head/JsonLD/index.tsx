@@ -88,8 +88,12 @@ const JsonLD = ({ data, locale }: JsonLDProps) => {
   }
 
   // NOTE: クローラーが確実に読めるよう初期HTMLに直接埋め込む（next/scriptのafterInteractiveだとJS実行後注入になる）
+  // NOTE: asyncはReact 19の制約対応。async無しのインラインscriptはSSR出力から
+  // 落とされる(「Cannot render a sync or defer script」エラー)。ld+jsonは実行されない
+  // データブロックのためasyncを付けても挙動は変わらない
   return (
     <script
+      async
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify([blogPostingJsonLD, { ...breadcrumbJsonLD }, siteNameJsonLD]) }}
     />
