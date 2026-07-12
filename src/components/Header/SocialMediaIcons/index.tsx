@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import { getSocialMediaNavItems } from "@/static/header";
 
-interface SocialMediaIconsProps {
+type SocialMediaIconsProps = {
   locale?: string;
 }
 

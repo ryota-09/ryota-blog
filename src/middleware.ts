@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextFetchEvent, NextRequest } from 'next/server'
 import createMiddleware from 'next-intl/middleware';
 import { getCloudflareContext } from '@opennextjs/cloudflare'
-import { routing } from './i18n/routing';
+import { isRoutingLocale, routing } from './i18n/routing';
 import { LOCALE_COOKIE_NAME } from './types/locale'
 import { CATEGORIES } from './static/categories'
 import { classifyAiAccess } from './lib/ai-access/classify'
@@ -51,8 +51,8 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   if (pathname === '/') {
     // 言語切替で保存される NEXT_LOCALE クッキーから優先ロケールを取得する
     const preferredLocale = request.cookies.get(LOCALE_COOKIE_NAME)?.value;
-    const targetLocale = preferredLocale && routing.locales.includes(preferredLocale as any) 
-      ? preferredLocale 
+    const targetLocale = isRoutingLocale(preferredLocale)
+      ? preferredLocale
       : routing.defaultLocale;
     
     return NextResponse.redirect(new URL(`/${targetLocale}`, request.url));
@@ -99,7 +99,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const localeMatch = pathname.match(/^\/([^\/]+)\/blogs\/([^\/]+)$/)
   if (
     localeMatch &&
-    routing.locales.includes(localeMatch[1] as any) &&
+    isRoutingLocale(localeMatch[1]) &&
     !NON_BLOG_ID_SEGMENTS.has(localeMatch[2])
   ) {
     const locale = localeMatch[1]
@@ -160,7 +160,7 @@ function recordAiAccessIfArticleRequest(request: NextRequest, event: NextFetchEv
   if (!match) return
 
   const [, locale, categoryId, blogId] = match
-  if (!routing.locales.includes(locale as (typeof routing.locales)[number]) || !KNOWN_CATEGORY_IDS.has(categoryId)) {
+  if (!isRoutingLocale(locale) || !KNOWN_CATEGORY_IDS.has(categoryId)) {
     return
   }
 

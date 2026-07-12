@@ -17,4 +17,12 @@
     font-style: normal;
     font-weight: 400;
   }
+
+  /* キーボード操作時のフォーカスリングをブラウザ既定に頼らず明示する
+     (WebKitはheadlessで既定リングを描画しないことがあり、E2E A11Y-01でも検出不能だった)。
+     色はブランドカラー(secondary #3BACB6)で、ライト/ダーク両背景で視認できる */
+  :focus-visible {
+    outline: 2px solid #3BACB6;
+    outline-offset: 2px;
+  }
 }

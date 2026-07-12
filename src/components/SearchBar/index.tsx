@@ -1,20 +1,20 @@
 "use client"
-import { useContext, useRef, type FormEvent } from "react"
+import { useRef, type FormEvent } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
-import { GlobalContext } from "@/providers"
+import { useGlobalContext } from "@/providers"
 import { cltw } from "@/util"
 
 const SearchBar = () => {
-  const { state } = useContext(GlobalContext)
+  const { state } = useGlobalContext()
   const router = useRouter()
   const pathname = usePathname()
   const locale = useLocale()
   const t = useTranslations('blog')
   const formRef = useRef<HTMLFormElement>(null)
 
-  // stateがundefinedの場合のフォールバック
-  const blogType = state?.blogType || "blogs"
+  // useGlobalContextはProvider外で使うと例外を投げるため、ここではstateの存在が保証される
+  const blogType = state.blogType
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()

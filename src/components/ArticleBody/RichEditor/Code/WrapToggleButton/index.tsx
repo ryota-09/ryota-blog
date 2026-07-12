@@ -59,13 +59,13 @@ const WrapToggleButton = ({
         aria-hidden="true"
       >
         {isWrapped ? (
-          // Unwrap icon - 長い一行のテキストと矢印で展開を表現
+          // 折り返し解除アイコン - 長い一行のテキストと矢印で展開を表現
           <>
             <line {...ICONS.wrap.unwrap.line} />
             <polyline points={ICONS.wrap.unwrap.polyline} />
           </>
         ) : (
-          // Wrap icon - テキストが折り返される様子を表現
+          // 折り返しアイコン - テキストが折り返される様子を表現
           <>
             <line {...ICONS.wrap.wrap.line} />
             <path d={ICONS.wrap.wrap.path} />

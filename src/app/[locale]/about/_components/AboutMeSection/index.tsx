@@ -23,7 +23,7 @@ const AboutMeSection = ({ locale }: AboutMeSectionProps) => {
           <p key={i} dangerouslySetInnerHTML={{ __html: p }} />
         ))}
       </div>
-      <p className="mt-6 text-sm text-gray-500">{hobbies}</p>
+      <p className="mt-6 text-sm text-gray-500 dark:text-gray-400">{hobbies}</p>
     </section>
   );
 };

@@ -11,26 +11,18 @@ function getLatestLighthouseReport() {
 }
 
 // Lighthouseのスコアを取得
+// NOTE: Lighthouse 13にはpwaカテゴリが存在しないため参照しない(参照すると実行時エラーで落ちる)
 function getLighthouseScores() {
   const reportPath = getLatestLighthouseReport();
   const report = JSON.parse(fs.readFileSync(reportPath));
-  // console.log(report)
-  console.log(
-    {
-      performance: report.categories.performance.score * 100,
-      accessibility: report.categories.accessibility.score * 100,
-      bestPractices: report.categories['best-practices'].score * 100,
-      seo: report.categories.seo.score * 100,
-      pwa: report.categories.pwa.score * 100,
-    }
-  )
-  return {
+  const scores = {
     performance: report.categories.performance.score * 100,
     accessibility: report.categories.accessibility.score * 100,
     bestPractices: report.categories['best-practices'].score * 100,
     seo: report.categories.seo.score * 100,
-    pwa: report.categories.pwa.score * 100,
   };
+  console.log(scores);
+  return scores;
 }
 
 // 最終行を取得する関数
@@ -61,7 +53,7 @@ async function appendDataToSheet() {
   const sheetName = 'シート1';
   const range = `1!A:E`;  // 書き込み対象の範囲を設定
   const values = [
-    [scores.performance, scores.accessibility, scores.bestPractices, scores.seo, scores.pwa],
+    [scores.performance, scores.accessibility, scores.bestPractices, scores.seo],
   ];
 
   // const lastRow = await getLastRow(spreadsheetId, range);

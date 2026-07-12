@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   robots: "noindex"
 }
 
-interface PageProps {
+type PageProps = {
   params: Promise<{
     locale: string;
   }>;

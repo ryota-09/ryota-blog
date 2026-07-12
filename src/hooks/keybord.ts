@@ -4,7 +4,10 @@ type Key = "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight" | "Enter" | "Esc
 
 export const useKey = (code: Key, callback: (event: KeyboardEvent) => void) => {
   const cbRef = useRef(callback);
-  cbRef.current = callback;
+  // レンダー中のref書き換えは並行レンダリングで不整合を起こしうるため、effectで同期する
+  useEffect(() => {
+    cbRef.current = callback;
+  });
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.code === code) {

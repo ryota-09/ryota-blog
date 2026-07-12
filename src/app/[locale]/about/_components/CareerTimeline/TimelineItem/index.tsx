@@ -20,10 +20,10 @@ const TimelineItem = ({ entry, locale }: TimelineItemProps) => {
         aria-hidden
         className="absolute -left-[7px] top-2 h-3 w-3 rounded-full bg-base-color ring-4 ring-white dark:bg-primary dark:ring-black"
       />
-      <p className="font-mono text-sm text-gray-500">{formatPeriod(entry.period, locale)}</p>
+      <p className="font-mono text-sm text-gray-500 dark:text-gray-400">{formatPeriod(entry.period, locale)}</p>
       <h3 className="mt-1 text-lg font-semibold leading-snug">
         {role}
-        <span className="block text-sm font-normal text-gray-500 sm:ml-2 sm:inline">
+        <span className="block text-sm font-normal text-gray-500 dark:text-gray-400 sm:ml-2 sm:inline">
           @ {org}
         </span>
       </h3>

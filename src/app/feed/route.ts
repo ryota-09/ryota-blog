@@ -34,9 +34,12 @@ export async function GET() {
 
   // NOTE: 現行実装(orders: "-updatedAt")と同じ並び順にするためupdatedAt降順に並べ替える
   //       (content.tsのgetAllBlogListByLocaleはpublishedAt降順固定のため)
-  const blogList = [...getAllBlogListByLocale("ja")].sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-  );
+  // noIndex記事はsitemap/llms.txtと同様にフィードからも除外する
+  const blogList = getAllBlogListByLocale("ja")
+    .filter((blog) => !blog.noIndex)
+    .sort(
+      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    );
   for (const blog of blogList) {
     const categoryId = resolveCategoryOrDefault(blog.categories[0]).slug;
     feed.addItem({

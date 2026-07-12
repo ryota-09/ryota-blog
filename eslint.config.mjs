@@ -1,4 +1,5 @@
 import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import eslintConfigPrettier from "eslint-config-prettier";
 
 // ESLint 9 / Next.js 16 のネイティブ Flat Config 構成
 const eslintConfig = [
@@ -27,6 +28,8 @@ const eslintConfig = [
       "react-hooks/refs": "warn",
     },
   },
+  // Prettierと競合する整形系ルールを無効化する(必ず最後に置く)
+  eslintConfigPrettier,
 ];
 
 export default eslintConfig;

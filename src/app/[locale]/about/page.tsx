@@ -6,7 +6,7 @@ import MissionSection from "./_components/MissionSection";
 import PersonJsonLd from "./_components/PersonJsonLd";
 import SkillStack from "./_components/SkillStack";
 
-interface AboutPageProps {
+type AboutPageProps = {
   params: Promise<{
     locale: string;
   }>;

@@ -1,4 +1,3 @@
-import Script from "next/script";
 import type { Person, WithContext } from "schema-dts";
 import { baseURL } from "@/config";
 import { AUTHOR_E_MAIL } from "@/static/blogs";
@@ -34,11 +33,14 @@ const PersonJsonLd = ({ locale }: PersonJsonLdProps) => {
     ],
   };
 
+  // NOTE: 記事詳細のJsonLDと同方針。クローラーが確実に読めるよう初期HTMLに直接埋め込む
+  // （next/scriptのafterInteractiveだとJS実行後注入になり、非JS実行クローラーが読めない）
+  // asyncは必須。next 16.2.10 + React 19系ではasync無しだとSSR出力から消えることを
+  // 実測確認済み(詳細は src/components/Head/JsonLD/index.tsx のNOTE参照)
   return (
-    <Script
-      id="about-person-json-ld"
+    <script
+      async
       type="application/ld+json"
-      strategy="afterInteractive"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
     />
   );

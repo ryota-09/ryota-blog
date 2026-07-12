@@ -7,11 +7,16 @@ import createNextIntlPlugin from 'next-intl/plugin';
 //   await initOpenNextCloudflareForDev();
 // }
 
+import withBundleAnalyzerFactory from '@next/bundle-analyzer';
+
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
-// const withBundleAnalyzer = require('@next/bundle-analyzer')({
-//   enabled: process.env.ANALYZE === 'true',
-// })
+// npm run analyze (ANALYZE=true) でバンドル内訳レポートを出力する。
+// NOTE: webpack-bundle-analyzerベースのため、Turbopackビルド(Next 16の既定)では
+// レポートが出ない。分析時は `ANALYZE=true npx next build --webpack` を使うこと
+const withBundleAnalyzer = withBundleAnalyzerFactory({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -129,5 +134,4 @@ const nextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
-// module.exports = withBundleAnalyzer(nextConfig)
+export default withBundleAnalyzer(withNextIntl(nextConfig));
