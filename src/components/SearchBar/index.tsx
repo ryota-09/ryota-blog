@@ -13,8 +13,8 @@ const SearchBar = () => {
   const t = useTranslations('blog')
   const formRef = useRef<HTMLFormElement>(null)
 
-  // stateがundefinedの場合のフォールバック
-  const blogType = state?.blogType || "blogs"
+  // useGlobalContextはProvider外で使うと例外を投げるため、ここではstateの存在が保証される
+  const blogType = state.blogType
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()

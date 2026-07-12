@@ -35,8 +35,8 @@ const PersonJsonLd = ({ locale }: PersonJsonLdProps) => {
 
   // NOTE: 記事詳細のJsonLDと同方針。クローラーが確実に読めるよう初期HTMLに直接埋め込む
   // （next/scriptのafterInteractiveだとJS実行後注入になり、非JS実行クローラーが読めない）
-  // asyncはReact 19の制約対応(async無しのインラインscriptはSSR出力から落とされる)。
-  // ld+jsonは実行されないデータブロックのため挙動は変わらない
+  // asyncは必須。next 16.2.10 + React 19系ではasync無しだとSSR出力から消えることを
+  // 実測確認済み(詳細は src/components/Head/JsonLD/index.tsx のNOTE参照)
   return (
     <script
       async
