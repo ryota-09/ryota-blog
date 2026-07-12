@@ -10,7 +10,8 @@ type AccordionProps = {
 const Accordion = ({ title, children, classes }: AccordionProps) => {
   return (
     <details className="group">
-      <summary className={cltw("list-none text-gray-400", classes)}>{title}</summary>
+      {/* NOTE: ページ背景(#eee)の上に直接載る想定のため、AA(4.5:1)を満たすgray-600を既定にする */}
+      <summary className={cltw("list-none text-gray-600 dark:text-gray-400", classes)}>{title}</summary>
       {children}
     </details>
   )

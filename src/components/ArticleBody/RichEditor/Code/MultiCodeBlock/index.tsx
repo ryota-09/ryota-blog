@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter';
-import oneDark from 'react-syntax-highlighter/dist/esm/styles/prism/one-dark';
+// 素のoneDarkはコメント色等がWCAG AA未達のため、コントラスト調整済みテーマを使う
+import a11yOneDark from '@/components/ArticleBody/RichEditor/Code/a11yOneDark';
 import CopyButton from '@/components/ArticleBody/RichEditor/Code/CopyButton';
 import WrapToggleButton from '@/components/ArticleBody/RichEditor/Code/WrapToggleButton';
 import { CODE_BLOCK_STYLES } from '../constants';
@@ -78,7 +79,7 @@ const MultiCodeBlock = ({
         <div className={isWrapped ? '' : 'overflow-x-auto'}>
           <SyntaxHighlighter 
             language={lang || 'text'} 
-            style={oneDark}
+            style={a11yOneDark}
             wrapLongLines={isWrapped}
             customStyle={customStyle}
             showLineNumbers={false}

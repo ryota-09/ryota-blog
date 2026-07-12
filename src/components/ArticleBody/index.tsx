@@ -64,7 +64,7 @@ const ArticleBody = ({ data, locale }: ArticleBodyProps) => {
         }
       </div>
       <div className='mt-4'>
-        <time dateTime={displayTime.split('T')[0]} className="text-gray-400">{displayTime.split('T')[0].replaceAll("-", "/")}</time>
+        <time dateTime={displayTime.split('T')[0]} className="text-gray-500 dark:text-gray-400">{displayTime.split('T')[0].replaceAll("-", "/")}</time>
       </div>
       {calcDiffYears(displayTime) >= 1 && (
         <aside className="mt-4">

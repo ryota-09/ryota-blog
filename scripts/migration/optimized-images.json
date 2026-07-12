@@ -278,5 +278,9 @@
   "content/blogs/nextjs-lcp-improvement/images/nextjs-lcp-improvement-thumbnail.png": {
     "hash": "20755573f403c602ce165a5e043cfb4b4d0b718c93a0826a3f936f14fb4e09a4",
     "size": 381502
+  },
+  "content/blogs/saa-c03-failed/images/saa-c03-failed-thumbnail.png": {
+    "hash": "3a63df7dab4c89450e531a9b2f70913fcffc8eb884db934b5c4e351fb4337a74",
+    "size": 40692
   }
 }

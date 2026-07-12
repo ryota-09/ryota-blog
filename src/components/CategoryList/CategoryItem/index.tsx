@@ -19,7 +19,7 @@ const CategoryItem = ({ id, categoryName }: CategoryItemProps) => {
   
   return (
     <li className="flex items-center justify-center md:justify-start gap-2">
-      <Link href={`/${locale}/blogs/${id}`} className="md:w-full h-full p-2 md:p-4 block text-white md:text-txt-base dark:md:text-gray-400 text-md leading-tight font-medium bg-secondary md:bg-transparent rounded-full md:rounded-none transition duration-200 hover:text-base-color dark:md:hover:text-primary dark:hover:text-gray-100 dark:hover:opacity-90" data-testid={`pw-category-list-${id}`}>
+      <Link href={`/${locale}/blogs/${id}`} className="md:w-full h-full p-2 md:p-4 block text-white md:text-txt-base dark:md:text-gray-400 text-md leading-tight font-medium bg-primary-deep md:bg-transparent rounded-full md:rounded-none transition duration-200 hover:text-base-color dark:md:hover:text-primary dark:hover:text-gray-100 dark:hover:opacity-90" data-testid={`pw-category-list-${id}`}>
         <p>{categoryName}</p>
       </Link>
     </li>
