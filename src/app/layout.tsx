@@ -7,12 +7,17 @@ import { routing } from '@/i18n/routing'
 
 import ClientLayout from "@/components/ClientLayout";
 import PreloadResources from "@/components/Head/PreloadResources";
+import fontManifest from "@/generated/font-manifest.json";
 
 // Kosugi Maruの@font-face定義CSS。next/font/googleはTurbopackで約33KB(圧縮後)の
 // render-blocking CSSチャンクを生成し、Slow 4G実測でFCP/LCPを約2.4秒遅らせていたため、
-// script挿入の非render-blockingスタイルシートに移行した(フォント本体はGoogle CDNの
-// バージョン固定URL・font-display:swap。フォールバックは従来と同じsize-adjust値でCLSパリティ維持)
-const FONT_CSS_PATH = "/fonts/kosugi-maru-v17.css";
+// script挿入の非render-blockingスタイルシートに移行した(font-display:swap。
+// フォールバックは従来と同じsize-adjust値でCLSパリティ維持)。
+// フォント本体はGoogle CDNのunicode-range 121分割(記事ページで34〜49スライス・280〜631KB)から、
+// サイト実使用文字のみの自己ホストサブセット1ファイル(約283KB・全ページ共通・immutable)に移行済み。
+// CSSパスはビルド時にscripts/generate-font-subset.mjsが生成するマニフェスト経由で解決する
+// (内容由来ハッシュ入りファイル名のため。文字セットが変わるとファイル名も変わる)
+const FONT_CSS_PATH = fontManifest.fontCssPath;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -52,7 +57,7 @@ export default function RootLayout({
                 このCSSはloadイベント後にしか適用されないので、それまでに取得できていれば足りる */}
             <link rel="preload" href={FONT_CSS_PATH} as="style" fetchPriority="low" />
             {/* script挿入のスタイルシートは仕様上render-blockingにならない。さらに適用をloadイベント後まで
-                遅らせることで、フォントwoff2(VeryHigh優先度・計約350KB)がLCP画像と帯域競合するのを防ぐ。
+                遅らせることで、フォントwoff2(VeryHigh優先度・約283KB)がLCP画像と帯域競合するのを防ぐ。
                 CSS本体は上のpreloadで先読み済みのため、load直後に即座にスワップが始まる(font-display:swap) */}
             <Script
               id="load-font-css"
