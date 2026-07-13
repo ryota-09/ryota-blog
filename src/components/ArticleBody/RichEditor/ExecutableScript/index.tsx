@@ -6,6 +6,9 @@ type ExecutableScriptProps = {
   attribs: Record<string, string>;
   // 元のscriptタグのインラインコード（外部scriptの場合は空文字）
   code: string;
+  // 指定時、親要素がビューポートに接近(rootMargin指定分の手前)するまでスクリプト実行を遅延する。
+  // 外部リソースを大量に取得する埋め込み(もしも等)を初期ロードのLCP帯域から退避させるために使う
+  lazyRootMargin?: string;
 };
 
 // もしもアフィリエイト(かんたんリンク)のローダーがbundle.jsのscript要素に付与するID
@@ -28,8 +31,12 @@ const prepareMoshimoBatch = () => {
     moshimoBatchStarted = false;
   });
   bundleExistedBeforeBatch = !!document.getElementById(MOSHIMO_LOADER_ID);
-  // 前のページで積まれた未処理のキューが残っていると、bundle.jsが古いエントリを
-  // 再処理して重複描画や例外を起こすため、このページ分を積む前に破棄する
+  // 前のページで積まれた処理済み・未処理のキューが残っていると、bundle.jsが古いエントリを
+  // 再処理して重複描画や例外を起こすため、このページ分を積む前に破棄する。
+  // ただしトリガー待ち(スケジュール済み)のキューは、遅延初期化で直前に発火した
+  // 別ウィジェットの処理前エントリなので破棄してはいけない(破棄するとそのウィジェットが
+  // 永久に描画されない。E2E: moshimo-lazy.spec.ts MOSHIMO-03で回帰検知)
+  if (moshimoTriggerScheduled) return;
   const loader = window.msmaflink;
   if (loader && Array.isArray(loader.q)) {
     loader.q.length = 0;
@@ -65,35 +72,63 @@ const scheduleMoshimoTrigger = () => {
 // そのため本文中のscriptタグをこのコンポーネントに置き換え、マウント時にDOM APIで
 // script要素を生成し直して実行させる。ソフトナビゲーションで記事へ遷移した場合も
 // 再マウントされるため、ハードナビゲーションと同様にウィジェット等が描画される
-const ExecutableScript = ({ attribs, code }: ExecutableScriptProps) => {
+const ExecutableScript = ({ attribs, code, lazyRootMargin }: ExecutableScriptProps) => {
   const anchorRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const anchor = anchorRef.current;
     if (!anchor || !anchor.parentNode) return;
 
-    const isMoshimo = code.includes(MOSHIMO_LOADER_ID);
-    if (isMoshimo) {
-      prepareMoshimoBatch();
+    // 遅延実行時はクリーンアップ時点でscript未挿入の可能性があるため、参照をクロージャで持つ
+    let script: HTMLScriptElement | null = null;
+
+    const execute = () => {
+      const isMoshimo = code.includes(MOSHIMO_LOADER_ID);
+      if (isMoshimo) {
+        prepareMoshimoBatch();
+      }
+
+      const element = document.createElement("script");
+      Object.entries(attribs).forEach(([name, value]) => {
+        element.setAttribute(name, value);
+      });
+      if (code) {
+        element.text = code;
+      }
+      // bundle.jsは「script要素の直後の兄弟がウィジェット本体かどうか」を重複描画ガードに
+      // 使っているため、ラッパー内ではなく元のscriptタグと同じ位置(anchorの直後)に挿入する
+      anchor.parentNode?.insertBefore(element, anchor.nextSibling);
+      script = element;
+
+      if (isMoshimo) {
+        scheduleMoshimoTrigger();
+      }
+    };
+
+    if (!lazyRootMargin || typeof IntersectionObserver === "undefined") {
+      execute();
+      return () => {
+        script?.remove();
+      };
     }
 
-    const script = document.createElement("script");
-    Object.entries(attribs).forEach(([name, value]) => {
-      script.setAttribute(name, value);
-    });
-    if (code) {
-      script.text = code;
-    }
-    // bundle.jsは「script要素の直後の兄弟がウィジェット本体かどうか」を重複描画ガードに
-    // 使っているため、ラッパー内ではなく元のscriptタグと同じ位置(anchorの直後)に挿入する
-    anchor.parentNode.insertBefore(script, anchor.nextSibling);
-
-    if (isMoshimo) {
-      scheduleMoshimoTrigger();
-    }
+    // 遅延実行: 埋め込みがビューポートに接近(rootMargin分手前)して初めてスクリプトを実行する。
+    // 外部リソース(もしものbundle.js+商品画像等)を初期ロードのLCP帯域から退避させるのが目的。
+    // anchor自身はサイズ0のspanのため、描画先divを含む親要素を観測して交差判定を確実にする
+    const target = anchor.parentElement ?? anchor;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        execute();
+      },
+      { rootMargin: lazyRootMargin },
+    );
+    observer.observe(target);
 
     return () => {
-      script.remove();
+      observer.disconnect();
+      script?.remove();
     };
     // 同一インスタンスの再レンダリングで重複実行しないよう、マウント時のみ実行する
     // eslint-disable-next-line react-hooks/exhaustive-deps

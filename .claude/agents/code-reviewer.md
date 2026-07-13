@@ -33,7 +33,7 @@ model: fable
 - 記事内の横長要素(コード/テーブル/埋め込み)には viewport基準キャップ `w-full min-w-0 max-w-[83vw] sm:max-w-[600px] md:max-w-[730px] lg:max-w-[1028px]` とスクロールコンテナの `overflow-x-auto` が付いているか(CustomTableは同一要素に、MultiCodeBlockは内側divに付与している。`max-w-full` だけでは無意味。`flex` を付けない)
 - ルート遷移でマウントされるコンポーネントに `animate-fadeIn` 等のマウント毎アニメーションを付けていないか(View Transitionとの二重再生でちらつく。reduced-motion環境ではdelayだけ残る)
 - 記事サムネイルは Velite生成の `blurDataURL` + `placeholder="blur"` を使っているか
-- フォントに `next/font/google` を再導入していないか(render-blocking再発。`/fonts/kosugi-maru-vNN.css` のload後挿入が規約)
+- フォントに `next/font/google` を再導入していないか(render-blocking再発。ビルド時サブセット生成CSS `/fonts/kosugi-maru-subset.<hash>.css`(scripts/generate-font-subset.mjs)のload後挿入が規約。woff2のpreload追加も禁止)
 
 ### コーディング規約(CLAUDE.md)
 - コメントは日本語か

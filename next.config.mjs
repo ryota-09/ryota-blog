@@ -21,6 +21,13 @@ const withBundleAnalyzer = withBundleAnalyzerFactory({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  // git worktree(リポジトリ内サブディレクトリ)でビルドしても .next/standalone/server.js の
+  // 位置が変わらないよう、ファイルトレース・Turbopackのルートをこのプロジェクト自身に固定する
+  // (要: worktree自身のnode_modules。親リポジトリのnode_modules頼みだとビルドが失敗する)
+  outputFileTracingRoot: import.meta.dirname,
+  turbopack: {
+    root: import.meta.dirname,
+  },
   // NOTE: experimental.inlineCss はA/B計測の結果、不採用(Issue #223)。
   // render-blocking監査は解消するが、日本語フォントの@font-face CSS(生90KB)が
   // 全ページのHTMLに複製されてFCPが2.4s→4.7s、Perfスコアが72→63に悪化した。

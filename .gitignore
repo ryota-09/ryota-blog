@@ -61,3 +61,6 @@ next-env.d.ts
 # Velite（ビルド時生成物。.velite=JSON+型、public/static=コロケーション画像のコピー先）
 .velite
 public/static
+# フォントサブセット生成物(predev/prebuildでscripts/generate-font-subset.mjsが自動生成。
+# マニフェスト src/generated/font-manifest.json のみコミットする)
+/public/fonts/kosugi-maru-subset.*
