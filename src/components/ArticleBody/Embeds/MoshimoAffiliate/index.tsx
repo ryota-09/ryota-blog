@@ -26,7 +26,13 @@ const MoshimoAffiliate = ({ widget }: MoshimoAffiliateProps) => {
 
   return (
     <aside className="my-4">
-      <ExecutableScript attribs={{ type: "text/javascript" }} code={code} />
+      {/* ビューポート1画面分手前まで初期化を遅延し、bundle.js+商品画像(各ウィジェット1枚目)の
+          取得を初期ロードのLCP帯域から退避させる。ファーストビュー内のウィジェットは即初期化される */}
+      <ExecutableScript
+        attribs={{ type: "text/javascript" }}
+        code={code}
+        lazyRootMargin="800px 0px"
+      />
       <div id={`msmaflink-${widget.eid}`}>リンク</div>
     </aside>
   );
