@@ -195,6 +195,10 @@ npm run dev
 - `http://localhost:3006` でプレビューできる
 - `draft: true` の記事も表示される
 - Velite(`velite dev --watch`)とNext.js(`next dev`)が並走し、MDXファイルの変更を検知して再ビルドする
+- サイトフォント(Kosugi Maru)はサイト全体の使用文字から生成したサブセットを配信している
+  (`scripts/generate-font-subset.mjs`、`npm run dev` 起動時に自動生成)。dev中にこれまで
+  どの記事でも使っていなかった漢字を書くと、その文字だけシステムフォント表示になることが
+  あるが、devサーバーの再起動またはビルドで自動的に解消する(手動対応は不要)
 
 ## 7. 公開フロー
 

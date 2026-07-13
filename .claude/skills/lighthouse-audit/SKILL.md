@@ -56,7 +56,7 @@ select:mcp__chrome-devtools__new_page,mcp__chrome-devtools__emulate,mcp__chrome-
 
 ## このプロジェクトのLCP設計(壊さないこと)
 
-- フォント(Kosugi Maru)は `next/font` ではなく `/fonts/kosugi-maru-v17.css` を**loadイベント後にscript挿入**(render-blocking回避 + LCP画像との帯域競合回避)。preload(as=style) + script挿入 + noscript の3点セット
+- フォント(Kosugi Maru)は `next/font` ではなくビルド時生成のサブセットCSS(`/fonts/kosugi-maru-subset.<hash>.css`、`scripts/generate-font-subset.mjs`が生成)を**loadイベント後にscript挿入**(render-blocking回避 + LCP画像との帯域競合回避)。preload(as=style) + script挿入 + noscript の3点セット。woff2自体のpreloadは追加しないこと(Lantern既知バグ lighthouse#11460 でシミュレーションLCPに算入され罰される)
 - 記事サムネイルはVelite生成の `blurDataURL` + `placeholder="blur"`
 - Next 16では `fetchPriority` は自動付与されない。LCP画像は `preload`(旧priority)の明示が必要
 
