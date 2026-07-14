@@ -19,7 +19,9 @@ export default defineCloudflareConfig({
     tagCache: d1NextTagCache,
   }),
   // ISR/SSGキャッシュヒット時にNextServerの起動を丸ごとスキップして直接レスポンスを返す。
-  // middleware(next-intlロケール解決・AIアクセス計測・adminのBasic認証)は
-  // interceptionより必ず前に実行されるため影響なし(@opennextjs/aws routingHandlerで確認済み)
+  // proxy(next-intlロケール解決・AIアクセス計測・adminのBasic認証、旧middleware.tsから移行)は
+  // interceptionより必ず前に実行されるため影響なし(@opennextjs/aws routingHandlerで確認済み。
+  // ビルド後はNext.js側でproxy.js→middleware.jsへリネームされるため@opennextjs/cloudflare 1.20.1側の
+  // 変更は不要。node_modules/next/dist/build/index.js の該当箇所で確認)
   enableCacheInterception: true,
 });
