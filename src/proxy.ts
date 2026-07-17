@@ -10,7 +10,7 @@ import { recordAiAccessHit } from './lib/ai-access/repository'
 import type { AiBotDefinition } from './lib/ai-access/types'
 // NOTE: 旧URL(/blogs/{slug})のカテゴリ解決用の軽量静的マップ(slug×locale→プライマリカテゴリid)。
 // Veliteのcomplete フック(velite.config.ts)がビルド時に生成する。記事本文は含まないため、
-// これをmiddlewareがimportしてもバンドルサイズへの影響は軽微(数KB)。
+// これをproxyがimportしてもバンドルサイズへの影響は軽微(数KB)。
 import categoryMap from '../.velite/category-map.json'
 
 const CATEGORY_SLUGS = CATEGORIES.map((category) => category.slug)
@@ -35,7 +35,7 @@ const ADMIN_PATH_PATTERN = /^\/[^/]+\/admin(\/.*)?$/
 // Create the intl middleware
 const intlMiddleware = createMiddleware(routing);
 
-export async function middleware(request: NextRequest, event: NextFetchEvent) {
+export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const pathname = request.nextUrl.pathname;
 
   // 管理者ページはBasic認証で保護する
