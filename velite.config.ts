@@ -146,9 +146,9 @@ export default defineConfig({
     }
   },
   complete: (data, { config }) => {
-    // proxy.ts の旧URL(/blogs/{slug})リダイレクト用に、
+    // middleware.ts の旧URL(/blogs/{slug})リダイレクト用に、
     // 「slug×locale → プライマリカテゴリid」の軽量マップを別ファイルとして書き出す。
-    // proxyのバンドルに記事本文(body/raw/plainText等)が混入しないよう、
+    // middlewareのバンドルに記事本文(body/raw/plainText等)が混入しないよう、
     // .velite/blogs.json (全フィールド込み・約2.3MB) は直接importさせない。
     const categoryMap: Record<string, Record<string, string>> = { ja: {}, en: {} };
     for (const blog of data.blogs) {
