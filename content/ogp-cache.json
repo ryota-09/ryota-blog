@@ -35,6 +35,15 @@
     "hostname": "techblog.yahoo.co.jp",
     "ok": true
   },
+  "https://www.amazon.jp/hz/wishlist/ls/2FEMYG87ZXIME?ref_=wl_share": {
+    "url": "https://www.amazon.jp/hz/wishlist/ls/2FEMYG87ZXIME?ref_=wl_share",
+    "title": "Amazonほしい物リストを一緒に編集しましょう",
+    "description": null,
+    "image": "https://m.media-amazon.com/images/G/01/wishlist/collablists_graphic_2x_1060x768._CB454600986_.jpg",
+    "favicon": "https://www.amazon.jp/favicon.ico",
+    "hostname": "www.amazon.jp",
+    "ok": true
+  },
   "https://zenn.dev/ryota_09/articles/06ec306f0ef9ee": {
     "url": "https://zenn.dev/ryota_09/articles/06ec306f0ef9ee",
     "title": "APIで取得したデータをもとに、動的にメタ情報を設定する方法(Next.js App Router)",
