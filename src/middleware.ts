@@ -1,3 +1,13 @@
+// ⚠️ このファイルは意図的に `middleware.ts` 規約のまま維持している(proxy.ts へ改名しないこと)。
+// 理由: Next.js 16 の新 `proxy.ts` 規約は、ビルド時に必ず Node.js ランタイムのミドルウェアとして
+// 出力される(next/dist/build/entries.js の runDependingOnPageType: isProxyFile → onServer() 固定で
+// Edge にする分岐が無い)。一方 `middleware.ts` は既定で Edge ランタイムになる。
+// @opennextjs/cloudflare(現行 1.20.1)は Node.js ミドルウェアを未サポートで、Node 判定だと
+// `opennextjs-cloudflare build` が "Node.js middleware is not currently supported" で exit 1 になり
+// 本番デプロイ(Cloudflare Workers)が停止する(実績: PR #303, 2026-07-17)。
+// Next.js 16 は `middleware.ts` に対して非推奨"警告"を出すが、警告 < 本番停止 であり、
+// opennextjs-cloudflare が Node プロキシに対応する(upstream)まではこの規約を維持する。
+// 経緯: #292 で proxy.ts へ改名(dccb865)→ 本番デプロイが落ちたため revert。
 import { NextResponse } from 'next/server'
 import type { NextFetchEvent, NextRequest } from 'next/server'
 import createMiddleware from 'next-intl/middleware';
@@ -10,7 +20,7 @@ import { recordAiAccessHit } from './lib/ai-access/repository'
 import type { AiBotDefinition } from './lib/ai-access/types'
 // NOTE: 旧URL(/blogs/{slug})のカテゴリ解決用の軽量静的マップ(slug×locale→プライマリカテゴリid)。
 // Veliteのcomplete フック(velite.config.ts)がビルド時に生成する。記事本文は含まないため、
-// これをproxyがimportしてもバンドルサイズへの影響は軽微(数KB)。
+// これをmiddlewareがimportしてもバンドルサイズへの影響は軽微(数KB)。
 import categoryMap from '../.velite/category-map.json'
 
 const CATEGORY_SLUGS = CATEGORIES.map((category) => category.slug)
@@ -35,7 +45,7 @@ const ADMIN_PATH_PATTERN = /^\/[^/]+\/admin(\/.*)?$/
 // Create the intl middleware
 const intlMiddleware = createMiddleware(routing);
 
-export async function proxy(request: NextRequest, event: NextFetchEvent) {
+export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const pathname = request.nextUrl.pathname;
 
   // 管理者ページはBasic認証で保護する
