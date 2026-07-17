@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // B. 旧URLリダイレクト(stg)
-// proxy.ts / next.config.mjs のリダイレクトルールが stg 上で期待通り動くかを検証する。
+// middleware.ts / next.config.mjs のリダイレクトルールが stg 上で期待通り動くかを検証する。
 
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
