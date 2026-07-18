@@ -226,11 +226,17 @@ npm run lint:content
 
 1. `scripts/check-internal-links.mjs`: 内部リンク(`/{locale}/blogs/{category}/{slug}`)の実在・
    カテゴリ整合性チェックと、相対画像パス(`./images/...`)の実在チェック
-2. `textlint`(`content/blogs/**/index.ja.mdx` が対象。日本語の技術文書向けルールセット。
+2. `scripts/check-garbled-text.mjs`: 文字化け(漢字の誤変換)チェック。異常コードポイント・
+   既知の化けパターン(2026-07のhitooshi-members事案の実例)・kuromoji形態素解析による
+   辞書に無い日本語トークンを検出する。誤検知は `scripts/garbled-text-allowlist.txt` に追記して除外する
+   (検出ロジックを変更したら `node scripts/check-garbled-text.mjs --self-test` で確認)。
+   なお実在語の組み合わせに化けたケース(「全員→全和」等)は機械検出できないため、
+   意味レベルの検査は記事リポジトリ側のレビューゲート(`review-blog-article`)が担当する
+3. `textlint`(`content/blogs/**/index.ja.mdx` が対象。日本語の技術文書向けルールセット。
    ただし個人ブログの文体を尊重するため、感嘆符・弱い表現・である/ですます混在などの多くのルールはoffにしている。
    詳細は `.textlintrc.json` のコメントを参照)
-3. `markdownlint-cli2`(`content/blogs/**/index.*.mdx` が対象。MDX特有の記法での誤検知が多いルール
+4. `markdownlint-cli2`(`content/blogs/**/index.*.mdx` が対象。MDX特有の記法での誤検知が多いルール
    ―― インラインHTML禁止、行長制限など ―― はoffにしている。詳細は `.markdownlint-cli2.jsonc` のコメントを参照)
-4. `npx velite build`(frontmatterのZodスキーマ検証。型に合わない値があれば失敗する)
+5. `npx velite build`(frontmatterのZodスキーマ検証。型に合わない値があれば失敗する)
 
 CIでは `content` ジョブがこのコマンドを実行する(`.github/workflows/ci.yml`)。
