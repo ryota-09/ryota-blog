@@ -298,5 +298,17 @@
   "content/blogs/hitooshi-withdrawal/images/hitooshi-withdrawal-thumbnail.png": {
     "hash": "b37877ca1276aa36ec2d6cb186aabeb3978fbef084460cb05849e3cd33a06052",
     "size": 289930
+  },
+  "content/blogs/hitooshi-screening/images/line-screening-passed.jpeg": {
+    "hash": "f2664b34688f2eea7913b671e42a8f86562036cbddec73e7eae67078bf6be647",
+    "size": 32654
+  },
+  "content/blogs/hitooshi-screening/images/screening-thumbnail.png": {
+    "hash": "94bd9ee4aaa893e533c4f579964461f160af98678cdaeda86ab39d9f2ea3e3c8",
+    "size": 344615
+  },
+  "content/blogs/hitooshi-screening/images/screening-thumbnail.jpeg": {
+    "hash": "d824379011a4c06b2bef0e98ec76c8cb8876e3c6a0597cda8a454cb0f3a9c863",
+    "size": 78252
   }
 }
