@@ -310,5 +310,9 @@
   "content/blogs/hitooshi-screening/images/screening-thumbnail.jpeg": {
     "hash": "d824379011a4c06b2bef0e98ec76c8cb8876e3c6a0597cda8a454cb0f3a9c863",
     "size": 78252
+  },
+  "content/blogs/hitooshi-yabai/images/yabai-thumbnail.jpeg": {
+    "hash": "d78c72dc62c8e3aa05347c58e2e9d79960cf3eff8e3e8d04d66dd945cec3738c",
+    "size": 85669
   }
 }
