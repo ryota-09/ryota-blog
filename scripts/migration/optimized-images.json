@@ -314,5 +314,9 @@
   "content/blogs/hitooshi-yabai/images/yabai-thumbnail.jpeg": {
     "hash": "d78c72dc62c8e3aa05347c58e2e9d79960cf3eff8e3e8d04d66dd945cec3738c",
     "size": 85669
+  },
+  "content/blogs/legacy-csv-s3-direct-read/images/rds_to_s3_thumbnail.png": {
+    "hash": "224931b451b030229109c828af4927abfceb0a26061820cc5b3a04044cbc922c",
+    "size": 274189
   }
 }
