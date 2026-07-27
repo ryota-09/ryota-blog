@@ -1,8 +1,8 @@
 [
   {
-    "id": "test",
+    "id": "testing",
     "name": "テスト",
-    "name_en": "test",
+    "name_en": "Testing",
     "icon": "./images/categories/gemini-svg.svg",
     "bg_color": "#FFEC89"
   },
