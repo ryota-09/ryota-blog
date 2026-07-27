@@ -14,6 +14,7 @@ npm run new-post -- <slug>
 - `slug` は英小文字・数字・ハイフンのみ(URL `/{locale}/blogs/{category}/{slug}` にそのまま使われる)
 - 既に同名の記事ディレクトリが存在する場合は中断する(誤って上書きしない)
 - 生成直後は `draft: true` になっている(下記「2. draft運用」を参照)
+- `categories` は `__REPLACE_ME__` という仮値になっている。`content/categories.json` に実在するidへ必ず差し替えること(veliteは素の文字列としか検証しないため差し替え忘れはビルドで落ちない。ただし公開URLに仮値がそのまま出るので目視で気付ける)
 
 生成後の流れ:
 

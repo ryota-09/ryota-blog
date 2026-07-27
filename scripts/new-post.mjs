@@ -60,6 +60,8 @@ function main() {
   console.log("");
   console.log("次のステップ:");
   console.log("  1. frontmatter(title/description/categories等)を編集する");
+  console.log("     ※ categories の仮値 __REPLACE_ME__ は content/categories.json の実在IDに必ず差し替える");
+  console.log("       (先頭要素が公開URL /{locale}/blogs/{category}/{slug} のカテゴリ部分になります)");
   console.log("  2. 本文を執筆する(埋め込みコンポーネントの使い方は docs/writing.md を参照)");
   console.log("  3. `npm run dev` でプレビュー(draft: true の記事は開発環境でのみ表示されます)");
   console.log("  4. 公開準備ができたら draft: false に変更し、PRを作成する");
@@ -68,6 +70,11 @@ function main() {
 }
 
 // ロケール別のfrontmatterテンプレートを生成する
+// NOTE: categoriesの仮値は content/categories.json に存在しないIDにしてある。
+// 以前は `test` だったが、実在カテゴリ「テスト」(旧id: test)と文字列が同一で、
+// 「本物のQA記事」と「差し替え忘れ」が区別できなかった(2026-07-27に実在側を testing へ改名)。
+// veliteのスキーマは categories を素の文字列配列としか検証しないため、この仮値でもビルドは通る。
+// 差し替え忘れは公開URLに `__REPLACE_ME__` がそのまま出るので目視で必ず気付ける。
 function buildFrontmatter({ now, locale }) {
   const title = locale === "ja" ? "(タイトルを入力してください)" : "(Enter title here)";
   const description =
@@ -79,7 +86,7 @@ description: ${description}
 publishedAt: "${now}"
 updatedAt: "${now}"
 categories:
-  - test
+  - __REPLACE_ME__
 draft: true
 ---
 
