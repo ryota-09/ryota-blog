@@ -60,6 +60,40 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      // --- カテゴリID改名の互換リダイレクト: test → testing (2026-07-27) ---
+      // 「テスト」カテゴリのidが `npm run new-post` の仮値プレースホルダー `test` と文字列衝突しており、
+      // 「本物のQA記事」と「カテゴリ差し替え忘れ」を機械でも人間でも判別できなかったため改名した。
+      // 記事詳細ページはURLのカテゴリセグメントと実カテゴリの不一致を notFound() にする実装
+      // (src/app/[locale]/blogs/[category]/[blogId]/page.tsx)なので、旧URLは明示的に301で受ける必要がある。
+      // NOTE: 予約セグメント page は先に個別ルールで拾ってから :blogId に流す。
+      {
+        source: '/:locale(ja|en)/blogs/test/page/:page',
+        destination: '/:locale/blogs/testing/page/:page',
+        permanent: true,
+      },
+      {
+        source: '/:locale(ja|en)/blogs/test/:blogId((?!page$)[^/]+)',
+        destination: '/:locale/blogs/testing/:blogId',
+        permanent: true,
+      },
+      {
+        source: '/:locale(ja|en)/blogs/test',
+        destination: '/:locale/blogs/testing',
+        permanent: true,
+      },
+      // ロケール無しの旧URL形式。改名で `test` がカテゴリ既知セグメント(middlewareのNON_BLOG_ID_SEGMENTS)から
+      // 外れたため、これが無いと /blogs/test はmiddlewareの「記事が見つからない」分岐で /ja/blogs へ流れてしまう。
+      // 実測(next dev): 本ルールが先に評価され、6形式すべて308で新URLへ到達することを確認済み
+      {
+        source: '/blogs/test/:blogId((?!page$)[^/]+)',
+        destination: '/ja/blogs/testing/:blogId',
+        permanent: true,
+      },
+      {
+        source: '/blogs/test',
+        destination: '/ja/blogs/testing',
+        permanent: true,
+      },
       // Redirect /blogs/page to /blogs
       {
         source: '/blogs/page',
