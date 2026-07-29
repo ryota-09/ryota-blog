@@ -50,11 +50,15 @@ const Page = async ({ params }: PageProps) => {
   // Next.js 16では、paramsを非同期で取得する必要がある
   const { locale } = await params;
 
-  const query: BlogListQuery = generateQuery({
-    page: "",
-    category: "",
-    keyword: "",
-  });
+  const query: BlogListQuery = {
+    ...generateQuery({
+      page: "",
+      category: "",
+      keyword: "",
+    }),
+    // トップの全体一覧では hideFromHome: true の記事を除外する(カテゴリ一覧・検索には表示される)
+    excludeHiddenFromHome: true,
+  };
 
   return (
     <>

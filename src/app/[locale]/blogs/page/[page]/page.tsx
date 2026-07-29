@@ -23,8 +23,8 @@ export async function generateStaticParams() {
   const params = [];
 
   for (const locale of locales) {
-    // 各ロケールごとにデータを取得
-    const data = getBlogList(locale as ContentLocale, { limit: 1 });
+    // 各ロケールごとにデータを取得(トップの全体一覧と同じ件数になるようhideFromHome記事を除外)
+    const data = getBlogList(locale as ContentLocale, { limit: 1, excludeHiddenFromHome: true });
     const totalPages = Math.ceil(data.totalCount / PER_PAGE);
     
     // ページ2以降のパラメータを生成（ページ1は/[locale]/blogsにある）
@@ -71,8 +71,8 @@ const Page = async ({ params }: { params: Promise<{ locale: string; page: string
     notFound();
   }
 
-  // ページが存在するかチェック
-  const data = getBlogList(locale as ContentLocale, { limit: 1 });
+  // ページが存在するかチェック(トップの全体一覧と同じ件数になるようhideFromHome記事を除外)
+  const data = getBlogList(locale as ContentLocale, { limit: 1, excludeHiddenFromHome: true });
   const totalPages = Math.ceil(data.totalCount / PER_PAGE);
 
   if (pageNum > totalPages) {
@@ -80,11 +80,15 @@ const Page = async ({ params }: { params: Promise<{ locale: string; page: string
   }
 
   const blogType = "blogs";
-  const query: BlogListQuery = generateQuery({
-    page,
-    category: "",
-    keyword: ""
-  });
+  const query: BlogListQuery = {
+    ...generateQuery({
+      page,
+      category: "",
+      keyword: ""
+    }),
+    // トップの全体一覧のページネーションでも hideFromHome: true の記事を除外する
+    excludeHiddenFromHome: true,
+  };
 
   return (
     <>

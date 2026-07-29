@@ -60,9 +60,15 @@ export const getBlogList = (
   locale: ContentLocale,
   query: BlogListQuery = {},
 ): BlogListResult => {
-  const { offset = 0, limit = 10, category, keyword } = query;
+  const { offset = 0, limit = 10, category, keyword, excludeHiddenFromHome } = query;
 
   let filtered = getPublishedBlogsByLocale(locale);
+
+  // トップ(/blogs)の全体一覧のみ hideFromHome: true の記事を除外する。
+  // カテゴリ一覧(§4のインデックス導線ハブ)・検索には出したいので、呼び出し側で明示的に指定する
+  if (excludeHiddenFromHome) {
+    filtered = filtered.filter((blog) => !blog.hideFromHome);
+  }
 
   if (category) {
     filtered = filtered.filter((blog) => matchesCategory(blog, category));
