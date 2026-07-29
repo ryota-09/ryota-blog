@@ -59,7 +59,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     let paginationPaths: Array<{ url: string; lastModified: Date }> = [];
     try {
       paginationPaths = SUPPORTED_LOCALES.flatMap((locale) => {
-        const totalBlogData = getBlogList(locale as ContentLocale, { limit: 1 });
+        // /blogs/page/N の実ページ数と一致させるため、トップの全体一覧と同様にhideFromHome記事を除外する
+        const totalBlogData = getBlogList(locale as ContentLocale, { limit: 1, excludeHiddenFromHome: true });
         const totalPages = Math.ceil(totalBlogData.totalCount / PER_PAGE);
 
         return Array.from({ length: Math.max(totalPages - 1, 0) }, (_, i) => ({

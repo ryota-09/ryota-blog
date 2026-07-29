@@ -25,6 +25,7 @@ const data: BlogPost = {
   "description": "今回は〇〇する方法を紹介していきます！今回は〇〇する方法を紹介していきます！今回は〇〇する方法を紹介していきます！今回は〇〇する方法を紹介していきます！",
   "noIndex": false,
   "isAdvertisement": false,
+  "hideFromHome": false,
   "thumbnail": {
     "src": "./no_contents.png",
     "height": 1080,
