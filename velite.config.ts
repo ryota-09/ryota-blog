@@ -89,6 +89,12 @@ const blogs = defineCollection({
       // 下書きフラグ。true の記事は本番ビルドの出力から除外される(prepareフック参照)。
       // 開発環境(NODE_ENV=development、package.jsonのpredev/dev/pretest参照)では除外しない
       draft: s.boolean().default(false),
+      // トップ(/blogs)の全体一覧からのみ除外するフラグ。カテゴリ一覧・検索・sitemap・
+      // 記事ページには通常どおり表示される。同一クラスタの記事を短期間に連投した際、
+      // publishedAtを偽らずにトップページの占有だけを避けるために使う
+      // (過去にpublishedAtのバックデートで代替した結果、カテゴリ一覧のnoindexページに
+      // 転落してSEO導線が切れた経緯があるため、日付ではなくこのフラグで制御する)。
+      hideFromHome: s.boolean().default(false),
       moshimoWidgets: s.array(moshimoWidgetSchema).default([]),
       body: s.mdx(),
       // 検索(plainText/toc計算)用の生MDX文字列
