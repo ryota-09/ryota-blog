@@ -318,5 +318,9 @@
   "content/blogs/legacy-csv-s3-direct-read/images/rds_to_s3_thumbnail.png": {
     "hash": "224931b451b030229109c828af4927abfceb0a26061820cc5b3a04044cbc922c",
     "size": 274189
+  },
+  "content/blogs/hitooshi-eligibility/images/hitooshi-area-thumbnail.png": {
+    "hash": "2103ca9eb5f84d94561b66162f99b5963ccf34527091657bda6cfd5278b5d094",
+    "size": 350291
   }
 }
