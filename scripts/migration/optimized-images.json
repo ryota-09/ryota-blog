@@ -322,5 +322,9 @@
   "content/blogs/hitooshi-eligibility/images/hitooshi-area-thumbnail.png": {
     "hash": "2103ca9eb5f84d94561b66162f99b5963ccf34527091657bda6cfd5278b5d094",
     "size": 350291
+  },
+  "content/blogs/hitooshi-eligibility/images/hitooshi-area-thumbnail-v2.jpeg": {
+    "hash": "b73c43f6fe09268abdadc6731333abe17bb418a2c5d63c616c5c8692060b4a33",
+    "size": 80232
   }
 }
