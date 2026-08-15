@@ -273,12 +273,12 @@ The fix changed both sides of the collision: the category ID became `testing`, a
 
 July's internal improvements:
 
-- ✅ **CMS-less**: migrated to Velite + MDX, with a seven-stage parity verification guaranteeing "nothing changes for the reader"
-- ✅ **Stronger quality gates**: mojibake checker (with morphological analysis) and internal link checks wired into CI
-- ✅ **Optimized font delivery**: self-hosted subset of the 1,760 characters actually in use (283KB, shared by all pages)
-- ✅ **Stronger caching**: regional cache + cache interception for OpenNext
-- ✅ **Runtime saga resolved**: the decision to stay on middleware.ts, documented right in the code
-- ✅ **AI operations**: subagents and skills turned into assets committed to the repository
+- **CMS-less**: migrated to Velite + MDX, with a seven-stage parity verification guaranteeing "nothing changes for the reader"
+- **Stronger quality gates**: mojibake checker (with morphological analysis) and internal link checks wired into CI
+- **Optimized font delivery**: self-hosted subset of the 1,760 characters actually in use (283KB, shared by all pages)
+- **Stronger caching**: regional cache + cache interception for OpenNext
+- **Runtime saga resolved**: the decision to stay on middleware.ts, documented right in the code
+- **AI operations**: subagents and skills turned into assets committed to the repository
 
 With content now living in the repository, a whole class of improvements premised on "the build can touch every piece of content" — font subsetting, mojibake checking — became possible one after another. July felt like a month where a platform migration didn't just end with itself, but kept unlocking follow-on optimizations in a chain.
 
