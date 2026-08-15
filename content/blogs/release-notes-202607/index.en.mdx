@@ -1,0 +1,291 @@
+---
+title: "July 2026 Release Notes - Ryota-Blog: CMS Migration, Font Subsetting & Infrastructure Deep Dive"
+description: July 2026 Ryota-Blog release notes. Migrating from microCMS to Velite + MDX, self-hosting a subsetted font, strengthening the OpenNext cache, and the story of how following a Next.js 16 deprecation warning broke production. This month focuses on internal machinery updates.
+publishedAt: "2026-08-15T00:13:56.153Z"
+updatedAt: "2026-08-15T00:13:56.153Z"
+categories:
+  - release_notes
+related:
+  - microcms-to-mdx-migration
+  - nextjs-lcp-improvement
+  - release-notes-202505
+draft: false
+---
+
+Hello! I'm [@Ryo54388667](https://x.com/Ryo54388667)! ☺️
+
+Here are the July release notes!
+
+July was the month I touched the "foundation" of this blog more than ever before. It was also a busy month for new articles, but this time I'm deliberately focusing on **updates to the internal machinery**.
+
+This month's highlights:
+
+- **Migrating the content platform from microCMS to Velite + MDX** (going CMS-less)
+- **Finishing touches on performance** (self-hosted font subsetting, a stronger cache layer)
+- **The story of how following a Next.js 16 deprecation warning stopped production deploys**
+- **Building an AI operations setup** (subagents / skills)
+
+## Rebuilding the Content Platform: microCMS → Velite + MDX 📦
+
+The biggest change in July was migrating article content management from microCMS to MDX files inside the repository, powered by [Velite](https://velite.js.org/). Sixty files (30 articles × 2 languages) moved over with **URLs fully preserved and zero conversion loss**.
+
+The full story of the migration — why, and how it was done in a single day — is covered in a dedicated article:
+
+[How I Removed the CMS from My Next.js Blog (microCMS → Velite + MDX in One Day)](/en/blogs/next_js/microcms-to-mdx-migration)
+
+In these release notes, I'll cover what that article doesn't: the verification machinery that made the migration safe, and what happened afterwards.
+
+### The Parity Verification That Backed the Migration 🔍
+
+The migration started by writing an ADR (Architecture Decision Record) that set one principle in stone: **nothing should change from the reader's perspective**. The final gate was a verification suite that checks this mechanically, in seven stages:
+
+- Exhaustive URL checks (every old URL still resolves)
+- Redirect verification for legacy URLs
+- Diffing sitemap, RSS, and llms.txt output against pre-migration snapshots
+- Metadata verification (title / description / OGP)
+- Article structure verification (headings, embedded components)
+- Visual regression (screenshot comparison with pixelmatch)
+- Lighthouse score regression checks
+
+The endpoint snapshots were captured and committed **before** the migration work began, then diffed against the post-migration build output. You can't prove "nothing changed" without a record of how things were before the change.
+
+Even so, one bug slipped through. Right after the migration, accessing a nonexistent slug in production returned a 500 instead of a 404. The cause was Next.js evaluation order: `generateMetadata` runs before the page body, so an exception thrown there becomes an unhandled error before the page's own 404 handling can kick in.
+
+```tsx title="src/app/[locale]/blogs/[category]/[blogId]/page.tsx"
+export async function generateMetadata({ params }: Props) {
+  try {
+    const blog = await getBlogBySlugByLocaleCached(blogId, locale);
+    // ...build metadata
+  } catch {
+    // generateMetadata is evaluated before the page body, so without
+    // calling notFound() here, an unknown slug becomes a 500
+    notFound();
+  }
+}
+```
+
+The lesson: even seven stages of verification leave edge cases that only surface in production.
+
+### Rebuilding Heading ID Generation Twice in Two Days 🔁
+
+Migrated articles keep the heading IDs that microCMS auto-assigned (the `hba7e17d1c0` style) in a frontmatter `headingIds` array, and a rehype plugin restores them in document order — so shared anchor links never break.
+
+But when I wrote the first new post after the migration, **the table of contents came up empty**. The code path that auto-generates IDs for articles without `headingIds` was missing.
+
+The first fix generated slugs from heading text with `github-slugger`, but Japanese headings get percent-encoded into bloated URL fragments. The next day I switched approaches and settled on a microCMS-compatible format: `h` + the first 10 hex digits of a sha256 hash.
+
+```typescript title="velite/mdast-utils.ts"
+// 見出しid1件分のハッシュを計算する(microCMS互換の h+16進10桁 形式)
+const hashHeadingId = (input: string): string =>
+  `h${createHash("sha256").update(input, "utf8").digest("hex").slice(0, 10)}`;
+```
+
+Three points matter here:
+
+- The hash is **derived from content**, not random, so builds stay deterministic (with a regression test asserting the same body always yields the same IDs)
+- Duplicate headings are disambiguated by mixing the occurrence count into the hash input, with a salt-and-retry fallback for any remaining collisions
+- The table of contents and the rendered HTML **both derive IDs from the same function and the same source** (the raw MDX body), so TOC links and actual `id` attributes can never drift apart structurally
+
+### Fighting Mojibake, Then Mechanizing Detection 🕵️
+
+About two weeks after the migration, corrupted text turned up in some articles — and not the obvious `�` kind. It was the nastier pattern of **substitution with visually similar kanji**:
+
+- `大卒` (university graduate) → `大匲`
+- `男性` (male) → `男有`
+- `全員` (everyone) → `全和`
+- `遭遇` (encounter) → `遇遇`
+
+These crept in during the bulk HTML→MDX conversion. I ran a **character-level alignment comparison** against the pre-migration archive across all 64 files and fixed corruption in 6 articles. All 32 English files came back clean — the corruption was specific to the Japanese processing path.
+
+Rather than stopping at the fixes, I built a checker (`scripts/check-garbled-text.mjs`) and wired it into the `npm run lint:content` quality gate. Detection is three-layered:
+
+1. **Abnormal code point detection**: orphaned combining marks, the U+FFFD replacement character, non-NFC-normalized text, and so on
+2. **Known-pattern recurrence checks**: matching against the list of past incidents (`大匲`, `男有`, `遇遇`, ...)
+3. **Unknown-word detection via kuromoji morphological analysis**: Japanese tokens missing from the dictionary get flagged as suspicious
+
+Code blocks and URLs are masked out (replaced with whitespace while preserving line numbers) before scanning, to avoid false positives.
+
+The interesting (and humbling) part is the detection ceiling: empirically, only **about 44% of this class of corruption is machine-detectable**. Corruption into combinations of real words — like `全員→全和` — is fundamentally undetectable by morphological analysis. That portion is explicitly delegated to an LLM review layer, and the division of labor is documented right in the code. Knowing exactly where the machine's competence ends is, I think, the key to operating this kind of tooling.
+
+## Performance: The Aftermath of the 17.4-Second LCP Incident ⚡
+
+The story of mobile LCP hitting 17.4 seconds at its worst — and clawing it back to 3.7–4.3 seconds in production by eliminating render-blocking CSS and article content leaking into the client bundle — is told in a dedicated article:
+
+[How I Fixed My Next.js Blog's 17.4-Second Mobile LCP (The Culprit Wasn't Images)](/en/blogs/next_js/nextjs-lcp-improvement)
+
+Here's the "sequel" work that article doesn't cover.
+
+### Trimming the Font Down to the 1,760 Characters Actually in Use ✂️
+
+The body font, Kosugi Maru, was served from the Google Fonts CDN. Google Fonts' 121-slice unicode-range CSS is a generic optimization tuned for the Japanese web as a whole — measured on this blog's article pages, it meant **34–49 slices and 280–631KB** of transfer, scaling with how many distinct kanji an article uses.
+
+This is where going CMS-less pays off. All content lives in the repository and is **fully known at build time**, so I can generate a subset font containing only the characters the site actually uses.
+
+Here's what `scripts/generate-font-subset.mjs` does during the build:
+
+1. Recursively scans `content/` (article MDX), `src/` (UI strings), and `locales/` (translations) to collect every character in use
+2. Always includes a safety margin of ASCII, hiragana, katakana, and common punctuation
+3. Generates a woff2 subset from the TTF using `subset-font` (HarfBuzz WASM)
+4. Names the file with a sha256 hash of the woff2 and the CSS template, playing nicely with immutable caching
+
+The result: **1,760 distinct characters in a single ~283KB file shared across all pages**.
+
+The quietly important part is defending against missing glyphs:
+
+- Characters from draft articles are collected too (so nothing goes missing the moment a draft is published)
+- If the number of scanned files is suspiciously low, the build itself fails (preventing the subset from silently shrinking due to a misconfigured scan path)
+- If an uncollected kanji does appear, it just renders in the fallback font and gets picked up by the next build
+
+The font regenerates with every build, so the ongoing operational cost is zero.
+
+### Lazy-Initializing the Moshimo Affiliate Widgets 🐢
+
+Earlier in July, the Moshimo affiliate widgets had a different problem. Their loader (`bundle.js`) only renders widgets on the `DOMContentLoaded`/`load` events — so when you reach an article via Next.js soft navigation (client-side transition), those events never fire again and **the widgets never appear**. That was solved by recreating the script element on mount and dispatching a synthetic `load` event exactly once per batch.
+
+Then came this month's improvement. On an article with nine widgets, `bundle.js` (50KB) plus nine product images (~218KB) were all fetched immediately on page load, competing with the LCP image for bandwidth.
+
+The fix uses IntersectionObserver to **defer creating the script element until the widget comes within 800px of the viewport**. Widgets in the initial viewport still initialize immediately.
+
+Lazy initialization surfaced a race condition, too. The page-transition cleanup that discards the previous page's unprocessed queue could, under lazy init, also discard the pending queue of a widget that had *just* triggered — leaving it permanently unrendered. The fix skips the discard while a trigger is pending, and E2E tests across three browsers now pin down "zero initial requests," "renders on scroll," and "renders after soft navigation."
+
+Total initial-load transfer dropped from **1.18MB to 961KB**.
+
+### One More Cache Layer for OpenNext (Regional Cache) 🏎️
+
+This blog runs on Cloudflare Workers via OpenNext (`@opennextjs/cloudflare`), with ISR/SSG cache entries stored in R2. But with a bare R2 connection, **every cache hit still costs a round trip to R2** — measured TTFB was 520–850ms.
+
+So the cache is now two-tiered:
+
+```typescript title="open-next.config.ts"
+export default defineCloudflareConfig({
+  ...(isProduction && {
+    // Cache API(データセンターローカル)でR2の手前をラップし、
+    // ISR/SSGエントリをrevalidate値までリージョン内で再利用する
+    incrementalCache: withRegionalCache(r2IncrementalCache, { mode: "long-lived" }),
+    queue: doQueue,
+    tagCache: d1NextTagCache,
+  }),
+  // ISR/SSGキャッシュヒット時にNextServerの起動を丸ごとスキップする
+  enableCacheInterception: true,
+});
+```
+
+`withRegionalCache` wraps R2 with the datacenter-local Cache API, so repeat requests within a region skip the R2 round trip entirely. `enableCacheInterception` goes further: on a cache hit, it skips booting the Next.js server altogether. Verification was done via the `x-opennext-cache` response header.
+
+### Exterminating Page Transition Flicker ✨
+
+July also brought a View Transitions API upgrade — list thumbnails now morph into the article hero image. But right after launch, **the whole screen flashed on every navigation**. Two causes:
+
+1. View Transitions' default behavior — a full-page crossfade via `::view-transition-old/new(root)` — was flashing the entire screen, header included. The root animations are now disabled with `animation: none`, keeping only the named-group morph for thumbnails
+2. A fade-in animation that ran on every mount was letting View Transitions capture its snapshot at `opacity: 0`. The fade was removed, and the corresponding Tailwind keyframe definition now carries a "do not reintroduce" warning comment
+
+On the image side, the `blurDataURL` that Velite generates at build time became the placeholder. Stacking a skeleton under a blur placeholder actually causes flashing, so images with blur placeholders deliberately skip the skeleton.
+
+## How Following a Next.js 16 Deprecation Warning Broke Production 🚨
+
+The incident of the month.
+
+Next.js 16.2.10 emits a build-time warning: "the middleware file convention is deprecated, migrate to proxy." I dutifully complied and renamed `src/middleware.ts` to `src/proxy.ts` — after checking Next.js's build output beforehand and confirming that `proxy.ts` compiles to the same output structure as before.
+
+**Three days later, production deploys stopped.**
+
+`opennextjs-cloudflare build` started failing with "Node.js middleware is not currently supported." Digging in, the root cause was in Next.js's own source:
+
+- Next.js 16 **always emits a `proxy.ts` file as a Node.js-runtime middleware** (in `next/dist/build/entries.js`, `runDependingOnPageType` hardcodes proxy files to `onServer()` — there is no branch that targets Edge)
+- The legacy `middleware.ts` convention, meanwhile, defaults to the Edge runtime
+- And `@opennextjs/cloudflare` (1.20.1, latest at the time) doesn't support Node.js middleware
+
+In other words, "follow the deprecation warning" and "deploy to Cloudflare" were mutually exclusive. A `runtime` config can't fix it (there's simply no Edge branch for proxy files), so the rename was reverted and the blog stays on the `middleware.ts` convention. **A warning is better than a production outage.**
+
+To prevent a repeat, the full story now lives as a warning comment at the top of `src/middleware.ts`:
+
+```typescript title="src/middleware.ts"
+// ⚠️ このファイルは意図的に `middleware.ts` 規約のまま維持している(proxy.ts へ改名しないこと)。
+// 理由: Next.js 16 の新 `proxy.ts` 規約は、ビルド時に必ず Node.js ランタイムのミドルウェアとして
+// 出力される(next/dist/build/entries.js の runDependingOnPageType: isProxyFile → onServer() 固定で
+// Edge にする分岐が無い)。一方 `middleware.ts` は既定で Edge ランタイムになる。
+// @opennextjs/cloudflare(現行 1.20.1)は Node.js ミドルウェアを未サポートで、Node 判定だと
+// `opennextjs-cloudflare build` が "Node.js middleware is not currently supported" で exit 1 になる。
+// Next.js 16 は `middleware.ts` に対して非推奨"警告"を出すが、警告 < 本番停止 であり、
+// opennextjs-cloudflare が Node プロキシに対応する(upstream)まではこの規約を維持する。
+```
+
+Framework deprecations and deployment-adapter support move on separate timelines. "Before following a warning, check whether your deploy path has caught up" was July's biggest lesson.
+
+## Getting the `html` `lang` Attribute Right in SSR 🌐
+
+An accessibility audit also surfaced a structural issue worth fixing.
+
+This blog serves two locales under `/ja/...` and `/en/...`, but the old root layout sat where the locale couldn't be determined, so the `lang` attribute was patched in after the fact by a `beforeInteractive` script setting `document.documentElement.lang`. The problem: **the server-rendered initial HTML had no `lang` at all**. To crawlers and assistive technology that don't execute JavaScript, the page appeared to have no declared language.
+
+App Router imposes two constraints: only the root layout may render the `html` element, and the root layout can't receive the `[locale]` segment's params. The solution was to flip the structure: **make `src/app/[locale]/layout.tsx` itself the root layout**, so `<html lang={locale}>` is emitted during SSR.
+
+The cost was redesigning the error and 404 boundaries that live outside `[locale]`: the locale-independent `not-found.tsx` / `error.tsx` became standalone files that render their own `html`/`body`, with `lang="ja"` as the default when no locale can be determined. Rebuilding the layout tree for the sake of one attribute — but "correct in the initial HTML" is worth exactly that much.
+
+## Building the AI Operations Setup 🤖
+
+### Turning Subagents and Skills into a Harness
+
+Starting in July, AI usage in development (Claude Code) moved from "ad-hoc prompting" to **a setup committed to the repository**, defined under `.claude/`:
+
+- **repo-explorer** (investigation): cross-codebase research and impact analysis, read-only
+- **web-researcher** (web research): checks findings against the project's actual dependency versions instead of trusting stale articles
+- **test-runner** (verification): runs lint, type checks, tests, and builds, and does first-pass triage of failures — never fixes anything
+- **code-reviewer** (review): a senior reviewer dedicated to this repository
+
+The organizing principle is **model routing**: research, search, and routine execution go to lightweight-model subagents running in parallel, while synthesis, design decisions, and review stay with a stronger model. The code-reviewer in particular carries a checklist distilled from real incidents in this repository — the full article-JSON leak into the client bundle, the OpenNext redirect config bug, and others. **Every landmine stepped on once becomes a permanent review criterion.**
+
+Three recurring workflows were also codified as skills:
+
+- `quality-check`: the full quality gate — lint → type check → unit tests → build
+- `cloudflare-preview`: real-environment verification on workerd (Cloudflare's runtime), catching OpenNext-specific behavior that `next start` can't reproduce
+- `lighthouse-audit`: mobile-based Lighthouse measurement, bundled with hard-won measurement gotchas (like the redirect scoring penalty)
+
+Incidentally, these release notes were written with this very setup — three subagents investigated July's merge commits in parallel.
+
+### Analytics for AI Bot Access 📊
+
+As an observatory for the AI era, the blog now tracks article access by AI crawlers and agents. **Fourteen bots** — GPTBot, ClaudeBot, PerplexityBot, and more — are identified by User-Agent and classified by purpose: training crawls, search indexing, or user-delegated fetches.
+
+The key design constraint: measurement must never slow down page delivery.
+
+- The middleware detects AI bot access to article URLs
+- Writes to Cloudflare D1 are made asynchronous via `event.waitUntil()` — the response never waits
+- The table UPSERTs against a unique constraint on date × article × bot, so it stays a compact daily aggregate
+
+An admin dashboard visualizes trends by article, vendor, and day. Watching which AI reads which articles is fascinating data in its own right.
+
+## Small Fixes That Punched Above Their Weight 🔧
+
+### The Google Search Favicon Turned into a Globe
+
+As part of the performance work, the favicon was shrunk from 1024×1024 (1.4MB!) to 96×96 (2.4KB). A few days later, the favicon in Google search results turned into a generic globe icon.
+
+The root cause wasn't the resize itself — it was that **`/favicon.ico` had been returning 404 all along**. There was no stable URL for browsers and search engines to fall back on, and the hash-suffixed URL changing triggered a Google re-evaluation that came up empty. Placing a multi-size ICO (16/32/48px) at `src/app/favicon.ico` and tightening the cache headers fixed it.
+
+### The Category ID "test" Name Collision
+
+The "Testing" category's ID was `test` — and the article scaffold generator's placeholder value was also `test`. So when frontmatter said `categories: [test]`, **neither a machine nor a human could tell whether it was the real category or a forgotten placeholder**. This caused real damage: documentation misidentified a genuine article as having a leftover placeholder.
+
+The fix changed both sides of the collision: the category ID became `testing`, and the scaffold placeholder became `__REPLACE_ME__` (an ID that can never exist). All six legacy URL patterns (with/without locale × page types) got permanent redirects. Name collisions are truly confusing once they surface — better to make them impossible.
+
+## Summary
+
+July's internal improvements:
+
+- ✅ **CMS-less**: migrated to Velite + MDX, with a seven-stage parity verification guaranteeing "nothing changes for the reader"
+- ✅ **Stronger quality gates**: mojibake checker (with morphological analysis) and internal link checks wired into CI
+- ✅ **Optimized font delivery**: self-hosted subset of the 1,760 characters actually in use (283KB, shared by all pages)
+- ✅ **Stronger caching**: regional cache + cache interception for OpenNext
+- ✅ **Runtime saga resolved**: the decision to stay on middleware.ts, documented right in the code
+- ✅ **AI operations**: subagents and skills turned into assets committed to the repository
+
+With content now living in the repository, a whole class of improvements premised on "the build can touch every piece of content" — font subsetting, mojibake checking — became possible one after another. July felt like a month where a platform migration didn't just end with itself, but kept unlocking follow-on optimizations in a chain.
+
+Thank you for reading to the end! 🙏
+
+If you have any questions or feedback, feel free to reach out on X ([@Ryo54388667](https://twitter.com/Ryo54388667)).
+
+If you found this article helpful, I'd be moved to tears if you sent a tip (gift card) from my wishlist 🥺
+
+<LinkCard url="https://www.amazon.jp/hz/wishlist/ls/2FEMYG87ZXIME?ref_=wl_share" />
