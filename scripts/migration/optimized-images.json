@@ -326,5 +326,9 @@
   "content/blogs/hitooshi-eligibility/images/hitooshi-area-thumbnail-v2.jpeg": {
     "hash": "b73c43f6fe09268abdadc6731333abe17bb418a2c5d63c616c5c8692060b4a33",
     "size": 80232
+  },
+  "content/blogs/hikkoshi-best-buy/images/thumbnail.png": {
+    "hash": "882bfc0e2aaa71d81eb6a1d2078fae214092009430a8d8dbe57d6c120986c267",
+    "size": 849
   }
 }
