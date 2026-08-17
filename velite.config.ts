@@ -12,6 +12,7 @@ import { extractPlainText, extractToc } from "./velite/mdast-utils";
 import { rehypeCodeMeta } from "./velite/rehype-code-meta";
 import { rehypeImageSize } from "./velite/rehype-image-size";
 import { rehypeRestoreHeadingIds } from "./velite/rehype-restore-heading-ids";
+import { rehypeUnwrapImages } from "./velite/rehype-unwrap-images";
 
 // 現在パース中のファイルのパス(blogs/{slug}/index.{locale}.mdx)から slug と locale を抽出する
 // (VeliteFile.pathはconfig.rootからの絶対パスのため、まずroot相対パスに正規化してから照合する)
@@ -131,11 +132,11 @@ const categories = defineCollection({
 export default defineConfig({
   collections: { blogs, categories },
   mdx: {
-    // 見出しid復元・画像サイズ注入・codeメタ受け渡し(#236)。
+    // 見出しid復元・画像段落unwrap・画像サイズ注入・codeメタ受け渡し(#236)。
     // 実行順序: rehypePluginsはremark段階(remarkCopyLinkedFiles含む)より後に実行されるため、
     // rehypeImageSizeは画像パスが/static/...へ書き換わった後の状態で実ファイルを解決する
     // (詳細はvelite/rehype-image-size.tsのコメント参照)。
-    rehypePlugins: [rehypeRestoreHeadingIds, rehypeImageSize, rehypeCodeMeta],
+    rehypePlugins: [rehypeRestoreHeadingIds, rehypeUnwrapImages, rehypeImageSize, rehypeCodeMeta],
   },
   // ビルド結果をファイル書き出し前に加工するフック(#240 draft運用)。
   // 本番ビルド(NODE_ENV=production。package.jsonのprebuildが明示的にセットする)でのみ、
