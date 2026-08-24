@@ -366,5 +366,9 @@
   "content/blogs/yamazaki-jitsugyo-best-buy/images/rin-trashcan.jpg": {
     "hash": "f65c5448301918286960d52257b2080e566780fea9b4a6fce890fc90d4107177",
     "size": 379464
+  },
+  "content/blogs/hitooshi-heiyou/images/hitooshi-heiyou-thumbnail.jpeg": {
+    "hash": "838d752ddf8d81f7f2f744ab000719ef15946534a6b028f3df5adc9693b841f6",
+    "size": 72904
   }
 }
