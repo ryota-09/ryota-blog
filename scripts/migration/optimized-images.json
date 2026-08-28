@@ -327,6 +327,50 @@
     "hash": "b73c43f6fe09268abdadc6731333abe17bb418a2c5d63c616c5c8692060b4a33",
     "size": 80232
   },
+  "content/blogs/hitooshi-campaign/images/hitooshi-campaign-thumbnail.png": {
+    "hash": "b46fd271bf41bd2712bc322991b21ddd1f06e40463437ecd5026bfc11d586838",
+    "size": 159757
+  },
+  "content/blogs/yamazaki-jitsugyo-best-buy/images/chomiryo-rack.png": {
+    "hash": "8c41a2d71c7fbd88a4ffc2ffbc51cedb7627d7635c24290e3e9b482e891fe312",
+    "size": 1047
+  },
+  "content/blogs/yamazaki-jitsugyo-best-buy/images/door-stopper.png": {
+    "hash": "8c41a2d71c7fbd88a4ffc2ffbc51cedb7627d7635c24290e3e9b482e891fe312",
+    "size": 1047
+  },
+  "content/blogs/yamazaki-jitsugyo-best-buy/images/konro-oku-rack.png": {
+    "hash": "8c41a2d71c7fbd88a4ffc2ffbc51cedb7627d7635c24290e3e9b482e891fe312",
+    "size": 1047
+  },
+  "content/blogs/yamazaki-jitsugyo-best-buy/images/rin-trashcan.png": {
+    "hash": "8c41a2d71c7fbd88a4ffc2ffbc51cedb7627d7635c24290e3e9b482e891fe312",
+    "size": 1047
+  },
+  "content/blogs/yamazaki-jitsugyo-best-buy/images/sink-towel-holder.png": {
+    "hash": "8c41a2d71c7fbd88a4ffc2ffbc51cedb7627d7635c24290e3e9b482e891fe312",
+    "size": 1047
+  },
+  "content/blogs/yamazaki-jitsugyo-best-buy/images/thumbnail.png": {
+    "hash": "70fa25b0151fe88f19d9d59387fe42711c29a10080870b0e28474ec852b2ff87",
+    "size": 14940
+  },
+  "content/blogs/yamazaki-jitsugyo-best-buy/images/chomiryo-rack.jpg": {
+    "hash": "7d38539f28c041f6265819f04591429d7a974cb5b268415cd00c5d781fef1339",
+    "size": 231032
+  },
+  "content/blogs/yamazaki-jitsugyo-best-buy/images/konro-oku-rack.jpg": {
+    "hash": "c2f696772814195f86ff4640d8171b2253039a60ba0a64c8d3992f203336cdcd",
+    "size": 234801
+  },
+  "content/blogs/yamazaki-jitsugyo-best-buy/images/rin-trashcan.jpg": {
+    "hash": "f65c5448301918286960d52257b2080e566780fea9b4a6fce890fc90d4107177",
+    "size": 379464
+  },
+  "content/blogs/hitooshi-heiyou/images/hitooshi-heiyou-thumbnail.jpeg": {
+    "hash": "838d752ddf8d81f7f2f744ab000719ef15946534a6b028f3df5adc9693b841f6",
+    "size": 72904
+  },
   "content/blogs/hikkoshi-best-buy/images/thumbnail.png": {
     "hash": "734be537b6a7daf4eb5b98ef08c578096702d9f5767322dda7c4e52ecaad1215",
     "size": 16949
