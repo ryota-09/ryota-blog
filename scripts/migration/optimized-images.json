@@ -370,5 +370,9 @@
   "content/blogs/hitooshi-heiyou/images/hitooshi-heiyou-thumbnail.jpeg": {
     "hash": "838d752ddf8d81f7f2f744ab000719ef15946534a6b028f3df5adc9693b841f6",
     "size": 72904
+  },
+  "content/blogs/hikkoshi-best-buy/images/thumbnail.png": {
+    "hash": "734be537b6a7daf4eb5b98ef08c578096702d9f5767322dda7c4e52ecaad1215",
+    "size": 16949
   }
 }

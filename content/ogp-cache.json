@@ -1,20 +1,47 @@
 {
+  "https://curama.jp/": {
+    "url": "https://curama.jp/",
+    "title": "15周年キャンペーン くらしのマーケット - くらべておトク、プロのお仕事。",
+    "description": "くらしのマーケット15周年感謝祭！400以上のカテゴリで使える最大3,000円割引クーポン配布中！人気のプロにお得に頼めるチャンス！ハウスクリーニングや家事代行、不用品回収、引越しなどの暮らしのサービスをオンラインで予約するなら「くらしのマーケット」。サービスを利用したユーザーの口コミ、満足度や具体的なサービス料金で簡単・便利に徹底比較！[保証制度完備！]",
+    "image": "https://cdn.curama.jp/images/lp/user/coupon/202607/bnr_ogimage.jpg?h=93ed7573986fd3a3a16a490e44961e9c",
+    "favicon": "https://curama.jp/favicon.ico",
+    "hostname": "curama.jp",
+    "ok": true
+  },
   "https://github.com/ryota-09/ryota-blog/blob/main/src/components/Pagination/EllipsisMenu/index.tsx": {
     "url": "https://github.com/ryota-09/ryota-blog/blob/main/src/components/Pagination/EllipsisMenu/index.tsx",
     "title": "ryota-blog/src/components/Pagination/EllipsisMenu/index.tsx at main · ryota-09/ryota-blog",
     "description": "Ryota-Blog with Next.js. Contribute to ryota-09/ryota-blog development by creating an account on GitHub.",
-    "image": "https://opengraph.githubassets.com/b2b82fbe11e84f494149a174cd0cb5734914b510a059bb2096b77a9a1c05bd9c/ryota-09/ryota-blog",
+    "image": "https://opengraph.githubassets.com/1154a3e121bc4c954b132560cc7d10606a7ac02974fde6eb0a5436c4bb55d496/ryota-09/ryota-blog",
     "favicon": "https://github.githubassets.com/favicons/favicon",
     "hostname": "github.com",
     "ok": true
   },
   "https://github.com/ryota-09/ryota-blog/blob/main/src/components/Pagination/index.tsx": {
     "url": "https://github.com/ryota-09/ryota-blog/blob/main/src/components/Pagination/index.tsx",
-    "title": "ryota-blog/src/components/Pagination/index.tsx at main · ryota-09/ryota-blog",
-    "description": "Ryota-Blog with Next.js. Contribute to ryota-09/ryota-blog development by creating an account on GitHub.",
-    "image": "https://opengraph.githubassets.com/b2b82fbe11e84f494149a174cd0cb5734914b510a059bb2096b77a9a1c05bd9c/ryota-09/ryota-blog",
-    "favicon": "https://github.githubassets.com/favicons/favicon",
+    "title": "https://github.com/ryota-09/ryota-blog/blob/main/src/components/Pagination/index.tsx",
+    "description": null,
+    "image": null,
+    "favicon": null,
     "hostname": "github.com",
+    "ok": false
+  },
+  "https://gmobb.jp/gmohikari/": {
+    "url": "https://gmobb.jp/gmohikari/",
+    "title": "https://gmobb.jp/gmohikari/",
+    "description": null,
+    "image": null,
+    "favicon": null,
+    "hostname": "gmobb.jp",
+    "ok": false
+  },
+  "https://ka-center.jp/": {
+    "url": "https://ka-center.jp/",
+    "title": "ケーエー引越センター",
+    "description": "単身引越しなら東京都内で1番安いケーエー引越センター",
+    "image": "https://ka-center.jp/img/share/og.png",
+    "favicon": "https://ka-center.jp/favicon.ico",
+    "hostname": "ka-center.jp",
     "ok": true
   },
   "https://menta.work/plan/21670?ref=mentor_profile": {
@@ -53,6 +80,15 @@
     "hostname": "www.amazon.jp",
     "ok": true
   },
+  "https://www.cdedirect.co.jp/": {
+    "url": "https://www.cdedirect.co.jp/",
+    "title": "【公式】CDエナジーなら電気とガスもまとめて便利！契約実績90万件突破",
+    "description": "電気とガスを節約するなら、CDエナジー！申し込みはかんたん5分！工事や面倒なお手続きも不要。電気とガスをセットで申し込めばまとめて便利！",
+    "image": "https://www.cdedirect.co.jp/assets/img/common/ogp.png?2026-07-24",
+    "favicon": "https://www.cdedirect.co.jp/assets/img/common/favicon.ico?2024-04-01",
+    "hostname": "www.cdedirect.co.jp",
+    "ok": true
+  },
   "https://zenn.dev/ryota_09/articles/06ec306f0ef9ee": {
     "url": "https://zenn.dev/ryota_09/articles/06ec306f0ef9ee",
     "title": "APIで取得したデータをもとに、動的にメタ情報を設定する方法(Next.js App Router)",
@@ -69,6 +105,15 @@
     "image": "https://res.cloudinary.com/zenn/image/upload/s--zPzk6dIe--/c_fit%2Cg_north_west%2Cl_text:notosansjp-medium.otf_55:%25E3%2580%2590Next.js%2520%252F%2520App%2520Router%25E3%2580%2591%2520opengraph-image.tsx%25E3%2581%25AEOG%25E7%2594%25BB%25E5%2583%258F%25E5%2586%2585%25E3%2583%2595%25E3%2582%25A9%25E3%2583%25B3%25E3%2583%2588%25E3%2581%25AE%25E5%25A4%2589%25E6%259B%25B4%25E6%2596%25B9%25E6%25B3%2595%2Cw_1010%2Cx_90%2Cy_100/g_south_west%2Cl_text:notosansjp-medium.otf_37:%25E3%2582%258A%25E3%2582%2587%25E3%2581%259F%2Cx_203%2Cy_121/g_south_west%2Ch_90%2Cl_fetch:aHR0cHM6Ly9zdGF0aWMuemVubi5zdHVkaW8vdXNlci11cGxvYWQvYXZhdGFyLzI2Mzg3YjI4MWEuanBlZw==%2Cr_max%2Cw_90%2Cx_87%2Cy_95/v1627283836/default/og-base-w1200-v2.png?_a=BACMTiAE",
     "favicon": "https://zenn.dev/favicon.ico",
     "hostname": "zenn.dev",
+    "ok": true
+  },
+  "https://gmobb.jp/": {
+    "url": "https://gmobb.jp/",
+    "title": "GMOとくとくBB｜運営実績30年以上のおトクなプロバイダー",
+    "description": "「GMOとくとくBB」はGMOインターネット株式会社が運営しているインターネットサービスプロバイダーです。ドコモ光、auひかり、GMO光アクセスなどの光回線やWiMAXなどのインターネットサービスをおトクな価格と充実したサポートサービスで提供いたします。",
+    "image": "https://gmobb.jp/common/assets/images/ogimage.png",
+    "favicon": "https://gmobb.jp/favicon.svg",
+    "hostname": "gmobb.jp",
     "ok": true
   }
 }
