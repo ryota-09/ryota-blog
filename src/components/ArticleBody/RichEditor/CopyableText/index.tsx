@@ -8,15 +8,35 @@ type PropsType = {
   className?: string;
 };
 
+// 紹介コードのコピーはCVに最も近い行動なのに、これまで一切計測されていなかった。
+// GA4拡張計測はコピーを検知しないので、GTMのdataLayer経由で明示的に送る。
+// コンポーネント自体は汎用(技術記事のコード片にも使う)なので、イベント名は汎用のまま
+// 値だけを渡し、「どの値が紹介コードか」の判断はGA4側の作成イベントに任せる。
+const pushCopyEvent = (value: string) => {
+  if (typeof window === "undefined") return;
+  try {
+    const w = window as Window & { dataLayer?: Record<string, unknown>[] };
+    w.dataLayer = w.dataLayer || [];
+    w.dataLayer.push({
+      event: "copyable_copy",
+      copy_value: value,
+      page_path: window.location.pathname,
+    });
+  } catch {
+    // 計測の失敗でコピー機能そのものを壊さない
+  }
+};
+
 const CopyableText = ({ children, className }: PropsType) => {
   const [copied, setCopied] = useState(false);
   const t = useTranslations('blog');
 
   const handleCopy = async () => {
     const text = typeof children === 'string' ? children : children?.toString() || "";
-    
+
     try {
       await navigator.clipboard.writeText(text);
+      pushCopyEvent(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {

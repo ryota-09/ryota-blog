@@ -100,14 +100,43 @@ describe('CopyableText', () => {
 
   it('文字列の子要素が正しく処理される', async () => {
     mockWriteText.mockResolvedValue(undefined);
-    
+
     render(<CopyableText>SIMPLE_STRING</CopyableText>);
-    
+
     const copyButton = screen.getByRole('button', { name: 'コードをコピー' });
     fireEvent.click(copyButton);
-    
+
     await waitFor(() => {
       expect(mockWriteText).toHaveBeenCalledWith('SIMPLE_STRING');
     });
+  });
+
+  it('コピー成功時にdataLayerへcopyable_copyイベントを送る', async () => {
+    mockWriteText.mockResolvedValue(undefined);
+    const w = window as Window & { dataLayer?: Record<string, unknown>[] };
+    w.dataLayer = [];
+
+    render(<CopyableText>A2R7FE3K</CopyableText>);
+    fireEvent.click(screen.getByRole('button', { name: 'コードをコピー' }));
+
+    await waitFor(() => {
+      expect(w.dataLayer).toEqual([
+        expect.objectContaining({ event: 'copyable_copy', copy_value: 'A2R7FE3K' }),
+      ]);
+    });
+  });
+
+  it('コピー失敗時はdataLayerへ送らない', async () => {
+    mockWriteText.mockRejectedValue(new Error('Clipboard API not available'));
+    const w = window as Window & { dataLayer?: Record<string, unknown>[] };
+    w.dataLayer = [];
+
+    render(<CopyableText>A2R7FE3K</CopyableText>);
+    fireEvent.click(screen.getByRole('button', { name: 'コードをコピー' }));
+
+    await waitFor(() => {
+      expect(mockWriteText).toHaveBeenCalled();
+    });
+    expect(w.dataLayer).toEqual([]);
   });
 });
