@@ -47,7 +47,8 @@ export type BlogListQuery = {
   category?: string;
   // タイトル・説明・本文プレーンテキストに対する大文字小文字無視の部分一致検索(microCMSの`q`相当)
   keyword?: string;
-  // hideFromHome: true の記事を除外する。トップ(/blogs)の全体一覧・その総ページ数計算でのみ
-  // 指定する想定(カテゴリ一覧・検索では指定しない)
+  // トップ(/blogs)の全体一覧から除外すべき記事を落とす。対象は「記事単位の hideFromHome: true」と
+  // 「primaryカテゴリが hideFromHome のカテゴリ(雑記・時事・LifeHack)に属する記事」の2種類。
+  // トップの全体一覧・その総ページ数計算でのみ指定する想定(カテゴリ一覧・検索では指定しない)
   excludeHiddenFromHome?: boolean;
 };

@@ -5,7 +5,7 @@ import { cache } from "react";
 import { getTranslations } from "next-intl/server";
 
 import { blogs as ALL_BLOGS } from "#content/index";
-import { resolveCategoryOrDefault } from "@/static/categories";
+import { isHiddenFromHomeByCategory, resolveCategoryOrDefault } from "@/static/categories";
 import { getLocalizedCategoryName } from "@/lib/i18n-utils";
 import type { BreadcrumbItemType, TOCAssetsType } from "@/types";
 import type {
@@ -64,10 +64,15 @@ export const getBlogList = (
 
   let filtered = getPublishedBlogsByLocale(locale);
 
-  // トップ(/blogs)の全体一覧のみ hideFromHome: true の記事を除外する。
+  // トップ(/blogs)の全体一覧のみ、以下2種類の記事を除外する。
+  //   1. 記事単位の hideFromHome: true (同一クラスタの連投でトップを占有しないための個別指定)
+  //   2. primaryカテゴリ(categories[0])が hideFromHome のカテゴリ(雑記・時事・LifeHack)に
+  //      属する記事。技術系の読者がトップを見たときに非IT記事が混ざらないようにする
   // カテゴリ一覧(§4のインデックス導線ハブ)・検索には出したいので、呼び出し側で明示的に指定する
   if (excludeHiddenFromHome) {
-    filtered = filtered.filter((blog) => !blog.hideFromHome);
+    filtered = filtered.filter(
+      (blog) => !blog.hideFromHome && !isHiddenFromHomeByCategory(blog.categories),
+    );
   }
 
   if (category) {

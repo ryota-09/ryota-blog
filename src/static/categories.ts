@@ -14,6 +14,9 @@ export type CategoryEntry = {
   // 現行UIでは未使用。将来利用する場合に備えJSONの情報を落とさず保持する
   icon?: string;
   bg_color?: string;
+  // このカテゴリをprimary(categories[0])に持つ記事を、トップ(/blogs)の全体一覧から
+  // 除外するか。非IT系カテゴリ(雑記・時事・LifeHack)をトップに出さないために使う。
+  hideFromHome: boolean;
 };
 
 export const CATEGORIES: CategoryEntry[] = CATEGORY_RECORDS.map((category) => ({
@@ -23,7 +26,21 @@ export const CATEGORIES: CategoryEntry[] = CATEGORY_RECORDS.map((category) => ({
   name_en: category.name_en,
   icon: category.icon,
   bg_color: category.bg_color,
+  hideFromHome: category.hideFromHome,
 }));
+
+// トップ(/blogs)の全体一覧から除外するカテゴリのid集合。
+// 「このカテゴリの記事はトップに出さない」という判断はカテゴリマスタ
+// (content/categories.json の hideFromHome)が唯一の情報源で、コード側には持たない。
+export const HOME_HIDDEN_CATEGORY_IDS: ReadonlySet<string> = new Set(
+  CATEGORIES.filter((category) => category.hideFromHome).map((category) => category.id),
+);
+
+// 記事のprimaryカテゴリ(categories[0])がトップ非表示カテゴリかを判定する。
+// 複数カテゴリを持つ記事は先頭のみで判定するため、[next_js, zakki] のような
+// 技術記事はトップに残る。
+export const isHiddenFromHomeByCategory = (categories: readonly string[]): boolean =>
+  HOME_HIDDEN_CATEGORY_IDS.has(categories[0]);
 
 // 記事にカテゴリが1件も紐付かない場合のみ使う最終フォールバック
 export const DEFAULT_CATEGORY_ID = "programming";
@@ -50,6 +67,7 @@ const HARD_FALLBACK_ENTRY: CategoryEntry = {
   slug: DEFAULT_CATEGORY_ID,
   name: "プログラミング",
   name_en: "Programming",
+  hideFromHome: false,
 };
 
 // content idからカテゴリを解決する唯一の入り口。見つからない場合（記事に紐づくカテゴリが

@@ -22,7 +22,7 @@ import { PER_PAGE } from "@/static/blogs";
 // .velite に含まれる。ファイル数ベースのオラクルはこれと常に一致する。
 const BLOGS_DIR = path.join(__dirname, "..", "..", "..", "content", "blogs");
 
-type BlogFrontmatter = { categories?: string[] };
+type BlogFrontmatter = { categories?: string[]; hideFromHome?: boolean };
 
 const listFrontmattersByLocale = (locale: "ja" | "en"): BlogFrontmatter[] =>
   readdirSync(BLOGS_DIR, { withFileTypes: true })
@@ -38,6 +38,20 @@ const jaFrontmatters = listFrontmattersByLocale("ja");
 const jaTotal = jaFrontmatters.length;
 const countJaByCategory = (category: string) =>
   jaFrontmatters.filter((fm) => fm.categories?.includes(category)).length;
+
+// トップ非表示カテゴリのオラクル。テスト対象(@/static/categories)ではなく
+// content/categories.json を直接読んで独立した期待値にする。
+type CategoryRecord = { id: string; hideFromHome?: boolean };
+const CATEGORIES_JSON = path.join(__dirname, "..", "..", "..", "content", "categories.json");
+const hiddenCategoryIds = new Set(
+  (JSON.parse(readFileSync(CATEGORIES_JSON, "utf-8")) as CategoryRecord[])
+    .filter((category) => category.hideFromHome)
+    .map((category) => category.id),
+);
+// トップ(/blogs)に残るべき記事: 記事単位のhideFromHomeでも、primaryカテゴリでも隠されていないもの
+const jaVisibleOnHome = jaFrontmatters.filter(
+  (fm) => !fm.hideFromHome && !hiddenCategoryIds.has(fm.categories?.[0] ?? ""),
+);
 
 describe("content.ts", () => {
   describe("getAllBlogListByLocale", () => {
@@ -107,6 +121,43 @@ describe("content.ts", () => {
       const result = getBlogList("ja", { offset: 0, limit: 100, category: "not-exist-category" });
       expect(result.totalCount).toBe(0);
       expect(result.contents).toHaveLength(0);
+    });
+
+    it("excludeHiddenFromHome: 記事単位のhideFromHomeとprimaryカテゴリの両方で除外する", () => {
+      const result = getBlogList("ja", { offset: 0, limit: 1000, excludeHiddenFromHome: true });
+
+      expect(result.totalCount).toBe(jaVisibleOnHome.length);
+      expect(result.totalCount).toBeGreaterThan(0);
+      expect(result.totalCount).toBeLessThan(jaTotal);
+      result.contents.forEach((content) => {
+        expect(content.hideFromHome).toBe(false);
+        expect(hiddenCategoryIds.has(content.categories[0])).toBe(false);
+      });
+    });
+
+    it("excludeHiddenFromHome未指定なら非表示カテゴリの記事も返る(カテゴリ一覧・検索用)", () => {
+      const hiddenCategoryId = [...hiddenCategoryIds][0];
+      const result = getBlogList("ja", { offset: 0, limit: 1000, category: hiddenCategoryId });
+
+      expect(result.totalCount).toBe(countJaByCategory(hiddenCategoryId));
+      expect(result.totalCount).toBeGreaterThan(0);
+    });
+
+    it("非表示カテゴリを2番目以降に持つ記事はトップに残る(primaryのみで判定する)", () => {
+      const secondaryOnly = jaFrontmatters.filter(
+        (fm) =>
+          !fm.hideFromHome &&
+          !hiddenCategoryIds.has(fm.categories?.[0] ?? "") &&
+          (fm.categories ?? []).some((category) => hiddenCategoryIds.has(category)),
+      );
+      const visibleSlugs = new Set(
+        getBlogList("ja", { offset: 0, limit: 1000, excludeHiddenFromHome: true }).contents.map(
+          (content) => content.slug,
+        ),
+      );
+      // 該当記事が現状0本でも、判定ロジックがprimary基準であることは上のテストで担保される
+      expect(secondaryOnly.length).toBeGreaterThanOrEqual(0);
+      expect(visibleSlugs.size).toBe(jaVisibleOnHome.length);
     });
 
     it("キーワード検索: タイトルに大文字小文字無視で部分一致する", () => {

@@ -126,6 +126,12 @@ const categories = defineCollection({
     // 現行UIでは未使用だが、JSONの情報を失わないため保持する(利用箇所ができた場合に備える)
     icon: s.string().optional(),
     bg_color: s.string().optional(),
+    // このカテゴリをprimary(categories[0])に持つ記事を、トップ(/blogs)の全体一覧から
+    // 一律で除外するフラグ。技術系の読者がトップを見たときに非IT記事(雑記・時事・
+    // LifeHack)が混ざらないようにするために使う。
+    // 記事単位の blogs.hideFromHome と同じ導線にのみ効く(カテゴリ一覧・検索・sitemap・
+    // RSS・記事ページには通常どおり表示される)ので、SEO導線は一切切らない。
+    hideFromHome: s.boolean().default(false),
   }),
 });
 
