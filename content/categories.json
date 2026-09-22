@@ -39,7 +39,8 @@
     "name": "雑記",
     "name_en": "daily",
     "icon": "./images/categories/pen-to-square.svg",
-    "bg_color": "#64748b"
+    "bg_color": "#64748b",
+    "hideFromHome": true
   },
   {
     "id": "release_notes",
@@ -74,7 +75,8 @@
     "name": "時事",
     "name_en": "News",
     "icon": "./images/categories/newspaper.svg",
-    "bg_color": "#ef4444"
+    "bg_color": "#ef4444",
+    "hideFromHome": true
   },
   {
     "id": "ui_parts",
@@ -130,6 +132,7 @@
     "name": "LifeHack",
     "name_en": "LifeHack",
     "icon": "./images/categories/lightbulb.svg",
-    "bg_color": "#ea580c"
+    "bg_color": "#ea580c",
+    "hideFromHome": true
   }
 ]
