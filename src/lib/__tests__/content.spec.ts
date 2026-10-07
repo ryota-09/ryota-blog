@@ -5,12 +5,14 @@ import yaml from "js-yaml";
 import { describe, expect, it } from "vitest";
 
 import {
+  buildArticleLanguageAlternates,
   getAllBlogListByLocale,
   getBlogBySlugByLocale,
   getBlogList,
   getCategoriesWithArticles,
   getPrevAndNextBlogByLocale,
 } from "../content";
+import { baseURL } from "@/config";
 import { PER_PAGE } from "@/static/blogs";
 
 // 実データ(.velite出力)を使って検証する。
@@ -295,6 +297,41 @@ describe("content.ts", () => {
         .filter((id) => countJaByCategory(id) === 0);
 
       emptyIds.forEach((id) => expect(ids.has(id)).toBe(false));
+    });
+  });
+
+  describe("buildArticleLanguageAlternates", () => {
+    // ja/enでプライマリカテゴリが異なりうるため、hreflangの各URLは
+    // 「そのlocaleの記事のプライマリカテゴリ」で組み立てる必要がある(異なると404を指す)
+    it("各localeのURLはそのlocaleの記事のプライマリカテゴリで組み立てる", () => {
+      const jaList = getAllBlogListByLocale("ja");
+      jaList.forEach((jaBlog) => {
+        const alternates = buildArticleLanguageAlternates(jaBlog.slug);
+        expect(alternates.ja).toBe(`${baseURL}/ja/blogs/${jaBlog.categories[0]}/${jaBlog.slug}`);
+        const enBlog = getAllBlogListByLocale("en").find((blog) => blog.slug === jaBlog.slug);
+        if (enBlog) {
+          expect(alternates.en).toBe(`${baseURL}/en/blogs/${enBlog.categories[0]}/${enBlog.slug}`);
+        } else {
+          expect(alternates.en).toBeUndefined();
+        }
+      });
+    });
+
+    it("ja/enでプライマリカテゴリが異なる記事でも各locale固有のカテゴリになる", () => {
+      const enBySlug = new Map(getAllBlogListByLocale("en").map((blog) => [blog.slug, blog]));
+      const mismatched = getAllBlogListByLocale("ja").find((blog) => {
+        const en = enBySlug.get(blog.slug);
+        return en && en.categories[0] !== blog.categories[0];
+      });
+      // 実データに該当記事が無くなった場合はこのケースの検証対象が無い
+      if (!mismatched) return;
+      const alternates = buildArticleLanguageAlternates(mismatched.slug);
+      expect(alternates.ja).toContain(`/ja/blogs/${mismatched.categories[0]}/`);
+      expect(alternates.en).toContain(`/en/blogs/${enBySlug.get(mismatched.slug)!.categories[0]}/`);
+    });
+
+    it("存在しないslugでは空オブジェクトを返す", () => {
+      expect(buildArticleLanguageAlternates("not-exist-slug")).toEqual({});
     });
   });
 });

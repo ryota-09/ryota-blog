@@ -7,7 +7,9 @@ import { getTranslations } from "next-intl/server";
 import { blogs as ALL_BLOGS } from "#content/index";
 import { CATEGORIES, isHiddenFromHomeByCategory, resolveCategoryOrDefault } from "@/static/categories";
 import type { CategoryEntry } from "@/static/categories";
+import { buildPageUrl } from "@/lib";
 import { getLocalizedCategoryName } from "@/lib/i18n-utils";
+import { locales } from "@/i18n/config";
 import type { BreadcrumbItemType, TOCAssetsType } from "@/types";
 import type {
   BlogListQuery,
@@ -112,6 +114,23 @@ export const getCategoriesWithArticles = (locale: ContentLocale): CategoryEntry[
   );
   return CATEGORIES.filter((category) => usedCategoryIds.has(category.id));
 };
+
+/**
+ * 記事詳細ページのhreflang(alternates.languages)を組み立てる。
+ * 記事のプライマリカテゴリ(categories[0])はja/enで異なりうるため(例: nextjs-typescript-book-review2 は
+ * ja=typescript / en=review)、各localeのURLは「そのlocaleの記事」のカテゴリで組み立てる。
+ * 表示中localeのカテゴリを使い回すと他localeのURLが404を指し、GSCで404として検出される。
+ * そのlocaleに記事が存在しない場合はエントリ自体を含めない。
+ */
+export const buildArticleLanguageAlternates = (slug: string): Record<string, string> =>
+  Object.fromEntries(
+    locales.flatMap((locale) => {
+      const blog = getPublishedBlogsByLocale(locale).find((item) => item.slug === slug);
+      if (!blog) return [];
+      const categoryId = resolveCategoryOrDefault(blog.categories[0]).slug;
+      return [[locale, buildPageUrl(locale, "blogs", categoryId, slug)]];
+    }),
+  );
 
 /**
  * getBlogByIdByLocale相当(本データ層ではcontent id = slug): 指定localeの記事をslugで1件取得する。
