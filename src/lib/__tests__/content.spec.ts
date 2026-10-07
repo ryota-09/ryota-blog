@@ -8,6 +8,7 @@ import {
   getAllBlogListByLocale,
   getBlogBySlugByLocale,
   getBlogList,
+  getCategoriesWithArticles,
   getPrevAndNextBlogByLocale,
 } from "../content";
 import { PER_PAGE } from "@/static/blogs";
@@ -43,8 +44,9 @@ const countJaByCategory = (category: string) =>
 // content/categories.json を直接読んで独立した期待値にする。
 type CategoryRecord = { id: string; hideFromHome?: boolean };
 const CATEGORIES_JSON = path.join(__dirname, "..", "..", "..", "content", "categories.json");
+const categoryRecords = JSON.parse(readFileSync(CATEGORIES_JSON, "utf-8")) as CategoryRecord[];
 const hiddenCategoryIds = new Set(
-  (JSON.parse(readFileSync(CATEGORIES_JSON, "utf-8")) as CategoryRecord[])
+  categoryRecords
     .filter((category) => category.hideFromHome)
     .map((category) => category.id),
 );
@@ -268,6 +270,31 @@ describe("content.ts", () => {
       const oldest = list[list.length - 1];
       const { prevBlogData } = getPrevAndNextBlogByLocale("ja", oldest);
       expect(prevBlogData).toBeNull();
+    });
+  });
+
+  describe("getCategoriesWithArticles", () => {
+    // 記事0件のカテゴリページは「空の一覧」を200で返すとGoogleにソフト404と判定されるため、
+    // 公開導線(サイトマップ・サイドナビ・静的生成)から除外する用途の関数
+    it.each(["ja", "en"] as const)(
+      "%s: 記事が1件以上あるカテゴリだけをcategories.jsonの並び順で返す",
+      (locale) => {
+        const frontmatters = listFrontmattersByLocale(locale);
+        const expected = categoryRecords
+          .map((category) => category.id)
+          .filter((id) => frontmatters.some((fm) => fm.categories?.includes(id)));
+
+        expect(getCategoriesWithArticles(locale).map((category) => category.id)).toEqual(expected);
+      },
+    );
+
+    it("記事0件のカテゴリは含まない", () => {
+      const ids = new Set(getCategoriesWithArticles("ja").map((category) => category.id));
+      const emptyIds = categoryRecords
+        .map((category) => category.id)
+        .filter((id) => countJaByCategory(id) === 0);
+
+      emptyIds.forEach((id) => expect(ids.has(id)).toBe(false));
     });
   });
 });

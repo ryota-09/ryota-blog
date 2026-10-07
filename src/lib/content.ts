@@ -5,7 +5,8 @@ import { cache } from "react";
 import { getTranslations } from "next-intl/server";
 
 import { blogs as ALL_BLOGS } from "#content/index";
-import { isHiddenFromHomeByCategory, resolveCategoryOrDefault } from "@/static/categories";
+import { CATEGORIES, isHiddenFromHomeByCategory, resolveCategoryOrDefault } from "@/static/categories";
+import type { CategoryEntry } from "@/static/categories";
 import { getLocalizedCategoryName } from "@/lib/i18n-utils";
 import type { BreadcrumbItemType, TOCAssetsType } from "@/types";
 import type {
@@ -96,6 +97,20 @@ export const getBlogList = (
  */
 export const getAllBlogListByLocale = (locale: ContentLocale): BlogPost[] => {
   return [...getPublishedBlogsByLocale(locale)].sort(sortByPublishedAtDesc);
+};
+
+/**
+ * 指定localeで記事が1件以上あるカテゴリだけを、カテゴリマスタ(content/categories.json)の並び順で返す。
+ * 記事0件のカテゴリページは「記事がありません」の空一覧を200で返すことになり、
+ * Googleにソフト404と判定される(2026-10 GSCで /blogs/gadget・/blogs/openai_api が該当)。
+ * そのため公開導線(静的生成・サイトマップ・サイドナビ)はこの関数を情報源にし、空カテゴリを出さない。
+ * NOTE: ja/enで記事のカテゴリ構成が異なりうるため、必ずlocaleごとに判定する。
+ */
+export const getCategoriesWithArticles = (locale: ContentLocale): CategoryEntry[] => {
+  const usedCategoryIds = new Set(
+    getPublishedBlogsByLocale(locale).flatMap((blog) => blog.categories),
+  );
+  return CATEGORIES.filter((category) => usedCategoryIds.has(category.id));
 };
 
 /**
