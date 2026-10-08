@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 import { baseURL } from "@/config";
-import { getAllBlogListByLocale, getBlogList } from "@/lib/content";
+import { getAllBlogListByLocale, getBlogList, getCategoriesWithArticles } from "@/lib/content";
 import { resolveCategoryOrDefault } from "@/static/categories";
 import { PER_PAGE } from "@/static/blogs";
 import { CATEGORIES } from "@/static/categories";
@@ -23,8 +23,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ])
 
     // カテゴリページのパスの多言語対応
+    // NOTE: 記事0件のカテゴリページは404になる(ソフト404回避)ため、記事のあるカテゴリのみ載せる
     const categoryPaths = SUPPORTED_LOCALES.flatMap(locale =>
-      CATEGORIES.map((category) => {
+      getCategoriesWithArticles(locale as ContentLocale).map((category) => {
         return {
           url: `${baseURL}/${locale}/blogs/${category.slug}`,
           lastModified: new Date()

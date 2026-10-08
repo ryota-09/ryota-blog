@@ -16,6 +16,7 @@ import { isRoutingLocale, routing } from './i18n/routing';
 import { LOCALE_COOKIE_NAME } from './types/locale'
 import { CATEGORIES } from './static/categories'
 import { classifyAiAccess } from './lib/ai-access/classify'
+import { resolveArticleCanonicalPath } from './lib/article-canonical-path'
 import { recordAiAccessHit } from './lib/ai-access/repository'
 import type { AiBotDefinition } from './lib/ai-access/types'
 // NOTE: 旧URL(/blogs/{slug})のカテゴリ解決用の軽量静的マップ(slug×locale→プライマリカテゴリid)。
@@ -123,6 +124,20 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
     } else {
       return intlMiddleware(request);
     }
+  }
+
+  // 記事URLのカテゴリがそのlocaleのプライマリカテゴリと異なる場合は正規URLへ301する。
+  // ja/enでプライマリカテゴリが異なる記事で、言語切替(ロケール接頭辞のみ置換)や
+  // 過去に配信していた誤ったhreflangのURLが404になるのを防ぐ
+  const canonicalArticlePath = resolveArticleCanonicalPath(
+    pathname,
+    categoryMap as Record<string, Record<string, string>>,
+    KNOWN_CATEGORY_IDS,
+  )
+  if (canonicalArticlePath) {
+    const newUrl = new URL(canonicalArticlePath, request.url)
+    newUrl.search = request.nextUrl.search
+    return NextResponse.redirect(newUrl, 301)
   }
 
   // 最後にnext-intlミドルウェアを実行

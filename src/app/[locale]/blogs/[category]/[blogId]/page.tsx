@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 
 import ArticleBody from "@/components/ArticleBody";
 import BreadcrumbList from "@/components/BreadcrumbList";
-import { buildPageUrl, buildLanguageAlternates } from "@/lib";
+import { buildPageUrl } from "@/lib";
 import {
+  buildArticleLanguageAlternates,
   getBlogBySlugByLocaleCached,
   getAllBlogListByLocale,
   getPrimaryCategoryIdFromBlogPost,
@@ -67,7 +68,9 @@ export async function generateMetadata(
     robots: data.noIndex ? "noindex" : null,
     alternates: {
       canonical: blogUrl,
-      languages: buildLanguageAlternates("blogs", category, blogId)
+      // NOTE: ja/enで記事のプライマリカテゴリが異なりうるため、表示中のcategoryを使い回さず
+      // 各localeの記事のカテゴリでURLを組み立てる(使い回すと他localeのURLが404を指す)
+      languages: buildArticleLanguageAlternates(blogId)
     },
     // openGraph は子で定義すると親（ルートレイアウト）の値が置換されるため siteName/type も明示する。
     // 画像は同セグメントの opengraph-image.tsx / twitter-image.tsx が自動付与するため images は指定しない
