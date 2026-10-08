@@ -1,7 +1,8 @@
 import { getTranslations } from 'next-intl/server';
 import CategoryItem from "@/components/CategoryList/CategoryItem";
 import { getLocalizedCategoryName } from "@/lib/i18n-utils";
-import { CATEGORIES } from "@/static/categories";
+import { getCategoriesWithArticles } from "@/lib/content";
+import type { ContentLocale } from "@/types/content";
 
 type CategoryListProps = {
   locale: string;
@@ -10,8 +11,9 @@ type CategoryListProps = {
 const CategoryList = async ({ locale }: CategoryListProps) => {
   const tBlog = await getTranslations({ locale, namespace: 'blog' });
 
-  // カテゴリ配列をmicroCMSのcategoriesコンテンツから生成
-  const categoryArray = CATEGORIES.map((category) => ({
+  // カテゴリマスタのうち、このlocaleで記事が1件以上あるカテゴリのみ並べる
+  // (記事0件のカテゴリページは404になるため、内部リンクを張らない)
+  const categoryArray = getCategoriesWithArticles(locale as ContentLocale).map((category) => ({
     id: category.slug,
     name: getLocalizedCategoryName(category, locale)
   }));

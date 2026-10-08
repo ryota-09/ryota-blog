@@ -8,10 +8,12 @@ import Skelton from "@/components/ArticleList/skelton";
 import SearchStateCard from "@/components/SearchStateCard";
 import SideNav from "@/components/SideNav";
 import { generateQuery, buildPageUrl, buildLanguageAlternates } from "@/lib";
+import { getCategoriesWithArticles } from "@/lib/content";
 import { getLocalizedCategoryName } from "@/lib/i18n-utils";
-import type { BlogListQuery } from "@/types/content";
+import type { BlogListQuery, ContentLocale } from "@/types/content";
 import { CATEGORY_QUERY } from "@/static/blogs";
-import { CATEGORIES, findCategoryBySlug } from "@/static/categories";
+import { findCategoryBySlug } from "@/static/categories";
+import type { CategoryEntry } from "@/static/categories";
 import BlogTypeTabs from "@/components/UiParts/BlogTypeTabs";
 import { locales } from '@/i18n/config';
 
@@ -24,10 +26,22 @@ import { locales } from '@/i18n/config';
 export const revalidate = 3600;
 export const dynamic = 'force-static';
 
+// 記事が1件以上あるカテゴリのみ解決する。記事0件のカテゴリは空一覧を200で返すと
+// Googleにソフト404と判定されるため、未知のカテゴリと同様に404(notFound)として扱う
+const resolveListedCategory = (locale: string, slug: string): CategoryEntry | undefined => {
+  const categoryEntry = findCategoryBySlug(slug);
+  if (!categoryEntry) return undefined;
+  const isListed = getCategoriesWithArticles(locale as ContentLocale).some(
+    (category) => category.id === categoryEntry.id,
+  );
+  return isListed ? categoryEntry : undefined;
+};
+
 export async function generateStaticParams() {
   const params = [];
   for (const locale of locales) {
-    for (const category of CATEGORIES) {
+    // 記事0件のカテゴリは静的生成しない(リクエスト時はresolveListedCategoryで404になる)
+    for (const category of getCategoriesWithArticles(locale as ContentLocale)) {
       params.push({
         locale,
         category: category.slug
@@ -43,7 +57,7 @@ export async function generateMetadata(
   // Next.js 16では、paramsを非同期で取得する必要がある
   const { locale, category } = await params;
   const t = await getTranslations({ locale, namespace: 'blog' });
-  const categoryEntry = findCategoryBySlug(category);
+  const categoryEntry = resolveListedCategory(locale, category);
 
   if (!categoryEntry) {
     notFound();
@@ -77,7 +91,7 @@ type PageProps = {
 const Page = async ({ params }: PageProps) => {
   // Next.js 16では、paramsを非同期で取得する必要がある
   const { locale, category } = await params;
-  const categoryEntry = findCategoryBySlug(category);
+  const categoryEntry = resolveListedCategory(locale, category);
 
   if (!categoryEntry) {
     notFound();
