@@ -374,5 +374,13 @@
   "content/blogs/hikkoshi-best-buy/images/thumbnail.png": {
     "hash": "734be537b6a7daf4eb5b98ef08c578096702d9f5767322dda7c4e52ecaad1215",
     "size": 16949
+  },
+  "content/blogs/ka-hikkoshi-center-review/images/estimate-breakdown.png": {
+    "hash": "bcf4e9e0efe4b92f5cdd23496320a99ab4783a93e1fb29a29f24d369c8288d61",
+    "size": 15807
+  },
+  "content/blogs/ka-hikkoshi-center-review/images/thumbnail.png": {
+    "hash": "c667d26b8946ebdc679fb087b2323109a6c7db21b82925c0d67eabacab10b37a",
+    "size": 16379
   }
 }
