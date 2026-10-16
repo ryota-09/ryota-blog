@@ -1,5 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
+import { assertAdminAuthorized } from "@/lib/admin-guard";
 import { getAllBlogListByLocale } from "@/lib/content";
 import {
   getAiAccessDailyTrend,
@@ -45,6 +46,8 @@ type AiAccessPageProps = {
 };
 
 const Page = async ({ params }: AiAccessPageProps) => {
+  // layoutはクライアント遷移で再実行されない場合があるため、ページ単体でも認可を検証する
+  await assertAdminAuthorized();
   const { locale } = await params;
   const isEn = locale === "en";
   const { env } = await getCloudflareContext({ async: true });
