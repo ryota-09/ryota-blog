@@ -15,6 +15,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { isRoutingLocale, routing } from './i18n/routing';
 import { LOCALE_COOKIE_NAME } from './types/locale'
 import { CATEGORIES } from './static/categories'
+import { isAdminPath, verifyBasicAuth } from './lib/admin-auth'
 import { classifyAiAccess } from './lib/ai-access/classify'
 import { resolveArticleCanonicalPath } from './lib/article-canonical-path'
 import { recordAiAccessHit } from './lib/ai-access/repository'
@@ -40,17 +41,15 @@ const NON_BLOG_ID_SEGMENTS = new Set<string>([...CATEGORY_SLUGS, 'zenn', 'page']
 const ARTICLE_PATH_PATTERN = /^\/([^/]+)\/blogs\/([^/]+)\/([^/]+)$/
 const KNOWN_CATEGORY_IDS = new Set<string>(CATEGORY_SLUGS)
 
-// 管理者ページのcanonical URL: /{locale}/admin(/...)
-const ADMIN_PATH_PATTERN = /^\/[^/]+\/admin(\/.*)?$/
-
 // Create the intl middleware
 const intlMiddleware = createMiddleware(routing);
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const pathname = request.nextUrl.pathname;
 
-  // 管理者ページはBasic認証で保護する
-  if (ADMIN_PATH_PATTERN.test(pathname)) {
+  // 管理者ページはBasic認証で保護する。%エンコードされたパス(/ja/%61dmin 等)でも迂回できないよう
+  // デコード後のパスで判定する。さらにページ側でも認可を検証する(二重防御: lib/admin-guard.ts)
+  if (isAdminPath(pathname)) {
     const unauthorized = await checkAdminBasicAuth(request)
     if (unauthorized) return unauthorized
   }
@@ -165,15 +164,8 @@ async function checkAdminBasicAuth(request: NextRequest): Promise<NextResponse |
   // 認証情報が未設定の環境（シークレット未設定のデプロイ）ではフェイルクローズし、常に認証を要求する
   if (!expectedUser || !expectedPassword) return unauthorizedResponse
 
-  const authHeader = request.headers.get('authorization')
-  if (authHeader?.startsWith('Basic ')) {
-    const decoded = atob(authHeader.slice('Basic '.length))
-    const separatorIndex = decoded.indexOf(':')
-    const user = decoded.slice(0, separatorIndex)
-    const password = decoded.slice(separatorIndex + 1)
-    if (user === expectedUser && password === expectedPassword) {
-      return null
-    }
+  if (verifyBasicAuth(request.headers.get('authorization'), expectedUser, expectedPassword)) {
+    return null
   }
 
   return unauthorizedResponse
