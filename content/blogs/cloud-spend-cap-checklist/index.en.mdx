@@ -1,0 +1,405 @@
+---
+title: "Avoiding a Surprise Cloud Bill on Side Projects: I Reviewed Spend Limits on 7 Services and Found an AWS Key in My Public JS"
+description: "A record of reviewing spend limits and budget alerts on AWS, Cloudflare, Anthropic, OpenAI, GitHub, Vercel, and Supabase, aiming for about $33 (5,000 yen) a month each. Covers which services actually stop at the limit versus only notify you, how much a Cloudflare attack would cost, and cleaning up a key leaked through the NEXT_PUBLIC_ trap."
+publishedAt: "2026-11-03T09:37:48.675Z"
+updatedAt: "2026-11-03T09:37:48.675Z"
+categories:
+  - aws
+related:
+  - microcms-to-mdx-migration
+  - nextjs-lcp-improvement
+  - amplify-custom-ssl-acm-import
+draft: false
+---
+
+Hi! I'm [@Ryo54388667](https://x.com/Ryo54388667)! ☺️
+
+I work as an engineer in Tokyo, and on the side I build this blog and a few small tools.
+
+Today I'll write about **how I reviewed the spend limits on the cloud services and APIs I use for side projects**!
+
+The other day I came across a story along the lines of "so much bot traffic hit my personal site that the bill nearly bankrupted me."
+
+A textbook surprise cloud bill. Reading it sent a chill down my spine...
+
+This blog runs on Cloudflare Workers on a usage-based plan, and my household-budget tool calls the Anthropic API. So I wondered, "Wait, did I ever set any limits?" I checked, and for the most part, I hadn't 😇
+
+In a bit of a panic, I went through seven services one by one (AWS / Cloudflare / Anthropic / OpenAI / GitHub / Vercel / Supabase) and reset everything with a target of at most 5,000 yen a month per service (about $33, at 150 yen to the dollar).
+
+This was only supposed to be a story about money, but halfway through I found something much scarier than a bill. I'll cover that too.
+
+If you've signed up for a bunch of services for side projects and never touched the limits, I think this will be useful.
+
+## The Bottom Line
+
+Here's where things ended up.
+
+| Service | What I did | Stops when the limit is exceeded? |
+|---|---|---|
+| AWS | Created a new $33/month budget alert. Deleted every unused resource | ❌ No (notification only) |
+| Cloudflare | Added a $23 usage-based budget alert, a WAF rate limiting rule, and a Workers usage alert | ❌ No (notification only). Attacks get blocked up front by rate limiting |
+| Anthropic API | Lowered the monthly spend limit from $1,000 to $33. Email notification at $26 | ✅ Yes |
+| OpenAI API | Org limit of $10 and auto recharge OFF were already in place, so no change | ✅ Yes |
+| GitHub | "$0 budget + stop at the limit" was already in place, so no change | ✅ Yes |
+| Vercel | Hobby plan with no card registered, so no change | Not billed |
+| Supabase | Free plan, so no change | Not billed |
+
+Laying it all out, this was the clearest thing I learned.
+
+**Some services have a "hard cap" that stops the service when you hit the limit, and some just send you an email.**
+
+Anthropic and OpenAI return an error and stop when you reach the limit. AWS and Cloudflare, on the other hand, only send an email even after you set a budget alert. The bill keeps running. So the two "notification only" services need some other form of protection.
+
+Outside these seven, the Gemini API lets you set a per-project cap in AI Studio (with about a 10-minute delay before it kicks in), while Google Cloud has no stopping feature, so you build your own mechanism that detaches the billing account (as far as I could find in October 2026).
+
+Also, on free plans most services just stop when you go over, without charging you, so those are safe. The scary state is having a card registered on a paid plan with no limit set.
+
+## Scarier Than the Bill 🔍
+
+This happened right after I started going through AWS.
+
+I was looking at an Amplify sample app I'd built in 2024 (Next.js + Bedrock), and found an IAM user's access key sitting right there in the public JS bundle.
+
+"Wait, why is there a key in here??"
+
+The cause was obvious. I had prefixed the environment variable names with `NEXT_PUBLIC_`.
+
+In Next.js, environment variables starting with `NEXT_PUBLIC_` get their values embedded into the browser JS at build time. In other words, anyone who opened the site could read the key from DevTools.
+
+Simplified, the code from back then looked something like this.
+
+```typescript
+// ❌ Values with NEXT_PUBLIC_ are embedded as strings into the browser JS at build time
+const client = new BedrockRuntimeClient({
+  region: "us-east-1",
+  credentials: {
+    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY!,
+  },
+});
+```
+
+The right approach is to move the Bedrock calls to the server side, such as a Route Handler, and never put `NEXT_PUBLIC_` on the key (or better, pass credentials via an IAM role). Two years later, I paid the price for building it sloppily "because it's just a sample"...
+
+On top of that, the key had permission to invoke Bedrock (Claude 3 Opus / Sonnet) plus `AdministratorAccess-Amplify`. A key that could call Claude 3 Opus as much as it liked would have been bad enough, but when I looked into it later, I went pale.
+
+`AdministratorAccess-Amplify` includes IAM actions, and the AWS documentation says it should be treated as being as powerful as AdministratorAccess, because it lets you create other users and roles with any permissions you like. In other words, whoever picked up this key could effectively have taken over the account.
+
+Honestly, this was the moment my heart skipped a beat.
+
+Before anything else, I deactivated the key.
+
+```bash title="terminal"
+# Deactivate the access key (it's not deleted, so you can restore it with --status Active)
+aws iam update-access-key \
+  --user-name <iam-user-name> \
+  --access-key-id <access-key-id> \
+  --status Inactive
+```
+
+I deactivated it instead of deleting it right away so I could restore it if something turned out to depend on it.
+
+After deactivating, I actually tried to authenticate with the key from the public JS and confirmed it was rejected.
+
+```bash title="terminal"
+AWS_ACCESS_KEY_ID=<key-from-public-js> \
+AWS_SECRET_ACCESS_KEY=<secret-from-public-js> \
+aws sts get-caller-identity
+```
+
+```plaintext
+An error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The security token included in the request is invalid.
+```
+
+If you get `InvalidClientTokenId`, the key is disabled.
+
+I then checked CloudTrail for suspicious activity and found nothing unauthorized in what I reviewed. The bill had also stayed around $0.5 a month the whole time, with no suspicious charges. I think I just got lucky 😅
+
+Note that CloudTrail event history only keeps 90 days. If you notice a leaked key, I recommend checking as soon as you can.
+
+Finally, I deleted the Amplify app itself and the IAM user to finish the cleanup.
+
+What this really drove home for me is that **a budget alert only tells you after the money is spent. It can't prevent the key from being abused in the first place**.
+
+Flip that around, and on services that stop at the limit, like Anthropic and OpenAI, a leaked key can only do damage up to that limit. The less a service stops on its own, as with AWS, the more key handling and tight permissions matter.
+
+If you're worried about your own Next.js app, start by checking whether any `NEXT_PUBLIC_` variable has a secret-looking name.
+
+```bash title="terminal"
+grep -rnE "NEXT_PUBLIC_[A-Z0-9_]*(KEY|SECRET|TOKEN|PASSWORD)" .env* src/
+```
+
+Values that are meant to be public, like Stripe's publishable key, will show up too, so go through the hits one by one.
+
+It's also worth checking the build output. AWS long-term access keys start with `AKIA`, so something like this:
+
+```bash title="terminal"
+grep -r "AKIA" .next/static/
+```
+
+That said, if you set environment variables on the hosting side (for example, in the Amplify console), your local build won't contain the values. The surest check is to search the JS actually served in production for "AKIA" using your browser's DevTools (Search in the Sources tab).
+
+## Services That Stop at the Limit
+
+Okay, back to the billing side.
+
+First, the services that stop once you set a limit. For these three, once the setting is in place, no more money goes out.
+
+### Anthropic API
+
+The organization for my household-budget tool is prepaid (you top up a balance), and auto-reload was OFF.
+
+But I had never touched the monthly spend limit. It was still at my usage tier's cap ($1,000).
+
+Here's what I set.
+
+- Location: Console → Settings → Billing → Spend limits
+- Monthly spend limit: $1,000 → $33
+- Email notification at $26 (about 80%)
+
+When you hit a limit you set yourself, the API returns HTTP 400 `invalid_request_error` ("You have reached your specified API usage limits") and stops. If you hit the tier cap instead, it returns HTTP 429 and you can't use it until the 1st of the next month.
+
+If you split usage into separate Workspaces, you can also set limits per Workspace (note that you can't set one on the Default Workspace). If you issue keys per Workspace for each tool, one runaway tool won't affect the others, which is safer.
+
+While I'm at it, a small tip for Claude Code users.
+
+The token issued by `claude setup-token` (`CLAUDE_CODE_OAUTH_TOKEN`) runs on your subscription, but `ANTHROPIC_API_KEY` is pay-as-you-go. And when both are present, `ANTHROPIC_API_KEY` takes precedence.
+
+If you run Claude Code in something like GitHub Actions and accidentally set both, you might think you're on your subscription while actually being billed per use... It's worth checking once.
+
+### OpenAI API
+
+When I checked OpenAI, it was already configured. Nice work, past me.
+
+- Organization limit: $10 (notifications at 50% and 100%)
+- Auto recharge: OFF
+- Prepaid with a $5 balance
+
+OpenAI lets you set hard limits per organization and per project, and requests over the limit return 429 (`organization_spend_limit_exceeded` / `project_spend_limit_exceeded`). Enforcement isn't instantaneous, though, so actual spend can go slightly over.
+
+The thing to watch here is auto recharge. According to OpenAI's help center, it's switched ON by default on the screen where you first add credit. If you click through without thinking, you'll keep using it with auto recharge ON.
+
+You can set a "monthly limit" on auto recharge too, but that caps the amount **purchased**, not the amount used. If you leave auto recharge ON, a looping bug drains the balance → it gets topped up automatically → it drains again, all the way up to that limit. With prepaid and auto recharge OFF, it stops when the balance runs out.
+
+Also, my local `.env` still had four old OpenAI keys, so I revoked all of them. An unused key is a risk just by existing.
+
+### GitHub
+
+GitHub was already configured too.
+
+Actions, Codespaces, Packages, Git LFS, and Copilot AI Credits all had a "$0 budget + stop usage when the limit is reached." It lives under Budgets and alerts at github.com/settings/billing.
+
+For a moment I thought, "If I'm standardizing on 5,000 yen, maybe I should raise this to 5,000 yen too," but I didn't. Raising the limit only creates room to be billed. If the free allowance is enough, stopping at $0 is the strongest setting.
+
+Note that "Stop usage" only applies to metered products like Actions. For license-based products like Copilot seats, a budget only sends notifications.
+
+Let me check the last two as well. Vercel is on the Hobby plan with no card registered, and Supabase is on the Free plan, so neither can charge me.
+
+If you're on a paid plan, I recommend checking these settings.
+
+| Service | Setting on paid plans |
+|---|---|
+| Vercel Pro | Set an amount in Settings → Billing → Spend Management and turn on Pause Production Deployments. Production returns 503 when you hit the limit (with a delay of a few minutes). AI Gateway and v0 usage and storage charges are not stopped |
+| Supabase Pro | Check that Spend Cap is ON. Some items, such as Compute, are not covered by the Spend Cap |
+
+While I was in there, I also found that nine projects on Vercel were still on Node.js 20 or earlier, with a warning that new builds would fail... That's a story for another day 😇
+
+## Services That Only Notify You
+
+From here on, it's the services that won't stop at the limit.
+
+### AWS
+
+When I checked, I had zero AWS Budgets, not a single budget alert. My actual bill is about $0.5 a month, so it had never caused any trouble.
+
+First, I created one budget with these settings.
+
+- Budget name: `monthly-cap-5000jpy`
+- Amount: $33/month
+- Email when actual spend reaches 50% / 80% / 100%
+- Email when the end-of-month forecast exceeds 100%
+
+With the forecast notification, you find out early when spending is running too fast partway through the month.
+
+If you create it with the CLI, it looks something like this.
+
+```bash title="terminal"
+aws budgets create-budget \
+  --account-id <aws-account-id> \
+  --budget '{"BudgetName":"monthly-cap-5000jpy","BudgetLimit":{"Amount":"33","Unit":"USD"},"TimeUnit":"MONTHLY","BudgetType":"COST"}' \
+  --notifications-with-subscribers '[
+    {"Notification":{"NotificationType":"ACTUAL","ComparisonOperator":"GREATER_THAN","Threshold":50},"Subscribers":[{"SubscriptionType":"EMAIL","Address":"<email-address>"}]},
+    {"Notification":{"NotificationType":"ACTUAL","ComparisonOperator":"GREATER_THAN","Threshold":80},"Subscribers":[{"SubscriptionType":"EMAIL","Address":"<email-address>"}]},
+    {"Notification":{"NotificationType":"ACTUAL","ComparisonOperator":"GREATER_THAN","Threshold":100},"Subscribers":[{"SubscriptionType":"EMAIL","Address":"<email-address>"}]},
+    {"Notification":{"NotificationType":"FORECASTED","ComparisonOperator":"GREATER_THAN","Threshold":100},"Subscribers":[{"SubscriptionType":"EMAIL","Address":"<email-address>"}]}
+  ]'
+```
+
+But this only notifies you. Going over the budget doesn't stop anything.
+
+It isn't instant, either. AWS Budgets data is updated up to three times a day (8–12 hours after the previous update), so it can take close to half a day to notice that something has run away.
+
+"Then why not stop things automatically when the budget is exceeded?" I thought, and looked into Budgets Actions as well.
+
+It turns out Budgets Actions can only "apply an IAM policy or SCP to block operations" or "stop specific EC2 / RDS instances." It can't stop charges like CloudFront data transfer or Amplify SSR.
+
+If you really want automatic shutdown, it seems you'd have to build something yourself, like "budget exceeded → SNS → Lambda disables CloudFront and stops Amplify." That's a bit much for a side project...
+
+So I changed my approach.
+
+**Rather than building a way to stop resources, the surest fix is to delete the ones you aren't using.** A resource that doesn't exist can't be billed.
+
+Once I took inventory, things just kept turning up.
+
+- CloudFront distributions: 9
+- Amplify apps: 7
+- App Runner (paused; billing starts again if resumed)
+- ECR repositories
+- RDS snapshots
+
+All of them were left over from experiments and samples. I deleted everything, and the AWS account is much lighter now.
+
+For what it's worth, in September 2026 AWS announced "spend limits," which let you set a monthly cap per project and pause it when the cap is reached. But it's still rolling out to a limited set of customers, so I didn't use it this time. I'd like to try it once it's generally available.
+
+One more thing: querying Cost Explorer through the API costs $0.01 per request. If you're hammering it from a script while investigating, it's worth keeping in mind.
+
+### Cloudflare
+
+Last is Cloudflare. This blog runs on Cloudflare Workers, so this was actually the one I was most worried about (I wrote about the move in [How I Moved My Next.js Blog Off the CMS](/en/blogs/next_js/microcms-to-mdx-migration)).
+
+I'm on paid plans for Workers Paid ($5/month), R2, and Images. The domain's zone itself is on the Free plan.
+
+And Cloudflare has no feature that stops at a limit. Budget alerts are notification only.
+
+You can create a budget alert from Manage Account → Billing → Billable Usage → Create budget alert.
+
+When I looked, there was already a $10 alert I didn't remember creating. I added a $23 alert for usage-based charges on top of it.
+
+Why $23? Budget alerts only cover usage-based charges, not fixed monthly fees like Workers Paid. Fixed monthly fees like Workers Paid come to roughly $10, so $10 + $23 works out to roughly 5,000 yen.
+
+Usage is aggregated daily, though, so the alert doesn't arrive in real time. On top of that, each alert sends only one email per billing period.
+
+I considered two ways to make it actually stop.
+
+The first was going back to the free plan. On a free plan, I can't be charged.
+
+But the Workers Free plan allows only 10 ms of CPU time per request. This blog averages about 42 ms per request, so most pages would error out. Rejected.
+
+The second was building my own "kill switch" that receives the budget alert via webhook and removes the Worker's custom domain.
+
+But since the alert itself is aggregated daily, it could take up to a day to stop. If the bill burns during that day, it's pointless...
+
+So instead of "stopping," I decided to go with "blocking before requests reach the Worker."
+
+### Cloudflare: Cost Estimate and Countermeasures
+
+Before deciding on countermeasures, I calculated how many requests it would take to go over 5,000 yen in the first place.
+
+| Item | Details |
+|---|---|
+| Included in Workers Paid | 10 million requests and 30 million CPU ms per month |
+| Overage pricing | $0.30 per additional million requests, $0.02 per additional million CPU ms |
+| This blog's CPU time | About 42 ms per request on average (about $0.84 in CPU time alone per million requests) |
+| Current traffic | About 137,000 requests per month |
+
+By this math, usage-based charges exceed $23 at around 23 million requests in a month. Add the small charges like cache reads that happen on every page view, and it comes a bit earlier, at around 18 million.
+
+Roughly speaking, that's 7 to 9 requests per second, nonstop, for an entire month, or 130 to 170 times my current traffic.
+
+On the flip side, some things don't get billed at all.
+
+- Requests to static assets (JS, CSS, etc.) are free and unlimited
+- Only requests that reach a Worker are billed, so requests blocked in front of it aren't charged
+- Image transformations are limited to a fixed set of variants in the config, so the theoretical maximum is about 2,800 (99 images × 14 sizes × 2 formats), which fits within the free allowance of 5,000 per month
+- Large-scale DDoS attacks are stopped in front of the Worker by Cloudflare's automatic DDoS protection (free)
+
+Looking at it this way, the biggest risk turned out to be a medium-scale flood of traffic that doesn't trip the automatic DDoS protection and keeps going for a long time. I suspect the bot story from the beginning was this pattern too.
+
+So I created one WAF rate limiting rule.
+
+- Rule name: "Block high-volume access per IP"
+- Condition: block for a while when the same IP sends more than a set number of requests in a short window
+- Excluded: static files (`/_next/static/`) and verified bots like Googlebot (blocking them would hurt SEO)
+
+At first I was thinking of a stricter number. But opening a single page fires off dozens of requests for JS, images, RSC, and so on, so normal readers could get caught. So I loosened it to a count that normal reading will basically never hit.
+
+I'll keep the exact number to myself, since it would only give attackers a hint 🙏
+
+Rate limiting rules on the Free plan have these constraints.
+
+| Item | Free plan constraint |
+|---|---|
+| Number of rules | 1 |
+| Counting by | IP address only |
+| Counting period | Fixed at 10 seconds |
+| Block duration | Fixed at 10 seconds |
+| Fields usable in conditions | Path and "is verified bot" only |
+
+It can't do much, but it's enough to protect a personal blog. The old "Rate Limiting" product was billed by the number of requests passing through, but today's rate limiting rules are a WAF feature included in the plan, and even the Free plan gets one rule. Blocked requests never reach the Worker, so it actually saves on Workers costs.
+
+This puts a ceiling on how much a single IP can push through.
+
+Then, while writing this, I realized: if a single IP kept hammering at just under that ceiling for an entire month, the math says it would reach the 5,000 yen line I just calculated... 😅
+
+So I added one more safety net: a usage alert (Usage-based billing notification) that emails me when Workers requests climb far above normal.
+
+I set the threshold well above my normal traffic (about 140,000 requests a month) and well below the free allowance of 10 million requests. This email should basically never arrive normally. Even if a single IP kept hammering right at the ceiling, the math says I'd notice long before the bill grew.
+
+If the alert ever does arrive, I plan to turn on "Under Attack Mode" from the domain's Overview in the dashboard. It puts every visitor through a browser check, and I'll turn it back off once things calm down.
+
+By the way, I didn't adopt Bot Fight Mode. This blog has a page that analyzes AI crawler traffic, and stopping crawlers too could break that measurement.
+
+To sum up, here's what these settings can and can't protect against.
+
+- Can prevent: heavy traffic from a small number of IPs, and large-scale DDoS
+- Can't fully prevent: attacks spread across a large number of IPs. But going over 5,000 yen takes roughly 18 to 23 million requests a month, and the usage alert would catch it well before that
+
+There's one regret, too. I set all of this directly in the dashboard, so none of it is managed in Terraform. I'd like to codify it someday...
+
+## Wrapping Up
+
+Here's a checklist of what I verified in this review.
+
+- Are any secrets in environment variables exposed to the browser, such as `NEXT_PUBLIC_`?
+- Have you created at least one AWS Budgets budget?
+- Have you deleted unused AWS resources (CloudFront, Amplify, App Runner, etc.)?
+- Have you added Cloudflare budget and usage alerts, plus a WAF rate limiting rule?
+- Are your Anthropic / OpenAI monthly limits still sitting at the tier cap?
+- Have you turned off OpenAI auto recharge?
+- Have you set "Stop usage" on your GitHub budgets?
+- Have you revoked API keys you no longer use?
+- Do your keys carry more permissions than they need (such as AdministratorAccess-style policies)?
+
+Honestly, there's nothing special about the 5,000 yen figure. What matters is setting a limit at all, and knowing whether each service stops at that limit or just sends you a notification.
+
+And above all, what made the biggest difference this time wasn't the billing settings. It was finding the leaked key and shutting it off. While you're reviewing your limits, please take another look at those old sample apps too...
+
+If you know a better way, please let me know~
+
+Thank you for reading to the end!
+
+I tweet casually, so please feel free to follow me! 🥺
+
+## References
+
+- [Budget alerts (Cloudflare Docs)](https://developers.cloudflare.com/billing/manage/budget-alerts/)
+- [Rate limiting rules (Cloudflare Docs)](https://developers.cloudflare.com/waf/rate-limiting-rules/)
+- [Workers Pricing (Cloudflare Docs)](https://developers.cloudflare.com/workers/platform/pricing/)
+- [Workers Limits (Cloudflare Docs)](https://developers.cloudflare.com/workers/platform/limits/)
+- [Configuring a budget action (AWS Docs)](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-controls.html)
+- [AWS Budgets pricing](https://aws.amazon.com/aws-cost-management/aws-budgets/pricing/)
+- [AdministratorAccess-Amplify (AWS Managed Policy Reference)](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AdministratorAccess-Amplify.html)
+- [Create a spend limit in AWS Settings (AWS Docs)](https://docs.aws.amazon.com/accounts/latest/reference/create-spend-limit.html)
+- [Rate limits (Claude Docs)](https://platform.claude.com/docs/en/api/rate-limits)
+- [Authentication (Claude Code Docs)](https://code.claude.com/docs/en/authentication)
+- [Spend limits (OpenAI Docs)](https://developers.openai.com/api/docs/guides/spend-limits)
+- [Setting up and managing prepaid API billing (OpenAI Help Center)](https://help.openai.com/en/articles/8264644-setting-up-and-managing-prepaid-api-billing)
+- [Budgets and alerts (GitHub Docs)](https://docs.github.com/en/billing/concepts/budgets-and-alerts)
+- [Spend Management (Vercel Docs)](https://vercel.com/docs/spend-management)
+- [Cost control (Supabase Docs)](https://supabase.com/docs/guides/platform/cost-control)
+- [Billing (Google AI Studio Docs)](https://aistudio.google.com/docs/billing)
+- [Disable billing usage with notifications (Google Cloud Docs)](https://docs.cloud.google.com/billing/docs/how-to/disable-billing-with-notifications)
+
+If this article helped you, I'd be moved to tears if you'd send a tip (an Amazon gift card) from my wish list 🥺
+
+<LinkCard url="https://www.amazon.jp/hz/wishlist/ls/2FEMYG87ZXIME?ref_=wl_share" />

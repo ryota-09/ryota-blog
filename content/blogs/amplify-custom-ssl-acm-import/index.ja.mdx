@@ -2,7 +2,7 @@
 title: AWS Amplify Hostingに自前のSSL証明書を持ち込む完全ガイド（CSR作成からACMインポート・Terraform適用・動作確認まで）
 description: AWS Amplify Hostingのカスタムドメインに、CA(認証局)から発行された独自のSSL証明書をACM経由で適用する手順を、CSR作成・チェーン構築・整合性検証・Terraform設定・動作確認・有効期限監視まで、丁寧に解説します。
 publishedAt: "2026-05-06T08:29:15.417Z"
-updatedAt: "2026-05-06T08:29:15.417Z"
+updatedAt: "2026-11-03T09:37:48.675Z"
 categories:
   - aws
   - terraform
@@ -158,6 +158,8 @@ terraform version
 - `acm:ListCertificates`
 - `amplify:UpdateDomainAssociation` / `amplify:GetDomainAssociation`
 - `cloudwatch:PutMetricAlarm` (期限監視を作るなら)
+
+ちなみに、このときのアクセスキーを `NEXT_PUBLIC_` 付きの環境変数に入れるのは絶対にやめましょう。ブラウザ向けのJSにそのまま埋め込まれます。僕は昔作ったAmplifyのサンプルアプリでこれをやらかしていて、公開JSにキーが入っていました。。見つけた経緯と後始末は、[個人開発の「クラウド破産」対策で料金上限を見直した記事](/ja/blogs/aws/cloud-spend-cap-checklist)にまとめています。
 
 ### Terraformのプロバイダ要件
 
