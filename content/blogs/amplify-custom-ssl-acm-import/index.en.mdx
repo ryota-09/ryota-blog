@@ -2,7 +2,7 @@
 title: A Complete Guide to Bringing Your Own SSL Certificate to AWS Amplify Hosting (CSR, ACM Import, Terraform, and Verification)
 description: A step-by-step guide to applying a custom SSL/TLS certificate (issued by a CA of your choice) to an AWS Amplify Hosting custom domain. Covers CSR creation, chain construction, integrity verification, Terraform configuration, post-deployment verification, and expiry monitoring — written so junior engineers can follow along.
 publishedAt: "2026-05-06T08:35:36.186Z"
-updatedAt: "2026-05-06T08:35:36.186Z"
+updatedAt: "2026-11-03T09:37:48.675Z"
 categories:
   - aws
   - terraform
@@ -156,6 +156,8 @@ At minimum, log in with a user/role that can call:
 - `acm:ListCertificates`
 - `amplify:UpdateDomainAssociation` / `amplify:GetDomainAssociation`
 - `cloudwatch:PutMetricAlarm` (if you're adding expiry monitoring)
+
+One warning: never put these access keys in an environment variable prefixed with `NEXT_PUBLIC_`. Its value gets embedded straight into the browser JS. I made exactly this mistake in an old Amplify sample app, and the key ended up in the public JS... I wrote up how I found it and cleaned it up in [my post on avoiding a surprise cloud bill by reviewing spend limits](/en/blogs/aws/cloud-spend-cap-checklist).
 
 ### Terraform provider requirement
 

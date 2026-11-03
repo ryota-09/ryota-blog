@@ -1,0 +1,405 @@
+---
+title: "個人開発の「クラウド破産」対策。7サービスの料金上限を見直したら、公開JSにAWSキーが埋まっていた話"
+description: "AWS・Cloudflare・Anthropic・OpenAIなど7サービスの料金上限と予算アラートを、月5,000円を目安に見直した記録です。上限で止まるサービスと通知だけのサービスの違い、Cloudflareが攻撃されたときの課金試算、NEXT_PUBLIC_で漏れていたAWSキーの後始末までまとめました。"
+publishedAt: "2026-11-03T09:37:48.675Z"
+updatedAt: "2026-11-03T09:37:48.675Z"
+categories:
+  - aws
+related:
+  - microcms-to-mdx-migration
+  - nextjs-lcp-improvement
+  - amplify-custom-ssl-acm-import
+draft: false
+---
+
+こんにちは！[@Ryo54388667](https://x.com/Ryo54388667)です！☺️
+
+都内でエンジニアとして働きつつ、このブログや小さなツールをいくつか個人開発しています。
+
+今回は **個人開発で使っているクラウドやAPIの料金上限を見直した話** を書いていきます！
+
+先日、「botからのアクセスが多すぎて、個人サイトの請求で破産しかけた」という話を見かけました。
+
+いわゆる「クラウド破産」です。読んでいて背筋が冷えました。。
+
+このブログもCloudflare Workersの従量課金プランで動いていますし、家計簿ツールではAnthropicのAPIも叩いています。そこでふと「あれ、自分って上限を決めてたっけ？」と思って確認したら、ほとんど決めていませんでした😇
+
+慌てて、AWS / Cloudflare / Anthropic / OpenAI / GitHub / Vercel / Supabase の7サービスを順番に棚卸しして、どのサービスも月5,000円(約$33、1ドル=150円換算)までを目標に設定し直しました。
+
+本当は料金の話だけをするつもりだったのですが、途中で料金よりもっと怖いものが出てきました。それも含めて書いていきます。
+
+同じように「個人開発でいろいろなサービスに登録したまま、上限は放置している」という方の参考になると思います。
+
+## 結論
+
+先に最終的な状態を載せておきます。
+
+| サービス | やったこと | 上限を超えたら止まるか |
+|---|---|---|
+| AWS | 月$33の予算アラートを新規作成。使っていないリソースを全部削除 | ❌ 止まらない(通知のみ) |
+| Cloudflare | 従量課金分$23の予算アラート、WAFのレート制限ルール、Workersの使用量アラートを追加 | ❌ 止まらない(通知のみ)。攻撃はレート制限で手前で遮断 |
+| Anthropic API | 月間の支出上限を$1,000 → $33に。$26でメール通知 | ✅ 止まる |
+| OpenAI API | 組織上限$10・自動チャージOFFが既に入っていたので変更なし | ✅ 止まる |
+| GitHub | 「$0予算＋上限で停止」が既に入っていたので変更なし | ✅ 止まる |
+| Vercel | Hobbyプランでカード未登録なので変更なし | 課金されない |
+| Supabase | Freeプランなので変更なし | 課金されない |
+
+整理してみて、一番はっきりしたのはここでした。
+
+**上限に達したらサービスごと止めてくれる「ハードキャップ」があるサービスと、メールが来るだけのサービスがある。**
+
+AnthropicやOpenAIは上限に達するとAPIがエラーを返して止まってくれます。一方でAWSとCloudflareは、予算アラートを設定してもメールが来るだけで、請求は止まりません。なので「通知だけ」の2つは、別の手段で守る必要があります。
+
+今回の7つ以外も少し調べました(2026年10月時点)。Gemini APIはAI Studioでプロジェクトごとに上限を決められます(反映に10分ほどの遅れあり)。Google Cloudは止める機能がなく、請求先アカウントを外す仕組みを自作する方式でした。
+
+なお、無料プランなら多くのサービスは「上限を超えたら止まるだけで、課金はされない」ので安心です。怖いのは、カードを登録して有料プランにしているのに上限を決めていない状態ですね。
+
+## 料金より怖かったもの 🔍
+
+AWSの棚卸しを始めて、すぐのことでした。
+
+2024年に作ったAmplifyのサンプルアプリ(Next.js + Bedrock)を調べていたら、公開されているJSバンドルの中に、IAMユーザーのアクセスキーがそのまま入っていました。
+
+「え、なんでここにキーがあるん？？」
+
+原因はすぐに分かりました。環境変数の名前に `NEXT_PUBLIC_` を付けていたんです。
+
+Next.jsでは、`NEXT_PUBLIC_` で始まる環境変数はビルド時にブラウザ向けのJSへ値が埋め込まれます。つまり、サイトを開いた人なら誰でもDevToolsからキーを読めた状態でした。
+
+当時のコードを簡略化すると、こんなイメージです。
+
+```typescript
+// ❌ NEXT_PUBLIC_ を付けた値は、ビルド時にブラウザ向けのJSへ文字列として埋め込まれる
+const client = new BedrockRuntimeClient({
+  region: "us-east-1",
+  credentials: {
+    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY!,
+  },
+});
+```
+
+本来は、Bedrockの呼び出しをRoute Handlerなどのサーバー側に寄せて、キーには `NEXT_PUBLIC_` を付けない(そもそもIAMロールで渡す)のが正解です。サンプルだからと雑に作ったツケが2年越しに回ってきました。。
+
+しかもこのキーの権限は、Bedrock(Claude 3 Opus / Sonnet)の呼び出しと `AdministratorAccess-Amplify` でした。Claude 3 Opusを叩き放題、というだけでも十分まずいのですが、あとで調べて青ざめました。
+
+`AdministratorAccess-Amplify` はIAMの操作まで含むポリシーで、AWSのドキュメントには「AdministratorAccessと同じくらい強力なものとして扱うべき」と書かれています。IAMで好きな権限を持つ別のユーザーやロールを作れてしまうからです。つまりこのキーを拾った人は、実質的にアカウントを乗っ取れた可能性があります。
+
+正直、ここが一番ヒヤッとしました。
+
+何はともあれ、まずキーを無効化しました。
+
+```bash title="terminal"
+# アクセスキーを無効化(削除ではないので、--status Active で元に戻せる)
+aws iam update-access-key \
+  --user-name <IAMユーザー名> \
+  --access-key-id <アクセスキーID> \
+  --status Inactive
+```
+
+いきなり削除せずに無効化にしたのは、万が一どこかで使っていても戻せるようにするためです。
+
+無効化したあと、公開JSに入っていたキーで実際に認証を試して、ちゃんと拒否されることも確認しました。
+
+```bash title="terminal"
+AWS_ACCESS_KEY_ID=<公開JSにあったキー> \
+AWS_SECRET_ACCESS_KEY=<公開JSにあったシークレット> \
+aws sts get-caller-identity
+```
+
+```plaintext
+An error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The security token included in the request is invalid.
+```
+
+`InvalidClientTokenId` が返ってくれば無効化できています。
+
+そのあとCloudTrailで不審な操作がないかを確認しましたが、見た範囲では不正な操作は見つかりませんでした。請求もずっと月$0.5前後で、怪しい課金もありませんでした。運が良かっただけだと思っています😅
+
+ちなみに、CloudTrailのイベント履歴は90日分しか残りません。キーの漏えいに気づいたら、なるべく早く見に行くのがおすすめです。
+
+最後に、Amplifyアプリ本体とIAMユーザーも削除して後片付けは完了です。
+
+この件で痛感したのは、**予算アラートはあくまで「使ったあとに知らせてくれるもの」で、キーの悪用そのものは防げない** ということです。
+
+逆に言うと、AnthropicやOpenAIのように上限で止まるサービスなら、キーが漏れても被害は上限までで済みます。AWSのように止まらないサービスほど、キーの扱いと権限の絞り込みが大事になります。
+
+自分のNext.jsアプリで心配な方は、まず `NEXT_PUBLIC_` にシークレットっぽい名前が付いていないかを見てみてください。
+
+```bash title="terminal"
+grep -rnE "NEXT_PUBLIC_[A-Z0-9_]*(KEY|SECRET|TOKEN|PASSWORD)" .env* src/
+```
+
+Stripeの公開可能キーのように、もともと公開前提の値もヒットするので、1つずつ中身を確認します。
+
+ビルド成果物も見ておくと安心です。AWSの長期アクセスキーは `AKIA` で始まるので、こんな感じです。
+
+```bash title="terminal"
+grep -r "AKIA" .next/static/
+```
+
+ただ、Amplifyのコンソールなどホスティング側で環境変数を設定している場合、手元のビルドには値が入りません。本番で配信されているJSを、ブラウザのDevTools(SourcesタブのSearch)で「AKIA」と検索してみるのが確実です。
+
+## 上限で止まるサービス
+
+気を取り直して、料金の話に戻ります。
+
+まずは、上限を決めれば止まってくれるサービスから。この3つは設定さえ入れておけば、それ以上お金が出ていくことはありません。
+
+### Anthropic API
+
+家計簿ツール用の組織は、残高をチャージして使うプリペイド方式で、自動リロードもOFFでした。
+
+ただ、月間の支出上限は利用ティアの上限($1,000)のまま、何も触っていませんでした。
+
+設定はこんな感じです。
+
+- 場所: Console → Settings → Billing → Spend limits
+- 月間の支出上限: $1,000 → $33
+- $26(約80%)に達したらメール通知
+
+自分で決めた上限に達すると、APIはHTTP 400の `invalid_request_error`(「You have reached your specified API usage limits」)を返して止まります。ティアの上限に達した場合はHTTP 429が返り、翌月1日まで使えなくなります。
+
+用途ごとにWorkspaceを分けておくと、Workspace単位でも上限を決められます(Default Workspaceには設定できないので注意です)。ツールごとにWorkspaceを分けてキーを発行しておけば、1つのツールが暴走しても他に影響が出ないので安全ですね。
+
+ついでに、Claude Codeを使っている方向けの小ネタです。
+
+`claude setup-token` で発行するトークン(`CLAUDE_CODE_OAUTH_TOKEN`)はサブスクの枠で動きますが、`ANTHROPIC_API_KEY` は従量課金です。そして両方がある環境では、`ANTHROPIC_API_KEY` のほうが優先されます。
+
+GitHub ActionsなどでClaude Codeを動かしている場合、うっかり両方を設定していると、サブスクのつもりが従量課金で動いていた。。ということが起こり得ます。一度確認しておくと安心です。
+
+### OpenAI API
+
+OpenAIは、見に行ったら既に設定済みでした。過去の自分、えらい。
+
+- 組織の上限: $10(50%と100%で通知)
+- 自動チャージ(Auto recharge): OFF
+- 残高$5のプリペイド
+
+OpenAIは組織単位・プロジェクト単位でhard limitを設定でき、超えると429(`organization_spend_limit_exceeded` / `project_spend_limit_exceeded`)が返ります。ただし強制は即時ではないので、実績が少しだけ超えることはあるようです。
+
+ここで注意したいのが自動チャージです。OpenAIのヘルプによると、最初に残高をチャージする画面では、自動チャージが最初からONになっています。何も考えずに進めると、そのままONで使い続けることになります。
+
+自動チャージにも「月の上限」を設定できますが、これは **購入額** の上限であって、使用量の上限ではありません。自動チャージをONのままにしていると、ループのバグで残高が減る → 自動で買い足される → また減る、という流れが上限まで続きます。プリペイドで自動チャージOFFにしておけば、残高を使い切った時点で止まってくれます。
+
+あと、ローカルの `.env` に古いOpenAIのキーが4つも残っていたので、これも全部失効させました。使っていないキーは、持っているだけでリスクですね。
+
+### GitHub
+
+GitHubも既に設定済みでした。
+
+Actions・Codespaces・Packages・Git LFS・CopilotのAI Creditsに、「$0の予算＋上限に達したら停止(Stop usage)」が入っていました。場所は github.com/settings/billing の Budgets and alerts です。
+
+「5,000円に揃えるなら、ここも5,000円にしようかな」と一瞬思ったのですが、やめました。上限を上げると、そのぶん課金される余地が生まれるだけなんですよね。無料枠で足りているなら、$0で止めておくのが一番強いです。
+
+なお、「Stop usage」が効くのは、Actionsのような従量課金の製品だけです。Copilotのシートのようなライセンス型の製品は、予算を決めても通知が来るだけなので注意です。
+
+残りの2つも見ておきます。VercelはHobbyプランでカードも未登録、SupabaseはFreeプランなので、どちらも課金されることはありません。
+
+もし有料プランを使っているなら、次の設定を確認しておくのがおすすめです。
+
+| サービス | 有料プランでの設定 |
+|---|---|
+| Vercel Pro | Settings → Billing → Spend Management で金額を決めて、Pause Production Deployments をON。上限に達すると本番が503になる(数分の遅延あり)。AI Gatewayやv0の利用、ストレージの課金は止まらない |
+| Supabase Pro | Spend CapがONになっているか確認。ただしComputeなど、Spend Capの対象外の項目がある |
+
+そういえば、Vercelで9プロジェクトがNode.js 20以前を使っていて、新しいビルドが失敗するという警告が出ているのを見つけてしまいました。。これはまた別の話です😇
+
+## 通知だけのサービス
+
+ここからは、上限で止まってくれないサービスの話です。
+
+### AWS
+
+見に行ったら、AWS Budgetsの予算が0件でした。予算アラートが1つも設定されていない状態です。実際の請求は月$0.5ほどなので、これまでは何も困っていなかったんですよね。
+
+まず予算を1つ作りました。設定は次のとおりです。
+
+- 予算名: `monthly-cap-5000jpy`
+- 金額: 月$33
+- 実績が50% / 80% / 100%に達したらメール
+- 月末の予測が100%を超えたらメール
+
+「予測」の通知を入れておくと、月の途中でペースが速すぎるときに早めに気づけます。
+
+コマンドで作るなら、こんな感じです。
+
+```bash title="terminal"
+aws budgets create-budget \
+  --account-id <AWSアカウントID> \
+  --budget '{"BudgetName":"monthly-cap-5000jpy","BudgetLimit":{"Amount":"33","Unit":"USD"},"TimeUnit":"MONTHLY","BudgetType":"COST"}' \
+  --notifications-with-subscribers '[
+    {"Notification":{"NotificationType":"ACTUAL","ComparisonOperator":"GREATER_THAN","Threshold":50},"Subscribers":[{"SubscriptionType":"EMAIL","Address":"<メールアドレス>"}]},
+    {"Notification":{"NotificationType":"ACTUAL","ComparisonOperator":"GREATER_THAN","Threshold":80},"Subscribers":[{"SubscriptionType":"EMAIL","Address":"<メールアドレス>"}]},
+    {"Notification":{"NotificationType":"ACTUAL","ComparisonOperator":"GREATER_THAN","Threshold":100},"Subscribers":[{"SubscriptionType":"EMAIL","Address":"<メールアドレス>"}]},
+    {"Notification":{"NotificationType":"FORECASTED","ComparisonOperator":"GREATER_THAN","Threshold":100},"Subscribers":[{"SubscriptionType":"EMAIL","Address":"<メールアドレス>"}]}
+  ]'
+```
+
+ただ、これは通知だけです。予算を超えても、サービスは何も止まりません。
+
+しかも即時でもありません。AWS Budgetsの情報が更新されるのは1日最大3回(前回から8〜12時間おき)なので、何かが暴走してから気づくまでに半日近くかかることもあります。
+
+「じゃあ予算を超えたら自動で止めればいいのでは？」と思って、Budgets Actionsも調べました。
+
+ところが、Budgets Actionsでできるのは「IAMポリシーやSCPを適用して操作を禁止する」「指定したEC2 / RDSインスタンスを止める」だけでした。CloudFrontの転送量やAmplifyのSSRのような課金は止められません。
+
+本気で自動停止したいなら、「予算超過 → SNS → LambdaでCloudFrontを無効化・Amplifyを停止」のような仕組みを自作するしかなさそうです。個人開発でそこまでやるのは、さすがに重いですね。。
+
+そこで発想を変えました。
+
+**止める仕組みを作るより、使っていないリソースを消すのが一番確実です。** 存在しないリソースには課金されようがないので。
+
+棚卸ししてみると、出るわ出るわ。
+
+- CloudFrontのディストリビューション: 9本
+- Amplifyのアプリ: 7個
+- App Runner(一時停止中。再開すると課金が始まる)
+- ECRのリポジトリ
+- RDSのスナップショット
+
+検証やサンプルで作ったまま放置していたものばかりでした。全部削除して、AWSアカウントはだいぶ身軽になりました。
+
+ひとつ補足すると、AWSも2026年9月に、プロジェクト単位で月の上限を決めて、達したら一時停止してくれる「spend limit」を発表しています。ただ、まだ一部の顧客に順次提供している段階で、今回は使っていません。普通に使えるようになったら試してみたいです。
+
+あと、Cost ExplorerはAPIで照会すると1回$0.01かかります。調べものでスクリプトから叩きまくるときは、少しだけ気にしておくとよいと思います。
+
+### Cloudflare
+
+最後にCloudflareです。このブログはCloudflare Workersで動いているので、実は一番気になっていたのがここでした(移行の経緯は[Next.js個人ブログを脱CMSした話](/ja/blogs/next_js/microcms-to-mdx-migration)に書いています)。
+
+契約しているのは、Workers Paid($5/月)・R2・Imagesの有料プランです。ドメインのゾーン自体はFreeプランです。
+
+そして、Cloudflareには上限で止まる機能がありません。予算アラートも通知だけです。
+
+予算アラートは Manage Account → Billing → Billable Usage → Create budget alert から作れます。
+
+見に行ったら、自分で作った覚えのない$10のアラートが既に1件ありました。そこに、従量課金分$23のアラートを追加しました。
+
+なぜ$23かというと、予算アラートの対象は従量課金の部分だけで、Workers Paidのような月額固定の料金は含まれないからです。Workers Paidなどの月額固定がだいたい$10なので、$10 + $23 で約5,000円になるようにしました。
+
+ただ、使用量の集計は日次なので、リアルタイムには届きません。しかも、メールが来るのは1つのアラートにつき請求期間中1回だけです。
+
+ここで「止まる設定」にできないか、2つ考えました。
+
+1つ目は、無料プランに戻す案です。無料プランなら課金されようがありません。
+
+ただ、WorkersのFreeプランは1リクエストあたりのCPU時間が10msまでです。このブログの実績は平均約42ms / リクエストなので、大半のページがエラーになってしまいます。不採用です。
+
+2つ目は、予算アラートをWebhookで受けて、Workerのカスタムドメインを外す「停止スイッチ」を自作する案です。
+
+これも、アラート自体が日次の集計なので、止まるまで最大1日遅れます。その1日で燃えたら意味がないんですよね。。
+
+というわけで、「止める」のではなく「Workerに届く前に遮断する」方向で考えることにしました。
+
+### Cloudflareの課金試算と対策
+
+対策を考える前に、そもそも何リクエスト来たら5,000円を超えるのかを計算してみました。
+
+| 項目 | 内容 |
+|---|---|
+| Workers Paidに含まれる量 | 月1,000万リクエスト・CPU時間3,000万ms |
+| 超えた分の料金 | 100万リクエストごとに$0.30、CPU時間100万msごとに$0.02 |
+| このブログのCPU時間 | 平均約42ms / リクエスト(100万リクエストでCPU時間だけで約$0.84) |
+| 現在の実績 | 月約13.7万リクエスト |
+
+これで計算すると、従量課金が$23を超えるのは、月に合計約2,300万リクエストあたりでした。ページ表示のたびに発生するキャッシュ読み出しなどの細かい課金も上乗せすると、もう少し手前の1,800万前後になります。
+
+ざっくり、毎秒7〜9回のアクセスが1か月ずっと途切れずに続く規模です。今の実績の130〜170倍ですね。
+
+逆に、課金されないものもあります。
+
+- 静的ファイル(JS・CSSなど)へのリクエストは無料・回数無制限
+- Workerに届いたリクエストだけが課金対象なので、手前でブロックしたリクエストは課金されない
+- 画像変換は変換パターンを設定で固定しているので、理論上の最大は約2,800通り(画像99枚 × サイズ14種 × 形式2種)。無料枠の月5,000件に収まる
+- 大規模なDDoSは、Cloudflareの自動DDoS防御(無料)がWorkerの手前で止めてくれる
+
+こうして見ると、一番のリスクは「自動DDoS防御に引っかからない程度の中規模なアクセスが、長く続く」ケースだと分かりました。冒頭のbotの話も、たぶんこのパターンだと思います。
+
+そこで、WAFのレート制限ルールを1つ作りました。
+
+- ルール名: 「IPごとの大量アクセス遮断」
+- 条件: 同じIPから短時間に一定回数を超えるリクエストが来たら、しばらくブロック
+- 対象外: 静的ファイル(`/_next/static/`)と、Googlebotなどの認証済みボット(止めるとSEOに響くので)
+
+最初はもっと厳しい回数で考えていました。でも、1ページ開くだけでJS・画像・RSCなどで数十リクエスト飛ぶので、普通に読んでいる人を巻き込みかねません。なので、普通に読んでいるだけではまず届かない回数まで緩めました。
+
+具体的な回数は、攻撃する側のヒントになってしまうので伏せておきます🙏
+
+Freeプランのレート制限ルールには、次の制約があります。
+
+| 項目 | Freeプランの制約 |
+|---|---|
+| ルール数 | 1つ |
+| 数え方 | IPアドレス単位のみ |
+| 集計期間 | 10秒で固定 |
+| ブロック時間 | 10秒で固定 |
+| 条件に使える項目 | パスと「認証済みボットか」のみ |
+
+できることは少ないですが、個人ブログを守るには十分です。昔の「Rate Limiting」という製品は通過したリクエスト数に応じた課金でしたが、今のレート制限ルールはWAFの機能としてプランに含まれていて、Freeプランでも1ルール使えます。ブロックしたリクエストはWorkerに届かないので、むしろWorkersの節約になります。
+
+これで、1つのIPから流せる量には上限がかかります。
+
+と、ここまで書いていて気づいたのですが、1つのIPが上限ぎりぎりのペースで1か月ずっと叩き続けると、計算上はさっきの5,000円ラインに届いてしまうんですよね。。😅
+
+なので、もう1つ保険を入れました。Workersのリクエスト数が普段よりずっと多くなったらメールが来る、使用量アラート(Usage-based billing notification)です。
+
+メールが来る基準は、普段の量(月約14万リクエスト)よりずっと上で、リクエスト数の無料枠(1,000万)よりずっと下に置きました。普段このメールが届くことはまずありません。もし1つのIPが上限ぎりぎりで叩き続けたとしても、課金が膨らむずっと手前で気づける計算です。
+
+万一アラートが届いたら、ダッシュボードでドメインの「概要」から「Under Attackモード」をONにするつもりです。全訪問者にブラウザチェックがかかるので、落ち着いたらOFFに戻します。
+
+ちなみに、Bot Fight Modeは採用しませんでした。このブログにはAIクローラーのアクセスを解析するページがあるので、クローラーまで止めると計測が壊れるおそれがあるからです。
+
+整理すると、今回の設定で守れる範囲はこうなります。
+
+- 防げる: 少数のIPからの大量アクセス、大規模なDDoS
+- 防ぎきれない: 大量のIPに分散した攻撃。ただし5,000円を超えるには月1,800万〜2,300万リクエストほどが必要で、その前に使用量アラートで気づける
+
+反省点もあります。今回の設定はダッシュボードから直接入れたので、Terraformでは管理できていません。そのうちコード化したいです。。
+
+## 最後に
+
+今回の見直しで確認したことを、チェックリストにまとめておきます。
+
+- `NEXT_PUBLIC_` など、ブラウザに出る環境変数にシークレットを入れていないか
+- AWS Budgetsの予算を1件以上作ったか
+- 使っていないAWSリソース(CloudFront、Amplify、App Runnerなど)を消したか
+- Cloudflareの予算アラート・使用量アラートとWAFのレート制限ルールを入れたか
+- Anthropic / OpenAIの月間上限を、ティアの上限のままにしていないか
+- OpenAIの自動チャージをOFFにしたか
+- GitHubのBudgetに「Stop usage」を入れたか
+- 使っていないAPIキーを失効させたか
+- キーに必要以上の権限(AdministratorAccess系のポリシーなど)を付けていないか
+
+正直、5,000円という金額に深い意味はありません。大事なのは「上限を決めること」そのものと、そのサービスが上限で止まるのか、通知が来るだけなのかを知っておくことだと思います。
+
+そして何より、今回いちばん効いたのは料金の設定ではなく、漏れていたキーを見つけて止めたことでした。上限を見直すついでに、昔作ったサンプルアプリもぜひ見返してみてください。。
+
+より良い方法があれば教えてください〜
+
+最後まで読んでいただきありがとうございます！
+
+気ままにつぶやいているので、気軽にフォローをお願いします！🥺
+
+## 参考資料
+
+- [Budget alerts(Cloudflare Docs)](https://developers.cloudflare.com/billing/manage/budget-alerts/)
+- [Rate limiting rules(Cloudflare Docs)](https://developers.cloudflare.com/waf/rate-limiting-rules/)
+- [Workers Pricing(Cloudflare Docs)](https://developers.cloudflare.com/workers/platform/pricing/)
+- [Workers Limits(Cloudflare Docs)](https://developers.cloudflare.com/workers/platform/limits/)
+- [Configuring a budget action(AWS Docs)](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-controls.html)
+- [AWS Budgets の料金](https://aws.amazon.com/aws-cost-management/aws-budgets/pricing/)
+- [AdministratorAccess-Amplify(AWS Managed Policy Reference)](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AdministratorAccess-Amplify.html)
+- [Create a spend limit in AWS Settings(AWS Docs)](https://docs.aws.amazon.com/accounts/latest/reference/create-spend-limit.html)
+- [Rate limits(Claude Docs)](https://platform.claude.com/docs/en/api/rate-limits)
+- [Authentication(Claude Code Docs)](https://code.claude.com/docs/en/authentication)
+- [Spend limits(OpenAI Docs)](https://developers.openai.com/api/docs/guides/spend-limits)
+- [Setting up and managing prepaid API billing(OpenAI Help Center)](https://help.openai.com/en/articles/8264644-setting-up-and-managing-prepaid-api-billing)
+- [Budgets and alerts(GitHub Docs)](https://docs.github.com/en/billing/concepts/budgets-and-alerts)
+- [Spend Management(Vercel Docs)](https://vercel.com/docs/spend-management)
+- [Cost control(Supabase Docs)](https://supabase.com/docs/guides/platform/cost-control)
+- [Billing(Google AI Studio Docs)](https://aistudio.google.com/docs/billing)
+- [Disable billing usage with notifications(Google Cloud Docs)](https://docs.cloud.google.com/billing/docs/how-to/disable-billing-with-notifications)
+
+もしこの記事が役に立ったら、欲しいものリストから投げ銭(ギフト券)していただけると泣いて喜びます🥺
+
+<LinkCard url="https://www.amazon.jp/hz/wishlist/ls/2FEMYG87ZXIME?ref_=wl_share" />
