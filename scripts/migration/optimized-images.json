@@ -382,5 +382,9 @@
   "content/blogs/ka-hikkoshi-center-review/images/thumbnail.png": {
     "hash": "c667d26b8946ebdc679fb087b2323109a6c7db21b82925c0d67eabacab10b37a",
     "size": 16379
+  },
+  "content/blogs/cloud-spend-cap-checklist/images/cloud-spend-cap-thumbnail.png": {
+    "hash": "7cdce6b2e0e5a08138fda36d4377dfa7221f051fb309ce55be0c2646ef13f411",
+    "size": 62887
   }
 }
