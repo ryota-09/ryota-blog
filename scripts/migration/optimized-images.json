@@ -386,5 +386,29 @@
   "content/blogs/cloud-spend-cap-checklist/images/cloud-spend-cap-thumbnail.png": {
     "hash": "7cdce6b2e0e5a08138fda36d4377dfa7221f051fb309ce55be0c2646ef13f411",
     "size": 62887
+  },
+  "content/blogs/best-buy-2026/images/best-buy-2026-thumbnail.png": {
+    "hash": "ad5740f774319a466b699f87fd5b2ee12fcaf532edbcdd59c27094c0ad7bf951",
+    "size": 38014
+  },
+  "content/blogs/best-buy-2026/images/fargo-cable-cover.jpeg": {
+    "hash": "3d5deb9d6318081a22fec74552d336c5e26e24712df1b36ea8aef84092280b7f",
+    "size": 54084
+  },
+  "content/blogs/best-buy-2026/images/fargo-tapking-t4.jpeg": {
+    "hash": "9c07ad4f4ecee7ff405a99bdf24271479bfb41b420d4d9a1933f386cd07cf773",
+    "size": 174230
+  },
+  "content/blogs/best-buy-2026/images/ipad-mini-a20pro-vs-a17pro.jpeg": {
+    "hash": "5208de8654eda381db3fc233aa08bbab061f21c410a4a9b1f136e785ec3f3dd1",
+    "size": 58114
+  },
+  "content/blogs/best-buy-2026/images/legend-walker-suitcase.jpeg": {
+    "hash": "8dce3ef428a66dbefde79d149852c696e57317c5f65be454e0c692ec3a4f2216",
+    "size": 176698
+  },
+  "content/blogs/best-buy-2026/images/osmo-pocket-3.jpeg": {
+    "hash": "663cfd3ffe0668a72ff93436a4bc518e56fc9d5fd4b8db5fc48a37757725faad",
+    "size": 145433
   }
 }
