@@ -94,6 +94,14 @@ const nextConfig = {
         destination: '/ja/blogs/testing',
         permanent: true,
       },
+      // --- 記事のプライマリカテゴリ変更の互換リダイレクト: best-buy-2026 life_hack → zakki (2026-11-17) ---
+      // 公開翌日にプライマリカテゴリを zakki へ変更した(上半期版 best-buy-2026-first-half とそろえる)。
+      // 記事詳細ページはカテゴリ不一致を notFound() にするため、公開済み・GSC申請済みの旧URLを301で受ける。
+      {
+        source: '/:locale(ja|en)/blogs/life_hack/best-buy-2026',
+        destination: '/:locale/blogs/zakki/best-buy-2026',
+        permanent: true,
+      },
       // Redirect /blogs/page to /blogs
       {
         source: '/blogs/page',
