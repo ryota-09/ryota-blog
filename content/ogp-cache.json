@@ -62,6 +62,24 @@
     "hostname": "menta.work",
     "ok": true
   },
+  "https://ryotablog.jp/en/blogs/zakki/best-buy-2026": {
+    "url": "https://ryotablog.jp/en/blogs/zakki/best-buy-2026",
+    "title": "2026 Best Buys of the Year: My Top 10, From the Osmo Pocket 3 and iPad mini to a Suitcase Built for Travel Abroad",
+    "description": "Looking back on a full year of purchases, I ranked my 2026 best buys. From a used Osmo Pocket 3 and the thinner iPad mini (A20 Pro) to a suitcase that made it through over two weeks in Europe and a 1,400-yen bag of frozen tonjiru vegetables — an honest top 10.",
+    "image": "https://ryotablog.jp/en/blogs/zakki/best-buy-2026/opengraph-image?67f8f8e5b2cae8ad",
+    "favicon": "https://ryotablog.jp/favicon.ico?favicon.35okjm4nh9-bu.ico",
+    "hostname": "ryotablog.jp",
+    "ok": true
+  },
+  "https://ryotablog.jp/ja/blogs/zakki/best-buy-2026": {
+    "url": "https://ryotablog.jp/ja/blogs/zakki/best-buy-2026",
+    "title": "2026年の年間ベストバイ10選｜Osmo Pocket 3、iPad mini、海外旅行を支えたスーツケースまで",
+    "description": "2026年の1年分の買い物を振り返って、年間ランキングにしました。中古で買ったOsmo Pocket 3、薄くなったiPad mini(A20 Pro)、2週間以上のヨーロッパ旅行を走りきったスーツケースから、1,400円の冷凍豚汁の具まで正直に紹介します。",
+    "image": "https://ryotablog.jp/ja/blogs/zakki/best-buy-2026/opengraph-image?67f8f8e5b2cae8ad",
+    "favicon": "https://ryotablog.jp/favicon.ico?favicon.35okjm4nh9-bu.ico",
+    "hostname": "ryotablog.jp",
+    "ok": true
+  },
   "https://techblog.yahoo.co.jp/entry/2022090530337093/": {
     "url": "https://techblog.yahoo.co.jp/entry/2022090530337093/",
     "title": "ヤフー全社横断「Webパフォーマンス改善」の取り組み (Core Web Vitalsスコアの向上)",
