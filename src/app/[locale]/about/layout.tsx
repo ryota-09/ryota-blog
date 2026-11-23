@@ -24,6 +24,7 @@ export async function generateMetadata({ params }: AboutLayoutProps): Promise<Me
       languages: {
         ja: `${baseURL}/ja/about`,
         en: `${baseURL}/en/about`,
+        "x-default": `${baseURL}/ja/about`,
       },
     },
     // og:image は同セグメントの opengraph-image.tsx が自動生成・付与するため images は指定しない
