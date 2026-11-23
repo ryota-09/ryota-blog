@@ -9,7 +9,7 @@ import { CATEGORIES, isHiddenFromHomeByCategory, resolveCategoryOrDefault } from
 import type { CategoryEntry } from "@/static/categories";
 import { buildPageUrl } from "@/lib";
 import { getLocalizedCategoryName } from "@/lib/i18n-utils";
-import { locales } from "@/i18n/config";
+import { defaultLocale, locales } from "@/i18n/config";
 import type { BreadcrumbItemType, TOCAssetsType } from "@/types";
 import type {
   BlogListQuery,
@@ -70,11 +70,13 @@ export const getBlogList = (
   // トップ(/blogs)の全体一覧のみ、以下2種類の記事を除外する。
   //   1. 記事単位の hideFromHome: true (同一クラスタの連投でトップを占有しないための個別指定)
   //   2. primaryカテゴリ(categories[0])が hideFromHome のカテゴリ(雑記・時事・LifeHack)に
-  //      属する記事。技術系の読者がトップを見たときに非IT記事が混ざらないようにする
+  //      属する記事。技術系の読者がトップを見たときに非IT記事が混ざらないようにする。
+  //      ただし記事単位の showOnHome: true はこの2だけを上書きしてトップに出す(1は上書きしない)
   // カテゴリ一覧(§4のインデックス導線ハブ)・検索には出したいので、呼び出し側で明示的に指定する
   if (excludeHiddenFromHome) {
     filtered = filtered.filter(
-      (blog) => !blog.hideFromHome && !isHiddenFromHomeByCategory(blog.categories),
+      (blog) =>
+        !blog.hideFromHome && (blog.showOnHome || !isHiddenFromHomeByCategory(blog.categories)),
     );
   }
 
@@ -122,8 +124,8 @@ export const getCategoriesWithArticles = (locale: ContentLocale): CategoryEntry[
  * 表示中localeのカテゴリを使い回すと他localeのURLが404を指し、GSCで404として検出される。
  * そのlocaleに記事が存在しない場合はエントリ自体を含めない。
  */
-export const buildArticleLanguageAlternates = (slug: string): Record<string, string> =>
-  Object.fromEntries(
+export const buildArticleLanguageAlternates = (slug: string): Record<string, string> => {
+  const languages: Record<string, string> = Object.fromEntries(
     locales.flatMap((locale) => {
       const blog = getPublishedBlogsByLocale(locale).find((item) => item.slug === slug);
       if (!blog) return [];
@@ -131,6 +133,11 @@ export const buildArticleLanguageAlternates = (slug: string): Record<string, str
       return [[locale, buildPageUrl(locale, "blogs", categoryId, slug)]];
     }),
   );
+  // x-default は200を返すURL(デフォルトロケール。無ければ存在する方のlocale)を指す。
+  // ロケールなしURL(/blogs/...)は301で転送されるため使わない
+  const xDefault = languages[defaultLocale] ?? Object.values(languages)[0];
+  return xDefault ? { ...languages, "x-default": xDefault } : languages;
+};
 
 /**
  * getBlogByIdByLocale相当(本データ層ではcontent id = slug): 指定localeの記事をslugで1件取得する。

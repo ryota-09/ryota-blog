@@ -58,6 +58,8 @@ draft: true # 下書き。省略時はfalse扱い
 | `isAdvertisement` | boolean(既定false) | 任意 | 広告記事フラグ |
 | `related` | slug配列(既定`[]`) | 任意 | 関連記事として表示するslugのリスト |
 | `draft` | boolean(既定false) | 任意 | 下書きフラグ。詳細は「2. draft運用」を参照 |
+| `hideFromHome` | boolean(既定false) | 任意 | trueにするとトップ(`/blogs`)の全体一覧にだけ出さない。カテゴリ一覧・検索・sitemap・記事ページには出る。同じクラスタの連投でトップが埋まるのを避けたいときに使う(`publishedAt` のバックデートで代用しない) |
+| `showOnHome` | boolean(既定false) | 任意 | primaryカテゴリがトップ非表示のカテゴリ(`content/categories.json` の `hideFromHome: true`。雑記・時事・LifeHack)でも、この記事だけトップに出す。トップはGooglebotが最もよくクロールするハブなので、非IT記事の新記事を早く見つけてもらいたいときに使う。記事単位の `hideFromHome: true` がある場合はそちらが優先される |
 | `headingIds` | string配列(既定`[]`) | 任意 | 見出しの固定id(旧microCMSからの移行記事のみ使用)。**新規記事では指定しない**(自動生成される) |
 | `moshimoWidgets` | オブジェクト配列(既定`[]`) | 任意 | もしもアフィリエイトウィジェットのデータ。詳細は「4-4. MoshimoAffiliate」を参照 |
 

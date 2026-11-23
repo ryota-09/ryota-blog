@@ -96,6 +96,12 @@ const blogs = defineCollection({
       // (過去にpublishedAtのバックデートで代替した結果、カテゴリ一覧のnoindexページに
       // 転落してSEO導線が切れた経緯があるため、日付ではなくこのフラグで制御する)。
       hideFromHome: s.boolean().default(false),
+      // primaryカテゴリが hideFromHome のカテゴリ(雑記・時事・LifeHack)でも、この記事だけは
+      // トップ(/blogs)の全体一覧に出すフラグ。カテゴリ単位の非表示だけを上書きする
+      // (記事単位の hideFromHome: true が付いている場合はそちらを優先し、表示しない)。
+      // トップ一覧はGooglebotのクロール頻度が最も高いハブのため、非IT記事でも新記事の
+      // 発見を早めたいときに使う(2026-11 best-buy-2026 の未クロール対策)
+      showOnHome: s.boolean().default(false),
       moshimoWidgets: s.array(moshimoWidgetSchema).default([]),
       body: s.mdx(),
       // 検索(plainText/toc計算)用の生MDX文字列

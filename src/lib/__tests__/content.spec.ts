@@ -25,7 +25,7 @@ import { PER_PAGE } from "@/static/blogs";
 // .velite に含まれる。ファイル数ベースのオラクルはこれと常に一致する。
 const BLOGS_DIR = path.join(__dirname, "..", "..", "..", "content", "blogs");
 
-type BlogFrontmatter = { categories?: string[]; hideFromHome?: boolean };
+type BlogFrontmatter = { slug?: string; categories?: string[]; hideFromHome?: boolean; showOnHome?: boolean };
 
 const listFrontmattersByLocale = (locale: "ja" | "en"): BlogFrontmatter[] =>
   readdirSync(BLOGS_DIR, { withFileTypes: true })
@@ -34,7 +34,7 @@ const listFrontmattersByLocale = (locale: "ja" | "en"): BlogFrontmatter[] =>
       const file = path.join(BLOGS_DIR, entry.name, `index.${locale}.mdx`);
       if (!existsSync(file)) return [];
       const match = readFileSync(file, "utf-8").match(/^---\r?\n([\s\S]*?)\r?\n---/);
-      return match ? [yaml.load(match[1]) as BlogFrontmatter] : [];
+      return match ? [{ ...(yaml.load(match[1]) as BlogFrontmatter), slug: entry.name }] : [];
     });
 
 const jaFrontmatters = listFrontmattersByLocale("ja");
@@ -52,9 +52,11 @@ const hiddenCategoryIds = new Set(
     .filter((category) => category.hideFromHome)
     .map((category) => category.id),
 );
-// トップ(/blogs)に残るべき記事: 記事単位のhideFromHomeでも、primaryカテゴリでも隠されていないもの
+// トップ(/blogs)に残るべき記事: 記事単位のhideFromHomeでも、primaryカテゴリでも隠されていないもの。
+// primaryカテゴリによる非表示は記事単位の showOnHome: true で上書きされる
 const jaVisibleOnHome = jaFrontmatters.filter(
-  (fm) => !fm.hideFromHome && !hiddenCategoryIds.has(fm.categories?.[0] ?? ""),
+  (fm) =>
+    !fm.hideFromHome && (fm.showOnHome === true || !hiddenCategoryIds.has(fm.categories?.[0] ?? "")),
 );
 
 describe("content.ts", () => {
@@ -135,8 +137,29 @@ describe("content.ts", () => {
       expect(result.totalCount).toBeLessThan(jaTotal);
       result.contents.forEach((content) => {
         expect(content.hideFromHome).toBe(false);
-        expect(hiddenCategoryIds.has(content.categories[0])).toBe(false);
+        // 非表示カテゴリがprimaryでも、showOnHomeの記事だけはトップに残る
+        if (!content.showOnHome) {
+          expect(hiddenCategoryIds.has(content.categories[0])).toBe(false);
+        }
       });
+    });
+
+    it("showOnHome: primaryカテゴリが非表示カテゴリでもトップに出す(記事単位のhideFromHomeは上書きしない)", () => {
+      const overridden = jaFrontmatters.filter(
+        (fm) =>
+          fm.showOnHome === true &&
+          !fm.hideFromHome &&
+          hiddenCategoryIds.has(fm.categories?.[0] ?? ""),
+      );
+      const visibleSlugs = new Set(
+        getBlogList("ja", { offset: 0, limit: 1000, excludeHiddenFromHome: true }).contents.map(
+          (content) => content.slug,
+        ),
+      );
+      overridden.forEach((fm) => expect(visibleSlugs.has(fm.slug ?? "")).toBe(true));
+      jaFrontmatters
+        .filter((fm) => fm.showOnHome === true && fm.hideFromHome === true)
+        .forEach((fm) => expect(visibleSlugs.has(fm.slug ?? "")).toBe(false));
     });
 
     it("excludeHiddenFromHome未指定なら非表示カテゴリの記事も返る(カテゴリ一覧・検索用)", () => {
@@ -151,6 +174,7 @@ describe("content.ts", () => {
       const secondaryOnly = jaFrontmatters.filter(
         (fm) =>
           !fm.hideFromHome &&
+          !fm.showOnHome &&
           !hiddenCategoryIds.has(fm.categories?.[0] ?? "") &&
           (fm.categories ?? []).some((category) => hiddenCategoryIds.has(category)),
       );
@@ -332,6 +356,23 @@ describe("content.ts", () => {
 
     it("存在しないslugでは空オブジェクトを返す", () => {
       expect(buildArticleLanguageAlternates("not-exist-slug")).toEqual({});
+    });
+
+    it("x-defaultは200を返すjaのURLを指す(ロケールなしのリダイレクトURLは使わない)", () => {
+      getAllBlogListByLocale("ja").forEach((jaBlog) => {
+        const alternates = buildArticleLanguageAlternates(jaBlog.slug);
+        expect(alternates["x-default"]).toBe(alternates.ja);
+        expect(alternates["x-default"]).not.toMatch(new RegExp(`^${baseURL}/blogs/`));
+      });
+    });
+
+    it("jaに記事が無いslugではx-defaultが存在するlocaleのURLを指す", () => {
+      const jaSlugs = new Set(getAllBlogListByLocale("ja").map((blog) => blog.slug));
+      const enOnly = getAllBlogListByLocale("en").find((blog) => !jaSlugs.has(blog.slug));
+      // 実データに該当記事が無い場合はこのケースの検証対象が無い
+      if (!enOnly) return;
+      const alternates = buildArticleLanguageAlternates(enOnly.slug);
+      expect(alternates["x-default"]).toBe(alternates.en);
     });
   });
 });

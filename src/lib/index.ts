@@ -3,7 +3,7 @@ import { CATEGORY_QUERY, KEYWORD_QUERY, PAGE_QUERY, PER_PAGE } from "@/static/bl
 import { resolveCategoryEntry } from "@/static/categories";
 import type { BlogListQuery } from "@/types/content";
 import { baseURL } from "@/config";
-import { locales } from "@/i18n/config";
+import { defaultLocale, locales } from "@/i18n/config";
 
 export const generateTOCAssets = (html: string) => {
   // 正規表現を使用して<h2>または<h3>タグのidとテキストを抽出
@@ -90,6 +90,10 @@ export const buildPageUrl = (locale: string, ...segments: string[]): string => {
   return `${baseURL}/${locale}${path ? `/${path}` : ""}`;
 }
 
-// 全ロケール分の hreflang(languages) マップを生成する
-export const buildLanguageAlternates = (...segments: string[]): Record<string, string> =>
-  Object.fromEntries(locales.map((loc) => [loc, buildPageUrl(loc, ...segments)]));
+// 全ロケール分の hreflang(languages) マップを生成する。
+// x-default はデフォルトロケール(ja)のURLにする。ロケールなしURL(/blogs/...)は301で転送されるため、
+// x-defaultには必ず200を返すURLを入れる(リダイレクトURLを指すとGooglebotのクロールを浪費する)
+export const buildLanguageAlternates = (...segments: string[]): Record<string, string> => ({
+  ...Object.fromEntries(locales.map((loc) => [loc, buildPageUrl(loc, ...segments)])),
+  "x-default": buildPageUrl(defaultLocale, ...segments),
+});

@@ -26,6 +26,7 @@ const data: BlogPost = {
   "noIndex": false,
   "isAdvertisement": false,
   "hideFromHome": false,
+  "showOnHome": false,
   "thumbnail": {
     "src": "./no_contents.png",
     "height": 1080,

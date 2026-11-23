@@ -56,6 +56,16 @@ const nextConfig = {
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
       },
+      // ステージング等の *.workers.dev ホストは検索エンジンにインデックスさせない。
+      // 2026-11、ステージング(ryota-blog-stg.ryota09dev.workers.dev)が index 可のまま古いビルドで公開され、
+      // Googleにトップがインデックスされ、GSCでも本番トップの参照元として検出されていた。
+      // robots.txt で拒否するとGoogleがnoindexを読めなくなるため、レスポンスヘッダーで止める。
+      // 本番(ryotablog.jp)はこの条件にかからない
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: '.*\\.workers\\.dev' }],
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
     ];
   },
   async redirects() {
