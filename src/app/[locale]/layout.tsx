@@ -5,7 +5,7 @@ import Script from "next/script";
 import { ViewTransitions } from 'next-view-transitions'
 import NextTopLoader from "nextjs-toploader";
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { isRoutingLocale, routing } from '@/i18n/routing'
 
 import { baseURL, gtmId } from "@/config";
@@ -81,7 +81,12 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const messages = await getMessages();
+  // 静的生成(SSG)ではmiddlewareが動かないため、next-intlはURLのロケールを自力では知れない。
+  // setRequestLocale と NextIntlClientProvider の locale 指定がないと、en ページが既定の ja で
+  // 描画され、一覧の記事カードが /ja/... にリンクし、UI文言も日本語になっていた(2026-11 発見。
+  // 英語記事への内部リンクが実質ゼロになり、英語版のクロールを妨げていた)
+  setRequestLocale(locale);
+  const messages = await getMessages({ locale });
 
   return (
     <ViewTransitions>
@@ -118,7 +123,7 @@ export default async function LocaleLayout({
               initialPosition={0.1}
               crawl
             />
-            <NextIntlClientProvider messages={messages}>
+            <NextIntlClientProvider locale={locale} messages={messages}>
               {children}
               {/* GA4(gtag.js)はGTMコンテナ内のGA4設定タグ経由でのみ計測する（二重ロード防止: Issue #222）。
                   @next/third-partiesのGoogleTagManagerはafterInteractive固定でgtm.js(127KB)+gtag.js(161KB)が

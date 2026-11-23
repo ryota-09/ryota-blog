@@ -1,4 +1,5 @@
 import AboutMeSection from "./_components/AboutMeSection";
+import { setRequestLocale } from "next-intl/server";
 import CareerTimeline from "./_components/CareerTimeline";
 import ContactSection from "./_components/ContactSection";
 import HeroSection from "./_components/HeroSection";
@@ -15,6 +16,9 @@ type AboutPageProps = {
 // aboutページ。10セクションを縦に並べる
 const Page = async ({ params }: AboutPageProps) => {
   const { locale } = await params;
+  // 静的生成(SSG)ではmiddlewareが動かず、next-intlがリクエストのロケールを知る手段がない。
+  // 呼ばないと en ページでもサーバー側の翻訳・リンクが既定の ja で描画される(2026-11 発見)
+  setRequestLocale(locale);
 
   return (
     <article className="mx-auto w-full max-w-4xl flex-grow space-y-16 bg-white px-4 py-12 sm:px-6 md:space-y-24 md:py-16 lg:px-8 dark:bg-black">
