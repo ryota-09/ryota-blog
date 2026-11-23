@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { setRequestLocale } from "next-intl/server";
 import AdBanner from "@/components/AdBanner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -29,6 +30,9 @@ export default async function BlogListLayout({
 }: BlogLayoutProps) {
   // Next.js 16では、paramsを非同期で取得する必要がある
   const { locale } = await params;
+  // 静的生成(SSG)ではmiddlewareが動かず、next-intlがリクエストのロケールを知る手段がない。
+  // 呼ばないと en ページでもサーバー側の翻訳・リンクが既定の ja で描画される(2026-11 発見)
+  setRequestLocale(locale);
   return (
     <GlobalStateProvider>
       <Header locale={locale} />

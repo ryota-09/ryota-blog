@@ -49,6 +49,7 @@ export type BlogListQuery = {
   keyword?: string;
   // トップ(/blogs)の全体一覧から除外すべき記事を落とす。対象は「記事単位の hideFromHome: true」と
   // 「primaryカテゴリが hideFromHome のカテゴリ(雑記・時事・LifeHack)に属する記事」の2種類。
+  // 後者は記事単位の showOnHome: true で上書きでき、その記事はトップに残る。
   // トップの全体一覧・その総ページ数計算でのみ指定する想定(カテゴリ一覧・検索では指定しない)
   excludeHiddenFromHome?: boolean;
 };

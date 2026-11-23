@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import ArticleList from "@/components/ArticleList";
 import Skelton from "@/components/ArticleList/skelton";
@@ -83,6 +83,9 @@ export async function generateMetadata({
 
 const Page = async ({ params, searchParams }: SearchPageProps) => {
   const { locale } = await params;
+  // 静的生成(SSG)ではmiddlewareが動かず、next-intlがリクエストのロケールを知る手段がない。
+  // 呼ばないと en ページでもサーバー側の翻訳・リンクが既定の ja で描画される(2026-11 発見)
+  setRequestLocale(locale);
   const resolvedSearchParams = await searchParams;
   const category = resolvedSearchParams[CATEGORY_QUERY];
   const keyword = resolvedSearchParams[KEYWORD_QUERY];
